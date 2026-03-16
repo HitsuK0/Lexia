@@ -20,6 +20,8 @@ public class Appointment {
     // TODO : Replace all exceptions by personalised ones
 
 
+    public Appointment() {}
+
     public Appointment(Beneficiary beneficiary, LocalTime appointementStartTime, LocalTime appointementEndTime) {
         this.beneficiary = beneficiary;
         this.appointement_start_time = appointementStartTime;
