@@ -20,13 +20,35 @@ public class ProfessionalSkill {
         this.appointments = new ArrayList<>();
     }
 
-    public String getDesignation() {
+    // Getters & Setters
+
+    public String get_Designation() {
         return designation;
     }
 
-    public void setDesignation(String designation) {
+    public void set_Designation(String designation) {
         this.designation = designation;
     }
 
-    
+    public List<Interpreter> get_List_Interpreters() {
+        return this.interpreters;
+    }
+
+    public void set_List_Interpreters(List<Interpreter> interpreters) {
+        this.interpreters = interpreters;
+    }
+
+    public List<Appointment> get_List_Appointment(){
+        return this.appointments;
+    }
+
+    public void set_Appointment(List<Appointment> appointments){
+        this.appointments = appointments;
+    }
+
+    // Affichage
+
+    public String toString() {
+        return "Professional Skill{designation :'" + designation + "'}";
+    }
 }
