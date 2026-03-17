@@ -23,21 +23,26 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
         POJOAcademicSkill as = null;
         try{
             PreparedStatement prStat = ConnectionOracle.getInstance().prepareStatement(query);
-            prStat.setString(1, objectToSearchInDB);
+            prStat.setString(1, objectToSearchInDB.getId());
             ResultSet rs = prStat.executeQuery();
             if(rs.next()){
                 as = new POJOAcademicSkill(rs.getInt("ID_academic_skill"), rs.getString("designation"));
             }
         }
-        catch(SQLException e){
-            throw new SQLException("Erreur : Couldn't find AcademicSkill -> "+e.getMessage());
-            // à modifier.
-        }
         finally {
-            resultSet.close();
-            prStat.close();
-        }
+            try{
+                prStat.close();
+            }
+            catch(SQLException e){
 
+            }
+            try{
+                rs.close();
+            }
+            catch(SQLException e){
+
+            }
+        }
         return as;
     }
     /**
@@ -52,17 +57,23 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
             PreparedStatement prStat = ConnectionOracle.getInstance().prepareStatement(query);
             ResultSet rs = prStat.executeQuery();
             while(rs.next()){
-                POJOAcademicSkill as = new POJOAcademicSkill(rs.getString("designation"));
+                POJOAcademicSkill as = new POJOAcademicSkill(rs.getInt("ID_academic_skill"), rs.getString("designation"));
                 list.add(as);
             }
         }
-        catch(SQLException e){
-            throw new SQLException("Erreur : Couldn't find all AcademicSkill -> "+e.getMessage());
-            // à modifier
-        }
         finally {
-            prStat.close();
-            rs.close();
+            try{
+                prStat.close();
+            }
+            catch(SQLException e){
+
+            }
+            try{
+                rs.close();
+            }
+            catch(SQLException e){
+
+            }
         }
         return list;
     }
@@ -85,13 +96,13 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
                 isCreated = true;
             }
         }
-        catch(SQLException e){
-            throw new SQLException("Erreur : Couldn't find all AcademicSkill -> "+e.getMessage());
-            // à modifier
-        }
         finally{
-            prStat.close();
-            rs.close();
+            try{
+                prStat.close();
+            }
+            catch(SQLException e){
+                System.out.println("Erreur : Couldn't find all AcademicSkill -> "+e.getMessage());
+            }
         }
         return isCreated;
     }
@@ -113,12 +124,13 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
                 isUpdated = true;
             }
         }
-        catch(SQLException e){
-            throw new SQLException("Erreur : Couldn't udpate AcademicSkill -> "+e.getMessage());
-            // à modifier
-        }
         finally{
-            prStat.close();
+            try{
+                prStat.close();
+            }
+            catch(SQLException e){
+                System.out.println("Erreur : Couldn't udpate AcademicSkill -> "+e.getMessage());
+            }
         }
         return isUpdated;
     }
@@ -141,12 +153,13 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
                 isDeleted = true;
             }
         }
-        catch(SQLException e){
-            throw new SQLException("Erreur : Couldn't delete AcademicSkill -> "+e.getMessage());
-            // à modifier
-        }
         finally {
-            prStat.close();
+            try{
+                prStat.close();
+            }
+            catch(SQLException e){
+                System.out.println("Erreur : Couldn't delete AcademicSkill -> "+e.getMessage());
+            }
         }
         return isDeleted;
     }
