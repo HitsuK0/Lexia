@@ -7,10 +7,9 @@ import java.sql.SQLException;
 
 import java.util.List;
 import java.util.ArrayList;
-import POJO.POJOAcademicSkill;
 
 
-public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
+public class DAOAcademicSkill extends DAO<AcademicSkill>{
 
     /**
      * Searches for the object whosppakce identifier matches the String passed as a parameter.
@@ -18,15 +17,15 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
      * @return The object whose identifier matches the String passed as a parameter. null if there is no object matching the String passed as a parameter.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
-    public POJOAcademicSkill find(String objectToSearchInDB) throws SQLException{
+    public AcademicSkill find(String objectToSearchInDB) throws SQLException{
         String query = "select * from AcademicSkill where ID_academic_skill = ?";
-        POJOAcademicSkill as = null;
+        AcademicSkill as = null;
         try{
             PreparedStatement prStat = ConnectionOracle.getInstance().prepareStatement(query);
             prStat.setString(1, objectToSearchInDB.getId());
             ResultSet rs = prStat.executeQuery();
             if(rs.next()){
-                as = new POJOAcademicSkill(rs.getInt("ID_academic_skill"), rs.getString("designation"));
+                as = new AcademicSkill(rs.getInt("ID_academic_skill"), rs.getString("designation"));
             }
         }
         finally {
@@ -34,13 +33,13 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
                 prStat.close();
             }
             catch(SQLException e){
-
+                System.out.println(e.getMessage());
             }
             try{
                 rs.close();
             }
             catch(SQLException e){
-
+                System.out.println(e.getMessage());
             }
         }
         return as;
@@ -50,14 +49,14 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
      * @return a list containing all the objects in the table or an empty list if the table is empty.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
-    public List<POJOAcademicSkill> findAll() throws SQLException{
+    public List<AcademicSkill> findAll() throws SQLException{
         String query = "select * from AcademicSkill";
-        List<POJOAcademicSkill> list = new ArrayList<POJOAcademicSkill>();
+        List<AcademicSkill> list = new ArrayList<AcademicSkill>();
         try {
             PreparedStatement prStat = ConnectionOracle.getInstance().prepareStatement(query);
             ResultSet rs = prStat.executeQuery();
             while(rs.next()){
-                POJOAcademicSkill as = new POJOAcademicSkill(rs.getInt("ID_academic_skill"), rs.getString("designation"));
+                AcademicSkill as = new AcademicSkill(rs.getInt("ID_academic_skill"), rs.getString("designation"));
                 list.add(as);
             }
         }
@@ -66,13 +65,13 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
                 prStat.close();
             }
             catch(SQLException e){
-
+                System.out.println(e.getMessage());
             }
             try{
                 rs.close();
             }
             catch(SQLException e){
-
+                System.out.println(e.getMessage());
             }
         }
         return list;
@@ -84,7 +83,7 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
      * @return true if the object was successfully inserted, false otherwise.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
-    public boolean create(POJOAcademicSkill objectToInsertInDB) throws SQLException {
+    public boolean create(AcademicSkill objectToInsertInDB) throws SQLException {
         boolean isCreated = false;
         String query = "insert into Academic_skill(designation) values (?)";
 
@@ -101,11 +100,12 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
                 prStat.close();
             }
             catch(SQLException e){
-                System.out.println("Erreur : Couldn't find all AcademicSkill -> "+e.getMessage());
+                System.out.println(e.getMessage());
             }
         }
         return isCreated;
     }
+
     /**
      * Precondition: the object passed as a parameter cannot be null.
      * Updates all object fields in the table (except its identifier) ​​that correspond to the object identifier passed as a parameter.
@@ -113,12 +113,13 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
      * @return true if the object has been successfully updated, false otherwise.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
-    public boolean update(POJOAcademicSkill objectToUpdateInDB) throws SQLException {
+    public boolean update(AcademicSkill objectToUpdateInDB) throws SQLException {
         boolean isUpdated = false;
-        String query = "update Academic_skill set designation = ?";
+        String query = "update Academic_skill set designation = ? where id = ?";
         try{
             PreparedStatement prStat = DAOConnection.getInstance().prepareStatement(query);
             prStat.setString(1, objectToUpdateInDB.getDesignation());
+            prStat.setInt(2, objectToUpdateInDB.getId());
             int nbreLigne = prStat.executeUpdate();
             if(nbreLigne > 0){
                 isUpdated = true;
@@ -129,7 +130,7 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
                 prStat.close();
             }
             catch(SQLException e){
-                System.out.println("Erreur : Couldn't udpate AcademicSkill -> "+e.getMessage());
+                System.out.println(e.getMessage());
             }
         }
         return isUpdated;
@@ -141,7 +142,7 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
      * @return true if the object was successfully deleted, false otherwise.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
-    public boolean delete(POJOAcademicSkill objectToDeleteFormDB) throws SQLException {
+    public boolean delete(AcademicSkill objectToDeleteFormDB) throws SQLException {
         boolean isDeleted = false;
         String query = "delete from Academic_skill where id = ? and designation = ?";
         try {
@@ -158,7 +159,7 @@ public class DAOAcademicSkill extends DAO<POJOAcademicSkill>{
                 prStat.close();
             }
             catch(SQLException e){
-                System.out.println("Erreur : Couldn't delete AcademicSkill -> "+e.getMessage());
+                System.out.println(e.getMessage());
             }
         }
         return isDeleted;
