@@ -37,7 +37,7 @@ public class ProfessionalSkill {
      * Returns the designation of this professional skill.
      * @return the designation string
      */
-    public String get_Designation() {
+    public String getDesignation() {
         return designation;
     }
 
@@ -45,14 +45,14 @@ public class ProfessionalSkill {
      * Set the skill's designation
      * @param designation The new designation to set
      */
-    public void set_Designation(String designation) {
+    public void setDesignation(String designation) {
         this.designation = designation;
     }
 
     /**
      * @return Returns ths list of interpreters associated with this skill
      */
-    public List<Interpreter> get_List_Interpreters() {
+    public List<Interpreter> getListInterpreters() {
         return this.interpreters;
     }
 
@@ -60,14 +60,14 @@ public class ProfessionalSkill {
      * Replaces ths entire list of interpreters
      * @param interpreters The new list of Interpreters
      */
-    public void set_List_Interpreters(List<Interpreter> interpreters) {
+    public void setListInterpreters(List<Interpreter> interpreters) {
         this.interpreters = interpreters;
     }
 
     /**
      * @return Returns the list of appointments associated with this skill.
      */
-    public List<Appointment> get_List_Appointment(){
+    public List<Appointment> getListAppointment(){
         return this.appointments;
     }
 
@@ -75,7 +75,7 @@ public class ProfessionalSkill {
      * Replaces the entire appointments list
      * @param appointments The new list of Appointments
      */
-    public void set_Appointment(List<Appointment> appointments){
+    public void setAppointment(List<Appointment> appointments){
         this.appointments = appointments;
     }
 
