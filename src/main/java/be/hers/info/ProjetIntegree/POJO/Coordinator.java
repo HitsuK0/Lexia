@@ -6,46 +6,72 @@ public class Coordinator {
     private Interpreter refInterpreter;
 
     /**
-     * Construit un/une coordinateur/coordinatrice.
-     * @param isAdmin si isAdmin est a true, la coordinatrice sera le/la coordinateur/coordinatrice principale. false, si c'est une resa
-     * @param refInterpreter l'interprete qui sera resa ou coordinateur/coordinatrice principale.
+     * Create a coordinator.
+     * @param isAdmin If isAdmin is true, the coordinator will be the main coordinator. false if it's a resa
+     * @param refInterpreter the interpreter who will be the resa or the main coordinator.
      */
     public Coordinator(boolean isAdmin, Interpreter refInterpreter) {
+        if(refInterpreter == null) throw new NullPointerException();
         this.isAdmin = isAdmin;
         this.refInterpreter = refInterpreter;
     }
 
     /**
-     * Construit un/une coordinateur/coordinatrice resa.
-     * @param refInterpreter l'interprete qui sera resa ou coordinatrice principale.
+     * Create a resa coordinator.
+     * @param refInterpreter the interpreter who will be the resa.
      */
     public Coordinator(Interpreter refInterpreter) {
+        if(refInterpreter == null) throw new NullPointerException();
         this.isAdmin = false;
         this.refInterpreter = refInterpreter;
     }
 
     /**
-     * Construit un objet Coordinator resa sans lien avec un Interpreter
+     * Create a Coordinator object resa with no link to an Interpreter
      */
     public Coordinator() {
         this.isAdmin = false;
         this.refInterpreter = null;
     }
 
+    /**
+     *
+     * @return the interpreter who will be the resa or the main coordinator.
+     */
     public Interpreter getRefInterpreter() {
         return refInterpreter;
     }
 
+    /**
+     *
+     * @param refInterpreter the interpreter who will be the resa or the main coordinator.
+     */
     public void setRefInterpreter(Interpreter refInterpreter) {
+        if(refInterpreter == null) throw new NullPointerException();
         this.refInterpreter = refInterpreter;
     }
 
+    /**
+     *
+     * @return If isAdmin is true, the coordinator will be the main coordinator. false if it's a resa
+     */
     public boolean isAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
+    /**
+     *
+     * @param isAdmin If isAdmin is true, the coordinator will be the main coordinator. false if it's a resa
+     */
+    public void setAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
+    /**
+     *
+     * @return a string that contains the interpreter and a textual interpretation of isAdmin.
+     */
+    public String toString() {
+        return refInterpreter.toString() + (isAdmin ? "Coordinatrice/Coordinateur principale" : "Resa");
+    }
 }
