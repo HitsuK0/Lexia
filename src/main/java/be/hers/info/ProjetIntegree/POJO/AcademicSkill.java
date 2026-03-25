@@ -9,8 +9,13 @@ public class AcademicSkill
     /**
      * Create an AcademicSkill.
      * @param designation the name of the academic skill
+     * @throws IllegalArgumentException if educationLevel or addresses is empty
      */
     public AcademicSkill(String designation){
+
+        if(designation == null){
+            throw new NullPointerException();
+        }
         this.designation = designation;
     }
 
@@ -34,5 +39,12 @@ public class AcademicSkill
      */
     public String getDesignation() {
         return designation;
+    }
+
+    /**
+     * @return a String containing the designation
+     */
+    public String toString(){
+        return "Designation : "+ designation + "\n";
     }
 }
