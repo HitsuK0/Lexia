@@ -9,6 +9,7 @@ import java.util.List;
  */
 
 public class ProfessionalSkill {
+    private int numProfessionalSkill;
     private String designation;
     private List<Interpreter> interpreters;
     private List<Appointment> appointments;
@@ -19,6 +20,18 @@ public class ProfessionalSkill {
      */
     public ProfessionalSkill(String designation) {
         this.designation = designation;
+        this.interpreters = new ArrayList<>();
+        this.appointments = new ArrayList<>();
+    }
+
+    /**
+     * Constructs a ProfessionalSkill with the given designation and ID numProfessionalSkill
+     * @param designation The skill of the professional skill
+     * @param numProfessionalSkill The ID of the professional skill
+     */
+    public ProfessionalSkill(String designation, int numProfessionalSkill) {
+        this.designation = designation;
+        this.numProfessionalSkill = numProfessionalSkill;
         this.interpreters = new ArrayList<>();
         this.appointments = new ArrayList<>();
     }
@@ -48,6 +61,13 @@ public class ProfessionalSkill {
     public void setDesignation(String designation) {
         this.designation = designation;
     }
+
+    /**
+     * @return The ID of this professional skill
+     */
+    public int getNumProfessionalSkill(){
+        return numProfessionalSkill;
+    }   
 
     /**
      * @return Returns ths list of interpreters associated with this skill
