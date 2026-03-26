@@ -1,67 +1,79 @@
 package be.hers.info.ProjetIntegree.POJO;
 
-public class Coordinator {
+public class Coordinator extends Interpreter {
     private int numCoordinator;
     private boolean isAdmin;
-    private Interpreter refInterpreter;
+
 
     /**
      * Create a coordinator.
      * @param numCoordinator the numero of the coordinator
      * @param isAdmin If isAdmin is true, the coordinator will be the main coordinator. false if it's a resa
-     * @param refInterpreter the interpreter who will be the resa or the main coordinator.
      */
-    public Coordinator(int numCoordinator,boolean isAdmin, Interpreter refInterpreter) {
-        if(refInterpreter == null) throw new NullPointerException();
+    public Coordinator(String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address,int numCoordinator,boolean isAdmin) {
+        super(lastName,firstName,email,phoneNumber,weeklyWorkHours,address);
         this.numCoordinator=numCoordinator;
         this.isAdmin = isAdmin;
-        this.refInterpreter = refInterpreter;
+
     }
 
     /**
      * Create a coordinator.
      * @param isAdmin If isAdmin is true, the coordinator will be the main coordinator. false if it's a resa
-     * @param refInterpreter the interpreter who will be the resa or the main coordinator.
+
      */
-    public Coordinator(boolean isAdmin, Interpreter refInterpreter) {
-        if(refInterpreter == null) throw new NullPointerException();
+    public Coordinator(String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address,boolean isAdmin) {
+        super(lastName,firstName,email,phoneNumber,weeklyWorkHours,address);
         this.isAdmin = isAdmin;
-        this.refInterpreter = refInterpreter;
     }
     /**
      * Create a resa coordinator.
-     * @param refInterpreter the interpreter who will be the resa.
      */
-    public Coordinator(Interpreter refInterpreter) {
-        if(refInterpreter == null) throw new NullPointerException();
+    public Coordinator(String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address) {
+        super(lastName,firstName,email,phoneNumber,weeklyWorkHours,address);
         this.isAdmin = false;
-        this.refInterpreter = refInterpreter;
+
+    }
+    /**
+     * Create a coordinator.
+     * @param numCoordinator the numero of the coordinator
+     * @param isAdmin If isAdmin is true, the coordinator will be the main coordinator. false if it's a resa
+     */
+    public Coordinator(int numInterpreter, String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address,int numCoordinator,boolean isAdmin) {
+        super(numInterpreter, lastName,firstName,email,phoneNumber,weeklyWorkHours,address);
+        this.numCoordinator=numCoordinator;
+        this.isAdmin = isAdmin;
+
     }
 
+    /**
+     * Create a coordinator.
+     * @param isAdmin If isAdmin is true, the coordinator will be the main coordinator. false if it's a resa
+
+     */
+    public Coordinator(int numInterpreter,String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address,boolean isAdmin) {
+        super(numInterpreter, lastName,firstName,email,phoneNumber,weeklyWorkHours,address);
+        this.isAdmin = isAdmin;
+    }
+    /**
+     * Create a resa coordinator.
+
+     */
+    public Coordinator(int numInterpreter,String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address) {
+        super(numInterpreter, lastName,firstName,email,phoneNumber,weeklyWorkHours,address);
+        this.isAdmin = false;
+
+    }
     /**
      * Create a Coordinator object resa with no link to an Interpreter
      */
     public Coordinator() {
+        super();
         this.isAdmin = false;
-        this.refInterpreter = null;
+
     }
 
-    /**
-     *
-     * @return the interpreter who will be the resa or the main coordinator.
-     */
-    public Interpreter getRefInterpreter() {
-        return refInterpreter;
-    }
 
-    /**
-     *
-     * @param refInterpreter the interpreter who will be the resa or the main coordinator.
-     */
-    public void setRefInterpreter(Interpreter refInterpreter) {
-        if(refInterpreter == null) throw new NullPointerException();
-        this.refInterpreter = refInterpreter;
-    }
 
     /**
      *
@@ -90,7 +102,8 @@ public class Coordinator {
      *
      * @return a string that contains the interpreter and a textual interpretation of isAdmin.
      */
+    @Override
     public String toString() {
-        return "NumCoordinator : " + numCoordinator + "\n" +refInterpreter.toString() + (isAdmin ? "Coordinatrice/Coordinateur principale" : "Resa");
+        return "NumCoordinator : " + numCoordinator + (isAdmin ? "Coordinatrice/Coordinateur principale" : "Resa") + "\n" + super.toString();
     }
 }
