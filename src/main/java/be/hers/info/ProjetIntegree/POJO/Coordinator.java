@@ -1,9 +1,22 @@
 package be.hers.info.ProjetIntegree.POJO;
 
 public class Coordinator {
-
+    private int numCoordinator;
     private boolean isAdmin;
     private Interpreter refInterpreter;
+
+    /**
+     * Create a coordinator.
+     * @param numCoordinator the numero of the coordinator
+     * @param isAdmin If isAdmin is true, the coordinator will be the main coordinator. false if it's a resa
+     * @param refInterpreter the interpreter who will be the resa or the main coordinator.
+     */
+    public Coordinator(int numCoordinator,boolean isAdmin, Interpreter refInterpreter) {
+        if(refInterpreter == null) throw new NullPointerException();
+        this.numCoordinator=numCoordinator;
+        this.isAdmin = isAdmin;
+        this.refInterpreter = refInterpreter;
+    }
 
     /**
      * Create a coordinator.
@@ -15,7 +28,6 @@ public class Coordinator {
         this.isAdmin = isAdmin;
         this.refInterpreter = refInterpreter;
     }
-
     /**
      * Create a resa coordinator.
      * @param refInterpreter the interpreter who will be the resa.
@@ -69,9 +81,16 @@ public class Coordinator {
 
     /**
      *
+     * @return the numero of the coordinator
+     */
+    public int getNumCoordinator() {
+        return numCoordinator;
+    }
+    /**
+     *
      * @return a string that contains the interpreter and a textual interpretation of isAdmin.
      */
     public String toString() {
-        return refInterpreter.toString() + (isAdmin ? "Coordinatrice/Coordinateur principale" : "Resa");
+        return "NumCoordinator : " + numCoordinator + "\n" +refInterpreter.toString() + (isAdmin ? "Coordinatrice/Coordinateur principale" : "Resa");
     }
 }
