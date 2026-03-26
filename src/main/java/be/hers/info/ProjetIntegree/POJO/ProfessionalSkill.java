@@ -67,7 +67,7 @@ public class ProfessionalSkill {
      */
     public int getNumProfessionalSkill(){
         return numProfessionalSkill;
-    }   
+    }
 
     /**
      * @return Returns ths list of interpreters associated with this skill
@@ -104,6 +104,6 @@ public class ProfessionalSkill {
      * Ex : Professionnal Skill{designation : 'translation'}
      */
     public String toString() {
-        return "Professional Skill{designation :'" + designation + "'}";
+        return "Professional Skill{designation :'" + designation + "', ID : '" + numProfessionalSkill + "'}";
     }
 }
