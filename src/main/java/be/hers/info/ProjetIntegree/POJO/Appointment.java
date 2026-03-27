@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Appointment {
+    private int appointmentID;
     private String status;
     private List<String> appointementLocals;
     private Beneficiary beneficiary;
@@ -16,6 +17,7 @@ public class Appointment {
     /**
      * Initialize an Appointment with beneficiary, appointementLocals, interpreters, specialists, academicSkillsNeeded, businessSkillsNeeded,
      * timeSlotPunctual, timeSlotBase and sets the status to 'On hold' by default
+     * @param appointmentID The id of the Appointment
      * @param beneficiary The Beneficiary concerned
      * @param appointementLocals List of local(s) where the Appointment will take place, can be null
      * @param interpreters List of Interpretes that will participate
@@ -27,8 +29,9 @@ public class Appointment {
      * @throws NullPointerException if beneficiary, appointementLocals, businessSkillsNeeded, interpreters is null
      * @throws IllegalArgumentException If interpreters or businessSkillsNeeded is empty
      *                                  If timeSlotPunctual and timeSlotBase are not null
+     *                                  If appointmentID is negative
      */
-    public Appointment(Beneficiary beneficiary, List<String> appointementLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> businessSkillsNeeded,
+    public Appointment(int appointmentID, Beneficiary beneficiary, List<String> appointementLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> businessSkillsNeeded,
                        TimeSlotPunctual timeSlotPunctual, TimeSlotBase timeSlotBase) {
         if(beneficiary == null || appointementLocals == null || interpreters == null || businessSkillsNeeded == null || (timeSlotPunctual == null && timeSlotBase == null)) {
             throw new NullPointerException();
@@ -38,10 +41,15 @@ public class Appointment {
             throw new IllegalArgumentException();
         }
 
+        if(appointmentID < 0) {
+            throw new IllegalArgumentException();
+        }
+
         if(interpreters.size() == 0 || businessSkillsNeeded.size() == 0) {
             throw new IllegalArgumentException();
         }
 
+        this.appointmentID = appointmentID;
         this.beneficiary = beneficiary;
         this.status = "en attente";
         this.appointementLocals = appointementLocals;
@@ -65,7 +73,12 @@ public class Appointment {
         businessSkillsNeeded = new ArrayList<ProfessionalSkill>();
     }
 
-    // TODO : AOUTER l'ID
+    /**
+     * @return the id of the Appointment
+     */
+    public int getAppointmentID() {
+        return appointmentID;
+    }
 
     /**
      * @return the status of the Appointment
@@ -141,6 +154,17 @@ public class Appointment {
     public List<ProfessionalSkill> getBusinessSkillsNeeded() {
 
         return businessSkillsNeeded;
+    }
+
+    /**
+     * @param id the id
+     * @throws IllegalArgumentException if the id is negative
+     */
+    public void setAppointmentID(int id) {
+        if(id < 0) {
+            throw new IllegalArgumentException();
+        }
+        this.appointmentID = id;
     }
 
     /**
@@ -268,5 +292,9 @@ public class Appointment {
         }
 
         this.status = status;
+    }
+
+    public String toString() {
+        return ;
     }
 }
