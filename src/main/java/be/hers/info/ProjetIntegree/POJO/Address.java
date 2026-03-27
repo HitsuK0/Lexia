@@ -26,11 +26,11 @@ public class Address {
      * @param establishment the establishment linked. It can have 0 or 1 establishment
      * @param beneficiaries the list of beneficiary linked. It can have 0, 1 or some beneficiaries
      * @param interpreters the list of interpreter linked. It can have 0, 1 or some interpreters
-     * @throws NoSuchElementException if postOfficeBox, locality, numStreet, beneficiaries or interpreters is null
+     * @throws IllegalArgumentException if postOfficeBox, locality, numStreet, beneficiaries or interpreters is null
      */
     public Address(int numAddress, int postcode, String postOfficeBox, String locality, String numStreet, String hamlet, Establishment establishment, List<Beneficiary> beneficiaries, List<Interpreter> interpreters) {
         if(postOfficeBox == null || locality == null || numStreet == null || beneficiaries == null || interpreters == null){
-            throw new NoSuchElementException();
+            throw new IllegalArgumentException();
         }
 
         this.numAddress = numAddress;
@@ -45,15 +45,22 @@ public class Address {
     }
 
     /**
-     * Initialize an address with numAddress, postcode, postOfficeBox, locality, numStreet, hamlet, establishment, beneficiaries, interpreters
-     * @throws NoSuchElementException if postOfficeBox, locality, numStreet, beneficiaries or interpreters is null
+     * Initialize an address with postcode, postOfficeBox, locality, numStreet, hamlet, establishment, beneficiaries, interpreters
+     * @param postcode the postcode
+     * @param postOfficeBox the post office box. It can only have 1 post office box
+     * @param locality the locality. It can only have 1 locality
+     * @param numStreet the number street. It can only have 1 number street
+     * @param hamlet the hamlet
+     * @param establishment the establishment linked. It can have 0 or 1 establishment
+     * @param beneficiaries the list of beneficiary linked. It can have 0, 1 or some beneficiaries
+     * @param interpreters the list of interpreter linked. It can have 0, 1 or some interpreters
+     * @throws IllegalArgumentException if postOfficeBox, locality, numStreet, beneficiaries or interpreters is null
      */
-    public Address(int numAddress, int postcode, String postOfficeBox, String locality, String numStreet, String hamlet, Establishment establishment, List<Beneficiary> beneficiaries, List<Interpreter> interpreters) {
+    public Address(int postcode, String postOfficeBox, String locality, String numStreet, String hamlet, Establishment establishment, List<Beneficiary> beneficiaries, List<Interpreter> interpreters) {
         if(postOfficeBox == null || locality == null || numStreet == null || beneficiaries == null || interpreters == null){
-            throw new NoSuchElementException();
+            throw new IllegalArgumentException();
         }
 
-        this.numAddress = numAddress;
         this.postcode = postcode;
         this.postOfficeBox = postOfficeBox;
         this.locality = locality;
@@ -87,6 +94,13 @@ public class Address {
     }
 
     /**
+     * @param numAddress the id
+     */
+    public void setNumAddress(int numAddress) {
+        this.numAddress = numAddress;
+    }
+
+    /**
      * @return the postcode
      */
     public int getPostcode() {
@@ -109,11 +123,11 @@ public class Address {
 
     /**
      * @param postOfficeBox the post office box. It can only have 1 post office box
-     * @throws NoSuchElementException if postOfficeBox is null
+     * @throws IllegalArgumentException if postOfficeBox is null
      */
     public void setPostOfficeBox(String postOfficeBox) {
         if(postOfficeBox == null){
-            throw new NoSuchElementException();
+            throw new IllegalArgumentException();
         }
 
         this.postOfficeBox = postOfficeBox;
@@ -128,11 +142,11 @@ public class Address {
 
     /**
      * @param locality the locality. It can only have 1 locality
-     * @throws NoSuchElementException if locality is null
+     * @throws IllegalArgumentException if locality is null
      */
     public void setLocality(String locality) {
         if(locality == null){
-            throw new NoSuchElementException();
+            throw new IllegalArgumentException();
         }
 
         this.locality = locality;
@@ -147,11 +161,11 @@ public class Address {
 
     /**
      * @param numStreet the number street. It can only have 1 number street
-     * @throws NoSuchElementException if numStreet is null
+     * @throws IllegalArgumentException if numStreet is null
      */
     public void setNumStreet(String numStreet) {
         if(numStreet == null){
-            throw new NoSuchElementException();
+            throw new IllegalArgumentException();
         }
 
         this.numStreet = numStreet;
@@ -194,11 +208,11 @@ public class Address {
 
     /**
      * @param beneficiaries the list of beneficiary linked. It can have 0, 1 or some beneficiaries
-     * @throws NoSuchElementException if beneficiaries is null
+     * @throws IllegalArgumentException if beneficiaries is null
      */
     public void setBeneficiaries(List<Beneficiary> beneficiaries) {
         if(beneficiaries == null){
-            throw new NoSuchElementException();
+            throw new IllegalArgumentException();
         }
 
         this.beneficiaries = beneficiaries;
@@ -213,11 +227,11 @@ public class Address {
 
     /**
      * @param interpreters the list of interpreter linked. It can have 0, 1 or some interpreters
-     * @throws NoSuchElementException if interpreters is null
+     * @throws IllegalArgumentException if interpreters is null
      */
     public void setInterpreters(List<Interpreter> interpreters) {
         if(interpreters == null){
-            throw new NoSuchElementException();
+            throw new IllegalArgumentException();
         }
 
         this.interpreters = interpreters;
@@ -229,7 +243,7 @@ public class Address {
      */
     public String toString() {
         String strBeneficiaries = "";
-        if(this.beneficiaries.size() == 0)
+        if(this.beneficiaries.isEmpty())
             strBeneficiaries += "Aucun bénédiciaire lié\n";
         else {
             strBeneficiaries = "Bénéficiaire(s) lié(s) : \n";
@@ -240,7 +254,7 @@ public class Address {
         strBeneficiaries += "\n";
 
         String strInterpreters = "";
-        if(this.interpreters.size() == 0)
+        if(this.interpreters.isEmpty())
             strInterpreters += "Aucun interprète lié\n";
         else{
             strInterpreters += "Interprète(s) lié(s) :\n";
