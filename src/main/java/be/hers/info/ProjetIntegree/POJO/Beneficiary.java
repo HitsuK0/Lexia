@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Beneficiary {
-    // TODO : ADD ID
+    private int beneficiaryID;
     private String name;
     private String surname;
     private String phoneNumber;
@@ -21,8 +21,10 @@ public class Beneficiary {
 
     /**
      * Initialize a Beneficiary with no elements
+     * beneficiaryID is set to -1 by default, waiting to be assigned by the database
      */
     public Beneficiary() {
+        beneficiaryID = -1;
         name = null;
         surname = null;
         phoneNumber = null;
@@ -37,16 +39,18 @@ public class Beneficiary {
 
     /**
      * Initialize a Beneficiary with emailAddress, name and surname
+     * @param beneficiaryID the id of the Beneficiary
      * @param emailAddress the email address of the Beneficiary
      * @param name the name of the Beneficiary
      * @param surname the surname of the Beneficiary
      * @throws NullPointerException if emailAddress, name or surname is null
      */
-    public Beneficiary(String emailAddress, String name, String surname) {
+    public Beneficiary(int beneficiaryID, String emailAddress, String name, String surname) {
         if(emailAddress == null || name == null || surname == null) {
             throw new NullPointerException();
         }
 
+        this.beneficiaryID = beneficiaryID;
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -58,6 +62,7 @@ public class Beneficiary {
 
     /**
      * Initialize an establishment with emailAddress, name and surname
+     * @param beneficiaryID the id of the Beneficiary
      * @param name the name
      * @param surname the surname
      * @param phoneNumber the phone number
@@ -70,7 +75,7 @@ public class Beneficiary {
      * @throws NullPointerException if the name, surname, phoneNumber, emailAddress, address or communicationLanguage is null
      * @throws IllegalArgumentException if communicationLanguage is empty
      */
-    public Beneficiary(String name, String surname, String phoneNumber, String emailAddress, Address address, int educationLevel,
+    public Beneficiary(int beneficiaryID, String name, String surname, String phoneNumber, String emailAddress, Address address, int educationLevel,
                        List<String> communicationLanguage, List<Appointment> appointmentList, Interpreter referenceInterpreter) {
 
         if(name == null || surname == null || phoneNumber == null || emailAddress == null || address == null || communicationLanguage == null ||
@@ -82,6 +87,7 @@ public class Beneficiary {
             throw new IllegalArgumentException();
         }
 
+        this.beneficiaryID = beneficiaryID;
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -92,6 +98,13 @@ public class Beneficiary {
         this.communicationLanguage = communicationLanguage;
         this.appointmentList = (appointmentList == null) ? new ArrayList<Appointment>() : appointmentList;
         this.referenceInterpreter = referenceInterpreter;
+    }
+
+    /**
+     * @return the id of the Beneficiary
+     */
+    public int getBeneficiaryID() {
+        return beneficiaryID;
     }
 
     /**
@@ -191,6 +204,18 @@ public class Beneficiary {
     public List<Appointment> getAppointmentList() {
 
         return appointmentList;
+    }
+
+    /**
+     * @param beneficiaryID the id to set
+     * @throws IllegalArgumentException if beneficiaryID is negative
+     */
+    public void setBeneficiaryID(int beneficiaryID) {
+        if(beneficiaryID < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        this.beneficiaryID = beneficiaryID;
     }
 
     /**
