@@ -4,26 +4,55 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Establishment {
+    private int id;
     private String nameBuilding;
     private String phoneNumber;
     private List<String> educationLevel;
-    private List<Specialist> specialists;
+    private List<Referent> referents;
     private List<Address> addresses;
 
     /**
-     * Initialize an establishment with nameBuilding, phoneNumber, educationLevel, specialists and addresses
+     * Initialize an establishment with id, nameBuilding, phoneNumber, educationLevel, referents and addresses
+     * @param id the id of the establishment
      * @param nameBuilding the name of the building
      * @param phoneNumber the phone number
      * @param educationLevel all education levels (nursery school, primary, secondary, higher education).
      *                       It can have 1 or some education level
-     * @param specialists list of specialists. It can have 0, 1 or some specialists
+     * @param referents list of referents. It can have 0, 1 or some referents
      * @param addresses list of Addresses. It can have 1 or some addresses
-     * @throws NullPointerException if educationLevel, specialists or addresses is null
-     *                              if a specialist in specialists or an address in addresses is null
+     * @throws NullPointerException if educationLevel, referents or addresses is null
+     *                              if a referent in referents or an address in addresses is null
      * @throws IllegalArgumentException if educationLevel or addresses is empty
      */
-    public Establishment(String nameBuilding, String phoneNumber, List<String> educationLevel, List<Specialist> specialists, List<Address> addresses) {
-        if(educationLevel == null || specialists == null || addresses == null || specialists.contains(null) || addresses.contains(null))
+    public Establishment(int id, String nameBuilding, String phoneNumber, List<String> educationLevel, List<Referent> referents, List<Address> addresses) {
+        if(educationLevel == null || referents == null || addresses == null || referents.contains(null) || addresses.contains(null))
+            throw new NullPointerException();
+
+        if(educationLevel.size() == 0 || addresses.size() == 0)
+            throw new IllegalArgumentException();
+
+        this.id = id;
+        this.nameBuilding = nameBuilding;
+        this.phoneNumber = phoneNumber;
+        this.educationLevel = educationLevel;
+        this.referents = referents;
+        this.addresses = addresses;
+    }
+
+    /**
+     * Initialize an establishment with nameBuilding, phoneNumber, educationLevel, referents and addresses
+     * @param nameBuilding the name of the building
+     * @param phoneNumber the phone number
+     * @param educationLevel all education levels (nursery school, primary, secondary, higher education).
+     *                       It can have 1 or some education level
+     * @param referents list of referents. It can have 0, 1 or some referents
+     * @param addresses list of Addresses. It can have 1 or some addresses
+     * @throws NullPointerException if educationLevel, referents or addresses is null
+     *                              if a referent in referents or an address in addresses is null
+     * @throws IllegalArgumentException if educationLevel or addresses is empty
+     */
+    public Establishment(String nameBuilding, String phoneNumber, List<String> educationLevel, List<Referent> referents, List<Address> addresses) {
+        if(educationLevel == null || referents == null || addresses == null || referents.contains(null) || addresses.contains(null))
             throw new NullPointerException();
 
         if(educationLevel.size() == 0 || addresses.size() == 0)
@@ -32,7 +61,7 @@ public class Establishment {
         this.nameBuilding = nameBuilding;
         this.phoneNumber = phoneNumber;
         this.educationLevel = educationLevel;
-        this.specialists = specialists;
+        this.referents = referents;
         this.addresses = addresses;
     }
 
@@ -43,8 +72,15 @@ public class Establishment {
         this.nameBuilding = null;
         this.phoneNumber = null;
         this.educationLevel = new ArrayList<>();
-        this.specialists = new ArrayList<>();
+        this.referents = new ArrayList<>();
         this.addresses = new ArrayList<>();
+    }
+
+    /**
+     * @return the id of the establishment
+     */
+    public int getId() {
+        return id;
     }
 
     /**
@@ -99,22 +135,22 @@ public class Establishment {
     }
 
     /**
-     * @return list of specialists
+     * @return list of referents
      */
-    public List<Specialist> getSpecialists() {
-        return specialists;
+    public List<Referent> getReferents() {
+        return referents;
     }
 
     /**
-     * @param specialists list of specialists. It can have 0, 1 or some specialists
-     * @throws NullPointerException if specialists is null
-     *                              if a specialist in specialists is null
+     * @param referents list of referents. It can have 0, 1 or some referents
+     * @throws NullPointerException if referents is null
+     *                              if a referent in referents is null
      */
-    public void setSpecialists(List<Specialist> specialists) {
-        if(specialists == null || specialists.contains(null))
+    public void setReferents(List<Referent> referents) {
+        if(referents == null || referents.contains(null))
             throw new NullPointerException();
 
-        this.specialists = specialists;
+        this.referents = referents;
     }
 
     /**
@@ -141,7 +177,7 @@ public class Establishment {
     }
 
     /**
-     * @return a String containing the name of the building, the phone number, the education levels, the specialists and
+     * @return a String containing the name of the building, the phone number, the education levels, the referents and
      *         the addresses
      */
     public String toString() {
@@ -157,19 +193,19 @@ public class Establishment {
         }
         strEducationLevel += "\n";
 
-        String strSpecialists = "";
-        if(this.specialists.size() == 0)
-            strSpecialists += "Aucun référent attribué\n";
+        String strReferents = "";
+        if(this.referents.size() == 0)
+            strReferents += "Aucun référent attribué\n";
         else{
-            strSpecialists += "Référent(s) :\n";
-            for(int i = 0; i < this.specialists.size(); i++){
-                strSpecialists += "- " + this.specialists.get(i).toString() + "\n";
+            strReferents += "Référent(s) :\n";
+            for(int i = 0; i < this.referents.size(); i++){
+                strReferents += "- " + this.referents.get(i).toString() + "\n";
             }
         }
-        strSpecialists += "\n";
+        strReferents += "\n";
 
         return "Etablissement " + this.nameBuilding + " :\n" +
-                "Numéro de téléphonne : " + this.phoneNumber + "\n" + strAdresses + strEducationLevel + strSpecialists;
+                "Numéro de téléphonne : " + this.phoneNumber + "\n" + strAdresses + strEducationLevel + strReferents;
 
     }
 }
