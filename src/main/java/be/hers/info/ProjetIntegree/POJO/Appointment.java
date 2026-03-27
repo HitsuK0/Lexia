@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Appointment {
-    private int appointmentID;
+    private int numAppointment;
     private String status;
-    private List<String> appointementLocals;
+    private List<String> appointmentLocals;
     private Beneficiary beneficiary;
     private List<Interpreter> interpreters;
     private TimeSlotPunctual timeSlotPunctual;
@@ -15,31 +15,30 @@ public class Appointment {
     private List<ProfessionalSkill> professionalSkillsNeeded;
 
     /**
-     * Initialize an Appointment with beneficiary, appointementLocals, interpreters, specialists, academicSkillsNeeded, professionalSkillsNeeded
+     * Initialize an Appointment with beneficiary, appointmentLocals, interpreters, specialists, academicSkillsNeeded, professionalSkillsNeeded
 ,
-     * timeSlotPunctual, timeSlotBase and sets the status to 'On hold' by default
-     * @param appointmentID The id of the Appointment
+     * timeSlotPunctual, timeSlotBase and sets the status to 'en attente' by default
+     * @param numAppointment The id of the Appointment
      * @param beneficiary The Beneficiary concerned
-     * @param appointementLocals List of local(s) where the Appointment will take place, can be null
+     * @param appointmentLocals List of local(s) where the Appointment will take place, can be null
      * @param interpreters List of Interpretes that will participate
      * @param academicSkillsNeeded List of academic skills needed, can be null
-     * @param professionalSkillsNeeded
- List of business skills needed
+     * @param professionalSkillsNeeded List of business skills needed
      * @param timeSlotPunctual For every non-repetitive Appointment, can be null
      * @param timeSlotBase For every repetitive Appointment, can be null
      *                     Note: an Appointment is either a timeSlotPunctual or a timeSlotBase, but not both at the same time
-     * @throws NullPointerException if beneficiary, appointementLocals, professionalSkillsNeeded
-, interpreters is null
-     * @throws IllegalArgumentException If interpreters or professionalSkillsNeeded
- is empty
+     * @throws NullPointerException if beneficiary, professionalSkillsNeeded, interpreters is null
+     * @throws IllegalArgumentException If interpreters or professionalSkillsNeeded is empty
      *                                  If timeSlotPunctual and timeSlotBase are not null
-     *                                  If appointmentID is negative
+     *                                  If numAppointment is negative
      */
-    public Appointment(int appointmentID, Beneficiary beneficiary, List<String> appointementLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
-,
-                       TimeSlotPunctual timeSlotPunctual, TimeSlotBase timeSlotBase) {
-        if(beneficiary == null || appointementLocals == null || interpreters == null || professionalSkillsNeeded
- == null || (timeSlotPunctual == null && timeSlotBase == null)) {
+    public Appointment(int numAppointment, Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
+            ,TimeSlotPunctual timeSlotPunctual, TimeSlotBase timeSlotBase) {
+        if(beneficiary == null || interpreters == null || professionalSkillsNeeded == null) {
+            throw new NullPointerException();
+        }
+
+        if(timeSlotBase == null && timeSlotPunctual == null) {
             throw new NullPointerException();
         }
 
@@ -47,7 +46,7 @@ public class Appointment {
             throw new IllegalArgumentException();
         }
 
-        if(appointmentID < 0) {
+        if(numAppointment < 0) {
             throw new IllegalArgumentException();
         }
 
@@ -55,17 +54,15 @@ public class Appointment {
             throw new IllegalArgumentException();
         }
 
-        this.appointmentID = appointmentID;
+        this.numAppointment = numAppointment;
         this.beneficiary = beneficiary;
         this.status = "en attente";
-        this.appointementLocals = appointementLocals;
+        this.appointmentLocals = appointmentLocals;
         this.interpreters = interpreters;
         this.timeSlotPunctual = timeSlotPunctual;
         this.timeSlotBase = timeSlotBase;
         this.academicSkillsNeeded = academicSkillsNeeded;
-        this.professionalSkillsNeeded
- = professionalSkillsNeeded
-;
+        this.professionalSkillsNeeded = professionalSkillsNeeded;
     }
 
     /**
@@ -73,15 +70,15 @@ public class Appointment {
      * appointmentID is set to -1 by default, waiting to be assigned by the database
      */
     public Appointment() {
-        appointmentID = -1;
+        numAppointment = -1;
         status = "en attente";
-        appointementLocals = new ArrayList<String>();
-        interpreters = null;
+        appointmentLocals = new ArrayList<String>();
         timeSlotPunctual = null;
         timeSlotBase = null;
+        beneficiary = null;
         academicSkillsNeeded = new ArrayList<AcademicSkill>();
-        professionalSkillsNeeded
- = new ArrayList<ProfessionalSkill>();
+        professionalSkillsNeeded = new ArrayList<ProfessionalSkill>();
+        interpreters = new ArrayList<Interpreter>();
     }
 
     /**
@@ -89,7 +86,7 @@ public class Appointment {
      */
     public int getAppointmentID() {
 
-        return appointmentID;
+        return numAppointment;
     }
 
     /**
@@ -103,9 +100,9 @@ public class Appointment {
     /**
      * @return the list of locals of the Appointment
      */
-    public List<String> getAppointementLocals() {
+    public List<String> getAppointmentLocals() {
 
-        return appointementLocals;
+        return appointmentLocals;
     }
 
     /**
@@ -126,24 +123,16 @@ public class Appointment {
 
     /**
      * @return the time slot punctual, only for non-repetitive Appointments
-     * @throws NullPointerException if timeSlotPunctual is null
      */
     public TimeSlotPunctual getTimeSlotPunctual() {
-        if(timeSlotPunctual == null) {
-            throw new NullPointerException();
-        }
 
         return timeSlotPunctual;
     }
 
     /**
      * @return the time slot base, only for repetitive Appointments
-     * @throws NullPointerException if timeSlotBase is null
      */
     public TimeSlotBase getTimeSlotBase() {
-        if(timeSlotBase == null ){
-            throw new NullPointerException();
-        }
 
         return timeSlotBase;
     }
@@ -159,11 +148,9 @@ public class Appointment {
     /**
      * @return the list of business skills needed for the Appointment
      */
-    public List<ProfessionalSkill> getProfessionalSkillsNeeded
-() {
+    public List<ProfessionalSkill> getProfessionalSkillsNeeded() {
 
-        return professionalSkillsNeeded
-;
+        return professionalSkillsNeeded;
     }
 
     /**
@@ -174,24 +161,24 @@ public class Appointment {
         if(id < 0) {
             throw new IllegalArgumentException();
         }
-        this.appointmentID = id;
+        this.numAppointment = id;
     }
 
     /**
-     * @param appointementLocals list of locals
-     * @throws IllegalArgumentException if appointementLocals is empty
-     * @throws NullPointerException if appointementLocals is null
+     * @param appointmentLocals list of locals
+     * @throws IllegalArgumentException if appointmentLocals is empty
+     * @throws NullPointerException if appointmentLocals is null
      */
-    public void setAppointementLocals(List<String> appointementLocals) {
-        if(appointementLocals == null) {
+    public void setAppointmentLocals(List<String> appointmentLocals) {
+        if(appointmentLocals == null) {
             throw new NullPointerException();
         }
 
-        if(appointementLocals.size() == 0) {
+        if(appointmentLocals.size() == 0) {
             throw new IllegalArgumentException();
         }
 
-        this.appointementLocals = appointementLocals;
+        this.appointmentLocals = appointmentLocals;
     }
 
     /**
@@ -275,44 +262,39 @@ public class Appointment {
     }
 
     /**
-     * @param professionalSkillsNeeded
- the list of business skills needed
-     * @throws NullPointerException if professionalSkillsNeeded
- is null
-     * @throws IllegalArgumentException if professionalSkillsNeeded
- is empty
+     * @param professionalSkillsNeeded the list of business skills needed
+     * @throws NullPointerException if professionalSkillsNeeded is null
+     * @throws IllegalArgumentException if professionalSkillsNeeded is empty
      */
-    public void setProfessionalSkillsNeeded
-(List<ProfessionalSkill> professionalSkillsNeeded
-) {
-        if(professionalSkillsNeeded
- == null) {
+    public void setProfessionalSkillsNeeded(List<ProfessionalSkill> professionalSkillsNeeded) {
+        if(professionalSkillsNeeded == null) {
             throw new NullPointerException();
         }
 
-        if(professionalSkillsNeeded
-.size() == 0) {
+        if(professionalSkillsNeeded.size() == 0) {
             throw new IllegalArgumentException();
         }
 
-        this.professionalSkillsNeeded
- = professionalSkillsNeeded
-;
+        this.professionalSkillsNeeded = professionalSkillsNeeded;
     }
 
     /**
      * @param status the status
      * @throws NullPointerException if status is null
-     * @throws BadStatusException if status is different from 'accepted' or 'refused'
+     * @throws BadStatusException if status is different from 'accepte' or 'refuse'
      *                            if status is the same as the already set status
-     *                            if the current status is not on hold
+     *                            if the current status is not equals to 'en attente'
      */
     public void setStatus(String status) throws BadStatusException {
         if(status == null) {
             throw new NullPointerException();
         }
 
-        if(!(status.equals("accepte") || status.equals("refuse")) || this.status.equals(status)) {
+        if(this.status.equals(status)) {
+            throw new BadStatusException();
+        }
+
+        if(!(status.equals("accepte") || status.equals("refuse"))) {
             throw new BadStatusException();
         }
 
@@ -330,54 +312,48 @@ public class Appointment {
      */
     public String toString() {
 
-        String strLocals = "Local :\n";
-        if(this.appointementLocals == null || this.appointementLocals.size() == 0) {
-            strLocals += "Aucun local attribué\n";
+        StringBuilder stringBuild = new StringBuilder();
+        stringBuild.append("Rendez-vous\n");
+        stringBuild.append("Id : ").append(this.numAppointment).append("\n");
+        stringBuild.append("Statut : ").append(this.status).append("\n");
+        stringBuild.append("Bénéficiaire : ").append(this.beneficiary).append("\n");
+
+        stringBuild.append("Local :\n");
+        if(this.appointmentLocals == null || this.appointmentLocals.size() == 0) {
+            stringBuild.append("Aucun local attribué\n");
         } else {
-            for (int i = 0; i < this.appointementLocals.size(); i++) {
-                strLocals += this.appointementLocals.get(i) + "\n";
+            for (String local : this.appointmentLocals) {
+                stringBuild.append(local).append("\n");
             }
         }
-        strLocals += "\n";
+        stringBuild.append("\n");
 
-        String strInterpreters = "Interprète(s) :\n";
+        stringBuild.append("Interprète(s):\n");
         if(this.interpreters == null || this.interpreters.size() == 0) {
-            strInterpreters += "Aucun interprète attribué\n";
+            stringBuild.append("Aucun interprète attribué\n");
         } else {
-            for (int i = 0; i < this.interpreters.size(); i++) {
-                strInterpreters += "- " + this.interpreters.get(i) + "\n";
+            for (Interpreter interpreter : this.interpreters) {
+                stringBuild.append("- ").append(interpreter).append("\n");
             }
         }
-        strInterpreters += "\n";
+        stringBuild.append("\n");
 
-        String strAcademicSkills = "Compétence(s) académique(s) :\n";
+        stringBuild.append("Compétence(s) académique(s) :\n");
         if(this.academicSkillsNeeded == null || this.academicSkillsNeeded.size() == 0) {
-            strAcademicSkills += "Aucune compétence académique requise.\n";
+            stringBuild.append("Aucune compétence académique requise.\n");
         } else {
-            for (int i = 0; i < this.academicSkillsNeeded.size(); i++) {
-                strAcademicSkills += "- " + this.academicSkillsNeeded.get(i) + "\n";
+            for (AcademicSkill academicSkill : this.academicSkillsNeeded) {
+                stringBuild.append("- ").append(academicSkill).append("\n");
             }
         }
-        strAcademicSkills += "\n";
+        stringBuild.append("\n");
 
-        String strProfessionalSkill = "Compétence(s) professionnelle(s) :\n";
-        for (int i = 0; i < this.professionalSkillsNeeded.size(); i++) {
-            strProfessionalSkill += this.professionalSkillsNeeded.get(i).toString() + "\n";
+        stringBuild.append("Compétence(s) professionnelle(s) :\n");
+        for (ProfessionalSkill professionalSkill : this.professionalSkillsNeeded) {
+            stringBuild.append("- ").append(professionalSkill).append("\n");
         }
-        strProfessionalSkill += "\n";
+        stringBuild.append("\n");
 
-        String strTimeSlot = "Tranche horaire :\n";
-        if(this.timeSlotBase != null) {
-            strTimeSlot += "Créneau répétitif : " + this.timeSlotBase.toString() + "\n";
-        } else {
-            strTimeSlot += "Créneau ponctuel : " + this.timeSlotPunctual.toString() + "\n";
-        }
-        strTimeSlot += "\n";
-
-        return "Rendez-vous\n" +
-                "Id : " + this.appointmentID + "\n" +
-                "Statut : " + this.status + "\n" +
-                "Bénéficiaire : " + this.beneficiary.toString() + "\n" +
-                strTimeSlot + strLocals + strInterpreters + strAcademicSkills + strProfessionalSkill;
+        return stringBuild.toString();
     }
 }
