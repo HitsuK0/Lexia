@@ -4,20 +4,38 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class TimeSlotPunctual extends TimeSlot {
-    private LocalDate date;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
-    public TimeSlotPunctual(LocalTime start_time, LocalTime duration, LocalDate date) {
+    public TimeSlotPunctual(LocalTime start_time, LocalTime duration, LocalDate startDate, LocalDate endDate) {
         super(start_time, duration);
-        this.date = date;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
-    public LocalDate get_date() { return date;}
+    public LocalDate getStartDate() {
+        return startDate;
+    }
 
-    public LocalTime get_start_time() { return start_time;}
-    public LocalTime get_duration() { return duration;}
-    public void set_start_time(LocalTime start_time) { this.start_time = start_time;}
-    public void set_duration(LocalTime duration) { this.duration = duration;}
+    public LocalDate getEndDate() {
+        return endDate;
+    }
 
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalTime getDuration() {
+        return duration;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setDuration(LocalTime duration) {
+        this.duration = duration;
+    }
 
     // TODO : A FAIRE
     @Override
