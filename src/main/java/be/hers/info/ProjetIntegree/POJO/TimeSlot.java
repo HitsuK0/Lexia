@@ -27,7 +27,7 @@ public abstract class TimeSlot {
         this.duration = duration;
     }
 
-    public abstract boolean overlaps(TimeSlot timeSlot);
-    public abstract boolean overlaps(TimeSlotPunctual timeSlotPunctual);
-    public abstract boolean overlaps(TimeSlotBase timeSlotBase);
+    public abstract boolean overlapsWith(TimeSlot timeSlot);
+    public abstract boolean overlapsWith(TimeSlotPunctual timeSlotPunctual);
+    public abstract boolean overlapsWith(TimeSlotBase timeSlotBase);
 }
