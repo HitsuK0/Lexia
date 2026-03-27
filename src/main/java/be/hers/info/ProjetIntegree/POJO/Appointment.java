@@ -12,28 +12,34 @@ public class Appointment {
     private TimeSlotPunctual timeSlotPunctual;
     private TimeSlotBase timeSlotBase;
     private List<AcademicSkill> academicSkillsNeeded;
-    private List<ProfessionalSkill> businessSkillsNeeded;
+    private List<ProfessionalSkill> professionalSkillsNeeded;
 
     /**
-     * Initialize an Appointment with beneficiary, appointementLocals, interpreters, specialists, academicSkillsNeeded, businessSkillsNeeded,
+     * Initialize an Appointment with beneficiary, appointementLocals, interpreters, specialists, academicSkillsNeeded, professionalSkillsNeeded
+,
      * timeSlotPunctual, timeSlotBase and sets the status to 'On hold' by default
      * @param appointmentID The id of the Appointment
      * @param beneficiary The Beneficiary concerned
      * @param appointementLocals List of local(s) where the Appointment will take place, can be null
      * @param interpreters List of Interpretes that will participate
      * @param academicSkillsNeeded List of academic skills needed, can be null
-     * @param businessSkillsNeeded List of business skills needed
+     * @param professionalSkillsNeeded
+ List of business skills needed
      * @param timeSlotPunctual For every non-repetitive Appointment, can be null
      * @param timeSlotBase For every repetitive Appointment, can be null
      *                     Note: an Appointment is either a timeSlotPunctual or a timeSlotBase, but not both at the same time
-     * @throws NullPointerException if beneficiary, appointementLocals, businessSkillsNeeded, interpreters is null
-     * @throws IllegalArgumentException If interpreters or businessSkillsNeeded is empty
+     * @throws NullPointerException if beneficiary, appointementLocals, professionalSkillsNeeded
+, interpreters is null
+     * @throws IllegalArgumentException If interpreters or professionalSkillsNeeded
+ is empty
      *                                  If timeSlotPunctual and timeSlotBase are not null
      *                                  If appointmentID is negative
      */
-    public Appointment(int appointmentID, Beneficiary beneficiary, List<String> appointementLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> businessSkillsNeeded,
+    public Appointment(int appointmentID, Beneficiary beneficiary, List<String> appointementLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
+,
                        TimeSlotPunctual timeSlotPunctual, TimeSlotBase timeSlotBase) {
-        if(beneficiary == null || appointementLocals == null || interpreters == null || businessSkillsNeeded == null || (timeSlotPunctual == null && timeSlotBase == null)) {
+        if(beneficiary == null || appointementLocals == null || interpreters == null || professionalSkillsNeeded
+ == null || (timeSlotPunctual == null && timeSlotBase == null)) {
             throw new NullPointerException();
         }
 
@@ -45,7 +51,7 @@ public class Appointment {
             throw new IllegalArgumentException();
         }
 
-        if(interpreters.size() == 0 || businessSkillsNeeded.size() == 0) {
+        if(interpreters.size() == 0 || professionalSkillsNeeded.size() == 0) {
             throw new IllegalArgumentException();
         }
 
@@ -57,7 +63,9 @@ public class Appointment {
         this.timeSlotPunctual = timeSlotPunctual;
         this.timeSlotBase = timeSlotBase;
         this.academicSkillsNeeded = academicSkillsNeeded;
-        this.businessSkillsNeeded = businessSkillsNeeded;
+        this.professionalSkillsNeeded
+ = professionalSkillsNeeded
+;
     }
 
     /**
@@ -70,13 +78,15 @@ public class Appointment {
         timeSlotPunctual = null;
         timeSlotBase = null;
         academicSkillsNeeded = new ArrayList<AcademicSkill>();
-        businessSkillsNeeded = new ArrayList<ProfessionalSkill>();
+        professionalSkillsNeeded
+ = new ArrayList<ProfessionalSkill>();
     }
 
     /**
      * @return the id of the Appointment
      */
     public int getAppointmentID() {
+
         return appointmentID;
     }
 
@@ -138,12 +148,8 @@ public class Appointment {
 
     /**
      * @return the list of academic skills needed for the Appointment
-     * @throws NullPointerException if there's no academic skill nedded for the Appointment
      */
     public List<AcademicSkill> getAcademicSkillsNeeded() {
-        if(academicSkillsNeeded == null) {
-            throw new NullPointerException();
-        }
 
         return academicSkillsNeeded;
     }
@@ -151,9 +157,11 @@ public class Appointment {
     /**
      * @return the list of business skills needed for the Appointment
      */
-    public List<ProfessionalSkill> getBusinessSkillsNeeded() {
+    public List<ProfessionalSkill> getProfessionalSkillsNeeded
+() {
 
-        return businessSkillsNeeded;
+        return professionalSkillsNeeded
+;
     }
 
     /**
@@ -255,20 +263,29 @@ public class Appointment {
     }
 
     /**
-     * @param businessSkillsNeeded the list of business skills needed
-     * @throws NullPointerException if businessSkillsNeeded is null
-     * @throws IllegalArgumentException if businessSkillsNeeded is empty
+     * @param professionalSkillsNeeded
+ the list of business skills needed
+     * @throws NullPointerException if professionalSkillsNeeded
+ is null
+     * @throws IllegalArgumentException if professionalSkillsNeeded
+ is empty
      */
-    public void setBusinessSkillsNeeded(List<ProfessionalSkill> businessSkillsNeeded) {
-        if(businessSkillsNeeded == null) {
+    public void setProfessionalSkillsNeeded
+(List<ProfessionalSkill> professionalSkillsNeeded
+) {
+        if(professionalSkillsNeeded
+ == null) {
             throw new NullPointerException();
         }
 
-        if(businessSkillsNeeded.size() == 0) {
+        if(professionalSkillsNeeded
+.size() == 0) {
             throw new IllegalArgumentException();
         }
 
-        this.businessSkillsNeeded = businessSkillsNeeded;
+        this.professionalSkillsNeeded
+ = professionalSkillsNeeded
+;
     }
 
     /**
@@ -294,7 +311,61 @@ public class Appointment {
         this.status = status;
     }
 
+    /**
+     * @return a String containing the appointment ID, the status, the beneficiary, the interpreters,
+     *         the locals, the academic skills needed, the business skills needed,
+     *         the time slot punctual and the time slot base
+     */
     public String toString() {
-        return ;
+
+        String strLocals = "Local :\n";
+        if(this.appointementLocals == null || this.appointementLocals.size() == 0) {
+            strLocals += "Aucun local attribué\n";
+        } else {
+            for (int i = 0; i < this.appointementLocals.size(); i++) {
+                strLocals += this.appointementLocals.get(i) + "\n";
+            }
+        }
+        strLocals += "\n";
+
+        String strInterpreters = "Interprète(s) :\n";
+        if(this.interpreters == null || this.interpreters.size() == 0) {
+            strInterpreters += "Aucun interprète attribué\n";
+        } else {
+            for (int i = 0; i < this.interpreters.size(); i++) {
+                strInterpreters += "- " + this.interpreters.get(i) + "\n";
+            }
+        }
+        strInterpreters += "\n";
+
+        String strAcademicSkills = "Compétence(s) académique(s) :\n";
+        if(this.academicSkillsNeeded == null || this.academicSkillsNeeded.size() == 0) {
+            strAcademicSkills += "Aucune compétence académique requise.\n";
+        } else {
+            for (int i = 0; i < this.academicSkillsNeeded.size(); i++) {
+                strAcademicSkills += "- " + this.academicSkillsNeeded.get(i) + "\n";
+            }
+        }
+        strAcademicSkills += "\n";
+
+        String strProfessionalSkill = "Compétence(s) professionnelle(s) :\n";
+        for (int i = 0; i < this.professionalSkillsNeeded.size(); i++) {
+            strProfessionalSkill += this.professionalSkillsNeeded.get(i).toString() + "\n";
+        }
+        strProfessionalSkill += "\n";
+
+        String strTimeSlot = "Tranche horaire :\n";
+        if(this.timeSlotBase != null) {
+            strTimeSlot += "Créneau répétitif : " + this.timeSlotBase.toString() + "\n";
+        } else {
+            strTimeSlot += "Créneau ponctuel : " + this.timeSlotPunctual.toString() + "\n";
+        }
+        strTimeSlot += "\n";
+
+        return "Rendez-vous\n" +
+                "Id : " + this.appointmentID + "\n" +
+                "Statut : " + this.status + "\n" +
+                "Bénéficiaire : " + this.beneficiary.toString() + "\n" +
+                strTimeSlot + strLocals + strInterpreters + strAcademicSkills + strProfessionalSkill;
     }
 }
