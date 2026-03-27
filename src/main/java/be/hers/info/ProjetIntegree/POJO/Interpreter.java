@@ -104,6 +104,11 @@ public class Interpreter {
      * @param phoneNumber the phone number of the interpreter
      * @param weeklyWorkHours the number of hours worked over the week
      * @param address the address of the interpreter
+     * @param absences the absence's list of the interpreter
+     * @param appointmentsList the appointment's list of the interpreter
+     * @param professionalSkillsList the professional skill's of the interpreter
+     * @param academicSkillsList the academic skill's of the interpreter
+     * @param beneficiariesList the beneficiaries's list of the interpreter
      */
     public Interpreter(int numInterpreter, String lastName, String firstName, String email, String phoneNumber,
                        int weeklyWorkHours, Address address, List<Absence> absences,
@@ -324,6 +329,6 @@ public class Interpreter {
                 ", professionalSkillsList=" + professionalSkillsList +
                 ", academicSkillsList=" + academicSkillsList +
                 ", beneficiariesList=" + beneficiariesList +
-                '}';
+                "}";
     }
 }
