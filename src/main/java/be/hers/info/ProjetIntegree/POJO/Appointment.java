@@ -70,8 +70,10 @@ public class Appointment {
 
     /**
      * Initialize an Appointment with no elements
+     * appointmentID is set to -1 by default, waiting to be assigned by the database
      */
     public Appointment() {
+        appointmentID = -1;
         status = "en attente";
         appointementLocals = new ArrayList<String>();
         interpreters = null;
@@ -224,10 +226,15 @@ public class Appointment {
     /**
      * @param timeSlotPunctual the time slot punctual
      * @throws NullPointerException if timeSlotPunctual is null
+     * @throws IllegalArgumentException if timeSlotBase is already set
      */
     public void setTimeSlotPunctual(TimeSlotPunctual timeSlotPunctual) {
         if(timeSlotPunctual == null) {
             throw new NullPointerException();
+        }
+
+        if(timeSlotBase != null) {
+            throw new IllegalArgumentException();
         }
 
         this.timeSlotPunctual = timeSlotPunctual;
@@ -236,10 +243,15 @@ public class Appointment {
     /**
      * @param timeSlotBase the time slot base
      * @throws NullPointerException if timeSlotBase is null
+     * @throws IllegalArgumentException if timeSlotPunctual is already set
      */
     public void setTimeSlotBase(TimeSlotBase timeSlotBase) {
         if(timeSlotBase == null) {
             throw new NullPointerException();
+        }
+
+        if(timeSlotPunctual != null) {
+            throw new IllegalArgumentException();
         }
 
         this.timeSlotBase = timeSlotBase;
