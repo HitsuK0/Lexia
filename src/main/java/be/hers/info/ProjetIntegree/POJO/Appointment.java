@@ -8,106 +8,94 @@ import java.util.List;
 
 public class Appointment {
     private String status;
-    private List<String> appointement_locals;
+    private List<String> appointementLocals;
     private Beneficiary beneficiary;
     private List<Interpreter> interpreters;
-    private TimeSlotPunctual time_slot_punctual;
-    private TimeSlotBase time_slot_base;
-    private List<AcademicSkill> academic_skills_needed;
-    private List<BusinessSkill> business_skills_needed;
+    private TimeSlotPunctual timeSlotPunctual;
+    private TimeSlotBase timeSlotBase;
+    private List<AcademicSkill> academicSkillsNeeded;
+    private List<BusinessSkill> businessSkillsNeeded;
 
-    public Appointment(Beneficiary beneficiary, List<String> appointement_locals, List<Interpreter> interpreters, List<AcademicSkill> academic_skills_needed, List<BusinessSkill> business_skills_needed,
-                       TimeSlotPunctual time_slot_punctual, TimeSlotBase time_slot_base) {
-        if(beneficiary == null || appointement_locals == null || interpreters == null || academic_skills_needed == null || business_skills_needed == null || time_slot_punctual == null || time_slot_base == null) {
+    public Appointment(Beneficiary beneficiary, List<String> appointementLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<BusinessSkill> businessSkillsNeeded,
+                       TimeSlotPunctual timeSlotPunctual, TimeSlotBase timeSlotBase) {
+        if(beneficiary == null || appointementLocals == null || interpreters == null || academicSkillsNeeded == null || businessSkillsNeeded == null || timeSlotPunctual == null || timeSlotBase == null) {
             throw new NullPointerException();
         }
 
-        if(appointement_locals.size() == 0 || interpreters.size() == 0 || academic_skills_needed.size() == 0 || business_skills_needed.size() == 0) {
+        if(appointementLocals.size() == 0 || interpreters.size() == 0 || academicSkillsNeeded.size() == 0 || businessSkillsNeeded.size() == 0) {
             throw new IllegalArgumentException();
         }
 
         this.beneficiary = beneficiary;
         this.status = "En attente";
-        this.appointement_locals = appointement_locals;
+        this.appointementLocals = appointementLocals;
         this.interpreters = interpreters;
-        this.time_slot_punctual = time_slot_punctual;
-        this.time_slot_base = time_slot_base;
-        this.academic_skills_needed = academic_skills_needed;
-        this.business_skills_needed = business_skills_needed;
+        this.timeSlotPunctual = timeSlotPunctual;
+        this.timeSlotBase = timeSlotBase;
+        this.academicSkillsNeeded = academicSkillsNeeded;
+        this.businessSkillsNeeded = businessSkillsNeeded;
     }
 
     public Appointment() {
         status = "En attente";
-        appointement_locals = new ArrayList<String>();
+        appointementLocals = new ArrayList<String>();
         interpreters = null;
-        time_slot_punctual = null;
-        time_slot_base = null;
-        academic_skills_needed = new ArrayList<AcademicSkill>();
-        business_skills_needed = new ArrayList<BusinessSkill>();
+        timeSlotPunctual = null;
+        timeSlotBase = null;
+        academicSkillsNeeded = new ArrayList<AcademicSkill>();
+        businessSkillsNeeded = new ArrayList<BusinessSkill>();
     }
 
     public String getStatus() {
+
         return status;
     }
 
-    public List<String> getAppointement_locals() {
-        return appointement_locals;
+    public List<String> getAppointementLocals() {
+
+        return appointementLocals;
     }
 
     public Beneficiary getBeneficiary() {
+
         return beneficiary;
     }
 
     public List<Interpreter> getInterpreters() {
+
         return interpreters;
     }
 
-    public TimeSlotPunctual getTime_slot_punctual() {
-        return time_slot_punctual;
+    public TimeSlotPunctual getTimeSlotPunctual() {
+
+        return timeSlotPunctual;
     }
 
-    public TimeSlotBase getTime_slot_base() {
-        return time_slot_base;
+    public TimeSlotBase getTimeSlotBase() {
+
+        return timeSlotBase;
     }
 
-    public List<AcademicSkill> getAcademic_skills_needed() {
-        return academic_skills_needed;
+    public List<AcademicSkill> getAcademicSkillsNeeded() {
+
+        return academicSkillsNeeded;
     }
 
     public List<BusinessSkill> getBusiness_skills_needed() {
-        return business_skills_needed;
+
+        return businessSkillsNeeded;
     }
 
-    public void set_appointement_start_time(LocalTime sT) {
-        if(sT == null) {
+    public void setAppointementLocals(List<String> appointementLocals) {
+        if(appointementLocals == null) {
             throw new NullPointerException();
         }
 
-        this.appointement_start_time = sT;
-    }
-
-    public void set_sppointement_end_time(LocalTime eT) {
-        if(eT == null) {
-            throw new NullPointerException();
-        }
-
-        this.appointement_end_time = eT;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setAppointement_locals(List<String> appointement_locals) {
-        if(appointement_locals == null) {
-            throw new NullPointerException();
-        }
-
-        if(appointement_locals.size() == 0) {
+        if(appointementLocals.size() == 0) {
             throw new IllegalArgumentException();
         }
 
-        this.appointement_locals = appointement_locals;
+        this.appointementLocals = appointementLocals;
     }
 
     public void setBeneficiary(Beneficiary beneficiary) {
@@ -130,47 +118,47 @@ public class Appointment {
         this.interpreters = interpreters;
     }
 
-    public void setTime_slot_punctual(TimeSlotPunctual time_slot_punctual) {
-        if(time_slot_punctual == null) {
+    public void setTimeSlotPunctual(TimeSlotPunctual timeSlotPunctual) {
+        if(timeSlotPunctual == null) {
             throw new NullPointerException();
         }
 
-        this.time_slot_punctual = time_slot_punctual;
+        this.timeSlotPunctual = timeSlotPunctual;
     }
 
-    public void setTime_slot_base(TimeSlotBase time_slot_base) {
-        if(time_slot_base == null) {
+    public void setTimeSlotBase(TimeSlotBase timeSlotBase) {
+        if(timeSlotBase == null) {
             throw new NullPointerException();
         }
 
-        this.time_slot_base = time_slot_base;
+        this.timeSlotBase = timeSlotBase;
     }
 
-    public void setAcademic_skills_needed(List<AcademicSkill> academic_skills_needed) {
-        if(academic_skills_needed == null) {
+    public void setAcademicSkillsNeeded(List<AcademicSkill> academicSkillsNeeded) {
+        if(academicSkillsNeeded == null) {
             throw new NullPointerException();
         }
 
-        if(academic_skills_needed.size() == 0) {
+        if(academicSkillsNeeded.size() == 0) {
             throw new IllegalArgumentException();
         }
 
-        this.academic_skills_needed = academic_skills_needed;
+        this.academicSkillsNeeded = academicSkillsNeeded;
     }
 
-    public void setBusiness_skills_needed(List<BusinessSkill> business_skills_needed) {
-        if(business_skills_needed == null) {
+    public void setBusinessSkillsNeeded(List<BusinessSkill> businessSkillsNeeded) {
+        if(businessSkillsNeeded == null) {
             throw new NullPointerException();
         }
 
-        if(business_skills_needed.size() == 0) {
+        if(businessSkillsNeeded.size() == 0) {
             throw new IllegalArgumentException();
         }
 
-        this.business_skills_needed = business_skills_needed;
+        this.businessSkillsNeeded = businessSkillsNeeded;
     }
 
-    public void set_status(String status) throws AppointmentException {
+    public void setStatus(String status) throws AppointmentException {
         if(this.status.equals("Accepte") || this.status.equals("Refuse")) {
             throw new AppointmentException("Le status ne peut plus etre modifie.");
         }
@@ -182,7 +170,14 @@ public class Appointment {
         this.status = status;
     }
 
+    public void displayLocals() {
+
+    }
+
     public String toString() {
-        return "Appointment {}";
+        return "Rendez-vous ," +
+                "Status : {"+status+"}," +
+                ""
+
     }
 }
