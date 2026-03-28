@@ -6,7 +6,10 @@ import java.time.LocalTime;
 public class TimeSlotBase extends TimeSlot {
     private int dayNumber;
 
+    /** Minimum day number (1 = Monday) */
     private static final int MIN_DAY = 1;
+
+    /** Maximum day number (7 = Sunday) */
     private static final int MAX_DAY = 7;
 
     /**
@@ -35,7 +38,7 @@ public class TimeSlotBase extends TimeSlot {
     }
 
     /**
-     * @return the day of the time slot base
+     * @return the day of the time slot base (1 = Monday, 7 = Sunday)
      */
     public int getJour() {
         return dayNumber;
