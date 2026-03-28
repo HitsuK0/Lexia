@@ -14,6 +14,8 @@ public class Beneficiary {
     private int educationLevel;
     private List<String> communicationLanguage;
     private List<Appointment> appointmentList;
+
+    // Not present in the class diagram, but it might be easier to add this attribute ?
     private Interpreter referenceInterpreter;
 
     private static final int DEFAULT_HOUR_QUOTA = 12;
@@ -21,24 +23,24 @@ public class Beneficiary {
 
     /**
      * Initialize a Beneficiary with no elements
-     * beneficiaryID is set to -1 by default, waiting to be assigned by the database
+     * beneficiaryID is set to 0 by default
      */
     public Beneficiary() {
-        beneficiaryID = -1;
-        name = null;
-        surname = null;
-        phoneNumber = null;
-        emailAddress = null;
-        address = null;
-        hourQuota = DEFAULT_HOUR_QUOTA;
-        educationLevel = 0;
-        communicationLanguage = new ArrayList<String>();
-        appointmentList = new ArrayList<Appointment>();
-        referenceInterpreter = null;
+        this.beneficiaryID = 0;
+        this.name = null;
+        this.surname = null;
+        this.phoneNumber = null;
+        this.emailAddress = null;
+        this.address = null;
+        this.hourQuota = DEFAULT_HOUR_QUOTA;
+        this.educationLevel = 0;
+        this.communicationLanguage = new ArrayList<String>();
+        this.appointmentList = new ArrayList<Appointment>();
+        this.referenceInterpreter = null;
     }
 
     /**
-     * Initialize a Beneficiary with emailAddress, name and surname
+     * Initialize a Beneficiary with beneficiaryID, emailAddress, name and surname
      * @param beneficiaryID the id of the Beneficiary
      * @param emailAddress the email address of the Beneficiary
      * @param name the name of the Beneficiary
@@ -54,14 +56,18 @@ public class Beneficiary {
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
+        this.phoneNumber = null;
+        this.address = null;
         this.hourQuota = DEFAULT_HOUR_QUOTA;
         this.educationLevel = 0;
         this.appointmentList = new ArrayList<Appointment>();
         this.communicationLanguage = new ArrayList<String>();
+        this.referenceInterpreter = null;
     }
 
     /**
-     * Initialize an establishment with emailAddress, name and surname
+     * Initialize a Beneficiary with beneficiaryID, name, surname, phoneNumber, emailAddress,
+     * address, educationLevel, communicationLanguage, appointmentList and referenceInterpreter
      * @param beneficiaryID the id of the Beneficiary
      * @param name the name
      * @param surname the surname
@@ -351,5 +357,44 @@ public class Beneficiary {
         }
 
         referenceInterpreter = interpreter;
+    }
+
+    /**
+     * @return a String containing the beneficiary ID, name, surname, phone number,
+     *         email address, address, hour quota, education level, communication languages,
+     *         reference interpreter and appointments
+     */
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Bénéficiaire n°").append(this.beneficiaryID).append(" :\n");
+        sb.append("Nom : ").append(this.name).append("\n");
+        sb.append("Prénom : ").append(this.surname).append("\n");
+        sb.append("Numéro de téléphone : ").append(this.phoneNumber == null ? "Non renseigné" : this.phoneNumber).append("\n");
+        sb.append("Adresse email : ").append(this.emailAddress).append("\n");
+        sb.append("Adresse : ").append(this.address == null ? "Non renseignée" : this.address.toString()).append("\n");
+        sb.append("Quota d'heures : ").append(this.hourQuota).append("\n");
+        sb.append("Niveau d'éducation : ").append(this.educationLevel).append("\n");
+
+        sb.append("Langue(s) de communication :\n");
+        for(int i = 0; i < this.communicationLanguage.size(); i++) {
+            sb.append("- ").append(this.communicationLanguage.get(i)).append("\n");
+        }
+
+        if(this.referenceInterpreter == null) {
+            sb.append("Aucun interprète de référence\n");
+        } else {
+            sb.append("Interprète de référence : ").append(this.referenceInterpreter.toString()).append("\n");
+        }
+
+        if(this.appointmentList.size() == 0) {
+            sb.append("Aucun rendez-vous\n");
+        } else {
+            sb.append("Rendez-vous :\n");
+            for(int i = 0; i < this.appointmentList.size(); i++) {
+                sb.append("- ").append(this.appointmentList.get(i).toString()).append("\n");
+            }
+        }
+
+        return sb.toString();
     }
 }
