@@ -1,8 +1,5 @@
 package be.hers.info.ProjetIntegree.POJO;
 
-import org.springframework.cglib.core.Local;
-
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -105,14 +102,41 @@ public class TimeSlotPunctual extends TimeSlot {
         this.endDate = endDate;
     }
 
+    /**
+     * Dispatches the overlap check to the correct overlapsWith method
+     * based on the runtime type of the given TimeSlot
+     * @param timeSlot the TimeSlot to check overlap with
+     * @return true if the two TimeSlots overlap, false otherwise
+     * @throws NullPointerException if timeSlot is null
+     */
     @Override
     public boolean overlapsWith(TimeSlot timeSlot) {
+        if(timeSlot == null) {
+            throw new NullPointerException();
+        }
 
         return timeSlot.overlapsWith(this);
     }
 
+    /**
+     * Checks if this TimeSlotPunctual overlaps with another TimeSlotPunctual
+     * A travel time of 40 minutes is added to this TimeSlot's end time
+     * Two TimeSlots overlap if their dates overlap and their times overlap
+     * @param punctual the TimeSlotPunctual to check overlap with
+     * @return true if the two TimeSlots overlap, false otherwise
+     * @throws NullPointerException if punctual is null
+     *                              if this.startDate is null
+     */
     @Override
     public boolean overlapsWith(TimeSlotPunctual punctual) {
+        if(punctual == null) {
+            throw new NullPointerException();
+        }
+
+        if(this.startDate == null) {
+            throw new NullPointerException();
+        }
+
         LocalDate thisEnd = null;
         if(this.endDate == null) {
             thisEnd = this.startDate;
@@ -139,8 +163,26 @@ public class TimeSlotPunctual extends TimeSlot {
         return false;
     }
 
+    /**
+     * Checks if this TimeSlotPunctual overlaps with a TimeSlotBase
+     * A travel time of 40 minutes is added to this TimeSlot's end time
+     * If endDate is null, only the startDate's day of week is compared to the TimeSlotBase's day
+     * If endDate is not null, all days between startDate and endDate are checked
+     * @param base the TimeSlotBase to check overlap with
+     * @return true if the two TimeSlots overlap, false otherwise
+     * @throws NullPointerException if base is null
+     *                              if this.startDate is null
+     */
     @Override
     public boolean overlapsWith(TimeSlotBase base) {
+        if(base == null) {
+            throw new NullPointerException();
+        }
+
+        if(this.startDate == null) {
+            throw new NullPointerException();
+        }
+
         if (endDate == null) {
             if (this.startDate.getDayOfWeek().getValue() == base.getJour()) {
                 LocalTime thisTime = this.startTime.plusSeconds(this.duration.toSecondOfDay()).plusMinutes(TRAVEL_TIME_MINUTES);
