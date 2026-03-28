@@ -14,12 +14,13 @@ public class Beneficiary {
     private int educationLevel;
     private List<String> communicationLanguage;
     private List<Appointment> appointmentList;
-
-    // Not present in the class diagram, but it might be easier to add this attribute ?
     private Interpreter referenceInterpreter;
 
-    private static final int DEFAULT_HOUR_QUOTA = 12;
+    /** Minimum education level (1 = nursery school) */
+    private static final int EDUCATION_LEVEL_MIN = 1;
 
+    /** Maximum education level (4 = higher education) */
+    private static final int EDUCATION_LEVEL_MAX = 4;
 
     /**
      * Initialize a Beneficiary with no elements
@@ -32,8 +33,8 @@ public class Beneficiary {
         this.phoneNumber = null;
         this.emailAddress = null;
         this.address = null;
-        this.hourQuota = DEFAULT_HOUR_QUOTA;
-        this.educationLevel = 0;
+        this.hourQuota = 0;
+        this.educationLevel = EDUCATION_LEVEL_MIN;
         this.communicationLanguage = new ArrayList<String>();
         this.appointmentList = new ArrayList<Appointment>();
         this.referenceInterpreter = null;
@@ -58,8 +59,8 @@ public class Beneficiary {
         this.emailAddress = emailAddress;
         this.phoneNumber = null;
         this.address = null;
-        this.hourQuota = DEFAULT_HOUR_QUOTA;
-        this.educationLevel = 0;
+        this.hourQuota = 0;
+        this.educationLevel = EDUCATION_LEVEL_MIN;
         this.appointmentList = new ArrayList<Appointment>();
         this.communicationLanguage = new ArrayList<String>();
         this.referenceInterpreter = null;
@@ -74,14 +75,17 @@ public class Beneficiary {
      * @param phoneNumber the phone number
      * @param emailAddress the email address
      * @param address the address
+     * @param hourQuota the quota hours
      * @param educationLevel the level of education
      * @param communicationLanguage the list of communication languages used by the beneficiary
      * @param appointmentList the list of Appointments, can be null
      * @param referenceInterpreter the Interpreter of reference
      * @throws NullPointerException if the name, surname, phoneNumber, emailAddress, address, referenceInterpreter or communicationLanguage is null
      * @throws IllegalArgumentException if communicationLanguage is empty
+     *                                  if hourQuota is negative
+     *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
      */
-    public Beneficiary(int beneficiaryID, String name, String surname, String phoneNumber, String emailAddress, Address address, int educationLevel,
+    public Beneficiary(int beneficiaryID, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
                        List<String> communicationLanguage, List<Appointment> appointmentList, Interpreter referenceInterpreter) {
 
         if(name == null || surname == null || phoneNumber == null || emailAddress == null || address == null || communicationLanguage == null ||
@@ -93,6 +97,14 @@ public class Beneficiary {
             throw new IllegalArgumentException("La liste des langues de communication ne peut pas être vide");
         }
 
+        if(hourQuota < 0) {
+            throw new IllegalArgumentException("Le quota d'heures ne peut pas être négatif");
+        }
+
+        if(educationLevel < EDUCATION_LEVEL_MIN || educationLevel > EDUCATION_LEVEL_MAX) {
+            throw new IllegalArgumentException("Le niveau d'éducation doit être compris entre "+EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
+        }
+
         this.beneficiaryID = beneficiaryID;
         this.name = name;
         this.surname = surname;
@@ -100,7 +112,7 @@ public class Beneficiary {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.educationLevel = educationLevel;
-        this.hourQuota = DEFAULT_HOUR_QUOTA;
+        this.hourQuota = hourQuota;
         this.communicationLanguage = communicationLanguage;
 
         if(appointmentList == null) {
@@ -270,7 +282,7 @@ public class Beneficiary {
      * @param hourQuota the hour quota to set
      * @throws IllegalArgumentException if hourQuota is negative
      */
-    public void setHourQuota(int hourQuota) { // TODO : maybe modify ?
+    public void setHourQuota(int hourQuota) {
         if(hourQuota < 0) {
             throw new IllegalArgumentException("Le quota d'heures ne peut pas être négatif");
         }
@@ -280,11 +292,11 @@ public class Beneficiary {
 
     /**
      * @param educationLevel the level of education to set
-     * @throws IllegalArgumentException if educationLevel is negative
+     * @throws IllegalArgumentException if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
      */
     public void setEducationLevel(int educationLevel) {
-        if(educationLevel < 0) {
-            throw new IllegalArgumentException("Le niveau d'éducation ne peut pas être négatif");
+        if(educationLevel < EDUCATION_LEVEL_MIN || educationLevel > EDUCATION_LEVEL_MAX) {
+            throw new IllegalArgumentException("Le niveau d'éducation est compris entre "+EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
         }
 
         this.educationLevel = educationLevel;
