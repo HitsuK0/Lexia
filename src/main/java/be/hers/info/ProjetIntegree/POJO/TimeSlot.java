@@ -93,4 +93,10 @@ public abstract class TimeSlot {
      * @throws NullPointerException if timeSlotBase is null
      */
     public abstract boolean overlapsWith(TimeSlotBase timeSlotBase);
+
+    /**
+     * @return a String representation of the TimeSlot
+     */
+    @Override
+    public abstract String toString();
 }

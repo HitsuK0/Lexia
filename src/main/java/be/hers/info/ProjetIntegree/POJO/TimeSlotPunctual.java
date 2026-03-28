@@ -208,4 +208,24 @@ public class TimeSlotPunctual extends TimeSlot {
         }
         return false;
     }
+
+    /**
+     * @return a String containing the start time, duration, start date and end date
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Tranche horaire ponctuelle :\n");
+        sb.append("Heure de début : ").append(this.startTime).append("\n");
+        sb.append("Durée : ").append(this.duration).append("\n");
+        sb.append("Date de début : ").append(this.startDate).append("\n");
+
+        if(endDate == null) {
+            sb.append("Date de fin : Aucune date de fin\n");
+        } else {
+            sb.append("Date de fin : ").append(this.endDate).append("\n");
+        }
+
+        return sb.toString();
+    }
 }
