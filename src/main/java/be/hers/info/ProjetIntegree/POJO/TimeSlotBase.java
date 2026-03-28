@@ -37,6 +37,13 @@ public class TimeSlotBase extends TimeSlot {
     }
 
     /**
+     * @return the end time of the time slot with travel time added
+     */
+    private LocalTime getEndTimeWithTravel() {
+        return this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(this.getTravelTimeMinutes());
+    }
+
+    /**
      * @param dayNumber  the day to set
      * @throws IllegalArgumentException if dayNumber is smaller than MIN_DAY or greater than MAX_DAY
      */
@@ -73,16 +80,11 @@ public class TimeSlotBase extends TimeSlot {
      * @return true if the two TimeSlots overlap, false otherwise
      * @throws NullPointerException if punctual is null
      *                              if punctual's startDate is null
-     * @throws IllegalArgumentException if this.dayNumber is 0
      */
     @Override
     public boolean overlapsWith(TimeSlotPunctual punctual) {
         if(punctual == null) {
             throw new NullPointerException("La tranche horaire ponctuelle ne peut pas être nulle");
-        }
-
-        if(this.dayNumber == 0) {
-            throw new IllegalArgumentException("Le numéro du jour ne peut pas être 0, utilisez le constructeur ou setDayNumber d'abord");
         }
 
         if(punctual.getStartDate() == null) {
@@ -91,7 +93,7 @@ public class TimeSlotBase extends TimeSlot {
 
         if(punctual.getEndDate() == null) {
             if(punctual.getStartDate().getDayOfWeek().getValue() == this.dayNumber) {
-                LocalTime thisTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(this.getTravelTimeMinutes());
+                LocalTime thisTime = getEndTimeWithTravel();
                 LocalTime otherTime = punctual.getStartTime().plusSeconds(punctual.getDuration().toSecondOfDay());
 
                 if(!thisTime.isBefore(punctual.getStartTime()) && !otherTime.isBefore(this.getStartTime())) {
@@ -102,7 +104,7 @@ public class TimeSlotBase extends TimeSlot {
             LocalDate current = punctual.getStartDate();
             while(!current.isAfter(punctual.getEndDate())) {
                 if(current.getDayOfWeek().getValue() == this.dayNumber) {
-                    LocalTime thisTotalTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(this.getTravelTimeMinutes());
+                    LocalTime thisTotalTime = getEndTimeWithTravel();
                     LocalTime otherTotalTime = punctual.getStartTime().plusSeconds(punctual.getDuration().toSecondOfDay());
 
                     if(!thisTotalTime.isBefore(punctual.getStartTime()) && !otherTotalTime.isBefore(this.getStartTime())) {
@@ -122,7 +124,6 @@ public class TimeSlotBase extends TimeSlot {
      * @param base the TimeSlotBase to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
      * @throws NullPointerException if base is null
-     * @throws IllegalArgumentException if this.dayNumber is 0
      */
     @Override
     public boolean overlapsWith(TimeSlotBase base) {
@@ -130,15 +131,11 @@ public class TimeSlotBase extends TimeSlot {
             throw new NullPointerException("La tranche horaire répétitive ne peut pas être nulle");
         }
 
-        if(this.dayNumber == 0) {
-            throw new IllegalArgumentException("Le numéro du jour ne peut pas être 0, utilisez le constructeur ou setDayNumber d'abord");
-        }
-
         if(this.dayNumber != base.getDayNumber()) {
             return false;
         }
 
-        LocalTime thisTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(this.getTravelTimeMinutes());
+        LocalTime thisTime = getEndTimeWithTravel();
         LocalTime otherTime = base.getStartTime().plusSeconds(base.getDuration().toSecondOfDay());
 
         if(!thisTime.isBefore(base.getStartTime()) && !otherTime.isBefore(this.getStartTime())) {
