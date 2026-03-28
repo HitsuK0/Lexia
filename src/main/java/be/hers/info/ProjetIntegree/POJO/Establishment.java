@@ -177,28 +177,28 @@ public class Establishment {
      *         the addresses
      */
     public String toString() {
-        String strAdresses = "Adresse(s) :\n";
+        StringBuilder strAdresses = new StringBuilder("Adresse(s) :\n");
         for(Address address : addresses){
-            strAdresses += "- " + address.toString() + "\n";
+            strAdresses.append("- " + address.toString() + "\n");
         }
-        strAdresses += "\n";
+        strAdresses.append("\n");
 
-        String strEducationLevel = "Niveau(x) d'éducation :\n";
+        StringBuilder strEducationLevel = new StringBuilder("Niveau(x) d'éducation :\n");
         for(Integer level : educationLevel){
-            strEducationLevel += "- " + level + "\n";
+            strEducationLevel.append("- " + level + "\n");
         }
-        strEducationLevel += "\n";
+        strEducationLevel.append("\n");
 
-        String strReferrers = "";
+        StringBuilder strReferrers = new StringBuilder("");
         if(this.referrers.isEmpty())
-            strReferrers += "Aucun référent attribué\n";
+            strReferrers.append("Aucun référent attribué\n");
         else{
-            strReferrers += "Référent(s) :\n";
+            strReferrers.append("Référent(s) :\n");
             for(Referrer referrer : referrers){
-                strReferrers += "- " + referrer.toString() + "\n";
+                strReferrers.append("- " + referrer.toString() + "\n");
             }
         }
-        strReferrers += "\n";
+        strReferrers.append("\n");
 
         return "Etablissement n°" + this.numEstablishment + " nommé " + this.nameBuilding + " :\n" +
                 "Numéro de téléphonne : " + this.phoneNumber + "\n" + strAdresses + strEducationLevel + strReferrers;
