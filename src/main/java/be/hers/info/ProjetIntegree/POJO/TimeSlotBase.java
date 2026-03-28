@@ -24,7 +24,7 @@ public class TimeSlotBase extends TimeSlot {
         super(startTime, duration);
 
         if(dayNumber < MIN_DAY || dayNumber > MAX_DAY) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Le numéro du jour doit être compris entre " + MIN_DAY + " et " + MAX_DAY);
         }
         this.dayNumber = dayNumber;
     }
@@ -40,7 +40,7 @@ public class TimeSlotBase extends TimeSlot {
     /**
      * @return the day of the time slot base (1 = Monday, 7 = Sunday)
      */
-    public int getJour() {
+    public int getDayNumber() {
         return dayNumber;
     }
 
@@ -50,7 +50,7 @@ public class TimeSlotBase extends TimeSlot {
      */
     public void setDayNumber(int dayNumber) {
         if(dayNumber < MIN_DAY || dayNumber > MAX_DAY) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Le numéro du jour doit être compris entre " + MIN_DAY + " et " + MAX_DAY));
         }
 
         this.dayNumber = dayNumber;
@@ -66,7 +66,7 @@ public class TimeSlotBase extends TimeSlot {
     @Override
     public boolean overlapsWith(TimeSlot timeSlot) {
         if(timeSlot == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La tranche horaire ne peut pas être nulle");
         }
 
         return timeSlot.overlapsWith(this);
@@ -86,15 +86,15 @@ public class TimeSlotBase extends TimeSlot {
     @Override
     public boolean overlapsWith(TimeSlotPunctual punctual) {
         if(punctual == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La tranche horaire ponctuelle ne peut pas être nulle");
         }
 
         if(this.dayNumber == 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Le numéro du jour ne peut pas être 0, utilisez le constructeur ou setDayNumber d'abord");
         }
 
         if(punctual.getStartDate() == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La date de début de la tranche horaire ponctuelle ne peut pas être nulle");
         }
 
         if(punctual.getEndDate() == null) {
@@ -135,14 +135,14 @@ public class TimeSlotBase extends TimeSlot {
     @Override
     public boolean overlapsWith(TimeSlotBase base) {
         if(base == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La tranche horaire répétitive ne peut pas être nulle");
         }
 
         if(this.dayNumber == 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Le numéro du jour ne peut pas être 0, utilisez le constructeur ou setDayNumber d'abord");
         }
 
-        if(this.dayNumber != base.getJour()) {
+        if(this.dayNumber != base.getDayNumber()) {
             return false;
         }
 
