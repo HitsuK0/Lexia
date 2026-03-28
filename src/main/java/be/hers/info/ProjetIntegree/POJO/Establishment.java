@@ -8,60 +8,58 @@ public class Establishment {
     private String nameBuilding;
     private String phoneNumber;
     private List<Integer> educationLevel;
-    private List<Referent> referents;
+    private List<Referrer> referrers;
     private List<Address> addresses;
 
     /**
-     * Initialize an establishment with numEstablishment, nameBuilding, phoneNumber, educationLevel, referents and addresses
+     * Initialize an establishment with numEstablishment, nameBuilding, phoneNumber, educationLevel, referrers and addresses
      * @param numEstablishment the id of the establishment
      * @param nameBuilding the name of the building
      * @param phoneNumber the phone number
      * @param educationLevel all education levels (nursery school - 1, primary - 2, secondary - 3, higher education - 4).
-     *                       It can have 1 or some education level
-     * @param referents list of referents. It can have 0, 1 or some referents
+     *                       It can have 0, 1 or some education level
+     * @param referrers list of referrers. It can have 0, 1 or some referrers
      * @param addresses list of Addresses. It can have 1 or some addresses
      * @throws IllegalArgumentException if educationLevel contains at least one element < 1 or > 4
-     *                                  if educationLevel, referents or addresses is null
-     *                                  if educationLevel or addresses is empty
+     *                                  if educationLevel, referrers or addresses is null
+     *                                  if addresses is empty
      */
     public Establishment(int numEstablishment, String nameBuilding, String phoneNumber, List<Integer> educationLevel,
-                         List<Referent> referents, List<Address> addresses) {
-        if(educationLevel == null || educationLevel.isEmpty() ||
-                educationLevel.stream().anyMatch(level -> level < 1 || level > 4) || referents == null ||
+                         List<Referrer> referrers, List<Address> addresses) {
+        if(educationLevel == null || educationLevel.stream().anyMatch(level -> level < 1 || level > 4) || referrers == null ||
                 addresses == null || addresses.isEmpty())
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOEstablishment] : educationLevel et/ou referrers et/ou addresses == null et/ou addresses est vide et/ou educationLevel ne contient que des niveaux entre 1 et 4 compris");
 
         this.numEstablishment = numEstablishment;
         this.nameBuilding = nameBuilding;
         this.phoneNumber = phoneNumber;
         this.educationLevel = educationLevel;
-        this.referents = referents;
+        this.referrers = referrers;
         this.addresses = addresses;
     }
 
     /**
-     * Initialize an establishment with nameBuilding, phoneNumber, educationLevel, referents and addresses
+     * Initialize an establishment with nameBuilding, phoneNumber, educationLevel, referrers and addresses
      * @param nameBuilding the name of the building
      * @param phoneNumber the phone number
      * @param educationLevel all education levels (nursery school, primary, secondary, higher education).
-     *                       It can have 1 or some education level
-     * @param referents list of referents. It can have 0, 1 or some referents
+     *                       It can have 0, 1 or some education level
+     * @param referrers list of referrers. It can have 0, 1 or some referrers
      * @param addresses list of Addresses. It can have 1 or some addresses
      * @throws IllegalArgumentException if educationLevel contains at least one element < 1 or > 4
-     *                                  if educationLevel, referents or addresses is null
-     *                                  if educationLevel or addresses is empty
+     *                                  if educationLevel, referrers or addresses is null
+     *                                  if addresses is empty
      */
     public Establishment(String nameBuilding, String phoneNumber, List<Integer> educationLevel,
-                         List<Referent> referents,List<Address> addresses) {
-        if(educationLevel == null || educationLevel.isEmpty() ||
-                educationLevel.stream().anyMatch(level -> level < 1 || level > 4) || referents == null ||
+                         List<Referrer> referrers,List<Address> addresses) {
+        if(educationLevel == null || educationLevel.stream().anyMatch(level -> level < 1 || level > 4) || referrers == null ||
                 addresses == null || addresses.isEmpty())
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOEstablishment] : educationLevel et/ou referrers et/ou addresses == null et/ou addresses est vide et/ou educationLevel ne contient que des niveaux entre 1 et 4 compris");
 
         this.nameBuilding = nameBuilding;
         this.phoneNumber = phoneNumber;
         this.educationLevel = educationLevel;
-        this.referents = referents;
+        this.referrers = referrers;
         this.addresses = addresses;
     }
 
@@ -72,7 +70,7 @@ public class Establishment {
         this.nameBuilding = "";
         this.phoneNumber = "";
         this.educationLevel = new ArrayList<>();
-        this.referents = new ArrayList<>();
+        this.referrers = new ArrayList<>();
         this.addresses = new ArrayList<>();
     }
 
@@ -129,32 +127,31 @@ public class Establishment {
      * @param educationLevel all education levels (nursery school - 1, primary - 2, secondary - 3, higher education - 4).
      *                       It can have 1 or some education level
      * @throws IllegalArgumentException if educationLevel contains at least one element < 1 or > 4
-     *                                  if educationLevel is null or educationLevel is empty
+     *                                  if educationLevel is null
      */
     public void setEducationLevel(List<Integer> educationLevel) {
-        if(educationLevel == null || educationLevel.isEmpty() ||
-                educationLevel.stream().anyMatch(level -> level < 1 || level > 4))
-            throw new IllegalArgumentException();
+        if(educationLevel == null || educationLevel.stream().anyMatch(level -> level < 1 || level > 4))
+            throw new IllegalArgumentException("[POJOEstablishment] : educationLevel == null et/ou educationLevel ne contient que des niveaux entre 1 et 4 compris");
 
         this.educationLevel = educationLevel;
     }
 
     /**
-     * @return list of referents
+     * @return list of referrers
      */
-    public List<Referent> getReferents() {
-        return referents;
+    public List<Referrer> getReferrers() {
+        return referrers;
     }
 
     /**
-     * @param referents list of referents. It can have 0, 1 or some referents
-     * @throws IllegalArgumentException if referents is null
+     * @param referrers list of referrers. It can have 0, 1 or some referrers
+     * @throws IllegalArgumentException if referrers is null
      */
-    public void setReferents(List<Referent> referents) {
-        if(referents == null)
-            throw new IllegalArgumentException();
+    public void setReferrers(List<Referrer> referrers) {
+        if(referrers == null)
+            throw new IllegalArgumentException("[POJOEstablishment] : referrers == null");
 
-        this.referents = referents;
+        this.referrers = referrers;
     }
 
     /**
@@ -170,13 +167,13 @@ public class Establishment {
      */
     public void setAddresses(List<Address> addresses) {
         if(addresses == null || addresses.contains(null))
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOEstablishment] : addresses == null");
 
         this.addresses = addresses;
     }
 
     /**
-     * @return a String containing the name of the building, the phone number, the education levels, the referents and
+     * @return a String containing the name of the building, the phone number, the education levels, the referrers and
      *         the addresses
      */
     public String toString() {
@@ -192,19 +189,19 @@ public class Establishment {
         }
         strEducationLevel += "\n";
 
-        String strReferents = "";
-        if(this.referents.isEmpty())
-            strReferents += "Aucun référent attribué\n";
+        String strReferrers = "";
+        if(this.referrers.isEmpty())
+            strReferrers += "Aucun référent attribué\n";
         else{
-            strReferents += "Référent(s) :\n";
-            for(Referent referent : referents){
-                strReferents += "- " + referent.toString() + "\n";
+            strReferrers += "Référent(s) :\n";
+            for(Referrer referrer : referrers){
+                strReferrers += "- " + referrer.toString() + "\n";
             }
         }
-        strReferents += "\n";
+        strReferrers += "\n";
 
         return "Etablissement n°" + this.numEstablishment + " nommé " + this.nameBuilding + " :\n" +
-                "Numéro de téléphonne : " + this.phoneNumber + "\n" + strAdresses + strEducationLevel + strReferents;
+                "Numéro de téléphonne : " + this.phoneNumber + "\n" + strAdresses + strEducationLevel + strReferrers;
 
     }
 }
