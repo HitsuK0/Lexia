@@ -3,10 +3,10 @@ package be.hers.info.ProjetIntegree.POJO;
 import java.time.LocalTime;
 
 public abstract class TimeSlot {
-    protected LocalTime startTime;
-    protected LocalTime duration;
+    private LocalTime startTime;
+    private LocalTime duration;
 
-    protected static final int TRAVEL_TIME_MINUTES = 40;
+    private static final int TRAVEL_TIME_MINUTES = 40;
 
     /**
      * Initialize a TimeSlot with startTime and duration
@@ -16,19 +16,11 @@ public abstract class TimeSlot {
      */
     public TimeSlot(LocalTime startTime, LocalTime duration) {
         if(startTime == null || duration == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("L'heure de début et la durée ne peuvent pas être nulles");
         }
 
         this.startTime = startTime;
         this.duration = duration;
-    }
-
-    /**
-     * Initialize a TimeSlot with no elements
-     */
-    public TimeSlot() {
-        this.startTime = null;
-        this.duration = null;
     }
 
     /**
@@ -46,12 +38,19 @@ public abstract class TimeSlot {
     }
 
     /**
+     * @return the minutes of travel time
+     */
+    public int getTravelTimeMinutes() {
+        return TRAVEL_TIME_MINUTES;
+    }
+
+    /**
      * @param startTime the start time to set
      * @throws NullPointerException if startTime is null
      */
     public void setStartTime(LocalTime startTime) {
         if(startTime == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("L'heure de début ne peut pas être nulle");
         }
 
         this.startTime = startTime;
@@ -63,7 +62,7 @@ public abstract class TimeSlot {
      */
     public void setDuration(LocalTime duration) {
         if(duration == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La durée ne peut pas être nulle");
         }
 
         this.duration = duration;
