@@ -4,8 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class TimeSlotPunctual extends TimeSlot {
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
+
+    private static final int TRAVEL_TIME_MINUTES = 40;
 
     public TimeSlotPunctual(LocalTime startTime, LocalTime duration, LocalDate startDate) {
         super(startTime, duration);
@@ -20,6 +22,7 @@ public class TimeSlotPunctual extends TimeSlot {
     }
 
     public LocalDate getStartDate() {
+
         return startDate;
     }
 
@@ -27,24 +30,9 @@ public class TimeSlotPunctual extends TimeSlot {
         return endDate;
     }
 
-    public LocalTime getStartTime() {
-        return startTime;
-    }
-
-    public LocalTime getDuration() {
-        return duration;
-    }
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public void setDuration(LocalTime duration) {
-        this.duration = duration;
-    }
-
     @Override
     public boolean overlapsWith(TimeSlot timeSlot) {
+
         return timeSlot.overlapsWith(this);
     }
 
@@ -68,7 +56,7 @@ public class TimeSlotPunctual extends TimeSlot {
             return false;
         }
 
-        LocalTime thisTime = this.startTime.plusSeconds(this.duration.toSecondOfDay());
+        LocalTime thisTime = this.startTime.plusSeconds(this.duration.toSecondOfDay()).plusMinutes(TRAVEL_TIME_MINUTES);
         LocalTime otherTime = punctual.getStartTime().plusSeconds(punctual.getDuration().toSecondOfDay());
 
         if(thisTime.isBefore((punctual.getStartTime())) || otherTime.isBefore(this.startTime)) {
