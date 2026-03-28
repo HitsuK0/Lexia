@@ -6,6 +6,8 @@ public abstract class TimeSlot {
     protected LocalTime startTime;
     protected LocalTime duration;
 
+    protected static final int TRAVEL_TIME_MINUTES = 40;
+
     public TimeSlot(LocalTime startTime, LocalTime duration) {
         this.startTime = startTime;
         this.duration = duration;
@@ -28,6 +30,8 @@ public abstract class TimeSlot {
     }
 
     public abstract boolean overlapsWith(TimeSlot timeSlot);
+
     public abstract boolean overlapsWith(TimeSlotPunctual timeSlotPunctual);
+
     public abstract boolean overlapsWith(TimeSlotBase timeSlotBase);
 }

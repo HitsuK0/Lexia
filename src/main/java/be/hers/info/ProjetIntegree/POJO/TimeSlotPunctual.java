@@ -7,8 +7,6 @@ public class TimeSlotPunctual extends TimeSlot {
     private final LocalDate startDate;
     private final LocalDate endDate;
 
-    private static final int TRAVEL_TIME_MINUTES = 40;
-
     public TimeSlotPunctual(LocalTime startTime, LocalTime duration, LocalDate startDate) {
         super(startTime, duration);
         this.startDate = startDate;
@@ -52,22 +50,43 @@ public class TimeSlotPunctual extends TimeSlot {
             otherEnd = punctual.getEndDate();
         }
 
-        if(thisEnd.isBefore(punctual.getStartDate()) || otherEnd.isBefore(this.startDate)) {
-            return false;
+        if(thisEnd.isAfter(punctual.getStartDate()) && otherEnd.isAfter(this.startDate)) {
+            LocalTime thisTime = this.startTime.plusSeconds(this.duration.toSecondOfDay()).plusMinutes(TRAVEL_TIME_MINUTES);
+            LocalTime otherTime = punctual.getStartTime().plusSeconds(punctual.getDuration().toSecondOfDay());
+
+            if(thisTime.isAfter((punctual.getStartTime())) && otherTime.isAfter(this.startTime)) {
+                return true;
+            }
         }
 
-        LocalTime thisTime = this.startTime.plusSeconds(this.duration.toSecondOfDay()).plusMinutes(TRAVEL_TIME_MINUTES);
-        LocalTime otherTime = punctual.getStartTime().plusSeconds(punctual.getDuration().toSecondOfDay());
-
-        if(thisTime.isBefore((punctual.getStartTime())) || otherTime.isBefore(this.startTime)) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
     @Override
-    public boolean overlapsWith(TimeSlotBase time_slot_base) {
+    public boolean overlapsWith(TimeSlotBase base) {
+        if (endDate == null) {
+            if (this.startDate.getDayOfWeek().getValue() == base.getJour()) {
+                LocalTime thisTime = this.startTime.plusSeconds(this.duration.toSecondOfDay()).plusMinutes(TRAVEL_TIME_MINUTES);
+                LocalTime otherTime = base.getStartTime().plusSeconds(base.getDuration().toSecondOfDay());
+
+                if (thisTime.isAfter(base.getStartTime()) && otherTime.isAfter(this.startTime)) {
+                    return true;
+                }
+            }
+        } else {
+            LocalDate current = this.startDate;
+            while (!current.isAfter(this.endDate)) {
+                if (current.getDayOfWeek().getValue() == base.getJour()) {
+                    LocalTime thisTotalTime = this.startTime.plusSeconds(this.duration.toSecondOfDay()).plusMinutes(TRAVEL_TIME_MINUTES);
+                    LocalTime otherTotalTime = base.getStartTime().plusSeconds(base.getDuration().toSecondOfDay());
+
+                    if (thisTotalTime.isAfter(base.getStartTime()) && otherTotalTime.isAfter(this.startTime)) {
+                        return true;
+                    }
+                }
+                current = current.plusDays(1);
+            }
+        }
         return false;
     }
 }
