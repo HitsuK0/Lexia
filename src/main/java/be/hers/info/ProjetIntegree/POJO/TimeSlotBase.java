@@ -22,6 +22,18 @@ public class TimeSlotBase extends TimeSlot {
         this.dayNumber = 0;
     }
 
+    public int getDayNumber() {
+        return dayNumber;
+    }
+
+    public void setDayNumber(int dayNumber) {
+        if(dayNumber < MIN_DAY || dayNumber > MAX_DAY) {
+            throw new IllegalArgumentException();
+        }
+
+        this.dayNumber = dayNumber;
+    }
+
     @Override
     public boolean overlapsWith(TimeSlot timeSlot) {
         return false;
