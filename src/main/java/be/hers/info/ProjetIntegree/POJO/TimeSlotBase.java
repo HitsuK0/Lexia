@@ -30,14 +30,6 @@ public class TimeSlotBase extends TimeSlot {
     }
 
     /**
-     * Initialize a TimeSlotBase with no elements
-     */
-    public TimeSlotBase() {
-        super();
-        this.dayNumber = 0;
-    }
-
-    /**
      * @return the day of the time slot base (1 = Monday, 7 = Sunday)
      */
     public int getDayNumber() {
@@ -50,7 +42,7 @@ public class TimeSlotBase extends TimeSlot {
      */
     public void setDayNumber(int dayNumber) {
         if(dayNumber < MIN_DAY || dayNumber > MAX_DAY) {
-            throw new IllegalArgumentException("Le numéro du jour doit être compris entre " + MIN_DAY + " et " + MAX_DAY));
+            throw new IllegalArgumentException("Le numéro du jour doit être compris entre " + MIN_DAY + " et " + MAX_DAY);
         }
 
         this.dayNumber = dayNumber;
@@ -99,10 +91,10 @@ public class TimeSlotBase extends TimeSlot {
 
         if(punctual.getEndDate() == null) {
             if(punctual.getStartDate().getDayOfWeek().getValue() == this.dayNumber) {
-                LocalTime thisTime = this.startTime.plusSeconds(this.duration.toSecondOfDay()).plusMinutes(TRAVEL_TIME_MINUTES);
+                LocalTime thisTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(this.getTravelTimeMinutes());
                 LocalTime otherTime = punctual.getStartTime().plusSeconds(punctual.getDuration().toSecondOfDay());
 
-                if(thisTime.isAfter(punctual.getStartTime()) && otherTime.isAfter(this.startTime)) {
+                if(!thisTime.isBefore(punctual.getStartTime()) && !otherTime.isBefore(this.getStartTime())) {
                     return true;
                 }
             }
@@ -110,10 +102,10 @@ public class TimeSlotBase extends TimeSlot {
             LocalDate current = punctual.getStartDate();
             while(!current.isAfter(punctual.getEndDate())) {
                 if(current.getDayOfWeek().getValue() == this.dayNumber) {
-                    LocalTime thisTotalTime = this.startTime.plusSeconds(this.duration.toSecondOfDay()).plusMinutes(TRAVEL_TIME_MINUTES);
+                    LocalTime thisTotalTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(this.getTravelTimeMinutes());
                     LocalTime otherTotalTime = punctual.getStartTime().plusSeconds(punctual.getDuration().toSecondOfDay());
 
-                    if(thisTotalTime.isAfter(punctual.getStartTime()) && otherTotalTime.isAfter(this.startTime)) {
+                    if(!thisTotalTime.isBefore(punctual.getStartTime()) && !otherTotalTime.isBefore(this.getStartTime())) {
                         return true;
                     }
                 }
@@ -146,10 +138,10 @@ public class TimeSlotBase extends TimeSlot {
             return false;
         }
 
-        LocalTime thisTime = this.startTime.plusSeconds(this.duration.toSecondOfDay()).plusMinutes(TRAVEL_TIME_MINUTES);
+        LocalTime thisTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(this.getTravelTimeMinutes());
         LocalTime otherTime = base.getStartTime().plusSeconds(base.getDuration().toSecondOfDay());
 
-        if(thisTime.isAfter(base.getStartTime()) && otherTime.isAfter(this.startTime)) {
+        if(!thisTime.isBefore(base.getStartTime()) && !otherTime.isBefore(this.getStartTime())) {
             return true;
         }
 
@@ -163,8 +155,8 @@ public class TimeSlotBase extends TimeSlot {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Tranche horaire répétitive :\n");
-        sb.append("Heure de début : ").append(this.startTime).append("\n");
-        sb.append("Durée : ").append(this.duration).append("\n");
+        sb.append("Heure de début : ").append(this.getStartTime()).append("\n");
+        sb.append("Durée : ").append(this.getDuration()).append("\n");
         sb.append("Jour : ").append(this.dayNumber).append("\n");
 
         return sb.toString();
