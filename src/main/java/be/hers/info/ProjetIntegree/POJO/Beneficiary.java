@@ -16,8 +16,8 @@ public class Beneficiary {
     private List<Appointment> appointmentList;
     private Interpreter referenceInterpreter;
 
-    /** Minimum education level (1 = nursery school) */
-    private static final int EDUCATION_LEVEL_MIN = 1;
+    /** Minimum education level (does not concern a school) */
+    private static final int EDUCATION_LEVEL_MIN = 0;
 
     /** Maximum education level (4 = higher education) */
     private static final int EDUCATION_LEVEL_MAX = 4;
