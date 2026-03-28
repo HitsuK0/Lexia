@@ -18,7 +18,7 @@ public class TimeSlotPunctual extends TimeSlot {
         super(startTime, duration);
 
         if(startDate == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La date de début ne peut pas être nulle");
         }
 
         this.startDate = startDate;
@@ -37,20 +37,11 @@ public class TimeSlotPunctual extends TimeSlot {
         super(startTime, duration);
 
         if(startDate == null || endDate == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La date de début et la date de fin ne peuvent pas être nulles");
         }
 
         this.startDate = startDate;
         this.endDate = endDate;
-    }
-
-    /**
-     * Initialize a TimeSlotPunctual with no elements
-     */
-    public TimeSlotPunctual() {
-        super();
-        this.startDate = null;
-        this.endDate = null;
     }
 
     /**
@@ -71,15 +62,15 @@ public class TimeSlotPunctual extends TimeSlot {
     /**
      * @param startDate the start date to set
      * @throws NullPointerException if startDate is null
-     * @throws IllegalArgumentException if this.startDate is not null and this.startDate is after startDate
+     * @throws IllegalArgumentException if this.endDate is not null and startDate is after this.endDate
      */
     public void setStartDate(LocalDate startDate) {
         if(startDate ==  null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La date de début ne peut pas être nulle");
         }
 
-        if(this.startDate != null && this.startDate.isAfter(startDate)) {
-            throw new IllegalArgumentException();
+        if(this.endDate != null && startDate.isAfter(this.endDate)) {
+            throw new IllegalArgumentException("La date de début ne peut pas être après la date de fin");
         }
 
         this.startDate = startDate;
@@ -92,11 +83,11 @@ public class TimeSlotPunctual extends TimeSlot {
      */
     public void setEndDate(LocalDate endDate) {
         if(endDate == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La date de fin ne peut pas être nulle");
         }
 
         if(this.startDate != null && endDate.isBefore(this.startDate)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("La date de fin ne peut pas être avant la date de début");
         }
 
         this.endDate = endDate;
@@ -112,7 +103,7 @@ public class TimeSlotPunctual extends TimeSlot {
     @Override
     public boolean overlapsWith(TimeSlot timeSlot) {
         if(timeSlot == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La tranche horaire ne peut pas être nulle");
         }
 
         return timeSlot.overlapsWith(this);
@@ -130,11 +121,11 @@ public class TimeSlotPunctual extends TimeSlot {
     @Override
     public boolean overlapsWith(TimeSlotPunctual punctual) {
         if(punctual == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La tranche horaire ponctuelle ne peut pas être nulle");
         }
 
         if(this.startDate == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La date de début de cette tranche horaire ne peut pas être nulle");
         }
 
         LocalDate thisEnd = null;
@@ -151,11 +142,11 @@ public class TimeSlotPunctual extends TimeSlot {
             otherEnd = punctual.getEndDate();
         }
 
-        if(thisEnd.isAfter(punctual.getStartDate()) && otherEnd.isAfter(this.startDate)) {
-            LocalTime thisTime = this.startTime.plusSeconds(this.duration.toSecondOfDay()).plusMinutes(TRAVEL_TIME_MINUTES);
+        if(!thisEnd.isBefore(punctual.getStartDate()) && !otherEnd.isBefore(this.startDate)) {
+            LocalTime thisTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(getTravelTimeMinutes());
             LocalTime otherTime = punctual.getStartTime().plusSeconds(punctual.getDuration().toSecondOfDay());
 
-            if(thisTime.isAfter((punctual.getStartTime())) && otherTime.isAfter(this.startTime)) {
+            if(!thisTime.isBefore((punctual.getStartTime())) && !otherTime.isBefore(this.getStartTime())) {
                 return true;
             }
         }
@@ -176,30 +167,30 @@ public class TimeSlotPunctual extends TimeSlot {
     @Override
     public boolean overlapsWith(TimeSlotBase base) {
         if(base == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La tranche horaire répétitive ne peut pas être nulle");
         }
 
         if(this.startDate == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("La date de début de cette tranche horaire ne peut pas être nulle");
         }
 
         if (endDate == null) {
-            if (this.startDate.getDayOfWeek().getValue() == base.getJour()) {
-                LocalTime thisTime = this.startTime.plusSeconds(this.duration.toSecondOfDay()).plusMinutes(TRAVEL_TIME_MINUTES);
+            if (this.startDate.getDayOfWeek().getValue() == base.getDayNumber()) {
+                LocalTime thisTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(getTravelTimeMinutes());
                 LocalTime otherTime = base.getStartTime().plusSeconds(base.getDuration().toSecondOfDay());
 
-                if (thisTime.isAfter(base.getStartTime()) && otherTime.isAfter(this.startTime)) {
+                if (thisTime.isAfter(base.getStartTime()) && otherTime.isAfter(this.getStartTime())) {
                     return true;
                 }
             }
         } else {
             LocalDate current = this.startDate;
             while (!current.isAfter(this.endDate)) {
-                if (current.getDayOfWeek().getValue() == base.getJour()) {
-                    LocalTime thisTotalTime = this.startTime.plusSeconds(this.duration.toSecondOfDay()).plusMinutes(TRAVEL_TIME_MINUTES);
+                if (current.getDayOfWeek().getValue() == base.getDayNumber()) {
+                    LocalTime thisTotalTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(getTravelTimeMinutes());
                     LocalTime otherTotalTime = base.getStartTime().plusSeconds(base.getDuration().toSecondOfDay());
 
-                    if (thisTotalTime.isAfter(base.getStartTime()) && otherTotalTime.isAfter(this.startTime)) {
+                    if (thisTotalTime.isAfter(base.getStartTime()) && otherTotalTime.isAfter(this.getStartTime())) {
                         return true;
                     }
                 }
@@ -216,8 +207,8 @@ public class TimeSlotPunctual extends TimeSlot {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Tranche horaire ponctuelle :\n");
-        sb.append("Heure de début : ").append(this.startTime).append("\n");
-        sb.append("Durée : ").append(this.duration).append("\n");
+        sb.append("Heure de début : ").append(this.getStartTime()).append("\n");
+        sb.append("Durée : ").append(this.getDuration()).append("\n");
         sb.append("Date de début : ").append(this.startDate).append("\n");
 
         if(endDate == null) {
