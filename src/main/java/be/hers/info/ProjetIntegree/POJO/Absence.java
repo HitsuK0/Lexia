@@ -3,7 +3,7 @@ package be.hers.info.ProjetIntegree.POJO;
 public class Absence {
     private int numAbsence;
     private String status;
-    private TimeSlotPonctual timeSlotPonctual;
+    private TimeSlotPunctual timeSlotPonctual;
     private Interpreter refInterpreter;
 
     /**
@@ -15,7 +15,7 @@ public class Absence {
      * @throws BadStatusException If the absence status is not among these values: 'en attente', 'accepte', 'refuse', 'absent'
      * @throws NullPointerException if timeSlotPonctual is null or refInterpreter is null
      */
-    public Absence(int numAbsence,String status, TimeSlotPonctual timeSlotPonctual, Interpreter refInterpreter) throws BadStatusException {
+    public Absence(int numAbsence,String status, TimeSlotPunctual timeSlotPonctual, Interpreter refInterpreter) throws BadStatusException {
         if(!status.equals("en attente") || !status.equals("accepte") || !status.equals("refuse") || !status.equals("absent")) throw new BadStatusException();
         if(timeSlotPonctual == null || refInterpreter == null) throw new NullPointerException();
         this.numAbsence = numAbsence;
@@ -31,7 +31,7 @@ public class Absence {
      * @throws BadStatusException If the absence status is not among these values: 'en attente', 'accepte', 'refuse', 'absent'
      * @throws NullPointerException if timeSlotPonctual is null or refInterpreter is null
      */
-    public Absence(String status, TimeSlotPonctual timeSlotPonctual, Interpreter refInterpreter) throws BadStatusException {
+    public Absence(String status, TimeSlotPunctual timeSlotPonctual, Interpreter refInterpreter) throws BadStatusException {
         if(!status.equals("en attente") || !status.equals("accepte") || !status.equals("refuse") || !status.equals("absent")) throw new BadStatusException();
         if(timeSlotPonctual == null || refInterpreter == null) throw new NullPointerException();
         this.status = status;
@@ -45,7 +45,7 @@ public class Absence {
      * @param refInterpreter The interpreter was absent.
      * @throws NullPointerException if timeSlotPonctual is null or refInterpreter is null
      */
-    public Absence(TimeSlotPonctual timeSlotPonctual, Interpreter refInterpreter) {
+    public Absence(TimeSlotPunctual timeSlotPonctual, Interpreter refInterpreter) {
         if(timeSlotPonctual == null || refInterpreter == null) throw new NullPointerException();
         this.status = "en attente";
         this.timeSlotPonctual = timeSlotPonctual;
@@ -82,7 +82,7 @@ public class Absence {
      *
      * @return the time slot of absence
      */
-    public TimeSlotPonctual getTimeSlotPonctual() {
+    public TimeSlotPunctual getTimeSlotPonctual() {
         return timeSlotPonctual;
     }
 
@@ -90,7 +90,7 @@ public class Absence {
      *
      * @param timeSlotPonctual the time slot of absence
      */
-    public void setTimeSlotPonctual(TimeSlotPonctual timeSlotPonctual) {
+    public void setTimeSlotPonctual(TimeSlotPunctual timeSlotPonctual) {
         if(timeSlotPonctual == null) throw new NullPointerException();
         this.timeSlotPonctual = timeSlotPonctual;
     }
