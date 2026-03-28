@@ -242,24 +242,24 @@ public class Address {
      *         beneficiaries, interpreters
      */
     public String toString() {
-        StringBuilder strBeneficiaries = "";
+        StringBuilder strBeneficiaries = new StringBuilder("");
         if(this.beneficiaries.isEmpty())
             strBeneficiaries.append("Aucun bénédiciaire lié\n");
         else {
-            strBeneficiaries = "Bénéficiaire(s) lié(s) : \n";
+            strBeneficiaries.append("Bénéficiaire(s) lié(s) : \n");
             for (Beneficiary beneficiary : this.beneficiaries) {
                 strBeneficiaries.append("- " + beneficiary.toString() + "\n");
             }
         }
         strBeneficiaries.append("\n");
 
-        StringBuilder strInterpreters = "";
+        StringBuilder strInterpreters = new StringBuilder("");
         if(this.interpreters.isEmpty())
             strInterpreters.append("Aucun interprète lié\n");
         else{
             strInterpreters.append("Interprète(s) lié(s) :\n");
             for(Interpreter interpreter : this.interpreters){
-                strInterpreters += "- " + interpreter.toString() + "\n";
+                strInterpreters.append("- " + interpreter.toString() + "\n");
             }
         }
         strInterpreters.append("\n");
