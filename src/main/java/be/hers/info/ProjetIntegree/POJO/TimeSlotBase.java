@@ -54,8 +54,11 @@ public class TimeSlotBase extends TimeSlot {
     }
 
     /**
-     * @param timeSlot
-     * @throws IllegalArgumentException if dayNumber is smaller than MIN_DAY or greater than MAX_DAY
+     * Dispatches the overlap check to the correct overlapsWith method
+     * based on the runtime type of the given TimeSlot
+     * @param timeSlot the TimeSlot to check overlap with
+     * @return true if the two TimeSlots overlap, false otherwise
+     * @throws NullPointerException if timeSlot is null
      */
     @Override
     public boolean overlapsWith(TimeSlot timeSlot) {
@@ -66,6 +69,17 @@ public class TimeSlotBase extends TimeSlot {
         return timeSlot.overlapsWith(this);
     }
 
+    /**
+     * Checks if this TimeSlotBase overlaps with a TimeSlotPunctual
+     * A travel time of 40 minutes is added to this TimeSlot's end time
+     * If punctual's endDate is null, only the punctual's startDate day of week is compared to this dayNumber
+     * If punctual's endDate is not null, all days between punctual's startDate and endDate are checked
+     * @param punctual the TimeSlotPunctual to check overlap with
+     * @return true if the two TimeSlots overlap, false otherwise
+     * @throws NullPointerException if punctual is null
+     *                              if punctual's startDate is null
+     * @throws IllegalArgumentException if this.dayNumber is 0
+     */
     @Override
     public boolean overlapsWith(TimeSlotPunctual punctual) {
         if(punctual == null) {
@@ -106,6 +120,15 @@ public class TimeSlotBase extends TimeSlot {
         return false;
     }
 
+    /**
+     * Checks if this TimeSlotBase overlaps with another TimeSlotBase
+     * A travel time of 40 minutes is added to this TimeSlot's end time
+     * Two TimeSlotBase overlap if they have the same dayNumber and their times overlap
+     * @param base the TimeSlotBase to check overlap with
+     * @return true if the two TimeSlots overlap, false otherwise
+     * @throws NullPointerException if base is null
+     * @throws IllegalArgumentException if this.dayNumber is 0
+     */
     @Override
     public boolean overlapsWith(TimeSlotBase base) {
         if(base == null) {
@@ -130,8 +153,17 @@ public class TimeSlotBase extends TimeSlot {
         return false;
     }
 
+    /**
+     * @return a String containing the start time, duration and day number
+     */
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Tranche horaire répétitive :\n");
+        sb.append("Heure de début : ").append(this.startTime).append("\n");
+        sb.append("Durée : ").append(this.duration).append("\n");
+        sb.append("Jour : ").append(this.dayNumber).append("\n");
 
+        return sb.toString();
     }
 }
