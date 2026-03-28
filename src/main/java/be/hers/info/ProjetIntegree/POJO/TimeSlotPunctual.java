@@ -48,7 +48,7 @@ public class TimeSlotPunctual extends TimeSlot {
      * Initialize a TimeSlotPunctual with no elements
      */
     public TimeSlotPunctual() {
-        super(null, null);
+        super();
         this.startDate = null;
         this.endDate = null;
     }
