@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Beneficiary {
-    private int beneficiaryID;
+    private int numBeneficiary;
     private String name;
     private String surname;
     private String phoneNumber;
@@ -14,7 +14,6 @@ public class Beneficiary {
     private int educationLevel;
     private List<String> communicationLanguage;
     private List<Appointment> appointmentList;
-    private Interpreter referenceInterpreter;
 
     /** Minimum education level (does not concern a school) */
     private static final int EDUCATION_LEVEL_MIN = 0;
@@ -24,52 +23,74 @@ public class Beneficiary {
 
     /**
      * Initialize a Beneficiary with no elements
-     * beneficiaryID is set to 0 by default
+     * numBeneficiary is set to 0 by default
      */
     public Beneficiary() {
-        this.beneficiaryID = 0;
-        this.name = null;
-        this.surname = null;
-        this.phoneNumber = null;
-        this.emailAddress = null;
+        this.numBeneficiary = 0;
+        this.name = "";
+        this.surname = "";
+        this.phoneNumber = "";
+        this.emailAddress = "";
         this.address = null;
         this.hourQuota = 0;
         this.educationLevel = EDUCATION_LEVEL_MIN;
         this.communicationLanguage = new ArrayList<String>();
         this.appointmentList = new ArrayList<Appointment>();
-        this.referenceInterpreter = null;
     }
 
     /**
-     * Initialize a Beneficiary with beneficiaryID, emailAddress, name and surname
-     * @param beneficiaryID the id of the Beneficiary
+     * Initialize a Beneficiary with emailAddress, name and surname
      * @param emailAddress the email address of the Beneficiary
      * @param name the name of the Beneficiary
      * @param surname the surname of the Beneficiary
-     * @throws NullPointerException if emailAddress, name or surname is null
+     * @throws IllegalArgumentException if emailAddress, name or surname is null
      */
-    public Beneficiary(int beneficiaryID, String emailAddress, String name, String surname) {
+    public Beneficiary(String emailAddress, String name, String surname) {
         if(emailAddress == null || name == null || surname == null) {
-            throw new NullPointerException("L'adresse email, le nom et le prénom ne peuvent pas être nuls");
+            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse email, le nom et le prénom ne peuvent pas être nuls");
         }
 
-        this.beneficiaryID = beneficiaryID;
+        this.numBeneficiary = 0;
+        this.name = name;
+        this.surname = surname;
+        this.phoneNumber = "";
+        this.emailAddress = emailAddress;
+        this.address = null;
+        this.hourQuota = 0;
+        this.educationLevel = EDUCATION_LEVEL_MIN;
+        this.communicationLanguage = new ArrayList<String>();
+        this.appointmentList = new ArrayList<Appointment>();
+    }
+
+    /**
+     * Initialize a Beneficiary with numBeneficiary, emailAddress, name and surname
+     * @param numBeneficiary the id of the Beneficiary
+     * @param emailAddress the email address of the Beneficiary
+     * @param name the name of the Beneficiary
+     * @param surname the surname of the Beneficiary
+     * @throws IllegalArgumentException if emailAddress, name or surname is null
+     */
+    public Beneficiary(int numBeneficiary, String emailAddress, String name, String surname) {
+        if(emailAddress == null || name == null || surname == null) {
+            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse email, le nom et le prénom ne peuvent pas être nuls");
+        }
+
+        this.numBeneficiary = numBeneficiary;
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
-        this.phoneNumber = null;
+        this.phoneNumber = "";
         this.address = null;
         this.hourQuota = 0;
         this.educationLevel = EDUCATION_LEVEL_MIN;
         this.appointmentList = new ArrayList<Appointment>();
         this.communicationLanguage = new ArrayList<String>();
-        this.referenceInterpreter = null;
     }
 
     /**
-     * Initialize a Beneficiary with beneficiaryID, name, surname, phoneNumber, emailAddress,
-     * address, educationLevel, communicationLanguage, appointmentList and referenceInterpreter
-     * @param beneficiaryID the id of the Beneficiary
+     * Initialize a Beneficiary with numBeneficiary, name, surname, phoneNumber, emailAddress,
+     * address, educationLevel, communicationLanguage and appointmentList
+     * @param numBeneficiary the id of the Beneficiary
      * @param name the name
      * @param surname the surname
      * @param phoneNumber the phone number
@@ -79,33 +100,31 @@ public class Beneficiary {
      * @param educationLevel the level of education
      * @param communicationLanguage the list of communication languages used by the beneficiary
      * @param appointmentList the list of Appointments, can be null
-     * @param referenceInterpreter the Interpreter of reference
-     * @throws NullPointerException if the name, surname, phoneNumber, emailAddress, address, referenceInterpreter or communicationLanguage is null
-     * @throws IllegalArgumentException if communicationLanguage is empty
+     * @throws IllegalArgumentException if the name, surname, phoneNumber, emailAddress, address or communicationLanguage is null
+     *                                  if communicationLanguage is empty
      *                                  if hourQuota is negative
      *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
      */
-    public Beneficiary(int beneficiaryID, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
-                       List<String> communicationLanguage, List<Appointment> appointmentList, Interpreter referenceInterpreter) {
+    public Beneficiary(int numBeneficiary, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
+                       List<String> communicationLanguage, List<Appointment> appointmentList) {
 
-        if(name == null || surname == null || phoneNumber == null || emailAddress == null || address == null || communicationLanguage == null ||
-        referenceInterpreter == null) {
-            throw new NullPointerException("Le nom, prénom, numéro de téléphone, adresse email, adresse, interprète de référence et langue(s) de communication ne peuvent pas être nuls");
+        if(name == null || surname == null || phoneNumber == null || emailAddress == null || address == null || communicationLanguage == null) {
+            throw new IllegalArgumentException("[POJOBeneficiary] Le nom, prénom, numéro de téléphone, adresse email, adresse et langue(s) de communication ne peuvent pas être nuls");
         }
 
-        if(communicationLanguage.size() == 0) {
-            throw new IllegalArgumentException("La liste des langues de communication ne peut pas être vide");
+        if(communicationLanguage.isEmpty()) {
+            throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de communication ne peut pas être vide");
         }
 
         if(hourQuota < 0) {
-            throw new IllegalArgumentException("Le quota d'heures ne peut pas être négatif");
+            throw new IllegalArgumentException("[POJOBeneficiary] Le quota d'heures ne peut pas être négatif");
         }
 
         if(educationLevel < EDUCATION_LEVEL_MIN || educationLevel > EDUCATION_LEVEL_MAX) {
-            throw new IllegalArgumentException("Le niveau d'éducation doit être compris entre "+EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
+            throw new IllegalArgumentException("[POJOBeneficiary] Le niveau d'éducation doit être compris entre "+EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
         }
 
-        this.beneficiaryID = beneficiaryID;
+        this.numBeneficiary = numBeneficiary;
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -120,15 +139,13 @@ public class Beneficiary {
         } else {
             this.appointmentList = appointmentList;
         }
-
-        this.referenceInterpreter = referenceInterpreter;
     }
 
     /**
      * @return the id of the Beneficiary
      */
-    public int getBeneficiaryID() {
-        return beneficiaryID;
+    public int getNumBeneficiary() {
+        return numBeneficiary;
     }
 
     /**
@@ -196,22 +213,14 @@ public class Beneficiary {
     }
 
     /**
-     * @return the Interpreter of reference
-     */
-    public Interpreter getReferenceInterpreter() {
-
-        return referenceInterpreter;
-    }
-
-    /**
      * @param appointment the appointment to search for
      * @return the appointment searched for
-     * @throws NullPointerException if appointment is null
-     * @throws IllegalArgumentException if appointment not found
+     * @throws IllegalArgumentException if appointment is null
+     *                                  if appointment not found
      */
     public Appointment getAppointment(Appointment appointment) {
         if(appointment == null) {
-            throw new NullPointerException("Le rendez-vous ne peut pas être nul");
+            throw new IllegalArgumentException("[POJOBeneficiary] Le rendez-vous ne peut pas être nul");
         }
 
         int index = appointmentList.indexOf(appointment);
@@ -219,7 +228,7 @@ public class Beneficiary {
             return appointmentList.get(index);
         }
 
-        throw new IllegalArgumentException("Le rendez-vous n'a pas été trouvé");
+        throw new IllegalArgumentException("[POJOBeneficiary] Le rendez-vous n'a pas été trouvé");
     }
 
     /**
@@ -231,24 +240,24 @@ public class Beneficiary {
     }
 
     /**
-     * @param beneficiaryID the id to set
-     * @throws IllegalArgumentException if beneficiaryID is negative
+     * @param numBeneficiary the id to set
+     * @throws IllegalArgumentException if numBeneficiary is negative
      */
-    public void setBeneficiaryID(int beneficiaryID) {
-        if(beneficiaryID < 0) {
-            throw new IllegalArgumentException("L'identifiant du bénéficiaire ne peut pas être négatif");
+    public void setNumBeneficiary(int numBeneficiary) {
+        if(numBeneficiary < 0) {
+            throw new IllegalArgumentException("[POJOBeneficiary] L'identifiant du bénéficiaire ne peut pas être négatif");
         }
 
-        this.beneficiaryID = beneficiaryID;
+        this.numBeneficiary = numBeneficiary;
     }
 
     /**
      * @param phoneNumber the phone number to set
-     * @throws NullPointerException if phoneNumber is null
+     * @throws IllegalArgumentException if phoneNumber is null
      */
     public void setPhoneNumber(String phoneNumber) {
         if(phoneNumber == null) {
-            throw new NullPointerException("Le numéro de téléphone ne peut pas être nul");
+            throw new IllegalArgumentException("[POJOBeneficiary] Le numéro de téléphone ne peut pas être vide");
         }
 
         this.phoneNumber = phoneNumber;
@@ -256,11 +265,11 @@ public class Beneficiary {
 
     /**
      * @param emailAddress the email address to set
-     * @throws NullPointerException if emailAddress is null
+     * @throws IllegalArgumentException if emailAddress is null
      */
     public void setEmailAddress(String emailAddress) {
         if(emailAddress == null) {
-            throw new NullPointerException("L'adresse email ne peut pas être nulle");
+            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse email ne peut pas être vide");
         }
 
         this.emailAddress = emailAddress;
@@ -268,11 +277,11 @@ public class Beneficiary {
 
     /**
      * @param address the address to set
-     * @throws NullPointerException if address is null
+     * @throws IllegalArgumentException if address is null
      */
     public void setAddress(Address address) {
         if(address == null) {
-            throw new NullPointerException("L'adresse ne peut pas être nulle");
+            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse ne peut pas être nulle");
         }
 
         this.address = address;
@@ -284,7 +293,7 @@ public class Beneficiary {
      */
     public void setHourQuota(int hourQuota) {
         if(hourQuota < 0) {
-            throw new IllegalArgumentException("Le quota d'heures ne peut pas être négatif");
+            throw new IllegalArgumentException("[POJOBeneficiary] Le quota d'heures ne peut pas être négatif");
         }
 
         this.hourQuota = hourQuota;
@@ -296,7 +305,7 @@ public class Beneficiary {
      */
     public void setEducationLevel(int educationLevel) {
         if(educationLevel < EDUCATION_LEVEL_MIN || educationLevel > EDUCATION_LEVEL_MAX) {
-            throw new IllegalArgumentException("Le niveau d'éducation est compris entre "+EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
+            throw new IllegalArgumentException("[POJOBeneficiary] Le niveau d'éducation est compris entre "+EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
         }
 
         this.educationLevel = educationLevel;
@@ -304,16 +313,16 @@ public class Beneficiary {
 
     /**
      * @param communicationLanguage the list of communication languages to set
-     * @throws NullPointerException if communicationLanguages is null
-     * @throws IllegalArgumentException if communicationLanguages is empty
+     * @throws IllegalArgumentException if communicationLanguages is null
+     *                                  if communicationLanguages is empty
      */
     public void setCommunicationLanguage(List<String> communicationLanguage) {
         if(communicationLanguage == null) {
-            throw new NullPointerException("La liste des langues de communication ne peut pas être nulle");
+            throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de communication ne peut pas être nulle");
         }
 
-        if(communicationLanguage.size() == 0) {
-            throw new IllegalArgumentException("La liste des langues de communication ne peut pas être vide");
+        if(communicationLanguage.isEmpty()) {
+            throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de communication ne peut pas être vide");
         }
 
         this.communicationLanguage = communicationLanguage;
@@ -321,16 +330,16 @@ public class Beneficiary {
 
     /**
      * @param appointmentList the list of appointments to set
-     * @throws NullPointerException if appointmentList is null
-     * @throws IllegalArgumentException if appointmentList is empty
+     * @throws IllegalArgumentException if appointmentList is null
+     *                                  if appointmentList is empty
      */
     public void setAppointmentList(List<Appointment> appointmentList) {
         if(appointmentList == null) {
-            throw new NullPointerException("La liste des rendez-vous ne peut pas être nulle");
+            throw new IllegalArgumentException("[POJOBeneficiary] La liste des rendez-vous ne peut pas être nulle");
         }
 
-        if(appointmentList.size() == 0) {
-            throw new IllegalArgumentException("La liste des rendez-vous ne peut pas être vide");
+        if(appointmentList.isEmpty()) {
+            throw new IllegalArgumentException("[POJOBeneficiary] La liste des rendez-vous ne peut pas être vide");
         }
 
         this.appointmentList = appointmentList;
@@ -338,11 +347,11 @@ public class Beneficiary {
 
     /**
      * @param name the name to set
-     * @throws NullPointerException if name is null
+     * @throws IllegalArgumentException if name is null
      */
     public void setName(String name) {
         if(name == null) {
-            throw new NullPointerException("Le nom ne peut pas être nul");
+            throw new IllegalArgumentException("[POJOBeneficiary] Le nom ne peut pas être nul");
         }
 
         this.name = name;
@@ -350,46 +359,38 @@ public class Beneficiary {
 
     /**
      * @param surname the surname to set
-     * @throws NullPointerException if surname is null
+     * @throws IllegalArgumentException if surname is null
      */
     public void setSurname(String surname) {
         if(surname == null) {
-            throw new NullPointerException("Le prénom ne peut pas être nul");
+            throw new IllegalArgumentException("[POJOBeneficiary] Le prénom ne peut pas être nul");
         }
 
         this.surname = surname;
     }
 
     /**
-     * @param interpreter the interpreter of reference to set
-     * @throws NullPointerException if interpreter is null
-     */
-    public void setReferenceInterpreter(Interpreter interpreter) {
-        if(interpreter == null) {
-            throw new NullPointerException("L'interprète de référence ne peut pas être nul");
-        }
-
-        referenceInterpreter = interpreter;
-    }
-
-    /**
      * @return a String containing the beneficiary ID, name, surname, phone number,
-     *         email address, address, hour quota, education level, communication languages,
-     *         reference interpreter and appointments
+     *         email address, address, hour quota, education level, communication languages
+     *         and appointments
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Bénéficiaire n°").append(this.beneficiaryID).append(" :\n");
+        sb.append("Bénéficiaire n°").append(this.numBeneficiary).append(" :\n");
         sb.append("Nom : ").append(this.name).append("\n");
         sb.append("Prénom : ").append(this.surname).append("\n");
 
-        if(this.phoneNumber == null) {
+        if(phoneNumber.isEmpty()) {
             sb.append("Numéro de téléphone : Non renseigné\n");
         } else {
             sb.append("Numéro de téléphone : ").append(this.phoneNumber).append("\n");
         }
 
-        sb.append("Adresse email : ").append(this.emailAddress).append("\n");
+        if(emailAddress.isEmpty()) {
+            sb.append("Adresse email : Non renseigné\n");
+        } else {
+            sb.append("Adresse email : ").append(this.emailAddress).append("\n");
+        }
 
         if(this.address == null) {
             sb.append("Adresse : Non renseignée\n");
@@ -405,13 +406,7 @@ public class Beneficiary {
             sb.append("- ").append(this.communicationLanguage.get(i)).append("\n");
         }
 
-        if(this.referenceInterpreter == null) {
-            sb.append("Aucun interprète de référence\n");
-        } else {
-            sb.append("Interprète de référence : ").append(this.referenceInterpreter.toString()).append("\n");
-        }
-
-        if(this.appointmentList.size() == 0) {
+        if(this.appointmentList.isEmpty()) {
             sb.append("Aucun rendez-vous\n");
         } else {
             sb.append("Rendez-vous :\n");
