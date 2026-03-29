@@ -20,7 +20,7 @@ public class AcademicSkill
     }
 
     /**
-     *  Initialize an AcademicSkill designated by the name "default"
+     *  Initialize an AcademicSkill designated by the name ""
      */
     public AcademicSkill(){
         this.designation = "";
