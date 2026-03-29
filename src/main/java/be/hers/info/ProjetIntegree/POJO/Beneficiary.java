@@ -24,9 +24,9 @@ public class Beneficiary {
     /**
      * Initialize a Beneficiary with no elements
      * numBeneficiary is set to 0 by default
+     * The parameter numBeneficiary can only be initialized with setNumBeneficiary
      */
     public Beneficiary() {
-        this.numBeneficiary = 0;
         this.name = "";
         this.surname = "";
         this.phoneNumber = "";
@@ -39,7 +39,8 @@ public class Beneficiary {
     }
 
     /**
-     * Initialize a Beneficiary with emailAddress, name and surname
+     * Initialize a Beneficiary with emailAddress, name and surname.
+     * The parameter numBeneficiary can only be initialized with setNumBeneficiary
      * @param emailAddress the email address of the Beneficiary
      * @param name the name of the Beneficiary
      * @param surname the surname of the Beneficiary
@@ -50,7 +51,6 @@ public class Beneficiary {
             throw new IllegalArgumentException("[POJOBeneficiary] L'adresse email, le nom et le prénom ne peuvent pas être nuls");
         }
 
-        this.numBeneficiary = 0;
         this.name = name;
         this.surname = surname;
         this.phoneNumber = "";
