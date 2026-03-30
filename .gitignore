@@ -2,6 +2,10 @@
 .idea/
 *.iml
 *.iws
+<<<<<<< HEAD
+*.ipr.DS_Store
+.DS_Store
+=======
 *.ipr
 out/
 
@@ -13,3 +17,5 @@ target/
 
 # Variables d'environnement / secrets
 *.env
+>>>>>>> 0fc66350f992606b435caf2db713f2aea3d4cc12
+.DS_Store
