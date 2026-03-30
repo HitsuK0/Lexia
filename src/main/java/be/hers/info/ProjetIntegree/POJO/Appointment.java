@@ -21,10 +21,9 @@ public class Appointment {
 
     /**
      * Initialize an Appointment with no elements
-     * appointmentID is set to -1 by default, waiting to be assigned by the database
+     * The parameter numAppointment can only be initialized with setNumAppointment
      */
     public Appointment() {
-        numAppointment = -1;
         status = "en attente";
         appointmentLocals = new ArrayList<String>();
         timeSlotPunctual = null;
@@ -51,28 +50,23 @@ public class Appointment {
      * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters is null
      *                                  If interpreters or professionalSkillsNeeded is empty
      *                                  If timeSlotPunctual and timeSlotBase are not null
-     *                                  If numAppointment is negative
      */
     public Appointment(int numAppointment, Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
             ,TimeSlotPunctual timeSlotPunctual, TimeSlotBase timeSlotBase) {
         if(beneficiary == null || interpreters == null || professionalSkillsNeeded == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes et les compétences professionnelles ne peuvent pas être null.");
         }
 
         if(timeSlotBase == null && timeSlotPunctual == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Un créneau (ponctuel ou récurrent) doit être défini.");
         }
 
         if(timeSlotPunctual != null && timeSlotBase != null) {
-            throw new IllegalArgumentException();
-        }
-
-        if(numAppointment < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Un rendez-vous ne peut pas être à la fois ponctuel et récurrent.");
         }
 
         if(interpreters.isEmpty()|| professionalSkillsNeeded.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Les listes d'interprètes et de compétences professionnelles ne peuvent pas être vides.");
         }
 
         this.numAppointment = numAppointment;
@@ -106,19 +100,19 @@ public class Appointment {
     public Appointment(Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
             ,TimeSlotPunctual timeSlotPunctual, TimeSlotBase timeSlotBase) {
         if(beneficiary == null || interpreters == null || professionalSkillsNeeded == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes et les compétences professionnelles ne peuvent pas être null.");
         }
 
         if(timeSlotBase == null && timeSlotPunctual == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Un créneau (ponctuel ou récurrent) doit être défini.");
         }
 
         if(timeSlotPunctual != null && timeSlotBase != null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Un rendez-vous ne peut pas être à la fois ponctuel et récurrent.");
         }
 
         if(interpreters.isEmpty() || professionalSkillsNeeded.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Les listes d'interprètes et de compétences professionnelles ne peuvent pas être vides.");
         }
 
         this.beneficiary = beneficiary;
@@ -134,7 +128,7 @@ public class Appointment {
     /**
      * @return the id of the Appointment
      */
-    public int getAppointmentID() {
+    public int getNumAppointment() {
 
         return numAppointment;
     }
@@ -206,7 +200,7 @@ public class Appointment {
     /**
      * @param id the id
      */
-    public void setAppointmentID(int id) {
+    public void setNumAppointment(int id) {
 
         this.numAppointment = id;
     }
@@ -218,11 +212,11 @@ public class Appointment {
      */
     public void setAppointmentLocals(List<String> appointmentLocals) {
         if(appointmentLocals == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] La liste des locaux ne peut pas être null.");
         }
 
         if(appointmentLocals.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] La liste des locaux ne peut pas être vide.");
         }
 
         this.appointmentLocals = appointmentLocals;
@@ -234,7 +228,7 @@ public class Appointment {
      */
     public void setBeneficiary(Beneficiary beneficiary) {
         if(beneficiary == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire ne peut pas être null.");
         }
 
         this.beneficiary = beneficiary;
@@ -247,11 +241,11 @@ public class Appointment {
      */
     public void setInterpreters(List<Interpreter> interpreters) {
         if(interpreters == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] La liste des interprètes ne peut pas être null.");
         }
 
         if(interpreters.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] La liste des interprètes ne peut pas être vide.");
         }
 
         this.interpreters = interpreters;
@@ -264,11 +258,11 @@ public class Appointment {
      */
     public void setTimeSlotPunctual(TimeSlotPunctual timeSlotPunctual) {
         if(timeSlotPunctual == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Le créneau ponctuel ne peut pas être null.");
         }
 
         if(timeSlotBase != null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Impossible de définir un créneau ponctuel si un créneau récurrent est déjà défini.");
         }
 
         this.timeSlotPunctual = timeSlotPunctual;
@@ -281,11 +275,11 @@ public class Appointment {
      */
     public void setTimeSlotBase(TimeSlotBase timeSlotBase) {
         if(timeSlotBase == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Le créneau récurrent ne peut pas être null.");
         }
 
         if(timeSlotPunctual != null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Impossible de définir un créneau récurrent si un créneau ponctuel est déjà défini.");
         }
 
         this.timeSlotBase = timeSlotBase;
@@ -298,11 +292,11 @@ public class Appointment {
      */
     public void setAcademicSkillsNeeded(List<AcademicSkill> academicSkillsNeeded) {
         if(academicSkillsNeeded == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] La liste des compétences académiques ne peut pas être null.");
         }
 
         if(academicSkillsNeeded.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] La liste des compétences académiques ne peut pas être vide.");
         }
 
         this.academicSkillsNeeded = academicSkillsNeeded;
@@ -315,11 +309,11 @@ public class Appointment {
      */
     public void setProfessionalSkillsNeeded(List<ProfessionalSkill> professionalSkillsNeeded) {
         if(professionalSkillsNeeded == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] La liste des compétences professionnelles ne peut pas être null.");
         }
 
         if(professionalSkillsNeeded.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] La liste des compétences professionnelles ne peut pas être vide.");
         }
 
         this.professionalSkillsNeeded = professionalSkillsNeeded;
@@ -334,7 +328,7 @@ public class Appointment {
      */
     public void setStatus(String status) throws BadStatusException {
         if(status == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[POJOAppointment] Le statut ne peut pas être null.");
         }
 
         if(this.status.equals(status)) {
