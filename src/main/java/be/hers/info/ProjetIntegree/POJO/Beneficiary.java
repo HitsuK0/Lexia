@@ -1,5 +1,10 @@
 package be.hers.info.ProjetIntegree.POJO;
 
+/**
+ * @author Vatafu Jean
+ * @reviewer Halet Louis
+ */
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,14 +48,9 @@ public class Beneficiary {
      * The parameter numBeneficiary can only be initialized with setNumBeneficiary
      * @param emailAddress the email address of the Beneficiary
      * @param name the name of the Beneficiary
-     * @param surname the surname of the Beneficiary
-     * @throws IllegalArgumentException if emailAddress, name or surname is null
+     * @param surname the surname of the Beneficiaryß
      */
     public Beneficiary(String emailAddress, String name, String surname) {
-        if(emailAddress == null || name == null || surname == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse email, le nom et le prénom ne peuvent pas être nuls");
-        }
-
         this.name = name;
         this.surname = surname;
         this.phoneNumber = "";
@@ -68,13 +68,8 @@ public class Beneficiary {
      * @param emailAddress the email address of the Beneficiary
      * @param name the name of the Beneficiary
      * @param surname the surname of the Beneficiary
-     * @throws IllegalArgumentException if emailAddress, name or surname is null
      */
     public Beneficiary(int numBeneficiary, String emailAddress, String name, String surname) {
-        if(emailAddress == null || name == null || surname == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse email, le nom et le prénom ne peuvent pas être nuls");
-        }
-
         this.numBeneficiary = numBeneficiary;
         this.name = name;
         this.surname = surname;
@@ -100,7 +95,7 @@ public class Beneficiary {
      * @param educationLevel the level of education
      * @param communicationLanguage the list of communication languages used by the beneficiary
      * @param appointmentList the list of Appointments, can be null
-     * @throws IllegalArgumentException if the name, surname, phoneNumber, emailAddress, address or communicationLanguage is null
+     * @throws IllegalArgumentException if address or communicationLanguage is null
      *                                  if communicationLanguage is empty
      *                                  if hourQuota is negative
      *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
@@ -108,7 +103,7 @@ public class Beneficiary {
     public Beneficiary(int numBeneficiary, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
                        List<String> communicationLanguage, List<Appointment> appointmentList) {
 
-        if(name == null || surname == null || phoneNumber == null || emailAddress == null || address == null || communicationLanguage == null) {
+        if(address == null || communicationLanguage == null) {
             throw new IllegalArgumentException("[POJOBeneficiary] Le nom, prénom, numéro de téléphone, adresse email, adresse et langue(s) de communication ne peuvent pas être nuls");
         }
 
@@ -125,6 +120,59 @@ public class Beneficiary {
         }
 
         this.numBeneficiary = numBeneficiary;
+        this.name = name;
+        this.surname = surname;
+        this.emailAddress = emailAddress;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.educationLevel = educationLevel;
+        this.hourQuota = hourQuota;
+        this.communicationLanguage = communicationLanguage;
+
+        if(appointmentList == null) {
+            this.appointmentList = new ArrayList<Appointment>();
+        } else {
+            this.appointmentList = appointmentList;
+        }
+    }
+
+    /**
+     * Initialize a Beneficiary with numBeneficiary, name, surname, phoneNumber, emailAddress,
+     * address, educationLevel, communicationLanguage and appointmentList.
+     * The parameter numBeneficiary can only be initialized with setNumBeneficiary
+     * @param name the name
+     * @param surname the surname
+     * @param phoneNumber the phone number
+     * @param emailAddress the email address
+     * @param address the address
+     * @param hourQuota the quota hours
+     * @param educationLevel the level of education
+     * @param communicationLanguage the list of communication languages used by the beneficiary
+     * @param appointmentList the list of Appointments, can be null
+     * @throws IllegalArgumentException if address or communicationLanguage is null
+     *                                  if communicationLanguage is empty
+     *                                  if hourQuota is negative
+     *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
+     */
+    public Beneficiary(String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
+                       List<String> communicationLanguage, List<Appointment> appointmentList) {
+
+        if(address == null || communicationLanguage == null) {
+            throw new IllegalArgumentException("[POJOBeneficiary] Le nom, prénom, numéro de téléphone, adresse email, adresse et langue(s) de communication ne peuvent pas être nuls");
+        }
+
+        if(communicationLanguage.isEmpty()) {
+            throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de communication ne peut pas être vide");
+        }
+
+        if(hourQuota < 0) {
+            throw new IllegalArgumentException("[POJOBeneficiary] Le quota d'heures ne peut pas être négatif");
+        }
+
+        if(educationLevel < EDUCATION_LEVEL_MIN || educationLevel > EDUCATION_LEVEL_MAX) {
+            throw new IllegalArgumentException("[POJOBeneficiary] Le niveau d'éducation doit être compris entre "+EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
+        }
+
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -241,13 +289,8 @@ public class Beneficiary {
 
     /**
      * @param numBeneficiary the id to set
-     * @throws IllegalArgumentException if numBeneficiary is negative
      */
     public void setNumBeneficiary(int numBeneficiary) {
-        if(numBeneficiary < 0) {
-            throw new IllegalArgumentException("[POJOBeneficiary] L'identifiant du bénéficiaire ne peut pas être négatif");
-        }
-
         this.numBeneficiary = numBeneficiary;
     }
 
