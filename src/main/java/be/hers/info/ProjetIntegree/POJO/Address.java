@@ -1,5 +1,10 @@
 package be.hers.info.ProjetIntegree.POJO;
 
+/*
+@author Rosman Loïs
+@reviewer Nicolas Jean-François
+ */
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -26,11 +31,11 @@ public class Address {
      * @param establishment the establishment linked. It can have 0 or 1 establishment
      * @param beneficiaries the list of beneficiary linked. It can have 0, 1 or some beneficiaries
      * @param interpreters the list of interpreter linked. It can have 0, 1 or some interpreters
-     * @throws NullPointerException if postOfficeBox, locality, numStreet, beneficiaries or interpreters is null
+     * @throws IllegalArgumentException if postOfficeBox, locality, numStreet, beneficiaries or interpreters is null
      */
     public Address(int numAddress, int postcode, String postOfficeBox, String locality, String numStreet, String hamlet, Establishment establishment, List<Beneficiary> beneficiaries, List<Interpreter> interpreters) {
         if(postOfficeBox == null || locality == null || numStreet == null || beneficiaries == null || interpreters == null){
-            throw new NullPointerException("[POJOAddress] : postOfficeBox et/ou locality et/ou numStreet et/ou beneficiaries et/ou interpreters == null");
+            throw new IllegalArgumentException("[POJOAddress] : postOfficeBox et/ou locality et/ou numStreet et/ou beneficiaries et/ou interpreters est null");
         }
 
         this.numAddress = numAddress;
@@ -54,11 +59,11 @@ public class Address {
      * @param establishment the establishment linked. It can have 0 or 1 establishment
      * @param beneficiaries the list of beneficiary linked. It can have 0, 1 or some beneficiaries
      * @param interpreters the list of interpreter linked. It can have 0, 1 or some interpreters
-     * @throws NullPointerException if postOfficeBox, locality, numStreet, beneficiaries or interpreters is null
+     * @throws IllegalArgumentException if postOfficeBox, locality, numStreet, beneficiaries or interpreters is null
      */
     public Address(int postcode, String postOfficeBox, String locality, String numStreet, String hamlet, Establishment establishment, List<Beneficiary> beneficiaries, List<Interpreter> interpreters) {
         if(postOfficeBox == null || locality == null || numStreet == null || beneficiaries == null || interpreters == null){
-            throw new NullPointerException("[POJOAddress] : postOfficeBox et/ou locality et/ou numStreet et/ou beneficiaries et/ou interpreters == null");
+            throw new IllegalArgumentException("[POJOAddress] : postOfficeBox et/ou locality et/ou numStreet et/ou beneficiaries et/ou interpreters est null");
         }
 
         this.postcode = postcode;
@@ -123,11 +128,11 @@ public class Address {
 
     /**
      * @param postOfficeBox the post office box. It can only have 1 post office box
-     * @throws NullPointerException if postOfficeBox is null
+     * @throws IllegalArgumentException if postOfficeBox is null
      */
     public void setPostOfficeBox(String postOfficeBox) {
         if(postOfficeBox == null){
-            throw new NullPointerException("[POJOAddress] : On ne peut pas set la boite postale à null");
+            throw new IllegalArgumentException("[POJOAddress] : On ne peut pas set la boite postale à null");
         }
 
         this.postOfficeBox = postOfficeBox;
@@ -142,11 +147,11 @@ public class Address {
 
     /**
      * @param locality the locality. It can only have 1 locality
-     * @throws NullPointerException if locality is null
+     * @throws IllegalArgumentException if locality is null
      */
     public void setLocality(String locality) {
         if(locality == null){
-            throw new NullPointerException("[POJOAddress] : On ne peut pas set la localité à null");
+            throw new IllegalArgumentException("[POJOAddress] : On ne peut pas set la localité à null");
         }
 
         this.locality = locality;
@@ -161,11 +166,11 @@ public class Address {
 
     /**
      * @param numStreet the number street. It can only have 1 number street
-     * @throws NullPointerException if numStreet is null
+     * @throws IllegalArgumentException if numStreet is null
      */
     public void setNumStreet(String numStreet) {
         if(numStreet == null){
-            throw new NullPointerException("[POJOAddress] : On ne peut pas set le numéro de la rue à null");
+            throw new IllegalArgumentException("[POJOAddress] : On ne peut pas set le numéro de la rue à null");
         }
 
         this.numStreet = numStreet;
@@ -208,11 +213,11 @@ public class Address {
 
     /**
      * @param beneficiaries the list of beneficiary linked. It can have 0, 1 or some beneficiaries
-     * @throws NullPointerException if beneficiaries is null
+     * @throws IllegalArgumentException if beneficiaries is null
      */
     public void setBeneficiaries(List<Beneficiary> beneficiaries) {
         if(beneficiaries == null){
-            throw new NullPointerException("[POJOAddress] : On ne peut pas set la liste des bénéficiaires à null");
+            throw new IllegalArgumentException("[POJOAddress] : On ne peut pas set la liste des bénéficiaires à null");
         }
 
         this.beneficiaries = beneficiaries;
@@ -227,11 +232,11 @@ public class Address {
 
     /**
      * @param interpreters the list of interpreter linked. It can have 0, 1 or some interpreters
-     * @throws NullPointerException if interpreters is null
+     * @throws IllegalArgumentException if interpreters is null
      */
     public void setInterpreters(List<Interpreter> interpreters) {
         if(interpreters == null){
-            throw new NullPointerException("[POJOAddress] : On ne peut pas set la liste des interprètes à null");
+            throw new IllegalArgumentException("[POJOAddress] : On ne peut pas set la liste des interprètes à null");
         }
 
         this.interpreters = interpreters;
@@ -264,12 +269,15 @@ public class Address {
         }
         strInterpreters.append("\n");
 
-        return "Adresse n°" + this.numAddress + " :\n" +
-                "Code postal : " + this.postcode + "\n" +
-                "Boite postale : " + this.postOfficeBox + "\n" +
-                "Localité : " + this.locality + "\n" +
-                "Numéro de la maison : " + this.numStreet + "\n" +
-                "Lieu dit : " + this.hamlet + "\n" +
-                "Etablissement lié : " + (this.establishment == null ? "Aucun" : this.establishment.toString()) + "\n" + strBeneficiaries + strInterpreters;
+        return "Adresse" +
+                "\nId : " + this.numAddress +
+                "\n" +
+                "\nCode postal : " + this.postcode +
+                "\nBoite postale : " + this.postOfficeBox +
+                "\nLocalité : " + this.locality +
+                "\nNuméro de la maison : " + this.numStreet +
+                "\nLieu dit : " + this.hamlet +
+                "\nEtablissement lié : " + (this.establishment == null ? "Aucun" : this.establishment.toString()) +
+                "\n" + strBeneficiaries + strInterpreters;
     }
 }
