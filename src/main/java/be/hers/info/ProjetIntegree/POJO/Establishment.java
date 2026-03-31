@@ -2,7 +2,7 @@ package be.hers.info.ProjetIntegree.POJO;
 
 /*
 @author Rosman Loïs
-@refactor Halet Louis
+@reviewer Halet Louis
  */
 
 import java.util.ArrayList;
