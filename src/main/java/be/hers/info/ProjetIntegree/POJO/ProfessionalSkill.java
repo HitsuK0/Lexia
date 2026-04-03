@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @author Wellinger Chloé
+ * @reviewer Nicolas Jean-François, Halet Louis
+ */
+
+/**
  * Represents a professional skill that can be associated
  * with a list of interpreters and a list of appoitments
  */
@@ -15,7 +20,16 @@ public class ProfessionalSkill {
     private List<Appointment> appointments;
 
     /**
-     * Constructs a ProfessionalSkill with the given designation
+     * Default constructor
+     */
+    public ProfessionalSkill() {
+        this.designation = "";
+        this.interpreters = new ArrayList<>();
+        this.appointments = new ArrayList<>();
+    }
+
+    /**
+     * Constructs a ProfessionalSkill with several attributs without ID
      * @param designation The skill of the professional skill
      */
     public ProfessionalSkill(String designation) {
@@ -25,25 +39,53 @@ public class ProfessionalSkill {
     }
 
     /**
-     * Constructs a ProfessionalSkill with the given designation and ID numProfessionalSkill
-     * @param designation The skill of the professional skill
+     * Constructs a ProfessionalSkill with several attributs and ID
      * @param numProfessionalSkill The ID of the professional skill
+     * @param designation The skill of the professional skill
+     * @throws IllegalArgumentException if numProfessionalSkill is negative
      */
-    public ProfessionalSkill(String designation, int numProfessionalSkill) {
-        this.designation = designation;
+    public ProfessionalSkill(int numProfessionalSkill, String designation) {
+        if (numProfessionalSkill < 0)
+            throw new IllegalArgumentException("[POJOProfessionalSkill] L'identifiant de la compétence métier ne peut pas être négatif");
+
         this.numProfessionalSkill = numProfessionalSkill;
+        this.designation = designation;
         this.interpreters = new ArrayList<>();
         this.appointments = new ArrayList<>();
     }
 
     /**
-     * Default constructor, sets designation to "default"
-     * and initalizes both lists as empty ArrayList.
+     * Constructs a ProfessionalSkill with all attributs and ID
+     * @param numProfessionalSkill
+     * @param designation
+     * @param interpreters
+     * @param appointments
+     * @throws IllegalArgumentException if numProfessionalSkill is negative
      */
-    public ProfessionalSkill() {
-        this.designation = "default";
-        this.interpreters = new ArrayList<>();
-        this.appointments = new ArrayList<>();
+    public ProfessionalSkill(int numProfessionalSkill, String designation,
+                             List<Interpreter> interpreters, List<Appointment> appointments) {
+        if (numProfessionalSkill < 0)
+            throw new IllegalArgumentException("[POJOProfessionalSkill] L'identifiant de la compétence métier ne peut pas être négatif");
+
+        this.numProfessionalSkill = numProfessionalSkill;
+        this.designation = designation;
+        this.interpreters = interpreters;
+        this.appointments = appointments;
+    }
+
+    /**
+     * Constructs a ProfessionalSkill with all attributs without ID
+     * @param designation
+     * @param interpreters
+     * @param appointments
+     * @throws IllegalArgumentException if numProfessionalSkill is negative
+     */
+    public ProfessionalSkill(String designation,
+                             List<Interpreter> interpreters, List<Appointment> appointments) {
+
+        this.designation = designation;
+        this.interpreters = interpreters;
+        this.appointments = appointments;
     }
 
     /**
@@ -67,6 +109,17 @@ public class ProfessionalSkill {
      */
     public int getNumProfessionalSkill(){
         return numProfessionalSkill;
+    }
+
+    /**
+     * Set the identifiant for the professional skill
+     * @param numProfessionalSkill The new identifiant to set
+     */
+    public void setNumProfessionalSkill(int numProfessionalSkill){
+        if (numProfessionalSkill < 0)
+            throw new IllegalArgumentException("[POJOProfessionalSkill] L'identifiant de la compétence métier ne peut pas être négatif");
+
+        this.numProfessionalSkill = numProfessionalSkill;
     }
 
     /**
@@ -100,10 +153,14 @@ public class ProfessionalSkill {
     }
 
     /**
-     * @return a string representation of this ProfessionalSkill.
-     * Ex : Professionnal Skill{designation : 'translation'}
+     * @return a String containing the professional skill ID, designation, list of interpreters, list of appointments
      */
+    @Override
     public String toString() {
-        return "Professional Skill{designation :'" + designation + "', ID : '" + numProfessionalSkill + "'}";
+        return "Compétence Métier" +
+                "\nNumero ID: " + numProfessionalSkill +
+                "\nDésignation : " + designation +
+                "\nListe des interprètes associés : " + interpreters +
+                "\nListe des rendez-vous : " + appointments;
     }
 }
