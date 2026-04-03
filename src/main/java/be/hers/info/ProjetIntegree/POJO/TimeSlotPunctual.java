@@ -13,6 +13,25 @@ public class TimeSlotPunctual extends TimeSlot {
     private LocalDate endDate;
 
     /**
+     * Initialize a TimeSlotPunctual with numTimeSlotPunctual, startTime, duration, startDate and endDate is null by default
+     * @param numTimeSlotPunctual the id of the time slot
+     * @param startTime the start time of the time slot
+     * @param duration the duration
+     * @param startDate the concerned date
+     * @throws IllegalArgumentException if startDate is null
+     */
+    public TimeSlotPunctual(int numTimeSlotPunctual, LocalTime startTime, LocalTime duration, LocalDate startDate) {
+        super(numTimeSlotPunctual, startTime, duration);
+
+        if(startDate == null) {
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La date de début ne peut pas être nulle");
+        }
+
+        this.startDate = startDate;
+        this.endDate = null;
+    }
+
+    /**
      * Initialize a TimeSlotPunctual with startTime, duration, startDate and endDate is null by default
      * @param startTime the start time of the time slot
      * @param duration the duration
@@ -28,6 +47,26 @@ public class TimeSlotPunctual extends TimeSlot {
 
         this.startDate = startDate;
         this.endDate = null;
+    }
+
+    /**
+     * Initialize a TimeSlotPunctual with numTimeSlotPunctual, startTime, duration, startDate and endDate
+     * @param numTimeSlotPunctual the id of the time slot
+     * @param startTime the start time of the time slot
+     * @param duration the duration
+     * @param startDate the start date of the time slot
+     * @param endDate the end date of the time slot
+     * @throws IllegalArgumentException if startDate or endDate is null
+     */
+    public TimeSlotPunctual(int numTimeSlotPunctual, LocalTime startTime, LocalTime duration, LocalDate startDate, LocalDate endDate) {
+        super(numTimeSlotPunctual, startTime, duration);
+
+        if(startDate == null || endDate == null) {
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La date de début et la date de fin ne peuvent pas être nulles");
+        }
+
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     /**
@@ -207,12 +246,13 @@ public class TimeSlotPunctual extends TimeSlot {
     }
 
     /**
-     * @return a String containing the start time, duration, start date and end date
+     * @return a String containing the numTimeSlot, start time, duration, start date and end date
      */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Tranche horaire ponctuelle :\n");
+        sb.append("Id :").append(this.getNumTimeSlot());
         sb.append("Heure de début : ").append(this.getStartTime()).append("\n");
         sb.append("Durée : ").append(this.getDuration()).append("\n");
         sb.append("Date de début : ").append(this.startDate).append("\n");
