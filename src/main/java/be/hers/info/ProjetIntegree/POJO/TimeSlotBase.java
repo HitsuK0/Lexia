@@ -19,6 +19,25 @@ public class TimeSlotBase extends TimeSlot {
 
     /**
      * Initialize a TimeSlotBase with startTime, duration and dayNumber
+     * @param numTimeSlotBase the id of the time slot
+     * @param startTime the start time of the time slot
+     * @param duration the duration
+     * @param dayNumber the number of the day concerned
+     * @throws IllegalArgumentException if startTime or duration is null
+     *                                  if dayNumber is smaller than MIN_DAY or greater than MAX_DAY
+     */
+    public TimeSlotBase(int numTimeSlotBase, LocalTime startTime, LocalTime duration, int dayNumber) {
+        super(numTimeSlotBase, startTime, duration);
+
+        if(dayNumber < MIN_DAY || dayNumber > MAX_DAY) {
+            throw new IllegalArgumentException("[POJOTimeSlotBase] Le numéro du jour doit être compris entre " + MIN_DAY + " et " + MAX_DAY);
+        }
+
+        this.dayNumber = dayNumber;
+    }
+
+    /**
+     * Initialize a TimeSlotBase with startTime, duration and dayNumber
      * @param startTime the start time of the time slot
      * @param duration the duration
      * @param dayNumber the number of the day concerned
@@ -154,12 +173,13 @@ public class TimeSlotBase extends TimeSlot {
     }
 
     /**
-     * @return a String containing the start time, duration and day number
+     * @return a String containing the id, start time, duration and day number
      */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Tranche horaire répétitive :\n");
+        sb.append("Id : ").append(this.getNumTimeSlot());
         sb.append("Heure de début : ").append(this.getStartTime()).append("\n");
         sb.append("Durée : ").append(this.getDuration()).append("\n");
         sb.append("Jour : ").append(this.dayNumber).append("\n");
