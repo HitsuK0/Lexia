@@ -12,11 +12,11 @@ public abstract class TimeSlot {
      * Initialize a TimeSlot with startTime and duration
      * @param startTime the start time of the time slot
      * @param duration the duration
-     * @throws NullPointerException if startTime or duration is null
+     * @throws IllegalArgumentException if startTime or duration is null
      */
     public TimeSlot(LocalTime startTime, LocalTime duration) {
         if(startTime == null || duration == null) {
-            throw new NullPointerException("L'heure de début et la durée ne peuvent pas être nulles");
+            throw new IllegalArgumentException("L'heure de début et la durée ne peuvent pas être nulles");
         }
 
         this.startTime = startTime;
@@ -46,11 +46,11 @@ public abstract class TimeSlot {
 
     /**
      * @param startTime the start time to set
-     * @throws NullPointerException if startTime is null
+     * @throws IllegalArgumentException if startTime is null
      */
     public void setStartTime(LocalTime startTime) {
         if(startTime == null) {
-            throw new NullPointerException("L'heure de début ne peut pas être nulle");
+            throw new IllegalArgumentException("L'heure de début ne peut pas être nulle");
         }
 
         this.startTime = startTime;
@@ -58,11 +58,11 @@ public abstract class TimeSlot {
 
     /**
      * @param duration the duration to set
-     * @throws NullPointerException if duration is null
+     * @throws IllegalArgumentException if duration is null
      */
     public void setDuration(LocalTime duration) {
         if(duration == null) {
-            throw new NullPointerException("La durée ne peut pas être nulle");
+            throw new IllegalArgumentException("La durée ne peut pas être nulle");
         }
 
         this.duration = duration;
@@ -73,7 +73,7 @@ public abstract class TimeSlot {
      * based on the runtime type of the given TimeSlot
      * @param timeSlot the TimeSlot to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
-     * @throws NullPointerException if timeSlot is null
+     * @throws IllegalArgumentException if timeSlot is null
      */
     public abstract boolean overlapsWith(TimeSlot timeSlot);
 
@@ -81,7 +81,7 @@ public abstract class TimeSlot {
      * Checks if this TimeSlot overlaps with a TimeSlotPunctual
      * @param timeSlotPunctual the TimeSlotPunctual to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
-     * @throws NullPointerException if timeSlotPunctual is null
+     * @throws IllegalArgumentException if timeSlotPunctual is null
      */
     public abstract boolean overlapsWith(TimeSlotPunctual timeSlotPunctual);
 
@@ -89,7 +89,7 @@ public abstract class TimeSlot {
      * Checks if this TimeSlot overlaps with a TimeSlotBase
      * @param timeSlotBase the TimeSlotBase to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
-     * @throws NullPointerException if timeSlotBase is null
+     * @throws IllegalArgumentException if timeSlotBase is null
      */
     public abstract boolean overlapsWith(TimeSlotBase timeSlotBase);
 
