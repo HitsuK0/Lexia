@@ -17,6 +17,7 @@ public class Beneficiary {
     private Address address;
     private int hourQuota;
     private int educationLevel;
+    private Interpreter interpreter;
     private List<String> communicationLanguage;
     private List<Appointment> appointmentList;
 
@@ -28,7 +29,6 @@ public class Beneficiary {
 
     /**
      * Initialize a Beneficiary with no elements
-     * numBeneficiary is set to 0 by default
      * The parameter numBeneficiary can only be initialized with setNumBeneficiary
      */
     public Beneficiary() {
@@ -39,6 +39,7 @@ public class Beneficiary {
         this.address = null;
         this.hourQuota = 0;
         this.educationLevel = EDUCATION_LEVEL_MIN;
+        this.interpreter = null;
         this.communicationLanguage = new ArrayList<String>();
         this.appointmentList = new ArrayList<Appointment>();
     }
@@ -48,7 +49,7 @@ public class Beneficiary {
      * The parameter numBeneficiary can only be initialized with setNumBeneficiary
      * @param emailAddress the email address of the Beneficiary
      * @param name the name of the Beneficiary
-     * @param surname the surname of the Beneficiaryß
+     * @param surname the surname of the Beneficiary
      */
     public Beneficiary(String emailAddress, String name, String surname) {
         this.name = name;
@@ -58,6 +59,7 @@ public class Beneficiary {
         this.address = null;
         this.hourQuota = 0;
         this.educationLevel = EDUCATION_LEVEL_MIN;
+        this.interpreter = null;
         this.communicationLanguage = new ArrayList<String>();
         this.appointmentList = new ArrayList<Appointment>();
     }
@@ -78,6 +80,7 @@ public class Beneficiary {
         this.address = null;
         this.hourQuota = 0;
         this.educationLevel = EDUCATION_LEVEL_MIN;
+        this.interpreter = null;
         this.appointmentList = new ArrayList<Appointment>();
         this.communicationLanguage = new ArrayList<String>();
     }
@@ -93,6 +96,7 @@ public class Beneficiary {
      * @param address the address
      * @param hourQuota the quota hours
      * @param educationLevel the level of education
+     * @param interpreter the interpreter of reference
      * @param communicationLanguage the list of communication languages used by the beneficiary
      * @param appointmentList the list of Appointments, can be null
      * @throws IllegalArgumentException if address or communicationLanguage is null
@@ -101,10 +105,10 @@ public class Beneficiary {
      *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
      */
     public Beneficiary(int numBeneficiary, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
-                       List<String> communicationLanguage, List<Appointment> appointmentList) {
+                       Interpreter interpreter, List<String> communicationLanguage, List<Appointment> appointmentList) {
 
-        if(address == null || communicationLanguage == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le nom, prénom, numéro de téléphone, adresse email, adresse et langue(s) de communication ne peuvent pas être nuls");
+        if(address == null || communicationLanguage == null || interpreter == null) {
+            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse, l'interprète de référence et langue(s) de communication ne peuvent pas être null");
         }
 
         if(communicationLanguage.isEmpty()) {
@@ -127,6 +131,7 @@ public class Beneficiary {
         this.address = address;
         this.educationLevel = educationLevel;
         this.hourQuota = hourQuota;
+        this.interpreter = interpreter;
         this.communicationLanguage = communicationLanguage;
 
         if(appointmentList == null) {
@@ -147,6 +152,7 @@ public class Beneficiary {
      * @param address the address
      * @param hourQuota the quota hours
      * @param educationLevel the level of education
+     * @param interpreter the interpreter of reference
      * @param communicationLanguage the list of communication languages used by the beneficiary
      * @param appointmentList the list of Appointments, can be null
      * @throws IllegalArgumentException if address or communicationLanguage is null
@@ -155,10 +161,10 @@ public class Beneficiary {
      *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
      */
     public Beneficiary(String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
-                       List<String> communicationLanguage, List<Appointment> appointmentList) {
+                       Interpreter interpreter, List<String> communicationLanguage, List<Appointment> appointmentList) {
 
-        if(address == null || communicationLanguage == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le nom, prénom, numéro de téléphone, adresse email, adresse et langue(s) de communication ne peuvent pas être nuls");
+        if(address == null || communicationLanguage == null || interpreter == null) {
+            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse, l'interprète de référence et langue(s) de communication ne peuvent pas être null");
         }
 
         if(communicationLanguage.isEmpty()) {
@@ -180,6 +186,7 @@ public class Beneficiary {
         this.address = address;
         this.educationLevel = educationLevel;
         this.hourQuota = hourQuota;
+        this.interpreter = interpreter;
         this.communicationLanguage = communicationLanguage;
 
         if(appointmentList == null) {
@@ -250,6 +257,14 @@ public class Beneficiary {
     public int getEducationLevel() {
 
         return educationLevel;
+    }
+
+    /**
+     * @return the interpreter
+     */
+    public Interpreter getInterpreter() {
+
+        return interpreter;
     }
 
     /**
@@ -355,6 +370,18 @@ public class Beneficiary {
     }
 
     /**
+     * @param interpreter the interpreter of reference
+     * @throws IllegalArgumentException if interpreter is null
+     */
+    public void setInterpreter(Interpreter interpreter) {
+        if(interpreter == null) {
+            throw new IllegalArgumentException("[POJOBeneficiary] L'interprète de référence ne peut pas être null");
+        }
+
+        this.interpreter = interpreter;
+    }
+
+    /**
      * @param communicationLanguage the list of communication languages to set
      * @throws IllegalArgumentException if communicationLanguages is null
      *                                  if communicationLanguages is empty
@@ -414,7 +441,7 @@ public class Beneficiary {
 
     /**
      * @return a String containing the beneficiary ID, name, surname, phone number,
-     *         email address, address, hour quota, education level, communication languages
+     *         email address, interpreter, address, hour quota, education level, communication languages
      *         and appointments
      */
     public String toString() {
@@ -433,6 +460,12 @@ public class Beneficiary {
             sb.append("Adresse email : Non renseigné\n");
         } else {
             sb.append("Adresse email : ").append(this.emailAddress).append("\n");
+        }
+
+        if(this.interpreter == null) {
+            sb.append("Interprète de référence : Non renseignée\n");
+        } else {
+            sb.append("Interprète de référence : ").append(this.interpreter.toString()).append("\n");
         }
 
         if(this.address == null) {
