@@ -1,5 +1,10 @@
 package be.hers.info.ProjetIntegree.POJO;
 
+/**
+ * @author Vatafu Jean
+ * @reviewer Nicolas Jean-François
+ */
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -12,13 +17,13 @@ public class TimeSlotPunctual extends TimeSlot {
      * @param startTime the start time of the time slot
      * @param duration the duration
      * @param startDate the concerned date
-     * @throws NullPointerException if startDate is null
+     * @throws IllegalArgumentException if startDate is null
      */
     public TimeSlotPunctual(LocalTime startTime, LocalTime duration, LocalDate startDate) {
         super(startTime, duration);
 
         if(startDate == null) {
-            throw new NullPointerException("La date de début ne peut pas être nulle");
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La date de début ne peut pas être nulle");
         }
 
         this.startDate = startDate;
@@ -31,13 +36,13 @@ public class TimeSlotPunctual extends TimeSlot {
      * @param duration the duration
      * @param startDate the start date of the time slot
      * @param endDate the end date of the time slot
-     * @throws NullPointerException if startDate or endDate is null
+     * @throws IllegalArgumentException if startDate or endDate is null
      */
     public TimeSlotPunctual(LocalTime startTime, LocalTime duration, LocalDate startDate, LocalDate endDate) {
         super(startTime, duration);
 
         if(startDate == null || endDate == null) {
-            throw new NullPointerException("La date de début et la date de fin ne peuvent pas être nulles");
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La date de début et la date de fin ne peuvent pas être nulles");
         }
 
         this.startDate = startDate;
@@ -56,21 +61,22 @@ public class TimeSlotPunctual extends TimeSlot {
      * @return the end date
      */
     public LocalDate getEndDate() {
+
         return endDate;
     }
 
     /**
      * @param startDate the start date to set
-     * @throws NullPointerException if startDate is null
-     * @throws IllegalArgumentException if this.endDate is not null and startDate is after this.endDate
+     * @throws IllegalArgumentException if startDate is null
+     *                                  if this.endDate is not null and startDate is after this.endDate
      */
     public void setStartDate(LocalDate startDate) {
         if(startDate ==  null) {
-            throw new NullPointerException("La date de début ne peut pas être nulle");
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La date de début ne peut pas être nulle");
         }
 
         if(this.endDate != null && startDate.isAfter(this.endDate)) {
-            throw new IllegalArgumentException("La date de début ne peut pas être après la date de fin");
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La date de début ne peut pas être après la date de fin");
         }
 
         this.startDate = startDate;
@@ -78,16 +84,16 @@ public class TimeSlotPunctual extends TimeSlot {
 
     /**
      * @param endDate the end date to set
-     * @throws NullPointerException if endDate is null
-     * @throws IllegalArgumentException if this.startDate is not null and endDate is before this.startDate
+     * @throws IllegalArgumentException if endDate is null
+     *                                  if this.startDate is not null and endDate is before this.startDate
      */
     public void setEndDate(LocalDate endDate) {
         if(endDate == null) {
-            throw new NullPointerException("La date de fin ne peut pas être nulle");
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La date de fin ne peut pas être nulle");
         }
 
         if(this.startDate != null && endDate.isBefore(this.startDate)) {
-            throw new IllegalArgumentException("La date de fin ne peut pas être avant la date de début");
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La date de fin ne peut pas être avant la date de début");
         }
 
         this.endDate = endDate;
@@ -98,12 +104,12 @@ public class TimeSlotPunctual extends TimeSlot {
      * based on the runtime type of the given TimeSlot
      * @param timeSlot the TimeSlot to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
-     * @throws NullPointerException if timeSlot is null
+     * @throws IllegalArgumentException if timeSlot is null
      */
     @Override
     public boolean overlapsWith(TimeSlot timeSlot) {
         if(timeSlot == null) {
-            throw new NullPointerException("La tranche horaire ne peut pas être nulle");
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La tranche horaire ne peut pas être nulle");
         }
 
         return timeSlot.overlapsWith(this);
@@ -115,17 +121,17 @@ public class TimeSlotPunctual extends TimeSlot {
      * Two TimeSlots overlap if their dates overlap and their times overlap
      * @param punctual the TimeSlotPunctual to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
-     * @throws NullPointerException if punctual is null
+     * @throws IllegalArgumentException if punctual is null
      *                              if this.startDate is null
      */
     @Override
     public boolean overlapsWith(TimeSlotPunctual punctual) {
         if(punctual == null) {
-            throw new NullPointerException("La tranche horaire ponctuelle ne peut pas être nulle");
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La tranche horaire ponctuelle ne peut pas être nulle");
         }
 
         if(this.startDate == null) {
-            throw new NullPointerException("La date de début de cette tranche horaire ne peut pas être nulle");
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La date de début de cette tranche horaire ne peut pas être nulle");
         }
 
         LocalDate thisEnd = null;
@@ -161,17 +167,17 @@ public class TimeSlotPunctual extends TimeSlot {
      * If endDate is not null, all days between startDate and endDate are checked
      * @param base the TimeSlotBase to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
-     * @throws NullPointerException if base is null
+     * @throws IllegalArgumentException if base is null
      *                              if this.startDate is null
      */
     @Override
     public boolean overlapsWith(TimeSlotBase base) {
         if(base == null) {
-            throw new NullPointerException("La tranche horaire répétitive ne peut pas être nulle");
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La tranche horaire répétitive ne peut pas être nulle");
         }
 
         if(this.startDate == null) {
-            throw new NullPointerException("La date de début de cette tranche horaire ne peut pas être nulle");
+            throw new IllegalArgumentException("[POJOTimeSlotPunctual] La date de début de cette tranche horaire ne peut pas être nulle");
         }
 
         if (endDate == null) {
