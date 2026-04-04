@@ -2,7 +2,7 @@ package be.hers.info.ProjetIntegree.POJO;
 
 /**
  * @author Vatafu Jean
- * @reviewer Nicolas Jean-François
+ * @reviewer Nicolas Jean-François, Halet Louis
  */
 
 import java.time.LocalDate;
@@ -16,6 +16,15 @@ public class TimeSlotBase extends TimeSlot {
 
     /** Maximum day number (7 = Sunday) */
     private static final int MAX_DAY = 7;
+
+    /**
+     * Initialize a TimeSlotBase with no elements
+     * The parameter numTimeSlot can only be initialized with setNumTimeSlot
+     * The parameter dayNumber can only be initialized with setDayNumber
+     */
+    public TimeSlotBase() {
+        super();
+    }
 
     /**
      * Initialize a TimeSlotBase with startTime, duration and dayNumber

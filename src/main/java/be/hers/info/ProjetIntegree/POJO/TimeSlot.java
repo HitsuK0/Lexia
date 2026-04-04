@@ -2,7 +2,7 @@ package be.hers.info.ProjetIntegree.POJO;
 
 /**
  * @author Vatafu Jean
- * @reviewer Nicolas Jean-François
+ * @reviewer Nicolas Jean-François, Halet Louis
  */
 
 import java.time.LocalTime;
@@ -14,6 +14,15 @@ public abstract class TimeSlot {
 
     /* Travel time in minutes added to the end of a time slot to account for travel between appointments */
     private static final int TRAVEL_TIME_MINUTES = 40;
+
+    /**
+     * Initialize a TimeSlot with no elements
+     * The parameter numTimeSlot can only be initialized with setNumTimeSlot
+     */
+    public TimeSlot() {
+        this.startTime = null;
+        this.duration = null;
+    }
 
     /**
      * Initialize a TimeSlot with numTimeSlot, startTime and duration
