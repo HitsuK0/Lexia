@@ -1,5 +1,8 @@
 package be.hers.info.ProjetIntegree.POJO;
-
+/**
+ * @author Halet Louis
+ * @reviewer Nicolas Jean-Francois
+ */
 public class Absence {
 
 
@@ -118,7 +121,7 @@ public class Absence {
      * @param numAbsence the numero of the absence
      */
     public void setNumAbsence(int numAbsence) {
-        if (numAbsence >= 0)
+        if (numAbsence < 0)
             throw new IllegalArgumentException("[POJOAbsence] Le numéro de l'absence ne peut pas être négatif");
         this.numAbsence = numAbsence;
     }
