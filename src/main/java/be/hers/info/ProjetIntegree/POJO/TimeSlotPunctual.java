@@ -12,6 +12,12 @@ public class TimeSlotPunctual extends TimeSlot {
     private LocalDate startDate;
     private LocalDate endDate;
 
+    public TimeSlotPunctual() {
+        super();
+        startDate = null;
+        endDate = null;
+    }
+
     /**
      * Initialize a TimeSlotPunctual with numTimeSlotPunctual, startTime, duration, startDate and endDate is null by default
      * @param numTimeSlotPunctual the id of the time slot
