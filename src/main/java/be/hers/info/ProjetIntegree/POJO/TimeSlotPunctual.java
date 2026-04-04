@@ -12,6 +12,10 @@ public class TimeSlotPunctual extends TimeSlot {
     private LocalDate startDate;
     private LocalDate endDate;
 
+    /**
+     * Initialize a TimeSlotPunctual with no elements
+     * The parameter numTimeSlot can only be initialized with setNumTimeSlot
+     */
     public TimeSlotPunctual() {
         super();
         startDate = null;
