@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * @author Vatafu Jean
- * @reviewer Nicolas Jean-François
+ * @reviewer Nicolas Jean-François, Halet Louis
  */
 
 public class Appointment {
