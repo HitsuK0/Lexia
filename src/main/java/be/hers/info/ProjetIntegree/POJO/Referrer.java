@@ -1,5 +1,10 @@
 package be.hers.info.ProjetIntegree.POJO;
 
+/**
+ * @author Leroy Rodriguez Ainhoa
+ * @reviewer Nicolas Jean-François, Halet Louis
+ */
+
 public class Referrer {
 
     private String name;
@@ -87,7 +92,7 @@ public class Referrer {
      */
     public void setName(String name) {
         if(name == null ) {
-            throw new NullPointerException("Valeur invalide : le prénom ne doit pas être a null");
+            throw new IllegalArgumentException("[POJOReferrer] Le prénom ne peut pas être null ou vide");
         }
 
 
@@ -101,7 +106,7 @@ public class Referrer {
      */
     public void setSurname(String surname) {
         if(surname == null ) {
-            throw new NullPointerException("Valeur invalide : le nom ne doit pas être a null");
+            throw new IllegalArgumentException("[POJOReferrer] Le nom ne peut pas être null ou vide");
         }
         this.surname = surname;
     }
@@ -113,7 +118,7 @@ public class Referrer {
      */
     public void setPhoneNumber(String phoneNumber) {
         if(phoneNumber == null ) {
-            throw new NullPointerException("Valeur invalide : le numéro de téléphone ne doit pas être a null");
+            throw new IllegalArgumentException("[POJOReferrer] Le numéro de téléphone ne peut pas être null ou vide");
         }
         this.phoneNumber = phoneNumber;
     }
@@ -125,7 +130,7 @@ public class Referrer {
      */
     public void setAddressMail(String addressMail) {
         if(addressMail == null ) {
-            throw new NullPointerException("Valeur invalide : l'adresse mail ne doit pas être a null");
+            throw new IllegalArgumentException("[POJOReferrer] L'adresse mail ne peut pas être null ou vide");
         }
         this.addressMail = addressMail;
     }
@@ -136,7 +141,7 @@ public class Referrer {
      */
     public void setRefEstablishment(Establishment refEstablishment) {
         if(refEstablishment == null ) {
-            throw new NullPointerException("Valeur invalide : l'établissement ne doit pas être a null");
+            throw new IllegalArgumentException("[POJOReferrer] L'établissement ne peut pas être null ou vide");
         }
         this.refEstablishment = refEstablishment;
     }
@@ -147,10 +152,12 @@ public class Referrer {
      */
     public String toString(){
 
-        return "Nom : " + this.name + " \n" + "Prenom : " + this.surname + " \n" +
-                "Numéro de téléphone : " + this.phoneNumber + " \n" +
-                "Addresse mail : " + this.addressMail + " \n" +
-                "Etablissement  :\n" + (refEstablishment != null ? refEstablishment.toString() : "Aucun établissement");
+        return "Rérérant" +
+                "\nNom : " + this.name +
+                "\nPrenom : " + this.surname +
+                "\nNuméro de téléphone : " + this.phoneNumber +
+                "\nAddresse mail : " + this.addressMail +
+                "\nEtablissement  :\n" + (refEstablishment != null ? refEstablishment.toString() : "Aucun établissement");
 
     }
 }
