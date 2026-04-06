@@ -92,7 +92,7 @@ public class Referrer {
      */
     public void setName(String name) {
         if(name == null ) {
-            throw new IllegalArgumentException("[POJOReferrer] Le prénom ne peut pas être null ou vide");
+            throw new IllegalArgumentException("[POJOReferrer] Le prénom ne peut pas être null");
         }
 
 
@@ -106,7 +106,7 @@ public class Referrer {
      */
     public void setSurname(String surname) {
         if(surname == null ) {
-            throw new IllegalArgumentException("[POJOReferrer] Le nom ne peut pas être null ou vide");
+            throw new IllegalArgumentException("[POJOReferrer] Le nom ne peut pas être null");
         }
         this.surname = surname;
     }
@@ -118,7 +118,7 @@ public class Referrer {
      */
     public void setPhoneNumber(String phoneNumber) {
         if(phoneNumber == null ) {
-            throw new IllegalArgumentException("[POJOReferrer] Le numéro de téléphone ne peut pas être null ou vide");
+            throw new IllegalArgumentException("[POJOReferrer] Le numéro de téléphone ne peut pas être null");
         }
         this.phoneNumber = phoneNumber;
     }
@@ -130,7 +130,7 @@ public class Referrer {
      */
     public void setAddressMail(String addressMail) {
         if(addressMail == null ) {
-            throw new IllegalArgumentException("[POJOReferrer] L'adresse mail ne peut pas être null ou vide");
+            throw new IllegalArgumentException("[POJOReferrer] L'adresse mail ne peut pas être null");
         }
         this.addressMail = addressMail;
     }
