@@ -5,6 +5,7 @@ import be.hers.info.ProjetIntegree.POJO.ProfessionalSkill;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
@@ -45,7 +46,35 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
 
     @Override
     public List<ProfessionalSkill> findAll() throws SQLException {
-        return List.of();
+        List<ProfessionalSkill> listeProfessionalSkills = new ArrayList<>();
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        String query = "SELECT numProfessionalSkill, designation" +
+                "FROM ProfessionalSkill";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            rs  =  prStat.executeQuery();
+
+            while(rs.next()) {
+                ProfessionalSkill professionalSkillTrouve = new ProfessionalSkill(
+                        rs.getInt("numProfessionalSkill"),
+                        rs.getString("designation")
+                );
+                listeProfessionalSkills.add(professionalSkillTrouve);
+            }
+        } catch (SQLException ex) {
+            System.out.println("[ERROR - DAOProfessionalSkill] ProfessionalSkill introuvable dans la BD");
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (prStat != null) {
+                prStat.close();
+            }
+        }
+        return  listeProfessionalSkills;
     }
 
     @Override
