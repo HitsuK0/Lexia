@@ -105,7 +105,28 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
 
     @Override
     public boolean update(ProfessionalSkill objectToUpdateInDB) throws SQLException {
-        return false;
+        boolean isUpdated = false;
+        PreparedStatement prStat = null;
+
+        String query = "UPDATE ProfessionalSkill SET designation = ? WHERE numProfessionalSkill = ?";
+
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setString(1, objectToUpdateInDB.getDesignation());
+            prStat.setInt(2, objectToUpdateInDB.getNumProfessionalSkill());
+
+            int nbLinesInsert = prStat.executeUpdate();
+            if(nbLinesInsert > 0) {
+                isUpdated = true;
+            }
+        } catch (SQLException e) {
+            System.out.println("[ERROR - DAOProfessionalSkill] ProfessionalSkill inchangé dans la BD");
+        } finally {
+            if (prStat != null){
+                prStat.close();
+            }
+        }
+        return isUpdated;
     }
 
     @Override
