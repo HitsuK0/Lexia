@@ -165,6 +165,9 @@ public class Appointment {
      */
     public void setNumAppointment(int id) {
 
+        if(id < 0) {
+            throw new IllegalArgumentException("[POJOAppointment] Le id ne peut pas être négatif.");
+        }
         this.numAppointment = id;
     }
 
@@ -263,7 +266,7 @@ public class Appointment {
     /**
      * @param status the status
      * @throws IllegalArgumentException if status is null
-     * @throws BadStatusException if status is different from 'accepte' or 'refuse'
+     * @throws BadStatusException if status is different from 'accepte', 'refuse' or 'en attente'
      *                            if status is the same as the already set status
      *                            if the current status is not equals to 'en attente'
      */
@@ -273,15 +276,15 @@ public class Appointment {
         }
 
         if(this.status.equals(status)) {
-            throw new BadStatusException();
+            throw new BadStatusException("[POJOAppointment] Le status status est déja "+this.status);
         }
 
-        if(!(status.equals("accepte") || status.equals("refuse"))) {
-            throw new BadStatusException();
+        if(!(status.equals("accepte") || status.equals("refuse") || status.equals("en attente"))) {
+            throw new BadStatusException("[POJOAppointment] "+status+ " n'est pas un status valide.");
         }
 
         if(!this.status.equals("en attente")) {
-            throw new BadStatusException();
+            throw new BadStatusException("[POJOAppointment] Le status ne peut plus être modifié.");
         }
 
         this.status = status;
@@ -298,8 +301,20 @@ public class Appointment {
         stringBuild.append("Rendez-vous\n");
         stringBuild.append("Id : ").append(this.numAppointment).append("\n");
         stringBuild.append("Statut : ").append(this.status).append("\n");
-        stringBuild.append("Bénéficiaire : ").append(this.beneficiary).append("\n");
-        stringBuild.append("Créneau : ").append(this.timeSlot).append("\n");
+
+        stringBuild.append("Bénéficiaire : ");
+        if(this.beneficiary == null) {
+            stringBuild.append("Aucun bénéficiaire attribué\n");
+        } else {
+                stringBuild.append(this.beneficiary).append("\n");
+        }
+
+        stringBuild.append("Créneau : ");
+        if(this.timeSlot == null) {
+            stringBuild.append("Aucun créneau attribué\n");
+        } else {
+            stringBuild.append(this.timeSlot).append("\n");
+        }
 
         stringBuild.append("Local :\n");
         if(this.appointmentLocals == null || this.appointmentLocals.isEmpty()) {
