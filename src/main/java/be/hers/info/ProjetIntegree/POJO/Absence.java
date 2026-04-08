@@ -1,81 +1,74 @@
 package be.hers.info.ProjetIntegree.POJO;
-
+/**
+ * @author Halet Louis
+ * @reviewer Nicolas Jean-Francois
+ */
 public class Absence {
+
+
     private int numAbsence;
     private String status;
     private TimeSlotPunctual timeSlotPonctual;
-    private Interpreter refInterpreter;
 
     /**
      * Create an Absence with all attribute
-     * @param numAbsence the numero of the absence
-     * @param status the status of the absence (it can only be among these values: 'en attente', 'accepte', 'refuse', 'absent')
+     *
+     * @param numAbsence       the numero of the absence
+     * @param status           the status of the absence (it can only be among these values: 'en attente', 'accepte', 'refuse', 'absent')
      * @param timeSlotPonctual the time slot of absence
-     * @param refInterpreter The interpreter was absent.
-     * @throws BadStatusException If the absence status is not among these values: 'en attente', 'accepte', 'refuse', 'absent'
-     * @throws NullPointerException if timeSlotPonctual is null or refInterpreter is null
+     * @throws BadStatusException   If the absence status is not among these values: 'en attente', 'accepte', 'refuse', 'absent'
+     * @throws IllegalArgumentException if timeSlotPonctual is null
      */
-    public Absence(int numAbsence,String status, TimeSlotPunctual timeSlotPonctual, Interpreter refInterpreter) throws BadStatusException {
-        if(!status.equals("en attente") || !status.equals("accepte") || !status.equals("refuse") || !status.equals("absent")) throw new BadStatusException();
-        if(timeSlotPonctual == null || refInterpreter == null) throw new NullPointerException();
+    public Absence(int numAbsence, String status, TimeSlotPunctual timeSlotPonctual) throws BadStatusException {
+        if (!status.equals("en attente") && !status.equals("accepte") && !status.equals("refuse") && !status.equals("absent"))
+            throw new BadStatusException("[POJOAbsence] Mauvais status de l'absence");
+        if (timeSlotPonctual == null)
+            throw new IllegalArgumentException("[POJOAbsence] La tranche horaire de l'absence ne peut pas être null ou vide");
         this.numAbsence = numAbsence;
         this.status = status;
         this.timeSlotPonctual = timeSlotPonctual;
-        this.refInterpreter = refInterpreter;
+
     }
+
     /**
      * Create an Absence without his numAbsence
-     * @param status the status of the absence (it can only be among these values: 'en attente', 'accepte', 'refuse', 'absent')
+     *
+     * @param status           the status of the absence (it can only be among these values: 'en attente', 'accepte', 'refuse', 'absent')
      * @param timeSlotPonctual the time slot of absence
-     * @param refInterpreter The interpreter was absent.
-     * @throws BadStatusException If the absence status is not among these values: 'en attente', 'accepte', 'refuse', 'absent'
-     * @throws NullPointerException if timeSlotPonctual is null or refInterpreter is null
+     * @throws BadStatusException   If the absence status is not among these values: 'en attente', 'accepte', 'refuse', 'absent'
+     * @throws IllegalArgumentException if timeSlotPonctual is null
      */
-    public Absence(String status, TimeSlotPunctual timeSlotPonctual, Interpreter refInterpreter) throws BadStatusException {
-        if(!status.equals("en attente") || !status.equals("accepte") || !status.equals("refuse") || !status.equals("absent")) throw new BadStatusException();
-        if(timeSlotPonctual == null || refInterpreter == null) throw new NullPointerException();
+    public Absence(String status, TimeSlotPunctual timeSlotPonctual) throws BadStatusException {
+        if (!status.equals("en attente") && !status.equals("accepte") && !status.equals("refuse") && !status.equals("absent"))
+            throw new BadStatusException("[POJOAbsence] Mauvais status de l'absence");
+        if (timeSlotPonctual == null)
+            throw new IllegalArgumentException("[POJOAbsence] La tranche horaire de l'absence ne peut pas être null ou vide");
         this.status = status;
         this.timeSlotPonctual = timeSlotPonctual;
-        this.refInterpreter = refInterpreter;
+
     }
 
     /**
      * Create an Absence with 'en attente' for status
+     *
      * @param timeSlotPonctual the time slot of absence
-     * @param refInterpreter The interpreter was absent.
-     * @throws NullPointerException if timeSlotPonctual is null or refInterpreter is null
+     * @throws IllegalArgumentException if timeSlotPonctual is null
      */
-    public Absence(TimeSlotPunctual timeSlotPonctual, Interpreter refInterpreter) {
-        if(timeSlotPonctual == null || refInterpreter == null) throw new NullPointerException();
+    public Absence(TimeSlotPunctual timeSlotPonctual) {
+        if (timeSlotPonctual == null)
+            throw new IllegalArgumentException("[POJOAbsence] La tranche horaire de l'absence ne peut pas être null ou vide");
         this.status = "en attente";
         this.timeSlotPonctual = timeSlotPonctual;
-        this.refInterpreter = refInterpreter;
+
     }
 
     /**
      * Create an Absence with 'en attente' for status (default constructor)
      */
-    public Absence(){
+    public Absence() {
         this.status = "en attente";
         this.timeSlotPonctual = null;
-        this.refInterpreter = null;
-    }
 
-    /**
-     *
-     * @return The interpreter was absent.
-     */
-    public Interpreter getRefInterpreter() {
-        return refInterpreter;
-    }
-
-    /**
-     *
-     * @param refInterpreter The interpreter was absent.
-     */
-    public void setRefInterpreter(Interpreter refInterpreter) {
-        if(refInterpreter == null) throw new NullPointerException();
-        this.refInterpreter = refInterpreter;
     }
 
     /**
@@ -91,7 +84,8 @@ public class Absence {
      * @param timeSlotPonctual the time slot of absence
      */
     public void setTimeSlotPonctual(TimeSlotPunctual timeSlotPonctual) {
-        if(timeSlotPonctual == null) throw new NullPointerException();
+        if (timeSlotPonctual == null)
+            throw new IllegalArgumentException("[POJOAbsence] La tranche horaire de l'absence ne peut pas être null ou vide");
         this.timeSlotPonctual = timeSlotPonctual;
     }
 
@@ -108,17 +102,10 @@ public class Absence {
      * @param status the status of the absence (it can only be among these values: 'en attente', 'accepte', 'refuse', 'absent')
      * @throws BadStatusException If the absence status is not among these values: 'en attente', 'accepte', 'refuse', 'absent'
      */
-    public void setStatus(String status)throws BadStatusException {
-        if(!status.equals("en attente") || !status.equals("accepte") || !status.equals("refuse") || !status.equals("absent")) throw new BadStatusException();
+    public void setStatus(String status) throws BadStatusException {
+        if (!status.equals("en attente") && !status.equals("accepte") && !status.equals("refuse") && !status.equals("absent"))
+            throw new BadStatusException("[POJOAbsence] Mauvais status de l'absence");
         this.status = status;
-    }
-
-    /**
-     *
-     * @return a string that contains all attribute of an absence
-     */
-    public String toString() {
-        return "NumAbsence : " + numAbsence + "\nStatus de l'absence : " + status + "\n" + "Tranche horraire : " + timeSlotPonctual.toString() + "\n" + "Interprete référence : " + refInterpreter.toString();
     }
 
     /**
@@ -128,4 +115,34 @@ public class Absence {
     public int getNumAbsence() {
         return numAbsence;
     }
+
+    /**
+     *
+     * @param numAbsence the numero of the absence
+     * @throws IllegalArgumentException if numAbsence is negative
+     */
+    public void setNumAbsence(int numAbsence) {
+        if (numAbsence < 0)
+            throw new IllegalArgumentException("[POJOAbsence] Le numéro de l'absence ne peut pas être négatif");
+        this.numAbsence = numAbsence;
+    }
+    /**
+     *
+     * @return a string that contains all attribute of an absence
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Absence");
+        sb.append("\nNumAbsence : ").append(numAbsence);
+        sb.append("\nStatus de l'absence : ").append(status);
+
+        if(timeSlotPonctual == null) {
+            sb.append("\nTranche horaire : Non renseigné");
+        } else {
+            sb.append("\nTranche horaire  : ").append(timeSlotPonctual.toString());
+        }
+        return sb.toString();
+    }
+
 }
