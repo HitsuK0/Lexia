@@ -1,5 +1,8 @@
 package be.hers.info.ProjetIntegree.POJO;
-
+/**
+ * @author Halet Louis
+ * @reviewer Nicolas Jean-Francois
+ */
 public class BadStatusException extends Exception {
     /**
      *

@@ -17,10 +17,10 @@ public class Absence {
      * @param status           the status of the absence (it can only be among these values: 'en attente', 'accepte', 'refuse', 'absent')
      * @param timeSlotPonctual the time slot of absence
      * @throws BadStatusException   If the absence status is not among these values: 'en attente', 'accepte', 'refuse', 'absent'
-     * @throws NullPointerException if timeSlotPonctual is null
+     * @throws IllegalArgumentException if timeSlotPonctual is null
      */
     public Absence(int numAbsence, String status, TimeSlotPunctual timeSlotPonctual) throws BadStatusException {
-        if (!status.equals("en attente") || !status.equals("accepte") || !status.equals("refuse") || !status.equals("absent"))
+        if (!status.equals("en attente") && !status.equals("accepte") && !status.equals("refuse") && !status.equals("absent"))
             throw new BadStatusException("[POJOAbsence] Mauvais status de l'absence");
         if (timeSlotPonctual == null)
             throw new IllegalArgumentException("[POJOAbsence] La tranche horaire de l'absence ne peut pas être null ou vide");
@@ -36,10 +36,10 @@ public class Absence {
      * @param status           the status of the absence (it can only be among these values: 'en attente', 'accepte', 'refuse', 'absent')
      * @param timeSlotPonctual the time slot of absence
      * @throws BadStatusException   If the absence status is not among these values: 'en attente', 'accepte', 'refuse', 'absent'
-     * @throws NullPointerException if timeSlotPonctual is null
+     * @throws IllegalArgumentException if timeSlotPonctual is null
      */
     public Absence(String status, TimeSlotPunctual timeSlotPonctual) throws BadStatusException {
-        if (!status.equals("en attente") || !status.equals("accepte") || !status.equals("refuse") || !status.equals("absent"))
+        if (!status.equals("en attente") && !status.equals("accepte") && !status.equals("refuse") && !status.equals("absent"))
             throw new BadStatusException("[POJOAbsence] Mauvais status de l'absence");
         if (timeSlotPonctual == null)
             throw new IllegalArgumentException("[POJOAbsence] La tranche horaire de l'absence ne peut pas être null ou vide");
@@ -52,7 +52,7 @@ public class Absence {
      * Create an Absence with 'en attente' for status
      *
      * @param timeSlotPonctual the time slot of absence
-     * @throws NullPointerException if timeSlotPonctual is null
+     * @throws IllegalArgumentException if timeSlotPonctual is null
      */
     public Absence(TimeSlotPunctual timeSlotPonctual) {
         if (timeSlotPonctual == null)
@@ -103,7 +103,7 @@ public class Absence {
      * @throws BadStatusException If the absence status is not among these values: 'en attente', 'accepte', 'refuse', 'absent'
      */
     public void setStatus(String status) throws BadStatusException {
-        if (!status.equals("en attente") || !status.equals("accepte") || !status.equals("refuse") || !status.equals("absent"))
+        if (!status.equals("en attente") && !status.equals("accepte") && !status.equals("refuse") && !status.equals("absent"))
             throw new BadStatusException("[POJOAbsence] Mauvais status de l'absence");
         this.status = status;
     }
@@ -119,6 +119,7 @@ public class Absence {
     /**
      *
      * @param numAbsence the numero of the absence
+     * @throws IllegalArgumentException if numAbsence is negative
      */
     public void setNumAbsence(int numAbsence) {
         if (numAbsence < 0)
@@ -131,10 +132,17 @@ public class Absence {
      */
     @Override
     public String toString() {
-        return "Absence" +
-                "\nNumAbsence : " + numAbsence +
-                "\nStatus de l'absence : " + status +
-                "\nTranche horaire  : " + timeSlotPonctual.toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Absence");
+        sb.append("\nNumAbsence : ").append(numAbsence);
+        sb.append("\nStatus de l'absence : ").append(status);
+
+        if(timeSlotPonctual == null) {
+            sb.append("\nTranche horaire : Non renseigné");
+        } else {
+            sb.append("\nTranche horaire  : ").append(timeSlotPonctual.toString());
+        }
+        return sb.toString();
     }
 
 }
