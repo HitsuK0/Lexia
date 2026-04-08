@@ -132,6 +132,8 @@ public class Coordinator extends Interpreter {
      * @param numCoordinator the numero of the coordinator
      */
     public void setNumCoordinator(int numCoordinator){
+        if (numCoordinator < 0)
+            throw new IllegalArgumentException("[POJOCoordinator] Le numéro du coordinateur ne peut pas être négatif");
         this.numCoordinator=numCoordinator;
     }
     /**
