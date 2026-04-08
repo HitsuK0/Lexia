@@ -64,7 +64,7 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
                 );
                 listeProfessionalSkills.add(professionalSkillTrouve);
             }
-        } catch (SQLException ex) {
+        } catch (SQLException e) {
             System.out.println("[ERROR - DAOProfessionalSkill] ProfessionalSkill introuvable dans la BD");
         } finally {
             if (rs != null) {
@@ -79,7 +79,28 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
 
     @Override
     public boolean create(ProfessionalSkill objectToInsertInDB) throws SQLException {
-        return false;
+        boolean isInserted = false;
+        PreparedStatement prStat = null;
+
+        String query = "INSERT INTO ProfessionalSkill (numProfessionalSkill, designation) VALUES (?, ?)";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, objectToInsertInDB.getNumProfessionalSkill());
+            prStat.setString(2, objectToInsertInDB.getDesignation());
+
+            int nbLinesInsert = prStat.executeUpdate();
+            if (nbLinesInsert > 0) {
+                isInserted = true;
+            }
+        } catch (SQLException e) {
+            System.out.println("[ERROR - DAOProfessionalSkill] Impossible d'insérer un ProfessionalSkill dans la BD");
+        } finally {
+            if  (prStat != null) {
+                prStat.close();
+            }
+        }
+        return isInserted;
     }
 
     @Override
