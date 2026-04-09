@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DAOBeneficiary extends DAO<Beneficiary> {
 
@@ -80,7 +81,48 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
 
     @Override
     public boolean create(Beneficiary objectToInsertInDB) throws SQLException {
-        return false;
+        boolean isCreated = false;
+        String query = "INSERT INTO Beneficiary (numBeneficiary, firstName, " +
+                "lastName, phoneNumber, emailAddress, hourQuota, educationLevel, " +
+                "communicationLanguage, FKnumInterpreter, FKAddress) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        PreparedStatement prStat = null;
+
+        try {
+            prStat = connect.prepareStatement(query);
+
+            prStat.setInt(1, objectToInsertInDB.getNumBeneficiary());
+            prStat.setString(2, objectToInsertInDB.getName());
+            prStat.setString(3, objectToInsertInDB.getSurname());
+            prStat.setString(4, objectToInsertInDB.getPhoneNumber());
+            prStat.setString(5, objectToInsertInDB.getEmailAddress());
+            prStat.setInt(6, objectToInsertInDB.getHourQuota());
+            prStat.setInt(7, objectToInsertInDB.getEducationLevel());
+
+            String communicationLanguage = objectToInsertInDB.getCommunicationLanguage()
+                    .stream()
+                    .collect(Collectors.joining(",", "", ""));
+
+            prStat.setString(8, communicationLanguage);
+            prStat.setInt(9, objectToInsertInDB.getInterpreter().getNumInterpreter());
+            prStat.setInt(10, objectToInsertInDB.getAddress().getNumAddress());
+
+            int numberOfLines = prStat.executeUpdate();
+            if(numberOfLines > 0) {
+                isCreated = true;
+            }
+
+        } finally {
+            if(prStat != null) {
+                try {
+                    prStat.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return isCreated;
     }
 
     @Override
