@@ -2,6 +2,11 @@ package be.hers.info.ProjetIntegree.POJO;
 
 import java.util.List;
 
+/*
+    @author Halet Louis
+    @reviewer Nicolas Jean-Francois
+*/
+
 public class Coordinator extends Interpreter {
     private int numCoordinator;
     private boolean isAdmin;
@@ -127,6 +132,8 @@ public class Coordinator extends Interpreter {
      * @param numCoordinator the numero of the coordinator
      */
     public void setNumCoordinator(int numCoordinator){
+        if (numCoordinator < 0)
+            throw new IllegalArgumentException("[POJOCoordinator] Le numéro du coordinateur ne peut pas être négatif");
         this.numCoordinator=numCoordinator;
     }
     /**
@@ -135,6 +142,9 @@ public class Coordinator extends Interpreter {
      */
     @Override
     public String toString() {
-        return "NumCoordinator : " + numCoordinator + (isAdmin ? " Coordinatrice/Coordinateur principale" : " Resa") + "\n" + super.toString();
+        return "Coordinateur/Coordinatrice" +
+                "\nNumCoordinator : " + numCoordinator +
+                "\nRole : " + (isAdmin ? "Coordinatrice/Coordinateur principale" : "Resa") +
+                super.toString();
     }
 }

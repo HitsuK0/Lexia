@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * @author Vatafu Jean
- * @reviewer Nicolas Jean-François
+ * @reviewer Nicolas Jean-François, Halet Louis
  */
 
 public class Appointment {
@@ -14,8 +14,7 @@ public class Appointment {
     private List<String> appointmentLocals;
     private Beneficiary beneficiary;
     private List<Interpreter> interpreters;
-    private TimeSlotPunctual timeSlotPunctual;
-    private TimeSlotBase timeSlotBase;
+    private TimeSlot timeSlot;
     private List<AcademicSkill> academicSkillsNeeded;
     private List<ProfessionalSkill> professionalSkillsNeeded;
 
@@ -26,8 +25,7 @@ public class Appointment {
     public Appointment() {
         status = "en attente";
         appointmentLocals = new ArrayList<String>();
-        timeSlotPunctual = null;
-        timeSlotBase = null;
+        timeSlot = null;
         beneficiary = null;
         academicSkillsNeeded = new ArrayList<AcademicSkill>();
         professionalSkillsNeeded = new ArrayList<ProfessionalSkill>();
@@ -35,34 +33,22 @@ public class Appointment {
     }
 
     /**
-     * Initialize an Appointment with beneficiary, appointmentLocals, interpreters, specialists, academicSkillsNeeded, professionalSkillsNeeded
-,
-     * timeSlotPunctual, timeSlotBase and sets the status to 'en attente' by default
+     * Initialize an Appointment with beneficiary, appointmentLocals, interpreters, specialists, academicSkillsNeeded, professionalSkillsNeeded,
+     * timeSlot and sets the status to 'en attente' by default
      * @param numAppointment The id of the Appointment
      * @param beneficiary The Beneficiary concerned
      * @param appointmentLocals List of local(s) where the Appointment will take place, can be null
      * @param interpreters List of Interpretes that will participate
      * @param academicSkillsNeeded List of academic skills needed, can be null
      * @param professionalSkillsNeeded List of business skills needed
-     * @param timeSlotPunctual For every non-repetitive Appointment, can be null
-     * @param timeSlotBase For every repetitive Appointment, can be null
-     *                     Note: an Appointment is either a timeSlotPunctual or a timeSlotBase, but not both at the same time
-     * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters is null
+     * @param timeSlot For every repetitive or non-repetitive Appointment
+     * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters or timeSlot is null
      *                                  If interpreters or professionalSkillsNeeded is empty
-     *                                  If timeSlotPunctual and timeSlotBase are not null
      */
     public Appointment(int numAppointment, Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
-            ,TimeSlotPunctual timeSlotPunctual, TimeSlotBase timeSlotBase) {
-        if(beneficiary == null || interpreters == null || professionalSkillsNeeded == null) {
-            throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes et les compétences professionnelles ne peuvent pas être null.");
-        }
-
-        if(timeSlotBase == null && timeSlotPunctual == null) {
-            throw new IllegalArgumentException("[POJOAppointment] Un créneau (ponctuel ou récurrent) doit être défini.");
-        }
-
-        if(timeSlotPunctual != null && timeSlotBase != null) {
-            throw new IllegalArgumentException("[POJOAppointment] Un rendez-vous ne peut pas être à la fois ponctuel et récurrent.");
+            ,TimeSlot timeSlot) {
+        if(beneficiary == null || interpreters == null || professionalSkillsNeeded == null || timeSlot == null) {
+            throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes, la tranche horaire et les compétences professionnelles ne peuvent pas être null.");
         }
 
         if(interpreters.isEmpty()|| professionalSkillsNeeded.isEmpty()) {
@@ -74,41 +60,27 @@ public class Appointment {
         this.status = "en attente";
         this.appointmentLocals = appointmentLocals;
         this.interpreters = interpreters;
-        this.timeSlotPunctual = timeSlotPunctual;
-        this.timeSlotBase = timeSlotBase;
+        this.timeSlot = timeSlot;
         this.academicSkillsNeeded = academicSkillsNeeded;
         this.professionalSkillsNeeded = professionalSkillsNeeded;
     }
 
     /**
-     * Initialize an Appointment with beneficiary, appointmentLocals, interpreters, specialists, academicSkillsNeeded, professionalSkillsNeeded
-     ,
-     * timeSlotPunctual, timeSlotBase and sets the status to 'en attente' by default
+     * Initialize an Appointment with beneficiary, appointmentLocals, interpreters, specialists, academicSkillsNeeded, professionalSkillsNeeded,
+     * timeSlot and sets the status to 'en attente' by default
      * @param beneficiary The Beneficiary concerned
      * @param appointmentLocals List of local(s) where the Appointment will take place, can be null
      * @param interpreters List of Interpretes that will participate
      * @param academicSkillsNeeded List of academic skills needed, can be null
      * @param professionalSkillsNeeded List of business skills needed
-     * @param timeSlotPunctual For every non-repetitive Appointment, can be null
-     * @param timeSlotBase For every repetitive Appointment, can be null
-     *                     Note: an Appointment is either a timeSlotPunctual or a timeSlotBase, but not both at the same time
-     * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters is null
+     * @param timeSlot For every repetitive and non-repetitive Appointment
+     * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters or timeSlot is null
      *                                  If interpreters or professionalSkillsNeeded is empty
-     *                                  If timeSlotPunctual and timeSlotBase are not null
-     *                                  If numAppointment is negative
      */
     public Appointment(Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
-            ,TimeSlotPunctual timeSlotPunctual, TimeSlotBase timeSlotBase) {
-        if(beneficiary == null || interpreters == null || professionalSkillsNeeded == null) {
-            throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes et les compétences professionnelles ne peuvent pas être null.");
-        }
-
-        if(timeSlotBase == null && timeSlotPunctual == null) {
-            throw new IllegalArgumentException("[POJOAppointment] Un créneau (ponctuel ou récurrent) doit être défini.");
-        }
-
-        if(timeSlotPunctual != null && timeSlotBase != null) {
-            throw new IllegalArgumentException("[POJOAppointment] Un rendez-vous ne peut pas être à la fois ponctuel et récurrent.");
+            ,TimeSlot timeSlot) {
+        if(beneficiary == null || interpreters == null || professionalSkillsNeeded == null || timeSlot == null) {
+            throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes, la tranche horaire et les compétences professionnelles ne peuvent pas être null.");
         }
 
         if(interpreters.isEmpty() || professionalSkillsNeeded.isEmpty()) {
@@ -119,8 +91,7 @@ public class Appointment {
         this.status = "en attente";
         this.appointmentLocals = appointmentLocals;
         this.interpreters = interpreters;
-        this.timeSlotPunctual = timeSlotPunctual;
-        this.timeSlotBase = timeSlotBase;
+        this.timeSlot = timeSlot;
         this.academicSkillsNeeded = academicSkillsNeeded;
         this.professionalSkillsNeeded = professionalSkillsNeeded;
     }
@@ -166,19 +137,11 @@ public class Appointment {
     }
 
     /**
-     * @return the time slot punctual, only for non-repetitive Appointments
+     * @return the time slot
      */
-    public TimeSlotPunctual getTimeSlotPunctual() {
+    public TimeSlot getTimeSlot() {
 
-        return timeSlotPunctual;
-    }
-
-    /**
-     * @return the time slot base, only for repetitive Appointments
-     */
-    public TimeSlotBase getTimeSlotBase() {
-
-        return timeSlotBase;
+        return timeSlot;
     }
 
     /**
@@ -202,6 +165,9 @@ public class Appointment {
      */
     public void setNumAppointment(int id) {
 
+        if(id < 0) {
+            throw new IllegalArgumentException("[POJOAppointment] Le id ne peut pas être négatif.");
+        }
         this.numAppointment = id;
     }
 
@@ -252,37 +218,15 @@ public class Appointment {
     }
 
     /**
-     * @param timeSlotPunctual the time slot punctual
-     * @throws IllegalArgumentException if timeSlotPunctual is null
-     *                                  if timeSlotBase is already set
+     * @param timeSlot the time slot
+     * @throws IllegalArgumentException if timeSlot is null
      */
-    public void setTimeSlotPunctual(TimeSlotPunctual timeSlotPunctual) {
-        if(timeSlotPunctual == null) {
-            throw new IllegalArgumentException("[POJOAppointment] Le créneau ponctuel ne peut pas être null.");
+    public void setTimeSlot(TimeSlot timeSlot) {
+        if(timeSlot == null) {
+            throw new IllegalArgumentException("[POJOAppointment] Le créneau ne peut pas être null.");
         }
 
-        if(timeSlotBase != null) {
-            throw new IllegalArgumentException("[POJOAppointment] Impossible de définir un créneau ponctuel si un créneau récurrent est déjà défini.");
-        }
-
-        this.timeSlotPunctual = timeSlotPunctual;
-    }
-
-    /**
-     * @param timeSlotBase the time slot base
-     * @throws IllegalArgumentException if timeSlotBase is null
-     *                                  if timeSlotPunctual is already set
-     */
-    public void setTimeSlotBase(TimeSlotBase timeSlotBase) {
-        if(timeSlotBase == null) {
-            throw new IllegalArgumentException("[POJOAppointment] Le créneau récurrent ne peut pas être null.");
-        }
-
-        if(timeSlotPunctual != null) {
-            throw new IllegalArgumentException("[POJOAppointment] Impossible de définir un créneau récurrent si un créneau ponctuel est déjà défini.");
-        }
-
-        this.timeSlotBase = timeSlotBase;
+        this.timeSlot = timeSlot;
     }
 
     /**
@@ -322,7 +266,7 @@ public class Appointment {
     /**
      * @param status the status
      * @throws IllegalArgumentException if status is null
-     * @throws BadStatusException if status is different from 'accepte' or 'refuse'
+     * @throws BadStatusException if status is different from 'accepte', 'refuse' or 'en attente'
      *                            if status is the same as the already set status
      *                            if the current status is not equals to 'en attente'
      */
@@ -332,15 +276,15 @@ public class Appointment {
         }
 
         if(this.status.equals(status)) {
-            throw new BadStatusException();
+            throw new BadStatusException("[POJOAppointment] Le status status est déja "+this.status);
         }
 
-        if(!(status.equals("accepte") || status.equals("refuse"))) {
-            throw new BadStatusException();
+        if(!(status.equals("accepte") || status.equals("refuse") || status.equals("en attente"))) {
+            throw new BadStatusException("[POJOAppointment] "+status+ " n'est pas un status valide.");
         }
 
         if(!this.status.equals("en attente")) {
-            throw new BadStatusException();
+            throw new BadStatusException("[POJOAppointment] Le status ne peut plus être modifié.");
         }
 
         this.status = status;
@@ -348,8 +292,8 @@ public class Appointment {
 
     /**
      * @return a String containing the appointment ID, the status, the beneficiary, the interpreters,
-     *         the locals, the academic skills needed, the business skills needed,
-     *         the time slot punctual and the time slot base
+     *         the locals, the academic skills needed, the business skills needed and
+     *         the time slot
      */
     public String toString() {
 
@@ -357,7 +301,20 @@ public class Appointment {
         stringBuild.append("Rendez-vous\n");
         stringBuild.append("Id : ").append(this.numAppointment).append("\n");
         stringBuild.append("Statut : ").append(this.status).append("\n");
-        stringBuild.append("Bénéficiaire : ").append(this.beneficiary).append("\n");
+
+        stringBuild.append("Bénéficiaire : ");
+        if(this.beneficiary == null) {
+            stringBuild.append("Aucun bénéficiaire attribué\n");
+        } else {
+                stringBuild.append(this.beneficiary).append("\n");
+        }
+
+        stringBuild.append("Créneau : ");
+        if(this.timeSlot == null) {
+            stringBuild.append("Aucun créneau attribué\n");
+        } else {
+            stringBuild.append(this.timeSlot).append("\n");
+        }
 
         stringBuild.append("Local :\n");
         if(this.appointmentLocals == null || this.appointmentLocals.isEmpty()) {
