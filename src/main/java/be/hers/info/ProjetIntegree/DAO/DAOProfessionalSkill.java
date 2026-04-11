@@ -10,7 +10,7 @@ import java.util.List;
 
 public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
 
-    @Override // Mettre en int et pas en string ??
+    @Override
     public ProfessionalSkill find(String idToSearch) throws SQLException {
         PreparedStatement prStat = null;
         ResultSet rs = null;
@@ -31,17 +31,23 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
                         rs.getString("designation")
                 );
             }
-        } catch (SQLException e) {
-            System.out.println("[ERROR - DAOProfessionalSkill] ProfessionalSkill introuvable dans la BD");
         } finally {
             if (rs != null) {
-                rs.close();
+                try {
+                    rs.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
             if (prStat != null) {
-                prStat.close();
+                try {
+                    prStat.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
+            return professionalSkillTrouve;
         }
-        return professionalSkillTrouve;
     }
 
     @Override
@@ -66,6 +72,7 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
             }
         } catch (SQLException e) {
             System.out.println("[ERROR - DAOProfessionalSkill] ProfessionalSkill introuvable dans la BD");
+            return null;
         } finally {
             if (rs != null) {
                 rs.close();
