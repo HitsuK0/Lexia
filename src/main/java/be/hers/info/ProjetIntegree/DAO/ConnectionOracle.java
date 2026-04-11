@@ -20,6 +20,7 @@ public class ConnectionOracle {
             throw new RuntimeException("Échec connexion Oracle", e);
         }
     }
+
     /**
      * 
      * @return The database connection singleton. Create a connection if it does not exist.

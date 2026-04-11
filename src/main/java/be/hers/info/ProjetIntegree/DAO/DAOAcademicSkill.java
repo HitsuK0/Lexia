@@ -1,6 +1,8 @@
 package be.hers.info.ProjetIntegree.DAO;
 
 
+import be.hers.info.ProjetIntegree.POJO.AcademicSkill;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,78 +13,77 @@ import java.util.ArrayList;
 
 public class DAOAcademicSkill extends DAO<AcademicSkill>{
 
-    /**
-     * Searches for the object whosppakce identifier matches the String passed as a parameter.
-     * @param objectToSearchInDB the identifier of the object to search for in the table.
-     * @return The object whose identifier matches the String passed as a parameter. null if there is no object matching the String passed as a parameter.
-     * @throws SQLException In case of any SQL problems encountered with this method.
-     */
-    public AcademicSkill find(String objectToSearchInDB) throws SQLException{
-        String query = "select * from AcademicSkill where ID_academic_skill = ?";
+
+    public AcademicSkill find(int objectToSearchInDB) throws SQLException{
+        String query = "select * from AcademicSkill where numAcademicSkill = ?";
         AcademicSkill as = null;
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
         try{
-            PreparedStatement prStat = ConnectionOracle.getInstance().prepareStatement(query);
-            prStat.setString(1, objectToSearchInDB.getId());
-            ResultSet rs = prStat.executeQuery();
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, objectToSearchInDB);
+            rs = prStat.executeQuery();
             if(rs.next()){
-                as = new AcademicSkill(rs.getInt("ID_academic_skill"), rs.getString("designation"));
+                as = new AcademicSkill(rs.getString("designation"));
             }
         }
         finally {
-            try{
-                prStat.close();
+            if(rs != null){
+                try{
+                    rs.close();
+                }
+                catch(SQLException e){
+                    System.out.println(e.getMessage());
+                }
             }
-            catch(SQLException e){
-                System.out.println(e.getMessage());
-            }
-            try{
-                rs.close();
-            }
-            catch(SQLException e){
-                System.out.println(e.getMessage());
+            if(prStat != null){
+                try{
+                    prStat.close();
+                }
+                catch(SQLException e){
+                    e.printStackTrace();
+                }
             }
         }
         return as;
     }
-    /**
-     * Create a list containing all the objects in the table.
-     * @return a list containing all the objects in the table or an empty list if the table is empty.
-     * @throws SQLException In case of any SQL problems encountered with this method.
-     */
+
+
     public List<AcademicSkill> findAll() throws SQLException{
         String query = "select * from AcademicSkill";
         List<AcademicSkill> list = new ArrayList<AcademicSkill>();
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
         try {
-            PreparedStatement prStat = ConnectionOracle.getInstance().prepareStatement(query);
-            ResultSet rs = prStat.executeQuery();
+            prStat = connect.prepareStatement(query);
+            rs = prStat.executeQuery();
             while(rs.next()){
-                AcademicSkill as = new AcademicSkill(rs.getInt("ID_academic_skill"), rs.getString("designation"));
+                AcademicSkill as = new AcademicSkill(rs.getString("designation"));
                 list.add(as);
             }
         }
         finally {
-            try{
-                prStat.close();
+            if(rs != null){
+                try{
+                    rs.close();
+                }
+                catch(SQLException e){
+                    System.out.println(e.getMessage());
+                }
             }
-            catch(SQLException e){
-                System.out.println(e.getMessage());
-            }
-            try{
-                rs.close();
-            }
-            catch(SQLException e){
-                System.out.println(e.getMessage());
+            if(prStat != null){
+                try{
+                    prStat.close();
+                }
+                catch(SQLException e){
+                    e.printStackTrace();
+                }
             }
         }
         return list;
     }
-    /**
-     * Precondition: the object passed as a parameter cannot be null.
-     * Adds the object passed as a parameter to the table.
-     * @param objectToInsertInDB the object to be inserted into the table.
-     * @return true if the object was successfully inserted, false otherwise.
-     * @throws SQLException In case of any SQL problems encountered with this method.
-     */
+
+
     public boolean create(AcademicSkill objectToInsertInDB) throws SQLException {
         boolean isCreated = false;
         String query = "insert into Academic_skill(designation) values (?)";
@@ -106,13 +107,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         return isCreated;
     }
 
-    /**
-     * Precondition: the object passed as a parameter cannot be null.
-     * Updates all object fields in the table (except its identifier) ​​that correspond to the object identifier passed as a parameter.
-     * @param objectToUpdateInDB the object containing the identifier and the fields to be updated in the table.
-     * @return true if the object has been successfully updated, false otherwise.
-     * @throws SQLException In case of any SQL problems encountered with this method.
-     */
+
     public boolean update(AcademicSkill objectToUpdateInDB) throws SQLException {
         boolean isUpdated = false;
         String query = "update Academic_skill set designation = ? where id = ?";
@@ -135,13 +130,8 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         }
         return isUpdated;
     }
-    /**
-     * Precondition: the object passed as a parameter cannot be null.
-     * Deletes the object where its identifier matches the identifier of the object passed as a parameter.
-     * @param objectToDeleteFormDB the object to be deleted from the table.
-     * @return true if the object was successfully deleted, false otherwise.
-     * @throws SQLException In case of any SQL problems encountered with this method.
-     */
+
+
     public boolean delete(AcademicSkill objectToDeleteFormDB) throws SQLException {
         boolean isDeleted = false;
         String query = "delete from Academic_skill where id = ? and designation = ?";
