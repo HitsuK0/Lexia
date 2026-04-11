@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
 
+    @Override
     public TimeSlotPunctual find(int objectToSearchInDB) throws SQLException{
         TimeSlotPunctual timeSlotPunctual = null;
         String query = "SELECT * FROM TimeSlotPunctual WHERE numTimeSlot = ?";
@@ -52,6 +53,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
     }
 
 
+    @Override
     public List<TimeSlotPunctual> findAll() throws SQLException{
         String query = "SELECT * FROM TimeSlotPunctual";
         ArrayList<TimeSlotPunctual> timeSlotPunctuals = new ArrayList<>();
@@ -91,7 +93,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         return timeSlotPunctuals;
     }
 
-
+    @Override
     public boolean create(TimeSlotPunctual objectToInsertInDB) throws SQLException{
         boolean isInserted = false;
         String query = "INSERT INTO TimeSlotPunctual(startTime, duration, startDate, endDate) " +
@@ -123,6 +125,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
     }
 
 
+    @Override
     public boolean update(TimeSlotPunctual objectToUpdateInDB) throws SQLException{
         boolean isUpdated = false;
         String query = "UPDATE TimeSlotPunctual SET startTime = ?, duration = ?, " +
@@ -156,6 +159,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
     }
 
 
+    @Override
     public boolean delete(TimeSlotPunctual objectToDeleteFormDB) throws SQLException{
         boolean isDeleted = false;
         String query = "DELETE FROM TimeSlotPunctual WHERE numTimeSlot = ?";
