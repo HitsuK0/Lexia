@@ -107,5 +107,32 @@ public class AbsenceTest {
         assertThrows(IllegalArgumentException.class, () -> new Absence("en attente", null));
     }
 
+    // Constructor (timeSlotPunctual only) //
 
+    /**
+     * Tests that constructor with only a TimeSlotPunctual sets the status to "en attente".
+     * Given : a valid TimeSlotPunctual
+     * When  : an Absence is created with only timeSlot
+     * Then  : getStatus() must return "en attente"
+     */
+    @Test
+    void constructor_WithTimeSlotOnly_StatusIsEnAttente(){
+        Absence a = new Absence(timeSlot);
+        assertEquals("en attente", a.getStatus());
+        assertEquals(timeSlot, a.getTimeSlotPonctual());
+    }
+
+    /**
+     * Tests that the constructor with only a TimeSlotPunctual throws an {@link IllegalArgumentException} when the timeSlot is null.
+     * Given : a null TimeSlotPunctual
+     * When  : an Absence is created with null
+     * Then  : an IllegalArgumentException must be thrown
+     */
+    @Test
+    void constructor_WhitNullTimeSlotOnly_RaisesAnException(){
+        assertThrows(IllegalArgumentException.class, () -> new Absence((TimeSlotPunctual) null));
+    }
+
+
+    
 }
