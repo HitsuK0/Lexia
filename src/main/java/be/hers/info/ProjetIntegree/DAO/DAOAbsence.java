@@ -99,7 +99,35 @@ public class DAOAbsence extends DAO<Absence> {
 
     @Override
     public boolean create(Absence objectToInsertInDB) throws SQLException {
-        return false;
+        boolean isCreated = false;
+        PreparedStatement preparedStatement = null;
+
+        String query = "INSERT INTO Absence(numAbsence, status, FKTimeSlotPunctual, FKnumInterpreter) " +
+                "VALUES (?, ?, ?, ?)";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+
+            preparedStatement.setInt(1, objectToInsertInDB.getNumAbsence());
+            preparedStatement.setString(2, objectToInsertInDB.getStatus());
+            preparedStatement.setInt(3, objectToInsertInDB.getTimeSlotPonctual().getNumTimeSlot());
+
+            // Problème ici : je ne sais pas comment ajouter l'id de l'interpreter si l'objet ne l'a pas de base ????
+
+            if(preparedStatement.executeUpdate() > 0) {
+                isCreated = true;
+            }
+        } finally {
+            if(preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return isCreated;
     }
 
     @Override
@@ -109,6 +137,30 @@ public class DAOAbsence extends DAO<Absence> {
 
     @Override
     public boolean delete(Absence objectToDeleteFormDB) throws SQLException {
-        return false;
+        boolean isDeleted = false;
+        PreparedStatement preparedStatement = null;
+
+        String query = "DELETE FROM Absence " +
+                "WHERE numAbsence = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+
+            preparedStatement.setInt(1, objectToDeleteFormDB.getNumAbsence());
+
+            if(preparedStatement.executeUpdate() > 0) {
+                isDeleted = true;
+            }
+        } finally {
+            if(preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return isDeleted;
     }
 }
