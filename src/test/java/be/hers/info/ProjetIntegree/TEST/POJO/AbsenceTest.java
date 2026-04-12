@@ -45,7 +45,7 @@ public class AbsenceTest {
     void constructor_WithValidArguments_SetsAllFields() throws BadStatusException{
         assertEquals(1, absence.getNumAbsence());
         assertEquals("en attente", absence.getStatus());
-        assertEquals(timeSlot, absence.getTimeSlotPonctual());
+        assertEquals(timeSlot, absence.getTimeSlotPunctual());
     }
 
     /**
@@ -82,7 +82,7 @@ public class AbsenceTest {
     void constructor_WithoutNumAbsence_SetsStatusAndTimeSlot() throws BadStatusException {
         Absence a = new Absence("accepte", timeSlot);
         assertEquals("accepte", a.getStatus());
-        assertEquals(timeSlot, a.getTimeSlotPonctual());
+        assertEquals(timeSlot, a.getTimeSlotPunctual());
     }
 
     /**
@@ -119,7 +119,7 @@ public class AbsenceTest {
     void constructor_WithTimeSlotOnly_StatusIsEnAttente(){
         Absence a = new Absence(timeSlot);
         assertEquals("en attente", a.getStatus());
-        assertEquals(timeSlot, a.getTimeSlotPonctual());
+        assertEquals(timeSlot, a.getTimeSlotPunctual());
     }
 
     /**
@@ -145,7 +145,7 @@ public class AbsenceTest {
     void defaultConstructor_StatusIsEnAttenteAndTimeSlotIsNull() {
         Absence a = new Absence();
         assertEquals("en attente", a.getStatus());
-        assertNull(a.getTimeSlotPonctual());
+        assertNull(a.getTimeSlotPunctual());
     }
 
     // getNumAbsence //
@@ -184,7 +184,7 @@ public class AbsenceTest {
      */
     @Test
     void getTimeSlotPunctual_ReturnsTheCorrectValue(){
-        assertEquals(timeSlot, absence.getTimeSlotPonctual());
+        assertEquals(timeSlot, absence.getTimeSlotuual());
     }
 
     // setNumAbsence //
@@ -248,8 +248,8 @@ public class AbsenceTest {
     @Test
     void setTimeSlotPunctual_UpdatesTheCorrectValue(){
         TimeSlotPunctual newSlot = new TimeSlotPunctual(LocalTime.of(10, 0), LocalTime.of(2, 0), LocalDate.of(2025, 6, 1));
-        absence.setTimeSlotPonctual(newSlot);
-        assertEquals(newSlot, absence.getTimeSlotPonctual());
+        absence.setTimeSlotPunctual(newSlot);
+        assertEquals(newSlot, absence.getTimeSlotPunctual());
     }
 
     /**
@@ -260,6 +260,30 @@ public class AbsenceTest {
      */
     @Test
     void setTimeSlotPunctual_WithNull_RaisesAnException(){
-        assertThrows(IllegalArgumentException.class, () -> absence.setTimeSlotPonctual(null));
+        assertThrows(IllegalArgumentException.class, () -> absence.setTimeSlotPunctual(null));
+    }
+
+    // toString //
+
+    /**
+     * Tests that {@code toString()} contains the label "Absence"
+     * Given : a valid Absence
+     * When  : toString() is called
+     * Then  : the result must contain "Absence"
+     */
+    @Test
+    void toString_ContainsLabel(){
+        assertTrue(absence.toString().contains("Absence"));
+    }
+
+    /**
+     * Tests that {@code toString()} contains the current status.
+     * Given : an Absence with status="en attente"
+     * When  : toString() is called
+     * Then  : the result must contain "en attente"
+     */
+    @Test
+    void toString_ContainsStatus(){
+        assertTrue(absence.toString().contains("en attente"));
     }
 }
