@@ -147,5 +147,46 @@ public class AbsenceTest {
         assertEquals("en attente", a.getStatus());
         assertNull(a.getTimeSlotPonctual());
     }
-    
+
+    // getNumAbsence //
+
+    /**
+     * Tests that {@code getNumAbsence()} returns the correct id.
+     * Given : an Absence initialized with numAbsence=1
+     * When  : getNumAbsence() is called
+     * Then  : The returned value must equal 1
+     */
+    @Test
+    void getNumAbsence_ReturnsTheCorrectValue(){
+        assertEquals(1, absence.getNumAbsence());
+    }
+
+    // getStatus //
+
+    /**
+     * Tests that {@code getStatus()} returns the correct status.
+     * Given : an Absence initialized with status="en attente"
+     * When  : getStatus() is called
+     * Then  : The returned value must equal "en attente"
+     */
+    @Test
+    void getStatus_ReturnsTheCorrectValue(){
+        assertEquals("en attente", absence.getStatus());
+    }
+
+    // getTimeSlotPunctual //
+
+    /**
+     * Tests that {@code getTimeSlotPunctual()} returns the correct timeSlot.
+     * Given : an Absence initialized with a TimeSlotPunctual
+     * When  : getTimeSlotPunctual() is called
+     * Then  : The returned value must equal the given timeSlot
+     */
+    @Test
+    void getTimeSlotPunctual_ReturnsTheCorrectValue(){
+        assertEquals(timeSlot, absence.getTimeSlotPonctual());
+    }
+
+
+
 }
