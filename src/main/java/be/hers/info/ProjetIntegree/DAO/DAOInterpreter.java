@@ -30,7 +30,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
         ResultSet rs = null;
         Interpreter interpreterFind = null;
 
-        String query = "SELECT * " +
+        String query = "SELECT numInterpreter, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, numAddress " +
                 "FROM Interpreter " +
                 "WHERE numInterpreter = ?";
 
@@ -41,7 +41,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
 
             if(rs.next()) {
                 DAOAddress daoAddress = new DAOAddress();
-                Address address = daoAddress.find(rs.getInt("numAdress"));
+                Address addressInterpreter = daoAddress.find(rs.getInt("numAddress"));
 
                 interpreterFind = new Interpreter(
                         rs.getInt("numInterpreter"),
@@ -50,7 +50,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
                         rs.getString("emailAddress"),
                         rs.getString("phoneNumber"),
                         rs.getInt("weeklyWorkHours"),
-                        address
+                        addressInterpreter
                 );
             }
         } finally {
@@ -85,7 +85,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
         PreparedStatement prStat = null;
         ResultSet rs = null;
 
-        String query = "SELECT * " +
+        String query = "SELECT numInterpreter, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, numAddress " +
                 "FROM Interpreter";
 
         try {
@@ -94,7 +94,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
 
             while(rs.next()) {
                 DAOAddress daoAddress = new DAOAddress();
-                Address address = daoAddress.find(rs.getInt("numAdress"));
+                Address addressInterpreter = daoAddress.find(rs.getInt("numAdress"));
 
                 Interpreter interpreterFind = new Interpreter(
                         rs.getInt("numInterpreter"),
@@ -103,7 +103,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
                         rs.getString("emailAddress"),
                         rs.getString("phoneNumber"),
                         rs.getInt("weeklyWorkHours"),
-                        address
+                        addressInterpreter
                 );
                 interpreterList.add(interpreterFind);
             }
