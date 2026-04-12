@@ -24,13 +24,13 @@ public class AcademicSkillTest {
     // Constructor with parameter //
 
     @Test
-    void constructorWithValidDesignation() {
+    void constructor_WithValidDesignation() {
         AcademicSkill a = new AcademicSkill("Informatique");
         assertEquals("Informatique", a.getDesignation());
     }
 
     @Test
-    void constructorWithNullDesignationRaiseException() {
+    void constructor_WithNullDesignationRaiseAnException() {
         assertThrows(IllegalArgumentException.class, () -> new AcademicSkill(null));
     }
 
@@ -45,17 +45,29 @@ public class AcademicSkillTest {
     // getDesignation //
 
     @Test
-    void getDesignationReturnTheCorrectValue() {
+    void getDesignation_ReturnTheCorrectValue() {
         assertEquals("Mathématiques", skill.getDesignation());
     }
 
     // setDesignation //
 
     @Test
-    void setDesignationChangeTheCorrectValue() {
+    void setDesignation_ChangeTheCorrectValue() {
         skill.setDesignation("Physique");
         assertEquals("Physique", skill.getDesignation());
     }
+
+    @Test
+    void setDesignation_WithNullRaiseAnException() {
+        assertThrows(IllegalArgumentException.class, () -> skill.setDesignation(null));
+    }
+
+    @Test
+    void setDesignation_EmptyStringIsAccept() {
+        assertDoesNotThrow(() -> skill.setDesignation(""));
+        assertEquals("", skill.getDesignation());
+    }
+
 
     
 }
