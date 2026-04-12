@@ -61,14 +61,51 @@ public class AbsenceTest {
 
     /**
      * Tests that the full constructor throws a {@link IllegalArgumentException} when the TimeSlotPunctual is null.
-     * Given : a null TimeSlotPunctual"
+     * Given : a null TimeSlotPunctual
      * When  : an Absence is created with null timeSlot
      * Then  : a IllegalArgumentException must be thrown
      */
     @Test
     void constructor_WhitNullTimeSlot_RaisesAnException(){
-        assertThrows(IllegalArgumentException.class, () -> new Absence(1, "invalide", null));
+        assertThrows(IllegalArgumentException.class, () -> new Absence(1, "en attente", null));
     }
 
     // Constructor (status, timeSlotPunctual) //
+
+    /**
+     * Tests that the constructor without numAbsence correctly sets status and timeSlot.
+     * Given : status="accepte" and a valid TimeSlotPunctual
+     * When  : an Absence is created without numAbsence
+     * Then  : getStatus() must return "accepte" and getTimeSlotPunctual() must return the timeSlot
+     */
+    @Test
+    void constructor_WithoutNumAbsence_SetsStatusAndTimeSlot() throws BadStatusException {
+        Absence a = new Absence("accepte", timeSlot);
+        assertEquals("accepte", a.getStatus());
+        assertEquals(timeSlot, a.getTimeSlotPonctual());
+    }
+
+    /**
+     * Tests that the constructor without numAbsence throws a {@link BadStatusException} when an invalid status is provided.
+     * Given : an invalid status "mauvais"
+     * When  : an Absence is created without numAbsence and with this status
+     * Then  : a BadStatusException must be thrown
+     */
+    @Test
+    void constructor_WithoutNumAbsence_InvalidStatus_RaisesABadStatusException(){
+        assertThrows(BadStatusException.class, () -> new Absence("mauvais", timeSlot));
+    }
+
+    /**
+     * Tests that the constructor without numAbsence throws a {@link IllegalArgumentException} when the TimeSlotPunctual is null.
+     * Given : a null TimeSlotPunctual
+     * When  : an Absence is created without numAbsence and with null timeSlot
+     * Then  : a IllegalArgumentException must be thrown
+     */
+    @Test
+    void constructor_WithoutNumAbsence_WhitNullTimeSlot_RaisesAnException(){
+        assertThrows(IllegalArgumentException.class, () -> new Absence("en attente", null));
+    }
+
+
 }
