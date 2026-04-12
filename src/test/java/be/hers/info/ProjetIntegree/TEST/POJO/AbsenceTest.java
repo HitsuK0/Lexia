@@ -58,4 +58,17 @@ public class AbsenceTest {
     void constructor_WithInvalidStatus_RaisesABadStatusException(){
         assertThrows(BadStatusException.class, () -> new Absence(1, "invalide", timeSlot));
     }
+
+    /**
+     * Tests that the full constructor throws a {@link IllegalArgumentException} when the TimeSlotPunctual is null.
+     * Given : a null TimeSlotPunctual"
+     * When  : an Absence is created with null timeSlot
+     * Then  : a IllegalArgumentException must be thrown
+     */
+    @Test
+    void constructor_WhitNullTimeSlot_RaisesAnException(){
+        assertThrows(IllegalArgumentException.class, () -> new Absence(1, "invalide", null));
+    }
+
+    // Constructor (status, timeSlotPunctual) //
 }
