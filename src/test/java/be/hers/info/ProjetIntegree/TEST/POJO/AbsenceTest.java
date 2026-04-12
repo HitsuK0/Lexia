@@ -187,6 +187,8 @@ public class AbsenceTest {
         assertEquals(timeSlot, absence.getTimeSlotPonctual());
     }
 
+    // setNumAbsence //
 
+    
 
 }
