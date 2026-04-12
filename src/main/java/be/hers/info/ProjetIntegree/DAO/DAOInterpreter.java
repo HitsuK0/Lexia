@@ -9,6 +9,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Wellinger Chloé
+ * @reviewer Nicolas Jean-Francois, Halet Louis
+ */
+
 public class DAOInterpreter extends DAO<Interpreter> {
 
     @Override
@@ -17,7 +22,9 @@ public class DAOInterpreter extends DAO<Interpreter> {
         ResultSet rs = null;
         Interpreter interpreterFind = null;
 
-        String query = "SELECT * FROM Interpreter WHERE numInterpreter = ?";
+        String query = "SELECT * " +
+                "FROM Interpreter " +
+                "WHERE numInterpreter = ?";
 
         try {
             prStat = connect.prepareStatement(query);
@@ -26,7 +33,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
 
             if(rs.next()) {
                 DAOAddress daoAddress = new DAOAddress();
-                Address address = daoAddress.find(rs.getInt"numAdress"));
+                Address address = daoAddress.find(rs.getInt("numAdress"));
 
                 interpreterFind = new Interpreter(
                         rs.getInt("numInterpreter"),
@@ -63,7 +70,8 @@ public class DAOInterpreter extends DAO<Interpreter> {
         PreparedStatement prStat = null;
         ResultSet rs = null;
 
-        String query = "SELECT * FROM Interpreter";
+        String query = "SELECT * " +
+                "FROM Interpreter";
 
         try {
             prStat = connect.prepareStatement(query);
@@ -139,11 +147,64 @@ public class DAOInterpreter extends DAO<Interpreter> {
 
     @Override
     public boolean update(Interpreter objectToUpdateInDB) throws SQLException {
-        
+        boolean isUpdated = false;
+        PreparedStatement prStat = null;
+
+        String query = "UPDATE Interpreter " +
+                "SET lastName = ?, firstName = ?, emailAddress = ?, phoneNumber = ?, weeklyWorkHours = ?, numAddress = ?" +
+                " WHERE numInterpreter = ?";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setString(1, objectToUpdateInDB.getLastName());
+            prStat.setString(2, objectToUpdateInDB.getFirstName());
+            prStat.setString(3, objectToUpdateInDB.getEmail());
+            prStat.setString(4, objectToUpdateInDB.getPhoneNumber());
+            prStat.setInt(5, objectToUpdateInDB.getWeeklyWorkHours());
+            prStat.setInt(6, objectToUpdateInDB.getAddress().getNumAddress());
+            prStat.setInt(7, objectToUpdateInDB.getNumInterpreter());
+
+            int nbLinesUpdate = prStat.executeUpdate();
+            if(nbLinesUpdate > 0) {
+                isUpdated = true;
+            }
+        } finally {
+            if (prStat != null) {
+                try {
+                    prStat.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return isUpdated;
     }
 
     @Override
     public boolean delete(Interpreter objectToDeleteFormDB) throws SQLException {
-        return false;
+        boolean isDeleted = false;
+        PreparedStatement prStat = null;
+
+        String query = "DELETE FROM Interpreter " +
+                "WHERE numInterpreter = ?";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, objectToDeleteFormDB.getNumInterpreter());
+
+            int nbLinesDelete = prStat.executeUpdate();
+            if(nbLinesDelete > 0) {
+                isDeleted = true;
+            }
+        } finally {
+            if (prStat != null) {
+                try {
+                    prStat.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return isDeleted;
     }
 }
