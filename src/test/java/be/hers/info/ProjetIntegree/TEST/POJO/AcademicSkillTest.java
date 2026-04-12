@@ -27,5 +27,16 @@ public class AcademicSkillTest {
         assertEquals("Informatique", a.getDesignation());
     }
 
-    
+    @Test
+    void constructorWithNullDesignationRaiseException() {
+        assertThrows(IllegalArgumentException.class, () -> new AcademicSkill(null));
+    }
+
+    // Default Constructor //
+
+    @Test
+    void defaultConstructor() {
+        AcademicSkill s = new AcademicSkill();
+        assertEquals("", s.getDesignation());
+    }
 }
