@@ -16,8 +16,62 @@ import java.util.stream.Collectors;
 public class DAOBeneficiary extends DAO<Beneficiary> {
 
     @Override
-    public Beneficiary find(String objectToSearchInDB) throws SQLException {
-        return null;
+    public Beneficiary find(int objectToSearchInDB) throws SQLException {
+        Beneficiary beneficiary = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet =  null;
+
+        String query = "SELECT login, firstName, lastName, phoneNumber, " +
+                "emailAddress, hourQuota, educationLevel, communicationLanguage, " +
+                "FKnumInterpreter, FKAddress " +
+                "FROM Beneficiary " +
+                "WHERE numBeneficiary = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+
+            preparedStatement.setInt(1, objectToSearchInDB);
+            resultSet = preparedStatement.executeQuery();
+
+            InterpreterDAO interpreterDAO = new InterpreterDAO();
+            AddressDAO addressDAO = new AddressDAO();
+            AppointmentDAO appointmentDAO = new AppointmentDAO();
+
+            if(resultSet.next()) {
+                Address address = addressDAO.find(resultSet.getInt("FKAddress"));
+                Interpreter interpreter = interpreterDAO.find(resultSet.getInt("FKnumInterpreter"));
+                List<Appointment> appointmentList = appointmentDAO.findAllByNumBeneficiary(objectToSearchInDB);
+
+                String langStr = resultSet.getString("communicationLanguage");
+                List<String> communicationLanguage = new ArrayList<String>();
+                if(langStr != null && !langStr.isEmpty()) {
+                    communicationLanguage = Arrays.stream(langStr.split(","))
+                            .toList();
+                }
+
+                beneficiary = new Beneficiary(objectToSearchInDB, resultSet.getString("firstName"), resultSet.getString("lastName"),
+                        resultSet.getString("phoneNumber"), resultSet.getInt("hourQuota"), resultSet.getString("emailAddress"),
+                        address, resultSet.getInt("educationLevel"), interpreter, communicationLanguage, appointmentList);
+            }
+
+        } finally {
+            if(resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if(preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            return beneficiary;
+        }
     }
 
     @Override
@@ -28,7 +82,8 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
 
         String query = "SELECT numBeneficiary, login, firstName, lastName, phoneNumber, " +
                 "emailAddress, hourQuota, educationLevel, communicationLanguage, " +
-                "FKnumInterpreter, FKAddress FROM Beneficiary";
+                "FKnumInterpreter, FKAddress " +
+                "FROM Beneficiary";
 
         try {
             prStat = connect.prepareStatement(query);
@@ -84,12 +139,17 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         boolean isCreated = false;
         String query = "INSERT INTO Beneficiary (numBeneficiary, firstName, " +
                 "lastName, phoneNumber, emailAddress, hourQuota, educationLevel, " +
-                "communicationLanguage, FKnumInterpreter, FKAddress) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "communicationLanguage, FKnumInterpreter, FKAddress) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         PreparedStatement prStat = null;
 
         try {
             prStat = connect.prepareStatement(query);
+
+            String communicationLanguage = objectToInsertInDB.getCommunicationLanguage()
+                    .stream()
+                    .collect(Collectors.joining(",", "", ""));
 
             prStat.setInt(1, objectToInsertInDB.getNumBeneficiary());
             prStat.setString(2, objectToInsertInDB.getName());
@@ -98,17 +158,11 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             prStat.setString(5, objectToInsertInDB.getEmailAddress());
             prStat.setInt(6, objectToInsertInDB.getHourQuota());
             prStat.setInt(7, objectToInsertInDB.getEducationLevel());
-
-            String communicationLanguage = objectToInsertInDB.getCommunicationLanguage()
-                    .stream()
-                    .collect(Collectors.joining(",", "", ""));
-
             prStat.setString(8, communicationLanguage);
             prStat.setInt(9, objectToInsertInDB.getInterpreter().getNumInterpreter());
             prStat.setInt(10, objectToInsertInDB.getAddress().getNumAddress());
 
-            int numberOfLines = prStat.executeUpdate();
-            if(numberOfLines > 0) {
+            if(prStat.executeUpdate() > 0) {
                 isCreated = true;
             }
 
@@ -127,11 +181,81 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
 
     @Override
     public boolean update(Beneficiary objectToUpdateInDB) throws SQLException {
-        return false;
+        boolean isUpdated = false;
+        PreparedStatement preparedStatement = null;
+
+        String query = "UPDATE Beneficiary SET firstName = ?, lastName = ?, phoneNumber = ?, emailAddress = ?, " +
+                "hourQuota = ?, educationLevel = ?, communicationLanguage = ?, FKnumInterpreter = ?, FKAddress = ? " +
+                "WHERE numBeneficiary = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+
+            String communicationLanguage = objectToUpdateInDB.getCommunicationLanguage()
+                    .stream()
+                    .collect(Collectors.joining(",", "", ""));
+
+            preparedStatement.setString(1, objectToUpdateInDB.getName());
+            preparedStatement.setString(2, objectToUpdateInDB.getSurname());
+            preparedStatement.setString(3, objectToUpdateInDB.getPhoneNumber());
+            preparedStatement.setString(4, objectToUpdateInDB.getEmailAddress());
+            preparedStatement.setInt(5, objectToUpdateInDB.getHourQuota());
+            preparedStatement.setInt(6, objectToUpdateInDB.getEducationLevel());
+            preparedStatement.setString(7, communicationLanguage);
+            preparedStatement.setInt(8, objectToUpdateInDB.getInterpreter().getNumInterpreter());
+            preparedStatement.setInt(9, objectToUpdateInDB.getAddress().getNumAddress());
+            preparedStatement.setInt(10, objectToUpdateInDB.getNumBeneficiary());
+
+            if(preparedStatement.executeUpdate() > 0) {
+
+                // Pas sûr du tout si je dois aussi mettre à jour les rdv du bénéficiare en question? Techniquement oui ?
+                // Mais ça me parait lourd
+                AppointmentDAO appointmentDAO = new AppointmentDAO();
+                for(Appointment appointment : objectToUpdateInDB.getAppointmentList()) {
+                    appointmentDAO.update(appointment);
+                }
+
+                isUpdated = true;
+            }
+        } finally {
+            if(preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return isUpdated;
     }
 
     @Override
     public boolean delete(Beneficiary objectToDeleteFormDB) throws SQLException {
-        return false;
+        boolean isDeleted = false;
+        PreparedStatement preparedStatement = null;
+
+        String query = "DELETE FROM Beneficiary " +
+                "WHERE numBeneficiary = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setInt(1, objectToDeleteFormDB.getNumBeneficiary());
+
+            if(preparedStatement.executeUpdate() > 0) {
+                isDeleted = true;
+            }
+
+        } finally {
+            if(preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return isDeleted;
     }
 }
