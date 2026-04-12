@@ -133,6 +133,19 @@ public class AbsenceTest {
         assertThrows(IllegalArgumentException.class, () -> new Absence((TimeSlotPunctual) null));
     }
 
+    // Default Constructor //
 
+    /**
+     * Tests that the default constructor sets status to "en attente" and timeSlotPunctual to null.
+     * Given : no argument
+     * When  : an absence is created with the default constructor
+     * Then  : getStatus() must return "en attente" and timeSlotPunctual must return null
+     */
+    @Test
+    void defaultConstructor_StatusIsEnAttenteAndTimeSlotIsNull() {
+        Absence a = new Absence();
+        assertEquals("en attente", a.getStatus());
+        assertNull(a.getTimeSlotPonctual());
+    }
     
 }
