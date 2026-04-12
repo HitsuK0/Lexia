@@ -7,6 +7,7 @@ import be.hers.info.ProjetIntegree.POJO.TimeSlotPunctual;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DAOAbsence extends DAO<Absence> {
@@ -56,7 +57,44 @@ public class DAOAbsence extends DAO<Absence> {
 
     @Override
     public List<Absence> findAll() throws SQLException {
-        return List.of();
+        List<Absence> absenceList = new ArrayList<Absence>();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        String query = "SELECT numAbsence, status, FKTimeSlotPunctual " +
+                "FROM Absence";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+
+            DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+
+            while(resultSet.next()) {
+                Absence absence = new Absence(resultSet.getInt("numAbsence"), resultSet.getString("status"),
+                        daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual")));
+
+                absenceList.add(absence);
+            }
+        } finally {
+            if(resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if(preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return absenceList;
+        }
     }
 
     @Override
