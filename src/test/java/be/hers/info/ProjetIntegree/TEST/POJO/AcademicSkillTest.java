@@ -61,7 +61,7 @@ public class AcademicSkillTest {
      * Then  : getDesignation() must return ""
      */
     @Test
-    void defaultConstructor() {
+    void defaultConstructor_DesignationIsEmpty() {
         AcademicSkill s = new AcademicSkill();
         assertEquals("", s.getDesignation());
     }
