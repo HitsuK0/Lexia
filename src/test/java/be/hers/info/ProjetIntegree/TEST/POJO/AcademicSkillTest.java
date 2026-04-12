@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AcademicSkillTest {
     private AcademicSkill skill;
 
+    // Set Up //
+
     @BeforeEach
     void setUp(){
         skill = new AcademicSkill("Mathématiques");
@@ -39,4 +41,21 @@ public class AcademicSkillTest {
         AcademicSkill s = new AcademicSkill();
         assertEquals("", s.getDesignation());
     }
+
+    // getDesignation //
+
+    @Test
+    void getDesignationReturnTheCorrectValue() {
+        assertEquals("Mathématiques", skill.getDesignation());
+    }
+
+    // setDesignation //
+
+    @Test
+    void setDesignationChangeTheCorrectValue() {
+        skill.setDesignation("Physique");
+        assertEquals("Physique", skill.getDesignation());
+    }
+
+    
 }
