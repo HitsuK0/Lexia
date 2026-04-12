@@ -68,6 +68,22 @@ public class AcademicSkillTest {
         assertEquals("", skill.getDesignation());
     }
 
+    // toString //
 
-    
+    @Test
+    void toString_ContainsDesignation() {
+        assertTrue(skill.toString().contains("Mathématiques"));
+    }
+
+    @Test
+    void toString_ContainsLabel() {
+        assertTrue(skill.toString().contains("Compétence académique"));
+    }
+
+    @Test
+    void toString_ContainsCompleteFormat() {
+        String s = "Compétence académique\nDesignation : Mathématiques\n";
+        assertEquals(s, skill.toString());
+    }
+
 }
