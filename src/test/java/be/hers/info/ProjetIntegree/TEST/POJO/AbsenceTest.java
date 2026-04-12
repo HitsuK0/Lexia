@@ -189,6 +189,77 @@ public class AbsenceTest {
 
     // setNumAbsence //
 
-    
+    /**
+     * Tests that {@code setNumAbsence()} correctly updates the id.
+     * Given : an Absence initialized with numAbsence=1
+     * When  : setNumAbsence(99) is called
+     * Then  : getNumAbsence() must return 99
+     */
+    @Test
+    void setNumAbsence_UpdatesTheCorrectValue(){
+        absence.setNumAbsence(99);
+        assertEquals(99, absence.getNumAbsence());
+    }
 
+    /**
+     * Tests that {@code setNumAbsence()} throws an {@link IllegalArgumentException} when a negative value is passed.
+     * Given : a negative value -1
+     * When  : setNumAbsence(-1) is called
+     * Then  : an IllegalArgumentException must be thrown
+     */
+    @Test
+    void setNumAbsence_WithNegativeValue_RaisesAnException(){
+        assertThrows(IllegalArgumentException.class, () -> absence.setNumAbsence(-1));
+    }
+
+    // setStatus //
+
+    /**
+     * Tests that {@code setStatus()} correctly updates the status with all valid values: "accepte", "refuse", "absent".
+     * Given : status="en attente"
+     * When  : setStatus("accepte") is called
+     * Then  : getStatus() must return "accepte"
+     */
+    @Test
+    void setStatus_WithValidStatus_UpdatesTheValue() throws BadStatusException {
+        absence.setStatus("accepte");
+        assertEquals("accepte", absence.getStatus());
+    }
+
+    /**
+     * Tests that {@code setStatus()} throws a {@link BadStatusException} when an invalid status is passed.
+     * Given : an invalid status "invalide"
+     * When  : setStatus("invalide") is called
+     * Then  : an BadStatusException must be thrown
+     */
+    @Test
+    void setStatus_WithInvalidStatus_RaisesABadStatusException(){
+        assertThrows(BadStatusException.class, () -> absence.setStatus("invalide"));
+    }
+
+    // setTimeSlotPunctual //
+
+    /**
+     * Tests that {@code setTimeSlotPunctual()} correctly updates the timeslot.
+     * Given : a valid new TimeSlotPunctual
+     * When  : setTimeSlotPunctual() is called with this new timeSlot
+     * Then  : getTimeSlotPunctuam() must return the new timeSlot
+     */
+    @Test
+    void setTimeSlotPunctual_UpdatesTheCorrectValue(){
+        TimeSlotPunctual newSlot = new TimeSlotPunctual(LocalTime.of(10, 0), LocalTime.of(2, 0), LocalDate.of(2025, 6, 1));
+        absence.setTimeSlotPonctual(newSlot);
+        assertEquals(newSlot, absence.getTimeSlotPonctual());
+    }
+
+    /**
+     * Tests that {@code setTimeSlotPunctual()} throws an {@link IllegalArgumentException} when null is passed.
+     * Given : a null value
+     * When  : setTimeSlotPunctual(null) is called
+     * Then  : an IllegalArgumentException must be thrown
+     */
+    @Test
+    void setTimeSlotPunctual_WithNull_RaisesAnException(){
+        assertThrows(IllegalArgumentException.class, () -> absence.setTimeSlotPonctual(null));
+    }
 }
