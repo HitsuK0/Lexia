@@ -13,6 +13,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author Vatafu Jean
+ * @reviewer
+ */
+
 public class DAOBeneficiary extends DAO<Beneficiary> {
 
     @Override
