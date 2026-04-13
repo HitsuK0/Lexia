@@ -61,9 +61,6 @@ public class Beneficiary {
      * @param hourQuota the quota hours
      * @param educationLevel the level of education
      * @param communicationLanguage the list of communication languages used by the beneficiary
-     * @throws IllegalArgumentException if communicationLanguage is empty
-     *                                  if hourQuota is negative
-     *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
      */
     public Beneficiary(int numBeneficiary, String login, String password, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, int educationLevel,
                        List<String> communicationLanguage) {
