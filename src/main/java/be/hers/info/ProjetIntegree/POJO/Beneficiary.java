@@ -10,6 +10,8 @@ import java.util.List;
 
 public class Beneficiary {
     private int numBeneficiary;
+    private String login;
+    private String password;
     private String name;
     private String surname;
     private String phoneNumber;
@@ -32,6 +34,8 @@ public class Beneficiary {
      * The parameter numBeneficiary can only be initialized with setNumBeneficiary
      */
     public Beneficiary() {
+        this.login = "";
+        this.password = "";
         this.name = "";
         this.surname = "";
         this.phoneNumber = "";
@@ -89,6 +93,8 @@ public class Beneficiary {
      * Initialize a Beneficiary with numBeneficiary, name, surname, phoneNumber, emailAddress,
      * address, educationLevel, communicationLanguage and appointmentList
      * @param numBeneficiary the id of the Beneficiary
+     * @param login The id login the user
+     * @param password The password of the user
      * @param name the name
      * @param surname the surname
      * @param phoneNumber the phone number
@@ -104,7 +110,7 @@ public class Beneficiary {
      *                                  if hourQuota is negative
      *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
      */
-    public Beneficiary(int numBeneficiary, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
+    public Beneficiary(int numBeneficiary, String login, String password, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
                        Interpreter interpreter, List<String> communicationLanguage, List<Appointment> appointmentList) {
 
         if(address == null || communicationLanguage == null || interpreter == null) {
@@ -124,6 +130,8 @@ public class Beneficiary {
         }
 
         this.numBeneficiary = numBeneficiary;
+        this.login = login;
+        this.password = password;
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -145,6 +153,8 @@ public class Beneficiary {
      * Initialize a Beneficiary with numBeneficiary, name, surname, phoneNumber, emailAddress,
      * address, educationLevel, communicationLanguage and appointmentList.
      * The parameter numBeneficiary can only be initialized with setNumBeneficiary
+     * @param login The login of the user
+     * @param password The password of the user
      * @param name the name
      * @param surname the surname
      * @param phoneNumber the phone number
@@ -160,7 +170,7 @@ public class Beneficiary {
      *                                  if hourQuota is negative
      *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
      */
-    public Beneficiary(String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
+    public Beneficiary(String login, String password, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
                        Interpreter interpreter, List<String> communicationLanguage, List<Appointment> appointmentList) {
 
         if(address == null || communicationLanguage == null || interpreter == null) {
@@ -179,6 +189,8 @@ public class Beneficiary {
             throw new IllegalArgumentException("[POJOBeneficiary] Le niveau d'éducation doit être compris entre "+EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
         }
 
+        this.login = login;
+        this.password = password;
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -200,7 +212,22 @@ public class Beneficiary {
      * @return the id of the Beneficiary
      */
     public int getNumBeneficiary() {
+
         return numBeneficiary;
+    }
+
+    /**
+     * @return the login of the Beneficiary
+     */
+    public String getLogin() {
+        return login;
+    }
+
+    /**
+     * @return the password of the Beneficiary
+     */
+    public String getPassword() {
+        return password;
     }
 
     /**
