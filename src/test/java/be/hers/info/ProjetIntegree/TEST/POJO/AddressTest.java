@@ -67,4 +67,18 @@ public class AddressTest {
         assertThrows(IllegalArgumentException.class,
                 () -> new Address(1, 6833, null, "Ucimont", "14", "Bouillon", null, beneficiaries, interpreters));
     }
+
+    /**
+     * Tests that the full constructor throws an {@link IllegalArgumentException} when locality is null.
+     * Given : a null locality
+     * When  : an Address is created with null locality
+     * Then  : an IllegalArgumentException must be thrown
+     */
+    @Test
+    void constructor_WithNullLocality_RaisesAnException(){
+        assertThrows(IllegalArgumentException.class,
+                () -> new Address(1, 6833, "BP1", null, "14", "Bouillon", null, beneficiaries, interpreters));
+    }
+
+    
 }
