@@ -1,3 +1,5 @@
+package be.hers.info.ProjetIntegree.DAO;
+
 import java.sql.* ;
 
 
