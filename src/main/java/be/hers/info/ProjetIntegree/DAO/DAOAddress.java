@@ -6,10 +6,12 @@ package be.hers.info.ProjetIntegree.DAO;
  */
 
 import be.hers.info.ProjetIntegree.POJO.Address;
+import be.hers.info.ProjetIntegree.POJO.Establishment;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DAOAddress implements DAO<Address> {
@@ -46,9 +48,11 @@ public class DAOAddress implements DAO<Address> {
             rs = prStat.executeQuery();
 
             if(rs.next()){
+                Establishment establishmentFind = daoEstablishment.find(objectToSearchInDB); //renvoie l'établissement qui contient l'adresse d'id objectToSearchInDB
                 addressFind = new Address(objectToSearchInDB, rs.getInt("postalCode"),
                               rs.getString("postalBox"), rs.getString("locality"),
-                              rs.getInt("numStreet"), rs.getString("complementOfPlace"));
+                              rs.getInt("numStreet"), rs.getString("complementOfPlace"),
+                              establishmentFind); //A voir comment Louis appelle le champ NumStreet
                 //ajouter le constructeur adéquat
             }
         }
@@ -61,11 +65,36 @@ public class DAOAddress implements DAO<Address> {
 
     @Override
     public List findAll() throws SQLException {
-        return List.of();
+        List<Address> listAddressFind = new ArrayList<>();
+        String query = "SELECT * FROM Address";
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+        try{
+            prStat = connect.prepareStatement(query);
+            rs = prStat.executeQuery();
+
+            if(rs.next()){
+                Establishment establishmentFind = daoEstablishment.find(rs.getInt("NumAddress")); //renvoie l'établissement qui contient l'adresse d'id objectToSearchInDB
+                Address addressFind = new Address(rs.getInt("NumAddress"), rs.getInt("postalCode"),
+                        rs.getString("postalBox"), rs.getString("locality"),
+                        rs.getInt("numStreet"), rs.getString("complementOfPlace"),
+                        establishmentFind); //A voir comment Louis appelle le champ NumStreet
+                //ajouter le constructeur adéquat
+                listAddressFind.add(addressFind);
+            }
+        }
+        finally{
+            closeStatementAndResultSet(prStat, rs);
+        }
+
+        return listAddressFind;
     }
 
     @Override
     public boolean create(Address objectToInsertInDB) throws SQLException {
+
+
+
         return false;
     }
 
