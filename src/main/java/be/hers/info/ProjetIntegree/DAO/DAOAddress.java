@@ -122,7 +122,25 @@ public class DAOAddress implements DAO<Address> {
 
     @Override
     public boolean update(Address objectToUpdateInDB) throws SQLException {
+        String query = "UPDATE Address SET postalCode = ?, postalBox ? , locality = ?, numStreet = ?, complementOfPlace = ? WHERE numAddress = ?";
 
+        PreparedStatement prStat = null;
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, objectToUpdateInDB.getPostcode());
+            prStat.setString(2, objectToUpdateInDB.getPostOfficeBox());
+            prStat.setString(3, objectToUpdateInDB.getLocality());
+            prStat.setInt(4, objectToUpdateInDB.getNumAddress());
+            prStat.setString(5, objectToUpdateInDB.getHamlet());
+            prStat.setInt(6, objectToUpdateInDB.getNumAddress());
+
+            if(prStat.executeUpdate() > 0)
+                return true;
+            return false;
+        }
+        finally{
+            closeStatement(prStat);
+        }
     }
 
     @Override
