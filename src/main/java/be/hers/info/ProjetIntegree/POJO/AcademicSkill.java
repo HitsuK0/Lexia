@@ -1,10 +1,15 @@
 package be.hers.info.ProjetIntegree.POJO;
 
+/**
+ * @author Leroy Rodriguez Ainhoa
+ * @reviewer Nicolas Jean-François, Halet Louis
+ */
+
+
 public class AcademicSkill
 {
 
     private String designation;
-
 
     /**
      * Create an AcademicSkill.
@@ -14,7 +19,7 @@ public class AcademicSkill
     public AcademicSkill(String designation){
 
         if(designation == null){
-            throw new NullPointerException();
+            throw new IllegalArgumentException("[POJOAcademicSkill] la désignation ne peut pas être null ou vide");
         }
         this.designation = designation;
     }
@@ -33,7 +38,7 @@ public class AcademicSkill
      */
     public void setDesignation(String designation) {
         if(designation == null){
-            throw new IllegalArgumentException("[POJOAcademicSkill] Valeur invalide : la désignation ne peut pas contenir null");
+            throw new IllegalArgumentException("[POJOAcademicSkill] la désignation ne peut pas être null");
         }
         this.designation = designation;
     }
@@ -50,6 +55,7 @@ public class AcademicSkill
      */
     @Override
     public String toString(){
-        return "Designation : "+ designation + "\n";
+        return "Compétence académique"+
+               "\nDesignation : "+ designation + "\n";
     }
 }
