@@ -16,6 +16,7 @@ import java.util.List;
 
 public class DAOAddress implements DAO<Address> {
 
+    //Bien ou pas ces deux méthodes ? Peut-être mettre les signatures dans la classe abstract DAO si on décide que tous le monde les adoptes
     public void closeStatement(PreparedStatement prStat){
         if(prStat != null){
             try{
@@ -52,12 +53,12 @@ public class DAOAddress implements DAO<Address> {
             rs = prStat.executeQuery();
 
             if(rs.next()){
+                DAOEstablishment daoEstablishment = new DAOEstablishment<>();
                 Establishment establishmentFind = daoEstablishment.find(objectToSearchInDB); //renvoie l'établissement qui contient l'adresse d'id objectToSearchInDB
                 addressFind = new Address(objectToSearchInDB, rs.getInt("postalCode"),
-                              rs.getString("postalBox"), rs.getString("locality"),
-                              rs.getInt("numStreet"), rs.getString("complementOfPlace"),
-                              establishmentFind); //A voir comment Louis appelle le champ NumStreet
-                //ajouter le constructeur adéquat
+                              rs.getString("postalBox"), rs.getString("locality"), rs.getString("complementOfPlace"),
+                              establishmentFind);
+                //ajouter le constructeur adéquat (et supprimer le champ numStreet du POJO Address
             }
         }
         finally{
@@ -78,10 +79,11 @@ public class DAOAddress implements DAO<Address> {
             rs = prStat.executeQuery();
 
             if(rs.next()){
+                DAOEstablishment daoEstablishment = new DAOEstablishment<>();
                 Establishment establishmentFind = daoEstablishment.find(rs.getInt("NumAddress")); //renvoie l'établissement qui contient l'adresse d'id objectToSearchInDB
                 Address addressFind = new Address(rs.getInt("NumAddress"), rs.getInt("postalCode"),
                         rs.getString("postalBox"), rs.getString("locality"),
-                        rs.getInt("numStreet"), rs.getString("complementOfPlace"),
+                        rs.getString("complementOfPlace"),
                         establishmentFind); //A voir comment Louis appelle le champ NumStreet
                 //ajouter le constructeur adéquat
                 listAddressFind.add(addressFind);
@@ -99,7 +101,7 @@ public class DAOAddress implements DAO<Address> {
      */
     @Override
     public boolean create(Address objectToInsertInDB) throws SQLException {
-        String query = "INSERT INTO Address (numAddress, postalCode, postalBox, locality, numStreet, complementOfPlace) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Address (numAddress, postalCode, postalBox, locality, complementOfPlace) VALUES (?, ?, ?, ?, ?, ?)";
 
         PreparedStatement prStat = null;
         try{
@@ -108,8 +110,7 @@ public class DAOAddress implements DAO<Address> {
             prStat.setInt(2, objectToInsertInDB.getPostcode());
             prStat.setString(3, objectToInsertInDB.getPostOfficeBox());
             prStat.setString(4, objectToInsertInDB.getLocality());
-            prStat.setInt(5, objectToInsertInDB.getNumAddress());
-            prStat.setString(6, objectToInsertInDB.getHamlet());
+            prStat.setString(5, objectToInsertInDB.getHamlet());
 
             if(prStat.executeUpdate() > 0)
                 return true;
@@ -122,7 +123,7 @@ public class DAOAddress implements DAO<Address> {
 
     @Override
     public boolean update(Address objectToUpdateInDB) throws SQLException {
-        String query = "UPDATE Address SET postalCode = ?, postalBox ? , locality = ?, numStreet = ?, complementOfPlace = ? WHERE numAddress = ?";
+        String query = "UPDATE Address SET postalCode = ?, postalBox ? , locality = ?, complementOfPlace = ? WHERE numAddress = ?";
 
         PreparedStatement prStat = null;
         try{
@@ -130,9 +131,8 @@ public class DAOAddress implements DAO<Address> {
             prStat.setInt(1, objectToUpdateInDB.getPostcode());
             prStat.setString(2, objectToUpdateInDB.getPostOfficeBox());
             prStat.setString(3, objectToUpdateInDB.getLocality());
-            prStat.setInt(4, objectToUpdateInDB.getNumAddress());
-            prStat.setString(5, objectToUpdateInDB.getHamlet());
-            prStat.setInt(6, objectToUpdateInDB.getNumAddress());
+            prStat.setString(4, objectToUpdateInDB.getHamlet());
+            prStat.setInt(5, objectToUpdateInDB.getNumAddress());
 
             if(prStat.executeUpdate() > 0)
                 return true;
