@@ -32,19 +32,21 @@ public class DAOEstablishment extends DAO<Establishment>{
 
             List<Integer> listEducationLevel = new ArrayList<>();
             List<Address> listAddress = new ArrayList<>();
+            List<Referrer> listReferrer = new ArrayList<>();
             if(rs.next()){
                 listEducationLevel.add(rs.getInt("educationLevel"));
 
                 DAOAddress daoAddress = new DAOAddress();
                 listAddress.add(daoAddress.find(rs.getInt("FKAddress")));
+
+                DAOReferrer daoReferrer = new DAOReferrer();
+                listReferrer = daoReferrer.find(objectToSearchInDB);
+                //Retourne la liste des Referrer qui sont liés avec l'Establishment qui possède l'id objectToSearchInDB
+
+                establishmentFind = new Establishment(objectToSearchInDB, rs.getString("name"),
+                        rs.getString("phoneNumber"), listEducationLevel, listReferrer, listAddress);
             }
 
-            DAOReferrer daoReferrer = new DAOReferrer();
-            List<Referrer> listReferrer = daoReferrer.find(objectToSearchInDB);
-            //Retourne la liste des Referrer qui sont liés avec l'Establishment qui possède l'id objectToSearchInDB
-
-            establishmentFind = new Establishment(objectToSearchInDB, rs.getString("name"),
-                    rs.getString("phoneNumber"), listEducationLevel, listReferrer, listAddress);
         }
         finally{
             if(rs != null){
@@ -103,9 +105,6 @@ public class DAOEstablishment extends DAO<Establishment>{
                 //Si l'établissement est déjà présent,
                 //ajoute le niveau d'éducation dans la liste si niveau d'éducation n'est pas encore présent
                 if(isInEstablishment){
-                    listReferrer = daoReferrer.find(rs.getInt("numEstablishment"));
-                    //Retourne la liste des Referrer qui sont liés avec l'Establishment qui possède l'id objectToSearchInDB
-
                     Establishment establishmentFind = listEstablishmentFind.get(i);
                     if(!establishmentFind.getEducationLevel().contains(rs.getInt("educationLevel"))){
                         establishmentFind.getEducationLevel().add(rs.getInt("educationLevel"));
@@ -124,6 +123,7 @@ public class DAOEstablishment extends DAO<Establishment>{
                 else{
                     listEducationLevel.add(rs.getInt("educationLevel"));
                     listReferrer = daoReferrer.find(rs.getInt("numEstablishment"));
+                    //Retourne la liste des Referrer qui sont liés avec l'Establishment qui possède l'id objectToSearchInDB
                     listAddress.add(daoAddress.find(rs.getInt("FKAddress")));
 
                     Establishment establishmentFind = new Establishment(rs.getInt("numEstablishment"),
@@ -217,34 +217,84 @@ public class DAOEstablishment extends DAO<Establishment>{
 
     @Override
     public boolean update(Establishment objectToUpdateInDB) throws SQLException {
-        String query = "UPDATE Establishment SET FKAddress = ?, name = ?, phoneNumber = ?, educationLevel = ? WHERE NumEstablishment = ?";
+        List<Integer> listEducationLevel = objectToUpdateInDB.getEducationLevel();
+        List<Address> listAddress = objectToUpdateInDB.getAddresses();
 
-        PreparedStatement prStat = null;
-        try{
-            prStat = connect.prepareStatement(query);
-            List<Address> listAddress = objectToUpdateInDB.getAddresses();
-            Address addressToUpdate = listAddress.get(0);
-            prStat.setInt(1, addressToUpdate.getNumAddress());
-            prStat.setString(2, objectToUpdateInDB.getNameBuilding());
-            prStat.setString(3, objectToUpdateInDB.getPhoneNumber());
-            List<Integer> listEducationLevel = objectToUpdateInDB.getEducationLevel();
-            prStat.setInt(4, listEducationLevel.get(0));
-            prStat.setInt(5, objectToUpdateInDB.getNumEstablishment());
+        List<Establishment> listEstablishmentFind = find(objectToUpdateInDB.getNameBuilding(),
+                                                             objectToUpdateInDB.getPhoneNumber());
 
-            if(prStat.executeUpdate() > 0)
-                return true;
-            return false;
-        }
-        finally{
-            if(prStat != null){
-                try{
-                    prStat.close();
-                }
-                catch(SQLException ex){
-                    ex.printStackTrace();
-                }
+        int educationLevelIndex = 0;
+        int addressIndex = 0;
+        int nbEstablishmentUpdate = 0;
+        for(Establishment establishment : listEstablishmentFind){
+            Establishment newEstablishment = null;
+            List<Integer> newListEducationLevel = new ArrayList<>();
+            List<Address> newListAddress = new ArrayList<>();
+            if (addressIndex < listAddress.size() && educationLevelIndex < listEducationLevel.size()) {
+                newListEducationLevel.add(listEducationLevel.get(educationLevelIndex));
+                newListAddress.add(listAddress.get(addressIndex));
+                newEstablishment = new Establishment(establishment.getNumEstablishment(),
+                            objectToUpdateInDB.getNameBuilding(), objectToUpdateInDB.getPhoneNumber(),
+                            newListEducationLevel, new ArrayList<>(), newListAddress);
+                update(newEstablishment, 'a');
+                educationLevelIndex++;
+                addressIndex++;
+                nbEstablishmentUpdate++;
+            }
+            else if(addressIndex < listAddress.size()){
+                newListEducationLevel.add(listEducationLevel.get(educationLevelIndex-1));
+                newListAddress.add(listAddress.get(addressIndex));
+                newEstablishment = new Establishment(establishment.getNumEstablishment(),
+                            objectToUpdateInDB.getNameBuilding(), objectToUpdateInDB.getPhoneNumber(),
+                            newListEducationLevel, new ArrayList<>(), newListAddress);
+                update(newEstablishment, 'a');
+                addressIndex++;
+                nbEstablishmentUpdate++;
+            }
+            else if(educationLevelIndex < listEducationLevel.size()){
+                newListEducationLevel.add(listEducationLevel.get(educationLevelIndex));
+                newListAddress.add(listAddress.get(addressIndex-1));
+                newEstablishment = new Establishment(establishment.getNumEstablishment(),
+                            objectToUpdateInDB.getNameBuilding(), objectToUpdateInDB.getPhoneNumber(),
+                            newListEducationLevel, new ArrayList<>(), newListAddress);
+                update(newEstablishment, 'a');
+                educationLevelIndex++;
+                nbEstablishmentUpdate++;
+            }
+            else{
+                delete(establishment);
             }
         }
+
+        while(addressIndex < listAddress.size() || educationLevelIndex < listEducationLevel.size()){
+            List<Integer> newListEducationLevel = new ArrayList<>();
+            List<Address> newListAddress = new ArrayList<>();
+            if (addressIndex < listAddress.size() && educationLevelIndex < listEducationLevel.size()) {
+                newListEducationLevel.add(listEducationLevel.get(educationLevelIndex));
+                newListAddress.add(listAddress.get(addressIndex));
+                educationLevelIndex++;
+                addressIndex++;
+            }
+            else if(addressIndex < listAddress.size()){
+                newListEducationLevel.add(listEducationLevel.get(educationLevelIndex-1));
+                newListAddress.add(listAddress.get(addressIndex));
+                addressIndex++;
+            }
+            else if(educationLevelIndex < listEducationLevel.size()){
+                newListEducationLevel.add(listEducationLevel.get(educationLevelIndex));
+                newListAddress.add(listAddress.get(addressIndex-1));
+                educationLevelIndex++;
+            }
+
+            Establishment newEstablishment = new Establishment(objectToUpdateInDB.getNameBuilding(),
+                    objectToUpdateInDB.getPhoneNumber(), newListEducationLevel, new ArrayList<>(), newListAddress);
+            create(newEstablishment);
+            nbEstablishmentUpdate++;
+        }
+
+        if(nbEstablishmentUpdate == listEstablishmentFind.size())
+            return true;
+        return false;
     }
 
     @Override
