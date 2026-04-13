@@ -38,9 +38,9 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             preparedStatement.setInt(1, objectToSearchInDB);
             resultSet = preparedStatement.executeQuery();
 
-            InterpreterDAO interpreterDAO = new InterpreterDAO();
-            AddressDAO addressDAO = new AddressDAO();
-            AppointmentDAO appointmentDAO = new AppointmentDAO();
+            DAOInterpreter interpreterDAO = new DAOInterpreter();
+            DAOAddress addressDAO = new DAOAddress();
+            DAOAppointment appointmentDAO = new DAOAppointment();
 
             if(resultSet.next()) {
                 Address address = addressDAO.find(resultSet.getInt("FKAddress"));
@@ -75,8 +75,8 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                     e.printStackTrace();
                 }
             }
-            return beneficiary;
         }
+        return beneficiary;
     }
 
     @Override
@@ -94,9 +94,9 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             prStat = connect.prepareStatement(query);
             rs = prStat.executeQuery();
 
-            InterpreterDAO interpreterDAO = new InterpreterDAO();
-            AddressDAO addressDAO = new AddressDAO();
-            AppointmentDAO appointmentDAO = new AppointmentDAO();
+            DAOInterpreter interpreterDAO = new DAOInterpreter();
+            DAOAddress addressDAO = new DAOAddress();
+            DAOAppointment appointmentDAO = new DAOAppointment();
 
             while(rs.next()) {
                 String langStr = rs.getString("communicationLanguage");
@@ -135,8 +135,8 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                     e.printStackTrace();
                 }
             }
-            return listBeneficiary;
         }
+        return listBeneficiary;
     }
 
     @Override
@@ -180,7 +180,6 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                 }
             }
         }
-
         return isCreated;
     }
 
@@ -231,7 +230,6 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                 }
             }
         }
-
         return isUpdated;
     }
 
@@ -260,7 +258,6 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                 }
             }
         }
-
         return isDeleted;
     }
 }
