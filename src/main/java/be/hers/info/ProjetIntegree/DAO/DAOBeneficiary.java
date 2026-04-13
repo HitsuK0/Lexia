@@ -26,7 +26,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet =  null;
 
-        String query = "SELECT login, firstName, lastName, phoneNumber, " +
+        String query = "SELECT login, password, firstName, lastName, phoneNumber, " +
                 "emailAddress, hourQuota, educationLevel, communicationLanguage, " +
                 "FKnumInterpreter, FKAddress " +
                 "FROM Beneficiary " +
@@ -85,7 +85,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         PreparedStatement prStat = null;
         ResultSet rs = null;
 
-        String query = "SELECT numBeneficiary, login, firstName, lastName, phoneNumber, " +
+        String query = "SELECT numBeneficiary, login, password, firstName, lastName, phoneNumber, " +
                 "emailAddress, hourQuota, educationLevel, communicationLanguage, " +
                 "FKnumInterpreter, FKAddress " +
                 "FROM Beneficiary";
@@ -142,10 +142,10 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
     @Override
     public boolean create(Beneficiary objectToInsertInDB) throws SQLException {
         boolean isCreated = false;
-        String query = "INSERT INTO Beneficiary (numBeneficiary, firstName, " +
+        String query = "INSERT INTO Beneficiary (numBeneficiary, login, password firstName, " +
                 "lastName, phoneNumber, emailAddress, hourQuota, educationLevel, " +
                 "communicationLanguage, FKnumInterpreter, FKAddress) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ? ?, ?, ?, ?, ?, ?, ?, ?)";
 
         PreparedStatement prStat = null;
 
@@ -211,14 +211,6 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             preparedStatement.setInt(10, objectToUpdateInDB.getNumBeneficiary());
 
             if(preparedStatement.executeUpdate() > 0) {
-
-                // Pas sûr du tout si je dois aussi mettre à jour les rdv du bénéficiare en question? Techniquement oui ?
-                // Mais ça me parait lourd
-                AppointmentDAO appointmentDAO = new AppointmentDAO();
-                for(Appointment appointment : objectToUpdateInDB.getAppointmentList()) {
-                    appointmentDAO.update(appointment);
-                }
-
                 isUpdated = true;
             }
         } finally {
