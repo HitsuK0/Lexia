@@ -16,7 +16,7 @@ public abstract class DAO<T> {
      * @return The object whose identifier matches the String passed as a parameter. null if there is no object matching the String passed as a parameter.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
-    public abstract T find(String objectToSearchInDB) throws SQLException;
+    public abstract T find(int objectToSearchInDB) throws SQLException;
     /**
      * Create a list containing all the objects in the table.
      * @return a list containing all the objects in the table or an empty list if the table is empty.
