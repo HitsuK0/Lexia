@@ -533,6 +533,8 @@ public class Beneficiary {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Bénéficiaire n°").append(this.numBeneficiary).append(" :\n");
+        sb.append("Login : ").append(this.login).append("\n");
+        sb.append("Password : ").append(this.password).append("\n");
         sb.append("Nom : ").append(this.name).append("\n");
         sb.append("Prénom : ").append(this.surname).append("\n");
 
