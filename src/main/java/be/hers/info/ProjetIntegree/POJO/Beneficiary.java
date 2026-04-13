@@ -62,8 +62,8 @@ public class Beneficiary {
      * @param educationLevel the level of education
      * @param communicationLanguage the list of communication languages used by the beneficiary
      */
-    public Beneficiary(int numBeneficiary, String login, String password, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, int educationLevel,
-                       List<String> communicationLanguage) {
+    public Beneficiary(int numBeneficiary, String login, String password, String name, String surname, String phoneNumber, Address address, int hourQuota, String emailAddress, int educationLevel,
+                       Interpreter interpreter, List<String> communicationLanguage) {
         this.numBeneficiary = numBeneficiary;
         this.login = login;
         this.password = password;
@@ -71,10 +71,10 @@ public class Beneficiary {
         this.surname = surname;
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
-        this.address = null;
         this.educationLevel = educationLevel;
+        this.address = address;
         this.hourQuota = hourQuota;
-        this.interpreter = null;
+        this.interpreter = interpreter;
         this.communicationLanguage = communicationLanguage;
         this.appointmentList = new ArrayList<Appointment>();
     }
