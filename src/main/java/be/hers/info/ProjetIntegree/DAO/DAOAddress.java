@@ -145,6 +145,19 @@ public class DAOAddress implements DAO<Address> {
 
     @Override
     public boolean delete(Address objectToDeleteFormDB) throws SQLException {
-        return false;
+        String query = "DELETE FROM Address WHERE NumAddress = ?";
+
+        PreparedStatement prStat = null;
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, objectToDeleteFormDB.getNumAddress());
+
+            if(prStat.executeUpdate() > 0)
+                return true;
+            return false;
+        }
+        finally{
+            closeStatement(prStat);
+        }
     }
 }
