@@ -16,6 +16,17 @@ import java.util.List;
 
 public class DAOAddress implements DAO<Address> {
 
+    public void closeStatement(PreparedStatement prStat){
+        if(prStat != null){
+            try{
+                prStat.close();
+            }
+            catch(SQLException ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+
     public void closeStatementAndResultSet(PreparedStatement prStat, ResultSet rs){
         if(rs != null){
             try{
@@ -26,14 +37,7 @@ public class DAOAddress implements DAO<Address> {
             }
         }
 
-        if(prStat != null){
-            try{
-                prStat.close();
-            }
-            catch(SQLException ex){
-                ex.printStackTrace();
-            }
-        }
+        closeStatement(prStat);
     }
 
     @Override
@@ -90,17 +94,35 @@ public class DAOAddress implements DAO<Address> {
         return listAddressFind;
     }
 
+    /**
+     * Precondition: the establishment at the address provided is already in the database
+     */
     @Override
     public boolean create(Address objectToInsertInDB) throws SQLException {
+        String query = "INSERT INTO Address (numAddress, postalCode, postalBox, locality, numStreet, complementOfPlace) VALUES (?, ?, ?, ?, ?, ?)";
 
+        PreparedStatement prStat = null;
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, objectToInsertInDB.getNumAddress());
+            prStat.setInt(2, objectToInsertInDB.getPostcode());
+            prStat.setString(3, objectToInsertInDB.getPostOfficeBox());
+            prStat.setString(4, objectToInsertInDB.getLocality());
+            prStat.setInt(5, objectToInsertInDB.getNumAddress());
+            prStat.setString(6, objectToInsertInDB.getHamlet());
 
-
-        return false;
+            if(prStat.executeUpdate() > 0)
+                return true;
+            return false;
+        }
+        finally{
+            closeStatement(prStat);
+        }
     }
 
     @Override
     public boolean update(Address objectToUpdateInDB) throws SQLException {
-        return false;
+
     }
 
     @Override
