@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
-
 //Explication pour le relecteur : j'ai décidé de traiter aussi la liste des niveaux d'éducations car c'est une liste d'entier
 //et qu'en DB, c'est stocké sous forme de String
 public class DAOEstablishment extends DAO<Establishment>{
@@ -166,6 +165,15 @@ public class DAOEstablishment extends DAO<Establishment>{
             int id = rs.getInt(5);
             objectToInsertInDB.setNumEstablishment(id);
         } finally {
+            if(rs != null){
+                try{
+                    rs.close();
+                }
+                catch(SQLException ex){
+                    ex.printStackTrace();
+                }
+            }
+
             if (prStat != null) {
                 try {
                     prStat.close();
