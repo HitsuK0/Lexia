@@ -2,6 +2,7 @@ package be.hers.info.ProjetIntegree.POJO;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * @author Wellinger Chloé
@@ -10,6 +11,8 @@ import java.util.List;
 
 public class Interpreter {
     private int numInterpreter;
+    private String login;
+    private String password;
     private String lastName;
     private String firstName;
     private String email;
@@ -26,6 +29,8 @@ public class Interpreter {
      * Default Constructor
      */
     public Interpreter() {
+        this.login = "";
+        this.password = "";
         this.lastName = "";
         this.firstName = "";
         this.email = "";
@@ -41,6 +46,8 @@ public class Interpreter {
 
     /**
      * Construct an interpreter with several attributes without ID
+     * @param login the login so that the interpreter can log in
+     * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -49,12 +56,16 @@ public class Interpreter {
      * @param address the address of the interpreter
      * @throws IllegalArgumentException if address is null / empty and if weeklyWorkHours is negative
      */
-    public Interpreter(String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address) {
+    public Interpreter(String login, String password, String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address) {
         if (weeklyWorkHours < 0)
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
         if (address == null)
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
+        if (password == null || password.isEmpty())
+            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
 
+        this.login = login;
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -71,6 +82,8 @@ public class Interpreter {
     /**
      * Construct an interpreter with several attributes and the ID
      * @param numInterpreter ID of the interpreter
+     * @param login the login so that the interpreter can log in
+     * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -81,7 +94,7 @@ public class Interpreter {
      *                                  if weeklyWorkHours is negative
      *                                  if address is null / empty
      */
-    public Interpreter(int numInterpreter, String lastName, String firstName, String email, String phoneNumber,
+    public Interpreter(int numInterpreter,String login, String password, String lastName, String firstName, String email, String phoneNumber,
                        int weeklyWorkHours, Address address) {
         if (numInterpreter < 0)
             throw new IllegalArgumentException("[POJOInterpreter] L'identifiant de l'interprète ne peut pas être négatif");
@@ -89,8 +102,12 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
         if (address == null)
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
+        if (password == null || password.isEmpty())
+            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
 
         this.numInterpreter = numInterpreter;
+        this.login = login;
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -107,6 +124,8 @@ public class Interpreter {
     /**
      * Construct an interpreter with all attributes and ID
      * @param numInterpreter ID of the interpreter
+     * @param login the login so that the interpreter can log in
+     * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -122,7 +141,7 @@ public class Interpreter {
      *                                  if weeklyWorkHours is negative
      *                                  if address is null / empty
      */
-    public Interpreter(int numInterpreter, String lastName, String firstName, String email, String phoneNumber,
+    public Interpreter(int numInterpreter,String login, String password, String lastName, String firstName, String email, String phoneNumber,
                        int weeklyWorkHours, Address address, List<Absence> absences,
                        List<Appointment> appointmentsList, List<ProfessionalSkill> professionalSkillsList,
                        List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList) {
@@ -132,8 +151,12 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
         if (address == null)
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
+        if (password == null || password.isEmpty())
+            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
 
         this.numInterpreter = numInterpreter;
+        this.login = login;
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -149,6 +172,8 @@ public class Interpreter {
 
     /**
      * Construct an interpreter with all attributes without ID
+     * @param login the login so that the interpreter can log in
+     * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -163,7 +188,7 @@ public class Interpreter {
      * @throws IllegalArgumentException if weeklyWorkHours is negative
      *                                  if address is null / empty
      */
-    public Interpreter(String lastName, String firstName, String email, String phoneNumber,
+    public Interpreter(String login, String password, String lastName, String firstName, String email, String phoneNumber,
                        int weeklyWorkHours, Address address, List<Absence> absences,
                        List<Appointment> appointmentsList, List<ProfessionalSkill> professionalSkillsList,
                        List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList) {
@@ -171,7 +196,11 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
         if (address == null)
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
+        if (password == null || password.isEmpty())
+            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
 
+        this.login = login;
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
