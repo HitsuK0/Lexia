@@ -2,6 +2,7 @@ package be.hers.info.ProjetIntegree.POJO;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * @author Wellinger Chloé
@@ -28,6 +29,8 @@ public class Interpreter {
      * Default Constructor
      */
     public Interpreter() {
+        this.login = "";
+        this.password = "";
         this.lastName = "";
         this.firstName = "";
         this.email = "";
@@ -44,7 +47,7 @@ public class Interpreter {
     /**
      * Construct an interpreter with several attributes without ID
      * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s password for logging in
+     * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -60,7 +63,7 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
 
         this.login = login;
-        this.password = password;
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -78,7 +81,7 @@ public class Interpreter {
      * Construct an interpreter with several attributes and the ID
      * @param numInterpreter ID of the interpreter
      * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s password for logging in
+     * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -100,7 +103,7 @@ public class Interpreter {
 
         this.numInterpreter = numInterpreter;
         this.login = login;
-        this.password = password;
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -118,7 +121,7 @@ public class Interpreter {
      * Construct an interpreter with all attributes and ID
      * @param numInterpreter ID of the interpreter
      * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s password for logging in
+     * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -147,7 +150,7 @@ public class Interpreter {
 
         this.numInterpreter = numInterpreter;
         this.login = login;
-        this.password = password;
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -164,7 +167,7 @@ public class Interpreter {
     /**
      * Construct an interpreter with all attributes without ID
      * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s password for logging in
+     * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -189,7 +192,7 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
 
         this.login = login;
-        this.password = password;
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
