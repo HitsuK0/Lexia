@@ -8,13 +8,21 @@ package be.hers.info.ProjetIntegree.DAO;
 import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
 import be.hers.info.ProjetIntegree.POJO.Referrer;
+import oracle.jdbc.OracleTypes;
+import oracle.jdbc.internal.OraclePreparedStatement;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
+
+
+//Explication pour le relecteur : j'ai décidé de traiter aussi la liste des niveaux d'éducations car c'est une liste d'entier
+//et qu'en DB, c'est stocké sous forme de String
 public class DAOEstablishment extends DAO<Establishment>{
     @Override
     public Establishment find(int objectToSearchInDB) throws SQLException {
@@ -30,23 +38,15 @@ public class DAOEstablishment extends DAO<Establishment>{
             prStat.setInt(1, objectToSearchInDB);
             rs = prStat.executeQuery();
 
-            List<Integer> listEducationLevel = new ArrayList<>();
-            List<Address> listAddress = new ArrayList<>();
-            List<Referrer> listReferrer = new ArrayList<>();
             if(rs.next()){
-                listEducationLevel.add(rs.getInt("educationLevel"));
-
-                DAOAddress daoAddress = new DAOAddress();
-                listAddress.add(daoAddress.find(rs.getInt("FKAddress")));
-
-                DAOReferrer daoReferrer = new DAOReferrer();
-                listReferrer = daoReferrer.find(objectToSearchInDB);
-                //Retourne la liste des Referrer qui sont liés avec l'Establishment qui possède l'id objectToSearchInDB
+                List<String> listStringEducationLevelFind = asList(rs.getString("educationLevel").split(","));
+                List<Integer> listIntegerEducationLevelFind = listStringEducationLevelFind.stream()
+                        .map(Integer::valueOf)
+                        .collect(Collectors.toList());
 
                 establishmentFind = new Establishment(objectToSearchInDB, rs.getString("name"),
-                        rs.getString("phoneNumber"), listEducationLevel, listReferrer, listAddress);
+                        rs.getString("phoneNumber"), listIntegerEducationLevelFind);
             }
-
         }
         finally{
             if(rs != null){
@@ -82,55 +82,16 @@ public class DAOEstablishment extends DAO<Establishment>{
             prStat = connect.prepareStatement(query);
             rs = prStat.executeQuery();
 
-            while(rs.next()){
-                //Vérifie si l'établissement rs.next est déjà présent dans listEstablishmentFind.
-                boolean isInEstablishment = false;
-                int i = 0;
-                while(i < listEstablishmentFind.size() && !isInEstablishment){
-                    Establishment establishment = listEstablishmentFind.get(i);
-                    if(establishment.getNameBuilding().equals(rs.getString("name"))){
-                        isInEstablishment = true;
-                    }
-                    else{
-                        i++;
-                    }
-                }
+            while(rs.next()) {
+                List<String> listStringEducationLevelFind = asList(rs.getString("educationLevel").split(","));
+                List<Integer> listIntegerEducationLevelFind = listStringEducationLevelFind.stream()
+                        .map(Integer::valueOf)
+                        .collect(Collectors.toList());
 
-                List<Integer> listEducationLevel = new ArrayList<>();
-                DAOReferrer daoReferrer = new DAOReferrer();
-                List<Referrer> listReferrer = new ArrayList<>();
-                DAOAddress daoAddress = new DAOAddress();
-                List<Address> listAddress = new ArrayList<>();
-
-                //Si l'établissement est déjà présent,
-                //ajoute le niveau d'éducation dans la liste si niveau d'éducation n'est pas encore présent
-                if(isInEstablishment){
-                    Establishment establishmentFind = listEstablishmentFind.get(i);
-                    if(!establishmentFind.getEducationLevel().contains(rs.getInt("educationLevel"))){
-                        establishmentFind.getEducationLevel().add(rs.getInt("educationLevel"));
-                    }
-
-                    //Si l'établissement est déjà présent,
-                    //vérifie si l'adresse est déjà dans la liste des adresses. Si non, elle est ajoutée
-                    listAddress = establishmentFind.getAddresses();
-                    Address addressFind = daoAddress.find(rs.getInt("FKAddress"));
-
-                    if(!listAddress.contains(addressFind)) {
-                        //contains nécessite l'ajout de equals dans Address
-                        listAddress.add(addressFind);
-                    }
-                }
-                else{
-                    listEducationLevel.add(rs.getInt("educationLevel"));
-                    listReferrer = daoReferrer.find(rs.getInt("numEstablishment"));
-                    //Retourne la liste des Referrer qui sont liés avec l'Establishment qui possède l'id objectToSearchInDB
-                    listAddress.add(daoAddress.find(rs.getInt("FKAddress")));
-
-                    Establishment establishmentFind = new Establishment(rs.getInt("numEstablishment"),
-                            rs.getString("name"), rs.getString("phoneNumber"),
-                            listEducationLevel, listReferrer, listAddress);
-                    listEstablishmentFind.add(establishmentFind);
-                }
+                Establishment establishmentFind = new Establishment(rs.getInt("numEstablishment"),
+                        rs.getString("name"), rs.getString("phoneNumber"),
+                        listIntegerEducationLevelFind);
+                listEstablishmentFind.add(establishmentFind);
             }
         }
         finally{
@@ -160,57 +121,61 @@ public class DAOEstablishment extends DAO<Establishment>{
     public boolean create(Establishment objectToInsertInDB) throws SQLException {
         int nbEstablishmentToAdd = 0;
         int nbEstablishmentInsert = 0;
-        String query = "INSERT INTO Establishment (NumEstablishment, FKAddress, name, phoneNumber, educationLevel) VALUES (?, ?, ?, ?, ?)";
+        String query = """
+                INSERT INTO Establishment (FKAddress, name, phoneNumber, educationLevel) VALUES (?, ?, ?, ?, ?)
+                returning numEstablishment into ?
+                """;
 
-        PreparedStatement prStat = null;
+        OraclePreparedStatement prStat = null;
+        ResultSet rs = null;
         try {
-            prStat = connect.prepareStatement(query);
+            prStat = (OraclePreparedStatement) connect.prepareStatement(query);
 
             List<Address> listAddress = objectToInsertInDB.getAddresses();
             List<Integer> listEducationLevel = objectToInsertInDB.getEducationLevel();
 
-            prStat.setInt(1, objectToInsertInDB.getNumEstablishment());
-            prStat.setString(3, objectToInsertInDB.getNameBuilding());
-            prStat.setString(4, objectToInsertInDB.getPhoneNumber());
+            prStat.setString(2, objectToInsertInDB.getNameBuilding());
+            prStat.setString(3, objectToInsertInDB.getPhoneNumber());
+            prStat.registerReturnParameter(5, OracleTypes.INTEGER);
             for (int addressIndex = 0, educationLevelIndex = 0;
                 //Pour les référents, c'est à faire en cascade dans la DB
-                 addressIndex < listAddress.size() || educationLevelIndex < listEducationLevel.size();) {
+                 addressIndex < listAddress.size() || educationLevelIndex < listEducationLevel.size(); ) {
                 if (addressIndex < listAddress.size() && educationLevelIndex < listEducationLevel.size()) {
                     Address addressToInsert = listAddress.get(addressIndex);
-                    prStat.setInt(2, addressToInsert.getNumAddress());
-                    prStat.setInt(5, listEducationLevel.get(educationLevelIndex));
+                    prStat.setInt(1, addressToInsert.getNumAddress());
+                    prStat.setInt(4, listEducationLevel.get(educationLevelIndex));
                     addressIndex++;
                     educationLevelIndex++;
-                }
-                else if(addressIndex < listAddress.size()) {
+                } else if (addressIndex < listAddress.size()) {
                     Address addressToInsert = listAddress.get(addressIndex);
-                    prStat.setInt(2, addressToInsert.getNumAddress());
-                    prStat.setInt(5, listEducationLevel.get(educationLevelIndex-1));
+                    prStat.setInt(1, addressToInsert.getNumAddress());
+                    prStat.setInt(4, listEducationLevel.get(educationLevelIndex - 1));
                     addressIndex++;
-                }
-                else if(educationLevelIndex < listEducationLevel.size()){
-                    Address addressToInsert = listAddress.get(addressIndex-1);
-                    prStat.setInt(2, addressToInsert.getNumAddress());
-                    prStat.setInt(5, listEducationLevel.get(educationLevelIndex));
+                } else if (educationLevelIndex < listEducationLevel.size()) {
+                    Address addressToInsert = listAddress.get(addressIndex - 1);
+                    prStat.setInt(1, addressToInsert.getNumAddress());
+                    prStat.setInt(4, listEducationLevel.get(educationLevelIndex));
                     educationLevelIndex++;
                 }
 
                 nbEstablishmentInsert += prStat.executeUpdate();
                 nbEstablishmentToAdd++;
             }
-        }
-        finally{
-            if(prStat != null){
-                try{
+
+            rs = prStat.getReturnResultSet();
+            int id = rs.getInt(5);
+            objectToInsertInDB.setNumEstablishment(id);
+        } finally {
+            if (prStat != null) {
+                try {
                     prStat.close();
-                }
-                catch(SQLException ex){
+                } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
             }
         }
 
-        if(nbEstablishmentInsert == nbEstablishmentToAdd)
+        if (nbEstablishmentInsert == nbEstablishmentToAdd)
             return true;
         return false;
     }
@@ -221,7 +186,7 @@ public class DAOEstablishment extends DAO<Establishment>{
         List<Address> listAddress = objectToUpdateInDB.getAddresses();
 
         List<Establishment> listEstablishmentFind = find(objectToUpdateInDB.getNameBuilding(),
-                                                             objectToUpdateInDB.getPhoneNumber());
+                objectToUpdateInDB.getPhoneNumber());
 
         int educationLevelIndex = 0;
         int addressIndex = 0;
@@ -234,8 +199,8 @@ public class DAOEstablishment extends DAO<Establishment>{
                 newListEducationLevel.add(listEducationLevel.get(educationLevelIndex));
                 newListAddress.add(listAddress.get(addressIndex));
                 newEstablishment = new Establishment(establishment.getNumEstablishment(),
-                            objectToUpdateInDB.getNameBuilding(), objectToUpdateInDB.getPhoneNumber(),
-                            newListEducationLevel, new ArrayList<>(), newListAddress);
+                        objectToUpdateInDB.getNameBuilding(), objectToUpdateInDB.getPhoneNumber(),
+                        newListEducationLevel, new ArrayList<>(), newListAddress);
                 update(newEstablishment, 'a');
                 educationLevelIndex++;
                 addressIndex++;
@@ -245,8 +210,8 @@ public class DAOEstablishment extends DAO<Establishment>{
                 newListEducationLevel.add(listEducationLevel.get(educationLevelIndex-1));
                 newListAddress.add(listAddress.get(addressIndex));
                 newEstablishment = new Establishment(establishment.getNumEstablishment(),
-                            objectToUpdateInDB.getNameBuilding(), objectToUpdateInDB.getPhoneNumber(),
-                            newListEducationLevel, new ArrayList<>(), newListAddress);
+                        objectToUpdateInDB.getNameBuilding(), objectToUpdateInDB.getPhoneNumber(),
+                        newListEducationLevel, new ArrayList<>(), newListAddress);
                 update(newEstablishment, 'a');
                 addressIndex++;
                 nbEstablishmentUpdate++;
@@ -255,8 +220,8 @@ public class DAOEstablishment extends DAO<Establishment>{
                 newListEducationLevel.add(listEducationLevel.get(educationLevelIndex));
                 newListAddress.add(listAddress.get(addressIndex-1));
                 newEstablishment = new Establishment(establishment.getNumEstablishment(),
-                            objectToUpdateInDB.getNameBuilding(), objectToUpdateInDB.getPhoneNumber(),
-                            newListEducationLevel, new ArrayList<>(), newListAddress);
+                        objectToUpdateInDB.getNameBuilding(), objectToUpdateInDB.getPhoneNumber(),
+                        newListEducationLevel, new ArrayList<>(), newListAddress);
                 update(newEstablishment, 'a');
                 educationLevelIndex++;
                 nbEstablishmentUpdate++;
