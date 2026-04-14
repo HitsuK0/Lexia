@@ -81,6 +81,30 @@ public class Establishment {
     }
 
     /**
+     * Initialize an establishment with numEstablishment, nameBuilding, phoneNumber, educationLevel
+     * @param numEstablishment the id of the establishment
+     * @param nameBuilding the name of the building
+     * @param phoneNumber the phone number
+     * @param educationLevel all education levels
+     *                       (other - 0, nursery school - 1, primary - 2, secondary - 3, higher education - 4)
+     *                       It can have 0, 1 or some education level
+     * @throws IllegalArgumentException if educationLevel contains at least one element < 0 or > 4
+     *                                  if educationLevel is null
+     */
+    public Establishment(int numEstablishment, String nameBuilding, String phoneNumber, List<Integer> educationLevel) {
+        if(educationLevel == null || educationLevel.stream().anyMatch(level -> level < 0 || level > 4))
+            throw new IllegalArgumentException("""
+                 [POJOEstablishment] :
+                 La liste des niveaux d'éducation ne peut pas être null et ne peut contenir que des entiers entre 0 et 4 compris. 
+                 """);
+
+        this.numEstablishment = numEstablishment;
+        this.nameBuilding = nameBuilding;
+        this.phoneNumber = phoneNumber;
+        this.educationLevel = educationLevel;
+    }
+
+    /**
      * Initialize an establishment with no elements
      */
     public Establishment() {
