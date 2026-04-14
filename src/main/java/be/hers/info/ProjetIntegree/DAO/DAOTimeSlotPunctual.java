@@ -9,8 +9,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+
+/// @author Vanderheyden Quentin
+///@reviewer Nicolas Jean-François, Halet Louis
+
 public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
 
+
+    /**
+     * Search for a TimeSlotPunctual with the same id as objectToSearchInDB
+     * @param objectToSearchInDB is the id of the TimeSlotPunctual to search
+     * @return null if nothing was find, else return a TimeSlotPuntual
+     * @throws SQLException if an errors occurs during the database request
+     */
     @Override
     public TimeSlotPunctual find(int objectToSearchInDB) throws SQLException{
         TimeSlotPunctual timeSlotPunctual = null;
@@ -19,7 +30,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         PreparedStatement prStat = null;
         ResultSet rs = null;
         try{
-            prStat = ConnectionOracle.getInstance().prepareStatement;
+            prStat = connect.prepareStatement;
             prStat.setInt(1, objectToSearchInDB);
             rs = prStat.executeQuery();
             if(rs.next()){
@@ -53,6 +64,11 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
     }
 
 
+    /**
+     * Search for all the TimeSlotPunctual
+     * @return an empty list if there were no TimeSlotPuncutal, else a list with all of them
+     * @throws SQLException if an errors occurs during the database request
+     */
     @Override
     public List<TimeSlotPunctual> findAll() throws SQLException{
         String query = "SELECT * FROM TimeSlotPunctual";
@@ -60,7 +76,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         PreparedStatement prStat = null;
         ResultSet rs = null;
         try{
-            prStat = ConnectionOracle.getInstance().prepareStatement;
+            prStat = connect.prepareStatement;
             rs = prStat.executeQuery();
             if(rs.next()){
                 TimeSlotPunctual timeSlotPunctual = new TimeSlotPunctual(
@@ -93,6 +109,12 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         return timeSlotPunctuals;
     }
 
+    /**
+     * Insert a TimeSlotPunctual in the DB
+     * @param objectToInsertInDB is the object TimeSlotPunctual to insert
+     * @return true if the insert did well, else false
+     * @throws SQLException if an errors occurs during the database request
+     */
     @Override
     public boolean create(TimeSlotPunctual objectToInsertInDB) throws SQLException{
         boolean isInserted = false;
@@ -101,7 +123,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         PreparedStatement prStat = null;
 
         try{
-            prStat = ConnectionOracle.getInstance().prepareStatement(query);
+            prStat = connect.prepareStatement(query);
             prStat.setDate(1, Date.valueOf(objectToInsertInDB.getStartTime().atDate(objectToInsertInDB.getStartDate()).toLocalDate()));
             prStat.setDate(2, Date.valueOf(objectToInsertInDB.getDuration().atDate(objectToInsertInDB.getStartDate()).toLocalDate())); // On ajoute le jour de début pour pouvoir convertir en date
             prStat.setDate(3, Date.valueOf(objectToInsertInDB.getStartDate()));
@@ -125,6 +147,12 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
     }
 
 
+    /**
+     * Update all the field where numTimeSlot = objectToUpdateInDB.get
+     * @param objectToUpdateInDB is the object
+     * @return true if the lines were updated else false
+     * @throws SQLException if an errors occurs during the database request
+     */
     @Override
     public boolean update(TimeSlotPunctual objectToUpdateInDB) throws SQLException{
         boolean isUpdated = false;
@@ -133,11 +161,12 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
                         "WHERE numTimeSlot = ?";
         PreparedStatement prStat = null;
         try{
-            prStat = ConnectionOracle.getInstance().prepareStatement(query);
+            prStat = connect.prepareStatement(query);
             prStat.setDate(1, Date.valueOf(objectToUpdateInDB.getStartTime().atDate(objectToUpdateInDB.getStartDate()).toLocalDate()));
             prStat.setDate(2, Date.valueOf(objectToUpdateInDB.getDuration().atDate(objectToUpdateInDB.getStartDate()).toLocalDate()));
             prStat.setDate(3, Date.valueOf(objectToUpdateInDB.getStartDate()));
             prStat.setDate(4, Date.valueOf(objectToUpdateInDB.getEndDate()));
+            prStat.setInt(5, objectToUpdateInDB.getNumTimeSlot());
             int nbreLine = prStat.executeUpdate();
             if(nbreLine > 0){
                 isUpdated = true;
@@ -159,13 +188,19 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
     }
 
 
+    /**
+     * Delete the lines where numTimeSlot == objectToDeleteForm.getNumTimeSlot()
+     * @param objectToDeleteFormDB is the TimeSlotPunctual to delete in the database
+     * @return true if the lines were deleted, false otherwise
+     * @throws SQLException if an errors occurs in the database request
+     */
     @Override
     public boolean delete(TimeSlotPunctual objectToDeleteFormDB) throws SQLException{
         boolean isDeleted = false;
         String query = "DELETE FROM TimeSlotPunctual WHERE numTimeSlot = ?";
         PreparedStatement prStat = null;
         try{
-            prStat = ConnectionOracle.getInstance().prepareStatement();
+            prStat = connect.prepareStatement();
             prStat.setInt(1, objectToDeleteFormDB.getNumTimeSlot());
             int nbreLine = prStat.executeUpdate();
             if(nbreLine > 0){
