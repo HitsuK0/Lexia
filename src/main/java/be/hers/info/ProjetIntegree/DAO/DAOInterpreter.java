@@ -30,7 +30,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
         ResultSet rs = null;
         Interpreter interpreterFind = null;
 
-        String query = "SELECT numInterpreter, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, numAddress " +
+        String query = "SELECT numInterpreter, login, password, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, numAddress " +
                 "FROM Interpreter " +
                 "WHERE numInterpreter = ?";
 
@@ -45,6 +45,8 @@ public class DAOInterpreter extends DAO<Interpreter> {
 
                 interpreterFind = new Interpreter(
                         rs.getInt("numInterpreter"),
+                        rs.getString("login"),
+                        rs.getString("password"),
                         rs.getString("lastName"),
                         rs.getString("firstName"),
                         rs.getString("emailAddress"),
@@ -85,7 +87,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
         PreparedStatement prStat = null;
         ResultSet rs = null;
 
-        String query = "SELECT numInterpreter, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, numAddress " +
+        String query = "SELECT numInterpreter, login, password, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, numAddress " +
                 "FROM Interpreter";
 
         try {
@@ -98,6 +100,8 @@ public class DAOInterpreter extends DAO<Interpreter> {
 
                 Interpreter interpreterFind = new Interpreter(
                         rs.getInt("numInterpreter"),
+                        rs.getString("login"),
+                        rs.getString("password"),
                         rs.getString("lastName"),
                         rs.getString("firstName"),
                         rs.getString("emailAddress"),
@@ -141,12 +145,13 @@ public class DAOInterpreter extends DAO<Interpreter> {
         boolean isInserted = false;
         PreparedStatement prStat = null;
 
-        String query = "INSERT INTO Interpreter (lastName, firstName, emailAddress, " +
+        String query = "INSERT INTO Interpreter (login, password, lastName, firstName, emailAddress, " +
                 "phoneNumber, weeklyWorkHours, numAddress) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             prStat = connect.prepareStatement(query);
+            prStat.setString(1, objectToInsertInDB.getLogin());
             prStat.setString(1, objectToInsertInDB.getLastName());
             prStat.setString(2, objectToInsertInDB.getFirstName());
             prStat.setString(3, objectToInsertInDB.getEmail());
