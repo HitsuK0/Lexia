@@ -117,6 +117,8 @@ public class Interpreter {
     /**
      * Construct an interpreter with all attributes and ID
      * @param numInterpreter ID of the interpreter
+     * @param login the login so that the interpreter can log in
+     * @param password the interpreter’s password for logging in
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -132,7 +134,7 @@ public class Interpreter {
      *                                  if weeklyWorkHours is negative
      *                                  if address is null / empty
      */
-    public Interpreter(int numInterpreter, String lastName, String firstName, String email, String phoneNumber,
+    public Interpreter(int numInterpreter,String login, String password, String lastName, String firstName, String email, String phoneNumber,
                        int weeklyWorkHours, Address address, List<Absence> absences,
                        List<Appointment> appointmentsList, List<ProfessionalSkill> professionalSkillsList,
                        List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList) {
@@ -144,6 +146,8 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
 
         this.numInterpreter = numInterpreter;
+        this.login = login;
+        this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -159,6 +163,8 @@ public class Interpreter {
 
     /**
      * Construct an interpreter with all attributes without ID
+     * @param login the login so that the interpreter can log in
+     * @param password the interpreter’s password for logging in
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -173,7 +179,7 @@ public class Interpreter {
      * @throws IllegalArgumentException if weeklyWorkHours is negative
      *                                  if address is null / empty
      */
-    public Interpreter(String lastName, String firstName, String email, String phoneNumber,
+    public Interpreter(String login, String password, String lastName, String firstName, String email, String phoneNumber,
                        int weeklyWorkHours, Address address, List<Absence> absences,
                        List<Appointment> appointmentsList, List<ProfessionalSkill> professionalSkillsList,
                        List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList) {
@@ -182,6 +188,8 @@ public class Interpreter {
         if (address == null)
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
 
+        this.login = login;
+        this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
