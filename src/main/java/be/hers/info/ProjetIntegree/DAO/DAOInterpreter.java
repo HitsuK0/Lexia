@@ -152,12 +152,13 @@ public class DAOInterpreter extends DAO<Interpreter> {
         try {
             prStat = connect.prepareStatement(query);
             prStat.setString(1, objectToInsertInDB.getLogin());
-            prStat.setString(1, objectToInsertInDB.getLastName());
-            prStat.setString(2, objectToInsertInDB.getFirstName());
-            prStat.setString(3, objectToInsertInDB.getEmail());
-            prStat.setString(4, objectToInsertInDB.getPhoneNumber());
-            prStat.setInt(5, objectToInsertInDB.getWeeklyWorkHours());
-            prStat.setInt(6, objectToInsertInDB.getAddress().getNumAddress());
+            prStat.setString(2, objectToInsertInDB.getPassword());
+            prStat.setString(3, objectToInsertInDB.getLastName());
+            prStat.setString(4, objectToInsertInDB.getFirstName());
+            prStat.setString(5, objectToInsertInDB.getEmail());
+            prStat.setString(6, objectToInsertInDB.getPhoneNumber());
+            prStat.setInt(7, objectToInsertInDB.getWeeklyWorkHours());
+            prStat.setInt(8, objectToInsertInDB.getAddress().getNumAddress());
 
             int nbLinesInsert = prStat.executeUpdate();
             if(nbLinesInsert > 0) {
@@ -189,18 +190,20 @@ public class DAOInterpreter extends DAO<Interpreter> {
         PreparedStatement prStat = null;
 
         String query = "UPDATE Interpreter " +
-                "SET lastName = ?, firstName = ?, emailAddress = ?, phoneNumber = ?, weeklyWorkHours = ?, numAddress = ?" +
+                "SET login = ?, password = ?, lastName = ?, firstName = ?, emailAddress = ?, phoneNumber = ?, weeklyWorkHours = ?, numAddress = ?" +
                 " WHERE numInterpreter = ?";
 
         try {
             prStat = connect.prepareStatement(query);
-            prStat.setString(1, objectToUpdateInDB.getLastName());
-            prStat.setString(2, objectToUpdateInDB.getFirstName());
-            prStat.setString(3, objectToUpdateInDB.getEmail());
-            prStat.setString(4, objectToUpdateInDB.getPhoneNumber());
-            prStat.setInt(5, objectToUpdateInDB.getWeeklyWorkHours());
-            prStat.setInt(6, objectToUpdateInDB.getAddress().getNumAddress());
-            prStat.setInt(7, objectToUpdateInDB.getNumInterpreter());
+            prStat.setString(1, objectToUpdateInDB.getLogin());
+            prStat.setString(2, objectToUpdateInDB.getPassword());
+            prStat.setString(3, objectToUpdateInDB.getLastName());
+            prStat.setString(4, objectToUpdateInDB.getFirstName());
+            prStat.setString(5, objectToUpdateInDB.getEmail());
+            prStat.setString(6, objectToUpdateInDB.getPhoneNumber());
+            prStat.setInt(7, objectToUpdateInDB.getWeeklyWorkHours());
+            prStat.setInt(8, objectToUpdateInDB.getAddress().getNumAddress());
+            prStat.setInt(9, objectToUpdateInDB.getNumInterpreter());
 
             int nbLinesUpdate = prStat.executeUpdate();
             if(nbLinesUpdate > 0) {
