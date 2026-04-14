@@ -7,6 +7,7 @@ package be.hers.info.ProjetIntegree.POJO;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class Beneficiary {
     private int numBeneficiary;
@@ -53,7 +54,7 @@ public class Beneficiary {
      * address, educationLevel, communicationLanguage and appointmentList
      * @param numBeneficiary the id of the Beneficiary
      * @param login The id login the user
-     * @param password The password of the user
+     * @param password The password of the user, it hashes it automatically
      * @param name the name
      * @param surname the surname
      * @param phoneNumber the phone number
@@ -61,12 +62,22 @@ public class Beneficiary {
      * @param hourQuota the quota hours
      * @param educationLevel the level of education
      * @param communicationLanguage the list of communication languages used by the beneficiary
+     * @throws IllegalArgumentException if the password is null
+     *                                  if the password is empty
      */
     public Beneficiary(int numBeneficiary, String login, String password, String name, String surname, String phoneNumber, Address address, int hourQuota, String emailAddress, int educationLevel,
                        Interpreter interpreter, List<String> communicationLanguage) {
+        if(password == null) {
+            throw new IllegalArgumentException("[POJOBeneficiary] Le mot de passe ne peut pas être null.");
+        }
+
+        if(password.isEmpty()) {
+            throw new IllegalArgumentException("[POJOBeneficiary] Le mot de passe ne peut pas être vide.");
+        }
+
         this.numBeneficiary = numBeneficiary;
         this.login = login;
-        this.password = password;
+        this.password = BCrypt.hashpw(password,  BCrypt.gensalt());
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -83,14 +94,24 @@ public class Beneficiary {
      * Initialize a Beneficiary with emailAddress, name and surname.
      * The parameter numBeneficiary can only be initialized with setNumBeneficiary
      * @param login the login of the user
-     * @param password the password of the user
+     * @param password the password of the user, it hashes it automatically
      * @param emailAddress the email address of the Beneficiary
      * @param name the name of the Beneficiary
      * @param surname the surname of the Beneficiary
+     * @throws IllegalArgumentException if the password is empty
+     *                                  if the password is null
      */
     public Beneficiary(String login, String password, String emailAddress, String name, String surname) {
+        if(password == null) {
+            throw new IllegalArgumentException("[POJOBeneficiary] Le mot de passe ne peut pas être null.");
+        }
+
+        if(password.isEmpty()) {
+            throw new IllegalArgumentException("[POJOBeneficiary] Le mot de passe ne peut pas être vide.");
+        }
+
         this.login = login;
-        this.password = password;
+        this.password = BCrypt.hashpw(password,  BCrypt.gensalt());
         this.name = name;
         this.surname = surname;
         this.phoneNumber = "";
@@ -107,15 +128,25 @@ public class Beneficiary {
      * Initialize a Beneficiary with numBeneficiary, emailAddress, name and surname
      * @param numBeneficiary the id of the Beneficiary
      * @param login the login of the user
-     * @param password the password of the user
+     * @param password the password of the user, it hashes it automatically
      * @param emailAddress the email address of the Beneficiary
      * @param name the name of the Beneficiary
      * @param surname the surname of the Beneficiary
+     * @throws IllegalArgumentException if the password is empty
+     *                                  if the password is null
      */
     public Beneficiary(int numBeneficiary, String login, String password, String emailAddress, String name, String surname) {
+        if(password == null) {
+            throw new IllegalArgumentException("[POJOBeneficiary] Le mot de passe ne peut pas être null.");
+        }
+
+        if(password.isEmpty()) {
+            throw new IllegalArgumentException("[POJOBeneficiary] Le mot de passe ne peut pas être vide.");
+        }
+
         this.numBeneficiary = numBeneficiary;
         this.login = login;
-        this.password = password;
+        this.password = BCrypt.hashpw(password,  BCrypt.gensalt());
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -133,7 +164,7 @@ public class Beneficiary {
      * address, educationLevel, communicationLanguage and appointmentList
      * @param numBeneficiary the id of the Beneficiary
      * @param login The id login the user
-     * @param password The password of the user
+     * @param password The password of the user, it hashes it automatically
      * @param name the name
      * @param surname the surname
      * @param phoneNumber the phone number
@@ -144,20 +175,20 @@ public class Beneficiary {
      * @param interpreter the interpreter of reference
      * @param communicationLanguage the list of communication languages used by the beneficiary
      * @param appointmentList the list of Appointments, can be null
-     * @throws IllegalArgumentException if address or communicationLanguage is null
-     *                                  if communicationLanguage is empty
+     * @throws IllegalArgumentException if address, communicationLanguage, interpreter or password is null
+     *                                  if communicationLanguage or password is empty
      *                                  if hourQuota is negative
      *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
      */
     public Beneficiary(int numBeneficiary, String login, String password, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
                        Interpreter interpreter, List<String> communicationLanguage, List<Appointment> appointmentList) {
 
-        if(address == null || communicationLanguage == null || interpreter == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse, l'interprète de référence et langue(s) de communication ne peuvent pas être null");
+        if(address == null || communicationLanguage == null || interpreter == null || password == null) {
+            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse, l'interprète de référence, langue(s) de communication et le mot de passe ne peuvent pas être null");
         }
 
-        if(communicationLanguage.isEmpty()) {
-            throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de communication ne peut pas être vide");
+        if(communicationLanguage.isEmpty() || password.isEmpty()) {
+            throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de communication ou le mot de passe ne peut pas être vide");
         }
 
         if(hourQuota < 0) {
@@ -170,7 +201,7 @@ public class Beneficiary {
 
         this.numBeneficiary = numBeneficiary;
         this.login = login;
-        this.password = password;
+        this.password = BCrypt.hashpw(password,  BCrypt.gensalt());
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -193,7 +224,7 @@ public class Beneficiary {
      * address, educationLevel, communicationLanguage and appointmentList.
      * The parameter numBeneficiary can only be initialized with setNumBeneficiary
      * @param login The login of the user
-     * @param password The password of the user
+     * @param password The password of the user, it hashes it automatically
      * @param name the name
      * @param surname the surname
      * @param phoneNumber the phone number
@@ -204,20 +235,20 @@ public class Beneficiary {
      * @param interpreter the interpreter of reference
      * @param communicationLanguage the list of communication languages used by the beneficiary
      * @param appointmentList the list of Appointments, can be null
-     * @throws IllegalArgumentException if address or communicationLanguage is null
-     *                                  if communicationLanguage is empty
+     * @throws IllegalArgumentException if address, communicationLanguage, interpreter or password is null
+     *                                  if communicationLanguage or password is empty
      *                                  if hourQuota is negative
      *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
      */
     public Beneficiary(String login, String password, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
                        Interpreter interpreter, List<String> communicationLanguage, List<Appointment> appointmentList) {
 
-        if(address == null || communicationLanguage == null || interpreter == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse, l'interprète de référence et langue(s) de communication ne peuvent pas être null");
+        if(address == null || communicationLanguage == null || interpreter == null || password == null) {
+            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse, l'interprète de référence, langue(s) de communication et mot de passe ne peuvent pas être null");
         }
 
-        if(communicationLanguage.isEmpty()) {
-            throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de communication ne peut pas être vide");
+        if(communicationLanguage.isEmpty() || password.isEmpty()) {
+            throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de  et mot de passe ne peut pas être vide");
         }
 
         if(hourQuota < 0) {
@@ -229,7 +260,7 @@ public class Beneficiary {
         }
 
         this.login = login;
-        this.password = password;
+        this.password = BCrypt.hashpw(password,  BCrypt.gensalt());
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -259,13 +290,15 @@ public class Beneficiary {
      * @return the login of the Beneficiary
      */
     public String getLogin() {
+
         return login;
     }
 
     /**
-     * @return the password of the Beneficiary
+     * @return the password of the Beneficiary, it hashes it automatically
      */
     public String getPassword() {
+
         return password;
     }
 
@@ -389,7 +422,7 @@ public class Beneficiary {
      */
     public void setPassword(String password) {
 
-        this.password = password;
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());;
     }
 
     /**
@@ -531,7 +564,6 @@ public class Beneficiary {
         StringBuilder sb = new StringBuilder();
         sb.append("Bénéficiaire n°").append(this.numBeneficiary).append(" :\n");
         sb.append("Login : ").append(this.login).append("\n");
-        sb.append("Password : ").append(this.password).append("\n");
         sb.append("Nom : ").append(this.name).append("\n");
         sb.append("Prénom : ").append(this.surname).append("\n");
 
