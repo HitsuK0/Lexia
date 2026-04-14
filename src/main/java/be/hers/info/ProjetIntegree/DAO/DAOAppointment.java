@@ -1,10 +1,8 @@
 package be.hers.info.ProjetIntegree.DAO;
 
-import be.hers.info.ProjetIntegree.POJO.Appointment;
-import be.hers.info.ProjetIntegree.POJO.Interpreter;
-import be.hers.info.ProjetIntegree.POJO.TimeSlotBase;
-import oracle.jdbc.internal.OraclePreparedStatement;
-import oracle.jdbc.internal.OracleTypes;
+import be.hers.info.ProjetIntegree.POJO.*;
+import oracle.jdbc.OraclePreparedStatement;
+import oracle.jdbc.OracleTypes;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -106,6 +104,7 @@ public class DAOAppointment extends DAO<Appointment> {
         }
         return appointmentList;
     }
+    //Precondition : timeslot existe dans la bd
 
     @Override
     public boolean create(Appointment objectToInsertInDB) throws SQLException {
@@ -114,8 +113,7 @@ public class DAOAppointment extends DAO<Appointment> {
         OraclePreparedStatement prStat = null;
         ResultSet rs = null;
         String local = null;
-        DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
-        DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+
         if (objectToInsertInDB.getAppointmentLocals() != null){
             local = String.join(",", objectToInsertInDB.getAppointmentLocals());
         }
@@ -144,7 +142,22 @@ public class DAOAppointment extends DAO<Appointment> {
                 }
                 if(!objectToInsertInDB.getInterpreters().isEmpty()){
                     for(Interpreter i : objectToInsertInDB.getInterpreters()){
-                        addInterpreterAtAppointment(i.getNumInterpreter(), id);
+                        if(!addInterpreterAtAppointment(id, i.getNumInterpreter()))
+                            throw new SQLException("[DAOAppointment] erreur lors de l'ajout dans la table RDVInterpreter");
+                    }
+                }
+                if(!objectToInsertInDB.getAcademicSkillsNeeded().isEmpty()){
+                    for(AcademicSkill a : objectToInsertInDB.getAcademicSkillsNeeded()){
+
+                        if(!addAcademicSkillAtAppointment(id, a.getNumAcademicSkill()))
+                            throw new SQLException("[DAOAppointment] erreur lors de l'ajout dans la table RequiredAcademicSkill");
+                    }
+                }
+                if(!objectToInsertInDB.getProfessionalSkillsNeeded().isEmpty()){
+                    for(ProfessionalSkill p : objectToInsertInDB.getProfessionalSkillsNeeded()){
+
+                        if(!addProfessionalSkillAtAppointment(id, p.getNumProfessionalSkill()))
+                            throw new SQLException("[DAOAppointment] erreur lors de l'ajout dans la table RequiredProfessionalSkill");
                     }
                 }
             }finally {
@@ -188,11 +201,83 @@ public class DAOAppointment extends DAO<Appointment> {
                 }
             }
         }
+        return isInserted;
+    }
+    public boolean addAcademicSkillAtAppointment(int numAppointment, int numAcademicSkill) throws SQLException {
+        boolean isInserted = false;
+        PreparedStatement prStat = null;
+        String query = "INSERT INTO RequiredAcademicSkill (numAppointment, numAcademicSkill) " +
+                "VALUES (?, ?)";
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1,numAppointment);
+            prStat.setInt(2,numAcademicSkill);
+            int nbLinesInsert = prStat.executeUpdate();
+            if(nbLinesInsert > 0) {
+                isInserted = true;
+            }
+        }finally {
+            if (prStat != null) {
+                try {
+                    prStat.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return isInserted;
+    }
+    public boolean addProfessionalSkillAtAppointment(int numAppointment, int numProfessionalSkill) throws SQLException {
+        boolean isInserted = false;
+        PreparedStatement prStat = null;
+        String query = "INSERT INTO RequiredProfessionalSkill (numAppointment, numProfessionalSkill) " +
+                "VALUES (?, ?)";
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1,numAppointment);
+            prStat.setInt(2,numProfessionalSkill);
+            int nbLinesInsert = prStat.executeUpdate();
+            if(nbLinesInsert > 0) {
+                isInserted = true;
+            }
+        }finally {
+            if (prStat != null) {
+                try {
+                    prStat.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return isInserted;
     }
 
     @Override
     public boolean delete(Appointment objectToDeleteFormDB) throws SQLException {
-        return false;
+        boolean isDeleted = false;
+        PreparedStatement prStat = null;
+
+        String query = "DELETE FROM Appointment " +
+                "WHERE numAppointment = ?";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, objectToDeleteFormDB.getNumAppointment());
+
+            int nbLinesDelete = prStat.executeUpdate();
+            if(nbLinesDelete > 0) {
+                isDeleted = true;
+            }
+        } finally {
+            if (prStat != null) {
+                try {
+                    prStat.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return isDeleted;
     }
 
     @Override
