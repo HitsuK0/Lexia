@@ -11,11 +11,17 @@ import java.util.List;
 import java.util.ArrayList;
 
 /// @author Vanderheyden Quentin
-/// @reviewer
+/// @reviewer Nicolas Jean-Francois, Halet Louis
 
 public class DAOAcademicSkill extends DAO<AcademicSkill>{
 
 
+    /**
+     * Search for an AcademicSkill where objectToSearchInDB == numAcademicSkill.
+     * @param objectToSearchInDB is the id of the AcademicSkill.
+     * @return null if nothing was found, else an AcademicSkill.
+     * @throws SQLException if an errors occurs during the database request.
+     */
     @Override
     public AcademicSkill find(int objectToSearchInDB) throws SQLException{
         String query = "SELECT numAcademicSkill, designation" +
@@ -53,6 +59,12 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         return as;
     }
 
+    /**
+     * Get all the AcademicSkill in the table AcademicSkill.
+     * @return an empty list if there is no line in AcademicSkill (table),
+     * else return a initialise list with all the AcademicSkill.
+     * @throws SQLException if an errors occurs during the database request.
+     */
     @Override
     public List<AcademicSkill> findAll() throws SQLException{
         String query = "SELECT numAcademicSkill, designation " +
@@ -89,6 +101,12 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         return list;
     }
 
+    /**
+     * Insert an AcademicSkill in the table
+     * @param objectToInsertInDB is the AcademicSkill to insert
+     * @return true if the AcademicSkill were inserted, otherwise false.
+     * @throws SQLException if an errors occurs in the database request
+     */
     @Override
     public boolean create(AcademicSkill objectToInsertInDB) throws SQLException {
         boolean isCreated = false;
@@ -114,6 +132,12 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         return isCreated;
     }
 
+    /**
+     * Update the line where objectToUpdate.getId() == numAcademicSkill.
+     * @param objectToUpdateInDB is the object to update.
+     * @return true if the line was updated, else false.
+     * @throws SQLException if an errors occurs during the database request.
+     */
     @Override
     public boolean update(AcademicSkill objectToUpdateInDB) throws SQLException {
         boolean isUpdated = false;
@@ -141,6 +165,12 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         return isUpdated;
     }
 
+    /**
+     * Delete the line in the table where the id and the designation are the same in objectToDeleteFormDB.
+     * @param objectToDeleteFormDB is object to delete in the table.
+     * @return true if the line was successfully deleted otherwise false.
+     * @throws SQLException if an errors occurs during the database request.
+     */
     @Override
     public boolean delete(AcademicSkill objectToDeleteFormDB) throws SQLException {
         boolean isDeleted = false;
