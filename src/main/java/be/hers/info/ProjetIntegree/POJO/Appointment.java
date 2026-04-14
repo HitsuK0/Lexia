@@ -33,6 +33,23 @@ public class Appointment {
     }
 
     /**
+     * Initialize an Appointment with numAppointment, status and appointmentLocals
+     * @param numAppointment The id of the Appointment
+     * @param status The status of the Appointment
+     * @param appointmentLocals List of local(s) where the Appointment will take place
+     */
+    public Appointment(int numAppointment, String status, List<String> appointmentLocals) {
+        this.numAppointment = numAppointment;
+        this.status = status;
+        this.appointmentLocals = appointmentLocals;
+        this.timeSlot = null;
+        this.beneficiary = null;
+        this.interpreters = new ArrayList<Interpreter>();
+        this.academicSkillsNeeded= new ArrayList<AcademicSkill>();
+        this.professionalSkillsNeeded = new ArrayList<ProfessionalSkill>();
+    }
+
+    /**
      * Initialize an Appointment with beneficiary, appointmentLocals, interpreters, specialists, academicSkillsNeeded, professionalSkillsNeeded,
      * timeSlot and sets the status to 'en attente' by default
      * @param numAppointment The id of the Appointment
