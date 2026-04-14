@@ -10,6 +10,8 @@ import java.util.List;
 
 public class Interpreter {
     private int numInterpreter;
+    private String login;
+    private String password;
     private String lastName;
     private String firstName;
     private String email;
@@ -41,6 +43,8 @@ public class Interpreter {
 
     /**
      * Construct an interpreter with several attributes without ID
+     * @param login the login so that the interpreter can log in
+     * @param password the interpreter’s password for logging in
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -49,12 +53,14 @@ public class Interpreter {
      * @param address the address of the interpreter
      * @throws IllegalArgumentException if address is null / empty and if weeklyWorkHours is negative
      */
-    public Interpreter(String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address) {
+    public Interpreter(String login, String password, String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address) {
         if (weeklyWorkHours < 0)
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
         if (address == null)
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
 
+        this.login = login;
+        this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -71,6 +77,8 @@ public class Interpreter {
     /**
      * Construct an interpreter with several attributes and the ID
      * @param numInterpreter ID of the interpreter
+     * @param login the login so that the interpreter can log in
+     * @param password the interpreter’s password for logging in
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -81,7 +89,7 @@ public class Interpreter {
      *                                  if weeklyWorkHours is negative
      *                                  if address is null / empty
      */
-    public Interpreter(int numInterpreter, String lastName, String firstName, String email, String phoneNumber,
+    public Interpreter(int numInterpreter,String login, String password, String lastName, String firstName, String email, String phoneNumber,
                        int weeklyWorkHours, Address address) {
         if (numInterpreter < 0)
             throw new IllegalArgumentException("[POJOInterpreter] L'identifiant de l'interprète ne peut pas être négatif");
@@ -91,6 +99,8 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
 
         this.numInterpreter = numInterpreter;
+        this.login = login;
+        this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
