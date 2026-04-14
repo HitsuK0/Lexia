@@ -61,6 +61,8 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
         if (address == null)
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
+        if (password == null || password.isEmpty())
+            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
 
         this.login = login;
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
@@ -100,6 +102,8 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
         if (address == null)
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
+        if (password == null || password.isEmpty())
+            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
 
         this.numInterpreter = numInterpreter;
         this.login = login;
@@ -147,6 +151,8 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
         if (address == null)
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
+        if (password == null || password.isEmpty())
+            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
 
         this.numInterpreter = numInterpreter;
         this.login = login;
@@ -190,6 +196,8 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
         if (address == null)
             throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
+        if (password == null || password.isEmpty())
+            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
 
         this.login = login;
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
