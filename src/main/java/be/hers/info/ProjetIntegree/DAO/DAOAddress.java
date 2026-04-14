@@ -56,9 +56,8 @@ public class DAOAddress implements DAO<Address> {
                 DAOEstablishment daoEstablishment = new DAOEstablishment<>();
                 Establishment establishmentFind = daoEstablishment.find(objectToSearchInDB); //renvoie l'établissement qui contient l'adresse d'id objectToSearchInDB
                 addressFind = new Address(objectToSearchInDB, rs.getInt("postalCode"),
-                              rs.getString("postalBox"), rs.getString("locality"), rs.getString("complementOfPlace"),
+                              rs.getString("postalBox"), rs.getString("locality"), rs.getString("hamlet"),
                               establishmentFind);
-                //ajouter le constructeur adéquat (et supprimer le champ numStreet du POJO Address
             }
         }
         finally{
@@ -83,9 +82,8 @@ public class DAOAddress implements DAO<Address> {
                 Establishment establishmentFind = daoEstablishment.find(rs.getInt("NumAddress")); //renvoie l'établissement qui contient l'adresse d'id objectToSearchInDB
                 Address addressFind = new Address(rs.getInt("NumAddress"), rs.getInt("postalCode"),
                         rs.getString("postalBox"), rs.getString("locality"),
-                        rs.getString("complementOfPlace"),
-                        establishmentFind); //A voir comment Louis appelle le champ NumStreet
-                //ajouter le constructeur adéquat
+                        rs.getString("hamlet"),
+                        establishmentFind);
                 listAddressFind.add(addressFind);
             }
         }
@@ -101,16 +99,19 @@ public class DAOAddress implements DAO<Address> {
      */
     @Override
     public boolean create(Address objectToInsertInDB) throws SQLException {
-        String query = "INSERT INTO Address (numAddress, postalCode, postalBox, locality, complementOfPlace) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = """
+                       INSERT INTO Address (postalCode, postalBox, locality, hamlet)
+                       VALUES (?, ?, ?, ?, ?) returning numAddress into ?
+                       """;
 
         PreparedStatement prStat = null;
+        ResultSet rs = null;
         try{
             prStat = connect.prepareStatement(query);
-            prStat.setInt(1, objectToInsertInDB.getNumAddress());
-            prStat.setInt(2, objectToInsertInDB.getPostcode());
-            prStat.setString(3, objectToInsertInDB.getPostOfficeBox());
-            prStat.setString(4, objectToInsertInDB.getLocality());
-            prStat.setString(5, objectToInsertInDB.getHamlet());
+            prStat.setInt(1, objectToInsertInDB.getPostcode());
+            prStat.setString(2, objectToInsertInDB.getPostOfficeBox());
+            prStat.setString(3, objectToInsertInDB.getLocality());
+            prStat.setString(4, objectToInsertInDB.getHamlet());
 
             if(prStat.executeUpdate() > 0)
                 return true;
@@ -123,7 +124,7 @@ public class DAOAddress implements DAO<Address> {
 
     @Override
     public boolean update(Address objectToUpdateInDB) throws SQLException {
-        String query = "UPDATE Address SET postalCode = ?, postalBox ? , locality = ?, complementOfPlace = ? WHERE numAddress = ?";
+        String query = "UPDATE Address SET postalCode = ?, postalBox ? , locality = ?, hamlet = ? WHERE numAddress = ?";
 
         PreparedStatement prStat = null;
         try{
