@@ -8,7 +8,7 @@ package be.hers.info.ProjetIntegree.POJO;
 
 public class AcademicSkill
 {
-
+    private int numAcademicSkill;
     private String designation;
 
     /**
@@ -49,6 +49,11 @@ public class AcademicSkill
     public String getDesignation() {
         return designation;
     }
+
+    /**
+     * @return the ID of the AcademicSkill
+     */
+    public int getNumAcademicSkill() { return numAcademicSkill; }
 
     /**
      * @return a String containing the designation
