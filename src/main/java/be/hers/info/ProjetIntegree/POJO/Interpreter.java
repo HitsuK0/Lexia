@@ -222,6 +222,20 @@ public class Interpreter {
     }
 
     /**
+     * @return the login of the interpreter
+     */
+    public String getLogin() {
+        return login;
+    }
+
+    /**
+     * @return the hashed password of the interpreter
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
      * @return the first name of the interpreter
      */
     public String getFirstName() {
@@ -306,6 +320,24 @@ public class Interpreter {
         if (numInterpreter < 0)
             throw new IllegalArgumentException("[POJOInterpreter] L'identifiant de l'interprète ne peut pas être négatif");
         this.numInterpreter = numInterpreter;
+    }
+
+    /**
+     * Set the login of the interpreter
+     * @param login The login to set
+     */
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    /**
+     * Set the hashed password of the interpreter
+     * @param password The hashed password to set
+     */
+    public void setPassword(String password) {
+        if(password == null || password.isEmpty())
+            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     /**
