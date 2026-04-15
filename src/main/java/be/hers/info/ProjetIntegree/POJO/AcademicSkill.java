@@ -1,6 +1,5 @@
 package be.hers.info.ProjetIntegree.POJO;
-// ajout de id avec getter et setter (à supprimer avant merge)
-// (supprimer les [QV] avant merge)
+
 /**
  * @author Leroy Rodriguez Ainhoa
  * @reviewer Nicolas Jean-François, Halet Louis
@@ -9,8 +8,7 @@ package be.hers.info.ProjetIntegree.POJO;
 
 public class AcademicSkill
 {
-
-    private int numAcademicSkill; // [QV]
+    private int numAcademicSkill;
     private String designation;
 
     /**
@@ -18,13 +16,13 @@ public class AcademicSkill
      * @param designation the name of the academic skill
      * @throws NullPointerException if designation is null
      */
-    public AcademicSkill(int id, String designation){
+    public AcademicSkill(int num, String designation){
 
         if(designation == null){
             throw new IllegalArgumentException("[POJOAcademicSkill] la désignation ne peut pas être null ou vide");
         }
         this.designation = designation;
-        this.numAcademicSkill = id;
+        this.numAcademicSkill = num;
     }
 
     /**
@@ -47,13 +45,6 @@ public class AcademicSkill
     }
 
     /**
-     * @return the id of the academic skill. [QV]
-     */
-    public int getId() {
-        return numAcademicSkill;
-    }
-
-    /**
      * @return the designation of the AcademicSkill
      */
     public String getDesignation() {
@@ -61,15 +52,9 @@ public class AcademicSkill
     }
 
     /**
-     *
-     * @param id the id of the academic skill [QV]
+     * @return the ID of the AcademicSkill
      */
-    public void setId(int id) {
-        if(id < 0){
-            throw new IllegalArgumentException("[POJOAcademicSkill] Le numéro de la compétence Academique ne peut pas être négatif");
-        }
-        this.numAcademicSkill = id;
-    }
+    public int getNumAcademicSkill() { return numAcademicSkill; }
 
     /**
      * @return a String containing the designation

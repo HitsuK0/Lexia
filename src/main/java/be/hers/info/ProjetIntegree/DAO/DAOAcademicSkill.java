@@ -146,7 +146,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         try{
             prStat = connect.prepareStatement(query);
             prStat.setString(1, objectToUpdateInDB.getDesignation());
-            prStat.setInt(2, objectToUpdateInDB.getId());
+            prStat.setInt(2, objectToUpdateInDB.getNumAcademicSkill());
             int nbreLigne = prStat.executeUpdate();
             if(nbreLigne > 0){
                 isUpdated = true;
@@ -178,7 +178,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         PreparedStatement prStat = null;
         try {
             prStat = connect.prepareStatement(query);
-            prStat.setInt(1, objectToDeleteFormDB.getId());
+            prStat.setInt(1, objectToDeleteFormDB.getNumAcademicSkill());
             prStat.setString(2, objectToDeleteFormDB.getDesignation());
             int nbreLigne = prStat.executeUpdate();
             if(nbreLigne > 0){
