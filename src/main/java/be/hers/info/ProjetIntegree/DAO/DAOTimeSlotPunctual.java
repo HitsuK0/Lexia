@@ -30,7 +30,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         PreparedStatement prStat = null;
         ResultSet rs = null;
         try{
-            prStat = connect.prepareStatement;
+            prStat = connect.prepareStatement(query);
             prStat.setInt(1, objectToSearchInDB);
             rs = prStat.executeQuery();
             if(rs.next()){
@@ -76,7 +76,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         PreparedStatement prStat = null;
         ResultSet rs = null;
         try{
-            prStat = connect.prepareStatement;
+            prStat = connect.prepareStatement(query);
             rs = prStat.executeQuery();
             if(rs.next()){
                 TimeSlotPunctual timeSlotPunctual = new TimeSlotPunctual(
@@ -200,7 +200,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         String query = "DELETE FROM TimeSlotPunctual WHERE numTimeSlot = ?";
         PreparedStatement prStat = null;
         try{
-            prStat = connect.prepareStatement();
+            prStat = connect.prepareStatement(query);
             prStat.setInt(1, objectToDeleteFormDB.getNumTimeSlot());
             int nbreLine = prStat.executeUpdate();
             if(nbreLine > 0){
