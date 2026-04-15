@@ -25,13 +25,14 @@ import static java.util.Arrays.asList;
 public class DAOEstablishment extends DAO<Establishment>{
     @Override
     public Establishment find(int objectToSearchInDB) throws SQLException {
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
         Establishment establishmentFind = null;
         String query = """
                        SELECT FKAddress, name, phoneNumber, educationLevel FROM Establishment
                        WHERE numEstablishment = ?
                        """;
-        PreparedStatement prStat = null;
-        ResultSet rs = null;
+
         try{
             prStat = connect.prepareStatement(query);
             prStat.setInt(1, objectToSearchInDB);
@@ -43,8 +44,11 @@ public class DAOEstablishment extends DAO<Establishment>{
                         .map(Integer::valueOf)
                         .collect(Collectors.toList());
 
-                establishmentFind = new Establishment(objectToSearchInDB, rs.getString("name"),
-                        rs.getString("phoneNumber"), listIntegerEducationLevelFind);
+                establishmentFind = new Establishment(
+                        objectToSearchInDB,
+                        rs.getString("name"),
+                        rs.getString("phoneNumber"),
+                        listIntegerEducationLevelFind);
             }
         }
         finally{
@@ -73,9 +77,10 @@ public class DAOEstablishment extends DAO<Establishment>{
     @Override
     public List findAll() throws SQLException {
         List<Establishment> listEstablishmentFind = new ArrayList();
-        String query = "SELECT * FROM Establishment";
         PreparedStatement prStat = null;
         ResultSet rs = null;
+
+        String query = "SELECT * FROM Establishment";
 
         try{
             prStat = connect.prepareStatement(query);
@@ -87,9 +92,12 @@ public class DAOEstablishment extends DAO<Establishment>{
                         .map(Integer::valueOf)
                         .collect(Collectors.toList());
 
-                Establishment establishmentFind = new Establishment(rs.getInt("numEstablishment"),
-                        rs.getString("name"), rs.getString("phoneNumber"),
+                Establishment establishmentFind = new Establishment(
+                        rs.getInt("numEstablishment"),
+                        rs.getString("name"),
+                        rs.getString("phoneNumber"),
                         listIntegerEducationLevelFind);
+
                 listEstablishmentFind.add(establishmentFind);
             }
         }
@@ -120,13 +128,14 @@ public class DAOEstablishment extends DAO<Establishment>{
     public boolean create(Establishment objectToInsertInDB) throws SQLException {
         int nbEstablishmentToAdd = 0;
         int nbEstablishmentInsert = 0;
+        OraclePreparedStatement prStat = null;
+        ResultSet rs = null;
+
         String query = """
                 INSERT INTO Establishment (FKAddress, name, phoneNumber, educationLevel) VALUES (?, ?, ?, ?, ?)
                 returning numEstablishment into ?
                 """;
 
-        OraclePreparedStatement prStat = null;
-        ResultSet rs = null;
         try {
             prStat = (OraclePreparedStatement) connect.prepareStatement(query);
 
@@ -192,13 +201,13 @@ public class DAOEstablishment extends DAO<Establishment>{
     public boolean update(Establishment objectToUpdateInDB) throws SQLException {
         List<Integer> listEducationLevel = objectToUpdateInDB.getEducationLevel();
         List<Address> listAddress = objectToUpdateInDB.getAddresses();
+        int educationLevelIndex = 0;
+        int addressIndex = 0;
+        int nbEstablishmentUpdate = 0;
 
         List<Establishment> listEstablishmentFind = find(objectToUpdateInDB.getNameBuilding(),
                 objectToUpdateInDB.getPhoneNumber());
 
-        int educationLevelIndex = 0;
-        int addressIndex = 0;
-        int nbEstablishmentUpdate = 0;
         for(Establishment establishment : listEstablishmentFind){
             Establishment newEstablishment = null;
             List<Integer> newListEducationLevel = new ArrayList<>();
@@ -272,9 +281,9 @@ public class DAOEstablishment extends DAO<Establishment>{
 
     @Override
     public boolean delete(Establishment objectToDeleteFormDB) throws SQLException {
+        PreparedStatement prStat = null;
         String query = "DELETE From Establishment WHERE NumEstablishment = ?";
 
-        PreparedStatement prStat = null;
         try{
             prStat = connect.prepareStatement(query);
             prStat.setInt(1, objectToDeleteFormDB.getNumEstablishment());
