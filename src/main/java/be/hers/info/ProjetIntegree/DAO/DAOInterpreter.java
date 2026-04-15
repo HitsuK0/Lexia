@@ -34,7 +34,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
         ResultSet rs = null;
         Interpreter interpreterFind = null;
 
-        String query = "SELECT numInterpreter, login, password, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, numAddress " +
+        String query = "SELECT numInterpreter, login, password, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, FKAddress " +
                 "FROM Interpreter " +
                 "WHERE numInterpreter = ?";
 
@@ -45,7 +45,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
 
             if(rs.next()) {
                 DAOAddress daoAddress = new DAOAddress();
-                Address addressInterpreter = daoAddress.find(rs.getInt("numAddress"));
+                Address addressInterpreter = daoAddress.find(rs.getInt("FKAddress"));
 
                 interpreterFind = new Interpreter(
                         rs.getInt("numInterpreter"),
@@ -91,7 +91,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
         PreparedStatement prStat = null;
         ResultSet rs = null;
 
-        String query = "SELECT numInterpreter, login, password, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, numAddress " +
+        String query = "SELECT numInterpreter, login, password, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, FKAddress " +
                 "FROM Interpreter";
 
         try {
@@ -100,7 +100,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
 
             while(rs.next()) {
                 DAOAddress daoAddress = new DAOAddress();
-                Address addressInterpreter = daoAddress.find(rs.getInt("numAdress"));
+                Address addressInterpreter = daoAddress.find(rs.getInt("FKAddress"));
 
                 Interpreter interpreterFind = new Interpreter(
                         rs.getInt("numInterpreter"),
@@ -242,7 +242,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
         PreparedStatement prStat = null;
 
         String query = "UPDATE Interpreter " +
-                "SET login = ?, password = ?, lastName = ?, firstName = ?, emailAddress = ?, phoneNumber = ?, weeklyWorkHours = ?, numAddress = ?" +
+                "SET login = ?, password = ?, lastName = ?, firstName = ?, emailAddress = ?, phoneNumber = ?, weeklyWorkHours = ?, FKAddress = ?" +
                 " WHERE numInterpreter = ?";
 
         try {
