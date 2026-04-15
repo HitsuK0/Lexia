@@ -15,6 +15,7 @@ public class Appointment {
     private Beneficiary beneficiary;
     private List<Interpreter> interpreters;
     private TimeSlot timeSlot;
+    private Establishment establishment;
     private List<AcademicSkill> academicSkillsNeeded;
     private List<ProfessionalSkill> professionalSkillsNeeded;
 
@@ -23,13 +24,14 @@ public class Appointment {
      * The parameter numAppointment can only be initialized with setNumAppointment
      */
     public Appointment() {
-        status = "en attente";
-        appointmentLocals = new ArrayList<String>();
-        timeSlot = null;
-        beneficiary = null;
-        academicSkillsNeeded = new ArrayList<AcademicSkill>();
-        professionalSkillsNeeded = new ArrayList<ProfessionalSkill>();
-        interpreters = new ArrayList<Interpreter>();
+        this.status = "en attente";
+        this.appointmentLocals = new ArrayList<String>();
+        this.timeSlot = null;
+        this.establishment = null;
+        this.beneficiary = null;
+        this.academicSkillsNeeded = new ArrayList<AcademicSkill>();
+        this.professionalSkillsNeeded = new ArrayList<ProfessionalSkill>();
+        this.interpreters = new ArrayList<Interpreter>();
     }
 
     /**
@@ -37,16 +39,24 @@ public class Appointment {
      * @param numAppointment The id of the Appointment
      * @param status The status of the Appointment
      * @param appointmentLocals List of local(s) where the Appointment will take place
+     * @param beneficiary The Beneficiary concerned
+     * @param timeSlot For every repetitive or non-repetitive Appointment
+     * @param establishment The establishment, can be null
      */
-    public Appointment(int numAppointment, String status, List<String> appointmentLocals) {
+    public Appointment(int numAppointment, String status, List<String> appointmentLocals, Beneficiary beneficiary, TimeSlot timeSlot,
+                       Establishment establishment) {
         this.numAppointment = numAppointment;
         this.status = status;
         this.appointmentLocals = appointmentLocals;
-        this.timeSlot = null;
-        this.beneficiary = null;
+        this.timeSlot = timeSlot;
+        this.beneficiary = beneficiary;
         this.interpreters = new ArrayList<Interpreter>();
         this.academicSkillsNeeded= new ArrayList<AcademicSkill>();
         this.professionalSkillsNeeded = new ArrayList<ProfessionalSkill>();
+
+        if(establishment != null) {
+            this.establishment = establishment;
+        }
     }
 
     /**
@@ -59,11 +69,12 @@ public class Appointment {
      * @param academicSkillsNeeded List of academic skills needed, can be null
      * @param professionalSkillsNeeded List of business skills needed
      * @param timeSlot For every repetitive or non-repetitive Appointment
+     * @param establishment The establishment, can be null
      * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters or timeSlot is null
      *                                  If interpreters or professionalSkillsNeeded is empty
      */
     public Appointment(int numAppointment, Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
-            ,TimeSlot timeSlot) {
+            ,TimeSlot timeSlot, Establishment establishment) {
         if(beneficiary == null || interpreters == null || professionalSkillsNeeded == null || timeSlot == null) {
             throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes, la tranche horaire et les compétences professionnelles ne peuvent pas être null.");
         }
@@ -80,6 +91,10 @@ public class Appointment {
         this.timeSlot = timeSlot;
         this.academicSkillsNeeded = academicSkillsNeeded;
         this.professionalSkillsNeeded = professionalSkillsNeeded;
+
+        if(establishment != null) {
+            this.establishment = establishment;
+        }
     }
 
     /**
@@ -91,11 +106,12 @@ public class Appointment {
      * @param academicSkillsNeeded List of academic skills needed, can be null
      * @param professionalSkillsNeeded List of business skills needed
      * @param timeSlot For every repetitive and non-repetitive Appointment
+     * @param establishment The establishment, can be null
      * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters or timeSlot is null
      *                                  If interpreters or professionalSkillsNeeded is empty
      */
     public Appointment(Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
-            ,TimeSlot timeSlot) {
+            ,TimeSlot timeSlot, Establishment establishment) {
         if(beneficiary == null || interpreters == null || professionalSkillsNeeded == null || timeSlot == null) {
             throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes, la tranche horaire et les compétences professionnelles ne peuvent pas être null.");
         }
@@ -111,6 +127,10 @@ public class Appointment {
         this.timeSlot = timeSlot;
         this.academicSkillsNeeded = academicSkillsNeeded;
         this.professionalSkillsNeeded = professionalSkillsNeeded;
+
+        if(establishment != null) {
+            this.establishment = establishment;
+        }
     }
 
     /**
@@ -175,6 +195,14 @@ public class Appointment {
     public List<ProfessionalSkill> getProfessionalSkillsNeeded() {
 
         return professionalSkillsNeeded;
+    }
+
+    /**
+     * @return the establishment of the Appointment
+     */
+    public Establishment getEstablishment() {
+
+        return establishment;
     }
 
     /**
@@ -308,6 +336,18 @@ public class Appointment {
     }
 
     /**
+     * @param establishment the establishment to set
+     * @throws IllegalArgumentException if establishment is null
+     */
+    public void setEstablishment(Establishment establishment) {
+        if(establishment == null) {
+            throw new IllegalArgumentException("[POJOAppointment] L'établissement ne peut pas être null.");
+        }
+
+        this.establishment = establishment;
+    }
+
+    /**
      * @return a String containing the appointment ID, the status, the beneficiary, the interpreters,
      *         the locals, the academic skills needed, the business skills needed and
      *         the time slot
@@ -331,6 +371,13 @@ public class Appointment {
             stringBuild.append("Aucun créneau attribué\n");
         } else {
             stringBuild.append(this.timeSlot).append("\n");
+        }
+
+        stringBuild.append("Établissement : \n");
+        if(this.establishment == null) {
+            stringBuild.append("Aucun establishment attribué\n");
+        } else {
+            stringBuild.append(this.establishment).append("\n");
         }
 
         stringBuild.append("Local :\n");
