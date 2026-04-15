@@ -7,6 +7,7 @@ package be.hers.info.ProjetIntegree.DAO;
 
 import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
+import oracle.jdbc.internal.OraclePreparedStatement;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -99,21 +100,30 @@ public class DAOAddress implements DAO<Address> {
      */
     @Override
     public boolean create(Address objectToInsertInDB) throws SQLException {
+        OraclePreparedStatement prStat = null;
+        ResultSet rs = null;
+        ResultSet generateID = null;
+
         String query = """
                        INSERT INTO Address (postalCode, postalBox, locality, hamlet)
                        VALUES (?, ?, ?, ?, ?) returning numAddress into ?
                        """;
 
-        PreparedStatement prStat = null;
-        ResultSet rs = null;
         try{
-            prStat = connect.prepareStatement(query);
+            prStat = (OraclePreparedStatement) connect.prepareStatement(query);
             prStat.setInt(1, objectToInsertInDB.getPostcode());
             prStat.setString(2, objectToInsertInDB.getPostOfficeBox());
             prStat.setString(3, objectToInsertInDB.getLocality());
             prStat.setString(4, objectToInsertInDB.getHamlet());
 
             if(prStat.executeUpdate() > 0)
+                generateID = prStat.getReturnResultSet();
+                if(!generateID.next()) {
+                    throw new SQLException("[DAOInterpreter] Impossible de récupérer le numInterpreter généré.");
+                }
+                int numAddressGenerated = generateID.getInt(1);
+                objectToInsertInDB.setNumAddress(numAddressGenerated);
+
                 return true;
             return false;
         }
