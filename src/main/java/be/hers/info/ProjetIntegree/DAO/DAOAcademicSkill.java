@@ -31,7 +31,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         PreparedStatement prStat = null;
         ResultSet rs = null;
         try{
-            prStat = ConnectionOracle.getInstance().prepareStatement(query);
+            prStat = connect.prepareStatement(query);
             prStat.setInt(1, objectToSearchInDB);
             rs = prStat.executeQuery();
             if(rs.next()){
@@ -73,7 +73,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         PreparedStatement prStat = null;
         ResultSet rs = null;
         try {
-            prStat = ConnectionOracle.getInstance().prepareStatement(query);
+            prStat = connect.prepareStatement(query);
             rs = prStat.executeQuery();
             while(rs.next()){
                 AcademicSkill as = new AcademicSkill(rs.getInt("numAcademicSkill"), rs.getString("designation"));
@@ -113,7 +113,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         String query = "INSERT INTO Academic_skill(designation) VALUES (?)"; // est-ce qu'on doit mettre id ou alors auto incrémenté ?
         PreparedStatement prStat = null;
         try{
-            prStat = ConnectionOracle.getInstance().prepareStatement(query);
+            prStat = connect.prepareStatement(query);
             prStat.setString(1, objectToInsertInDB.getDesignation());
             int nbreLigne = prStat.executeUpdate();
             if(nbreLigne > 0){
@@ -144,7 +144,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         String query = "UPDATE AcademicSkill SET designation = ? WHERE numAcademicSkill = ?";
         PreparedStatement prStat = null;
         try{
-            prStat = ConnectionOracle.getInstance().prepareStatement(query);
+            prStat = connect.prepareStatement(query);
             prStat.setString(1, objectToUpdateInDB.getDesignation());
             prStat.setInt(2, objectToUpdateInDB.getId());
             int nbreLigne = prStat.executeUpdate();
@@ -177,7 +177,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         String query = "DELETE FROM AcademicSkill WHERE numAcademicSkill = ? AND designation = ?";
         PreparedStatement prStat = null;
         try {
-            prStat = ConnectionOracle.getInstance().prepareStatement(query);
+            prStat = connect.prepareStatement(query);
             prStat.setInt(1, objectToDeleteFormDB.getId());
             prStat.setString(2, objectToDeleteFormDB.getDesignation());
             int nbreLigne = prStat.executeUpdate();
