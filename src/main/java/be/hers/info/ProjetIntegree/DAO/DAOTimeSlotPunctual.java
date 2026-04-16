@@ -16,6 +16,27 @@ import java.util.ArrayList;
 public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
 
 
+    public void closeStatement(PreparedStatement statement){
+        if(statement != null){
+            try{
+                statement.close();
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void closeResultSet(ResultSet resultSet){
+        if(resultSet != null){
+            try{
+                resultSet.close();
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+
     /**
      * Search for a TimeSlotPunctual with the same id as objectToSearchInDB
      * @param objectToSearchInDB is the id of the TimeSlotPunctual to search
@@ -44,20 +65,8 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
             }
         }
         finally{
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeResultSet(rs);
+            closeStatement(prStat);
 
         }
         return timeSlotPunctual;
@@ -90,20 +99,8 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
             }
         }
         finally{
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeResultSet(rs);
+            closeStatement(prStat);
 
         }
         return timeSlotPunctuals;
@@ -134,14 +131,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
             }
         }
         finally{
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                }
-                catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeStatement(prStat);
         }
         return isInserted;
     }
@@ -173,14 +163,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
             }
         }
         finally{
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                }
-                catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeStatement(prStat);
         }
 
 
@@ -208,14 +191,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
             }
         }
         finally{
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                }
-                catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeStatement(prStat);
         }
         return isDeleted;
     }
