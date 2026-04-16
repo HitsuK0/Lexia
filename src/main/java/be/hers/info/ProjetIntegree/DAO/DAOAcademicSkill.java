@@ -16,6 +16,27 @@ import java.util.ArrayList;
 public class DAOAcademicSkill extends DAO<AcademicSkill>{
 
 
+
+    public void closeStatement(PreparedStatement statement){
+        if(statement != null){
+            try{
+                statement.close();
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void closeResultSet(ResultSet resultSet){
+        if(resultSet != null){
+            try{
+                resultSet.close();
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Search for an AcademicSkill where objectToSearchInDB == numAcademicSkill.
      * @param objectToSearchInDB is the id of the AcademicSkill.
@@ -39,22 +60,8 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
             }
         }
         finally {
-            if(rs != null){
-                try{
-                    rs.close();
-                }
-                catch(SQLException e){
-                    System.out.println(e.getMessage());
-                }
-            }
-            if(prStat != null){
-                try{
-                    prStat.close();
-                }
-                catch(SQLException e){
-                    e.printStackTrace();
-                }
-            }
+            closeResultSet(rs);
+            closeStatement(prStat);
         }
         return as;
     }
@@ -81,22 +88,8 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
             }
         }
         finally {
-            if(rs != null){
-                try{
-                    rs.close();
-                }
-                catch(SQLException e){
-                    System.out.println(e.getMessage());
-                }
-            }
-            if(prStat != null){
-                try{
-                    prStat.close();
-                }
-                catch(SQLException e){
-                    e.printStackTrace();
-                }
-            }
+            closeResultSet(rs);
+            closeStatement(prStat);
         }
         return list;
     }
@@ -121,13 +114,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
             }
         }
         finally{
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeStatement(prStat);
         }
         return isCreated;
     }
@@ -153,13 +140,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
             }
         }
         finally{
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeStatement(prStat);
 
         }
         return isUpdated;
@@ -186,13 +167,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
             }
         }
         finally {
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeStatement(prStat);
         }
         return isDeleted;
     }
