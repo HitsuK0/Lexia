@@ -91,7 +91,7 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
     }
 
 
-    public boolean create(TimeSlotBase timeSlotBase) throws SQLException {
+    public boolean create(TimeSlotBase objectToInsertInDB) throws SQLException {
         boolean estInseree = false;
         String query = "INSERT INTO TimeSlotBase(numTimeSlotBase,startTime,duration,dayNumber)  VALUES (?,?,?,?)";
         PreparedStatement prStat = null;
@@ -100,13 +100,11 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
             prStat = connect.prepareStatement(query);
 
 
-            LocalDate dateDuJour = LocalDate.now();
 
-
-            prStat.setInt(1, timeSlotBase.getNumTimeSlot());
-            prStat.setTime(2, java.sql.Time.valueOf(timeSlotBase.getStartTime()));
-            prStat.setTime(3,  java.sql.Time.valueOf(timeSlotBase.getStartTime()));
-            prStat.setInt(4, timeSlotBase.getDayNumber());
+            prStat.setInt(1, objectToInsertInDB.getNumTimeSlot());
+            prStat.setTime(2,  java.sql.Time.valueOf(objectToInsertInDB.getStartTime()));
+            prStat.setTime(3,   java.sql.Time.valueOf(objectToInsertInDB.getDuration()));
+            prStat.setInt(4, objectToInsertInDB.getDayNumber());
 
             int nbrLigneInsert = prStat.executeUpdate();
             if(nbrLigneInsert > 0){
