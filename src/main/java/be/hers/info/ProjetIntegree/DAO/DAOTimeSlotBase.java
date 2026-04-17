@@ -9,6 +9,12 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * @author Leroy Rodriguez Ainhoa
+ * @reviewer Nicolas Jean-Francois, Halet Louis
+ */
+
 public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
 
 
@@ -47,7 +53,7 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
             prStat.setInt(1, objectToSearchInDB);
             resultSet = prStat.executeQuery();
 
-            /*int numTimeSlotBase, LocalTime startTime, LocalTime duration, int dayNumber*/
+
             if(resultSet.next()){
                 LocalTime start = resultSet.getTime("startTime").toLocalTime();
                 LocalTime duration = resultSet.getTime("duration").toLocalTime();
@@ -116,22 +122,8 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
 
         return estInseree ;
     }
-/*
-ici j'ai :
-
-            prStat.setTime(2, java.sql.Date.valueOf(timeSlotBase.getStartTime().atDate(dateDuJour).toLocalDate()));
-            prStat.setTime(3, java.sql.Date.valueOf(timeSlotBase.getDuration().atDate(dateDuJour).toLocalDate()));
 
 
-         public class Date
-extends java.util.Date
-
-A thin wrapper around a millisecond value that allows JDBC to identify this as an SQL DATE value. A milliseconds value represents the number of milliseconds that have passed since January 1, 1970 00:00:00.000 GMT.
-To conform with the definition of SQL DATE, the millisecond values wrapped by a java.sql.Date instance must be 'normalized' by setting the hours, minutes, seconds, and milliseconds to zero in the particular time zone with which the instance is associated.
-Since:
-1.1
-
- */
     public boolean update(TimeSlotBase objectToUpdateInDB) throws SQLException {
 
         boolean estModifier = false;
