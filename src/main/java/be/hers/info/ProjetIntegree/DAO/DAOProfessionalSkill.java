@@ -45,20 +45,7 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
                 );
             }
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatementAndResultSet(prStat, rs);
         }
         return professionalSkillFind;
     }
@@ -89,20 +76,7 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
                 listProfessionalSkills.add(professionalSkillTrouve);
             }
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatementAndResultSet(prStat, rs);
         }
         return  listProfessionalSkills;
     }
@@ -122,21 +96,20 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
         OraclePreparedStatement prStat = null;
         ResultSet generateID = null;
 
-        String query = "INSERT INTO ProfessionalSkill (numProfessionalSkill, designation) " +
-                "VALUES (?, ?) " +
-                "RETURNING numInterpreter INTO ?";
+        String query = "INSERT INTO ProfessionalSkill (designation) " +
+                "VALUES (?) " +
+                "RETURNING numProfessionalSkill INTO ?";
 
         try {
             prStat = (OraclePreparedStatement)connect.prepareStatement(query);
-            prStat.setInt(1, objectToInsertInDB.getNumProfessionalSkill());
-            prStat.setString(2, objectToInsertInDB.getDesignation());
-            prStat.registerReturnParameter(3, OracleTypes.INTEGER);
+            prStat.setString(1, objectToInsertInDB.getDesignation());
+            prStat.registerReturnParameter(2, OracleTypes.INTEGER);
 
             int nbLinesInsert = prStat.executeUpdate();
             if (nbLinesInsert > 0) {
                 generateID = prStat.getReturnResultSet();
                 if(!generateID.next()) {
-                    throw new SQLException("[DAOInterpreter] Impossible de récupérer le numInterpreter généré.");
+                    throw new SQLException("[DAOProfessionalSkill] Impossible de récupérer le numProfessionalSkill généré.");
                 }
                 int numProfessionalSkillGenerated = generateID.getInt(1);
                 objectToInsertInDB.setNumProfessionalSkill(numProfessionalSkillGenerated);
@@ -144,16 +117,7 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
                 isInserted = true;
             }
         } finally {
-            if (generateID != null) {
-                try { generateID.close(); } catch (SQLException ex) { ex.printStackTrace(); }
-            }
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatementAndResultSet(prStat, generateID);
         }
         return isInserted;
     }
@@ -185,13 +149,7 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
                 isUpdated = true;
             }
         } finally {
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatement(prStat);
         }
 
         return isUpdated;
@@ -222,13 +180,7 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
                 isDeleted = true;
             }
         } finally {
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatement(prStat);
         }
         return isDeleted;
     }
