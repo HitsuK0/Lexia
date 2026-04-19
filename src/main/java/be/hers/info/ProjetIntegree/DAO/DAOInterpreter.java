@@ -60,20 +60,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
                 );
             }
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatementAndResultSet(prStat, rs);
         }
         return interpreterFind;
     }
@@ -116,20 +103,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
                 interpreterList.add(interpreterFind);
             }
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatementAndResultSet(prStat, rs);
         }
         return interpreterList;
     }
@@ -212,18 +186,9 @@ public class DAOInterpreter extends DAO<Interpreter> {
                 isInserted = true;
             }
         } finally {
-            if (generateID != null) {
-                try { generateID.close(); } catch (SQLException ex) { ex.printStackTrace(); }
-            }
-            if (prStatInterpreter != null) {
-                try { prStatInterpreter.close(); } catch (SQLException ex) { ex.printStackTrace(); }
-            }
-            if (prStatProfSkill != null) {
-                try { prStatProfSkill.close(); } catch (SQLException ex) { ex.printStackTrace(); }
-            }
-            if (prStatAcadSkill != null) {
-                try { prStatAcadSkill.close(); } catch (SQLException ex) { ex.printStackTrace(); }
-            }
+            closeStatementAndResultSet(prStatInterpreter, generateID);
+            closeStatement(prStatProfSkill);
+            closeStatement(prStatAcadSkill);
         }
         return isInserted;
     }
@@ -262,13 +227,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
                 isUpdated = true;
             }
         } finally {
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatement(prStat);
         }
         return isUpdated;
     }
@@ -298,13 +257,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
                 isDeleted = true;
             }
         } finally {
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatement(prStat);
         }
         return isDeleted;
     }
