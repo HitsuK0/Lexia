@@ -29,10 +29,10 @@ public abstract class DAO<T> {
     }
 
     /**
-     * Close the ResultSet given in param.
+     * Close the ResultSet and the PrepareStatement given in param.
      * @param resultSet is the ResutlSet to close.
      */
-    public void closeResultSet(ResultSet resultSet){
+    public void closeStatementAndResultSet(PreparedStatement pr, ResultSet resultSet){
         if(resultSet != null){
             try{
                 resultSet.close();
@@ -40,6 +40,7 @@ public abstract class DAO<T> {
                 e.printStackTrace();
             }
         }
+        closeStatement(pr);
     }
 
 
