@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="navbar(activeTab)" class="navbar navbar-expand-lg bg-body-tertiary px-3">
+
+    <a th:href="@{/}" class="navbar-brand fw-bold">
+        <img th:src="@{/images/logo_lexia.png}" alt="Lexia" height="36" class="me-2"/>
+        Lexia
+    </a>
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+                <a th:href="@{/interprete/planning}"
+                   th:class="${activeTab == 'planning'} ? 'nav-link active' : 'nav-link'">
+                    Mon Planning
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/interprete/indisponibilites}"
+                   th:class="${activeTab == 'indisponibilites'} ? 'nav-link active' : 'nav-link'">
+                    Mes Disponibilités
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/interprete/profil}"
+                   th:class="${activeTab == 'profil'} ? 'nav-link active' : 'nav-link'">
+                    Mon Profil
+                </a>
+            </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-3">
+            <span class="fw-semibold"
+                  th:text="${userName != null ? userName : 'NOM Prenom'}">NOM Prenom</span>
+            <a th:href="@{/logout}" class="btn btn-primary">
+                Se Déconnecter
+            </a>
+        </div>
+    </div>
+
+</nav>
+
+</body>
+</html>
