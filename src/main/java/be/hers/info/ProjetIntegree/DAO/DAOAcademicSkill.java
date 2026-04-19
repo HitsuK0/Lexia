@@ -115,9 +115,8 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
             }
             rs = prStat.getGeneratedKeys();
             if (rs.next()) {
-                int lastId = rs.getInt(1);
+                objectToInsertInDB.setNumAcademicSkill(rs.getInt(1));
             }
-
         }
         finally{
             closeResultSet(rs);

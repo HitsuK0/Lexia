@@ -34,6 +34,15 @@ public class AcademicSkill
     }
 
     /**
+     * Set the numAcademicSkill field with num
+     * @param num is the id to put in numAcademicSkill.
+     */
+    public void setNumAcademicSkill(int num){
+        this.numAcademicSkill = num;
+    }
+
+
+    /**
      * @param designation  the name of the AcademicSkill
      * @throws IllegalArgumentException if the designation is empty
      */
