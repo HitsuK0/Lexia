@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * @author Vatafu Jean
- * @reviewer
+ * @reviewer Nicolas Jean-François, Louis Halet
  */
 
 public class DAOAbsence {
@@ -46,21 +46,7 @@ public class DAOAbsence {
                 absence = new Absence(objectToSearchInDB, resultSet.getString("status"),timeSlotPunctual);
             }
         } finally {
-            if(resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if(preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeStatementAndResultSet(preparedStatement, resultSet);
         }
         return absence;
     }
@@ -91,21 +77,7 @@ public class DAOAbsence {
                 absenceList.add(absence);
             }
         } finally {
-            if(resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if(preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeStatementAndResultSet(preparedStatement, resultSet);
         }
         return absenceList;
     }
@@ -124,7 +96,7 @@ public class DAOAbsence {
             throw new IllegalArgumentException("[DAOAbsence] L'id de l'interprète ne peut pas être négatif.");
         }
 
-        String query = "INSERT INTO Absence(, status, FKTimeSlotPunctual, FKnumInterpreter) " +
+        String query = "INSERT INTO Absence(status, FKTimeSlotPunctual, FKnumInterpreter) " +
                 "VALUES ( ?, ?, ?)";
 
         try {
@@ -138,13 +110,7 @@ public class DAOAbsence {
                 created = true;
             }
         } finally {
-            if(preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeStatement(preparedStatement);
         }
 
         return created;
@@ -169,13 +135,7 @@ public class DAOAbsence {
                 updated = true;
             }
         } finally {
-            if(preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                }  catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeStatement(preparedStatement);
         }
         return updated;
     }
@@ -197,14 +157,30 @@ public class DAOAbsence {
                 isDeleted = true;
             }
         } finally {
-            if(preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeStatement(preparedStatement);
         }
         return isDeleted;
+    }
+
+    public void closeStatement(PreparedStatement preparedStatement) {
+        if (preparedStatement != null) {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void closeStatementAndResultSet(PreparedStatement preparedStatement, ResultSet resultSet) {
+        closeStatement(preparedStatement);
+
+        if(resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
