@@ -105,6 +105,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         boolean isCreated = false;
         String query = "INSERT INTO Academic_skill(designation) VALUES (?)"; // est-ce qu'on doit mettre id ou alors auto incrémenté ?
         PreparedStatement prStat = null;
+        ResultSet rs = null;
         try{
             prStat = connect.prepareStatement(query);
             prStat.setString(1, objectToInsertInDB.getDesignation());
@@ -112,8 +113,14 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
             if(nbreLigne > 0){
                 isCreated = true;
             }
+            rs = prStat.getGeneratedKeys();
+            if (rs.next()) {
+                int lastId = rs.getInt(1);
+            }
+
         }
         finally{
+            closeResultSet(rs);
             closeStatement(prStat);
         }
         return isCreated;
