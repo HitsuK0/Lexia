@@ -17,25 +17,6 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
 
 
 
-    public void closeStatement(PreparedStatement statement){
-        if(statement != null){
-            try{
-                statement.close();
-            }catch(SQLException e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void closeResultSet(ResultSet resultSet){
-        if(resultSet != null){
-            try{
-                resultSet.close();
-            }catch(SQLException e){
-                e.printStackTrace();
-            }
-        }
-    }
 
     /**
      * Search for an AcademicSkill where objectToSearchInDB == numAcademicSkill.
@@ -60,8 +41,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
             }
         }
         finally {
-            closeResultSet(rs);
-            closeStatement(prStat);
+            closeStatementAndResultSet(prStat, rs);
         }
         return as;
     }
@@ -88,8 +68,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
             }
         }
         finally {
-            closeResultSet(rs);
-            closeStatement(prStat);
+            closeStatementAndResultSet(prStat, rs);
         }
         return list;
     }
@@ -119,8 +98,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
             }
         }
         finally{
-            closeResultSet(rs);
-            closeStatement(prStat);
+            closeStatementAndResultSet(prStat, rs);
         }
         return isCreated;
     }
