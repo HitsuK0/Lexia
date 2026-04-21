@@ -108,8 +108,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         try{
             prStat = (OraclePreparedStatement)connect.prepareStatement(query);
             prStat.setDate(1, Date.valueOf(objectToInsertInDB.getStartTime().atDate(objectToInsertInDB.getStartDate()).toLocalDate()));
-            prStat.setDate(2, Date.valueOf(objectToInsertInDB.getDuration().atDate(objectToInsertInDB.getStartDate()).toLocalDate())); // On ajoute le jour de début pour pouvoir convertir en date
-            prStat.setDate(3, Date.valueOf(objectToInsertInDB.getStartDate()));
+            prStat.setDate(2, Date.valueOf(objectToInsertInDB.getDuration().atDate(objectToInsertInDB.getStartDate()).toLocalDate()));            prStat.setDate(3, Date.valueOf(objectToInsertInDB.getStartDate()));
             prStat.setDate(4, Date.valueOf(objectToInsertInDB.getEndDate()));
             prStat.registerReturnParameter(5, OracleTypes.INTEGER);
             int nbreLine = prStat.executeUpdate();
