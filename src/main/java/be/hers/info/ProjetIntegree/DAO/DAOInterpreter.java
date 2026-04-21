@@ -34,7 +34,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
         ResultSet rs = null;
         Interpreter interpreterFind = null;
 
-        String query = "SELECT numInterpreter, login, password, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, numAddress " +
+        String query = "SELECT numInterpreter, login, password, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, FKAddress " +
                 "FROM Interpreter " +
                 "WHERE numInterpreter = ?";
 
@@ -45,7 +45,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
 
             if(rs.next()) {
                 DAOAddress daoAddress = new DAOAddress();
-                Address addressInterpreter = daoAddress.find(rs.getInt("numAddress"));
+                Address addressInterpreter = daoAddress.find(rs.getInt("FKAddress"));
 
                 interpreterFind = new Interpreter(
                         rs.getInt("numInterpreter"),
@@ -60,20 +60,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
                 );
             }
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatementAndResultSet(prStat, rs);
         }
         return interpreterFind;
     }
@@ -91,7 +78,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
         PreparedStatement prStat = null;
         ResultSet rs = null;
 
-        String query = "SELECT numInterpreter, login, password, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, numAddress " +
+        String query = "SELECT numInterpreter, login, password, lastName, firstName, emailAddress, phoneNumber, weeklyWorkHours, FKAddress " +
                 "FROM Interpreter";
 
         try {
@@ -100,7 +87,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
 
             while(rs.next()) {
                 DAOAddress daoAddress = new DAOAddress();
-                Address addressInterpreter = daoAddress.find(rs.getInt("numAdress"));
+                Address addressInterpreter = daoAddress.find(rs.getInt("FKAddress"));
 
                 Interpreter interpreterFind = new Interpreter(
                         rs.getInt("numInterpreter"),
@@ -116,20 +103,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
                 interpreterList.add(interpreterFind);
             }
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatementAndResultSet(prStat, rs);
         }
         return interpreterList;
     }
@@ -212,18 +186,9 @@ public class DAOInterpreter extends DAO<Interpreter> {
                 isInserted = true;
             }
         } finally {
-            if (generateID != null) {
-                try { generateID.close(); } catch (SQLException ex) { ex.printStackTrace(); }
-            }
-            if (prStatInterpreter != null) {
-                try { prStatInterpreter.close(); } catch (SQLException ex) { ex.printStackTrace(); }
-            }
-            if (prStatProfSkill != null) {
-                try { prStatProfSkill.close(); } catch (SQLException ex) { ex.printStackTrace(); }
-            }
-            if (prStatAcadSkill != null) {
-                try { prStatAcadSkill.close(); } catch (SQLException ex) { ex.printStackTrace(); }
-            }
+            closeStatementAndResultSet(prStatInterpreter, generateID);
+            closeStatement(prStatProfSkill);
+            closeStatement(prStatAcadSkill);
         }
         return isInserted;
     }
@@ -242,7 +207,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
         PreparedStatement prStat = null;
 
         String query = "UPDATE Interpreter " +
-                "SET login = ?, password = ?, lastName = ?, firstName = ?, emailAddress = ?, phoneNumber = ?, weeklyWorkHours = ?, numAddress = ?" +
+                "SET login = ?, password = ?, lastName = ?, firstName = ?, emailAddress = ?, phoneNumber = ?, weeklyWorkHours = ?, FKAddress = ?" +
                 " WHERE numInterpreter = ?";
 
         try {
@@ -262,13 +227,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
                 isUpdated = true;
             }
         } finally {
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatement(prStat);
         }
         return isUpdated;
     }
@@ -298,13 +257,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
                 isDeleted = true;
             }
         } finally {
-            if (prStat != null) {
-                try {
-                    prStat.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            closeStatement(prStat);
         }
         return isDeleted;
     }
