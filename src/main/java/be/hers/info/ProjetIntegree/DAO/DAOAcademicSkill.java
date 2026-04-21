@@ -2,6 +2,8 @@ package be.hers.info.ProjetIntegree.DAO;
 
 
 import be.hers.info.ProjetIntegree.POJO.AcademicSkill;
+import oracle.jdbc.OraclePreparedStatement;
+import oracle.jdbc.OracleTypes;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -82,19 +84,24 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
     @Override
     public boolean create(AcademicSkill objectToInsertInDB) throws SQLException {
         boolean isCreated = false;
-        String query = "INSERT INTO Academic_skill(designation) VALUES (?)"; // est-ce qu'on doit mettre id ou alors auto incrémenté ?
-        PreparedStatement prStat = null;
+        String query = "INSERT INTO Academic_skill(designation) " +
+                "VALUES (?)" +
+                "RETURNING numAcademicSkill INTO ?";
+
+        OraclePreparedStatement prStat = null;
         ResultSet rs = null;
         try{
-            prStat = connect.prepareStatement(query);
+            prStat = (OraclePreparedStatement)connect.prepareStatement(query);
             prStat.setString(1, objectToInsertInDB.getDesignation());
+            prStat.registerReturnParameter(2, OracleTypes.INTEGER);
             int nbreLigne = prStat.executeUpdate();
-            if(nbreLigne > 0){
-                isCreated = true;
-            }
-            rs = prStat.getGeneratedKeys();
-            if (rs.next()) {
+            if(nbreLigne > 0) {
+                rs = prStat.getReturnResultSet();
+                if (!rs.next()) {
+                    throw new SQLException("[DAOAcademicSkill] Impossible de récupérer le numProfessionalSkill généré.");
+                }
                 objectToInsertInDB.setNumAcademicSkill(rs.getInt(1));
+                isCreated = true;
             }
         }
         finally{
