@@ -9,32 +9,26 @@
 
 <div class="container-fluid py-4">
 
-    <!-- Titre page -->
     <div class="text-center mb-4">
         <h1 class="fw-bold text-primary">Votre horaire de la semaine</h1>
         <p class="text-muted fst-italic">Consultez vos interventions planifiées</p>
     </div>
 
-    <!-- Barre d'outils -->
     <div class="d-flex justify-content-between align-items-center mb-3">
 
-        <!-- Onglets Mon Planning / Mes Bénéficiaires -->
         <div class="btn-group">
             <a th:href="@{/interprete/planning}" class="btn btn-primary">Mon Planning</a>
             <a th:href="@{/interprete/planning/beneficiaires}" class="btn btn-outline-primary">Mes Bénéficiaires</a>
         </div>
 
-        <!-- Bouton déclarer une indisponibilité -->
         <a th:href="@{/interprete/indisponibilites}" class="btn btn-primary">
             + Déclarer une indisponibilité
         </a>
 
     </div>
 
-    <!-- Calendrier FullCalendar -->
     <div id="calendar"></div>
 
-    <!-- Légende -->
     <div class="d-flex justify-content-center gap-4 mt-3">
         <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;&nbsp;&nbsp;</span> Indisponibilités confirmée</span>
         <span><span class="badge" style="background-color:#f28b82;">&nbsp;&nbsp;&nbsp;</span> Intervention annulée</span>
@@ -43,7 +37,6 @@
 
 </div>
 
-<!-- FullCalendar CDN -->
 <script th:src="@{/js/fullcalendar.min.js}"></script>
 
 <script>
@@ -109,7 +102,6 @@ allDaySlot: false,
 height: 'auto',
 events: events,
 eventContent: function (arg) {
-// Affiche chaque ligne du titre sur une ligne séparée
 const lines = arg.event.title.split('\n');
 const html = lines.map((l, i) =>
 `<div class="${i === 0 ? 'fw-bold' : 'small'}">${l}</div>`
