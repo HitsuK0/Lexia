@@ -136,30 +136,25 @@ public class DAOAbsence {
     }
 
     /**
-     * Updates all Absence fields in the table except its id
-     * The Address is updated via its numAddress (the Address itself is not updated here).
-     * Precondition: the Interpreter passed as a parameter cannot be null.
-     * @param objectToUpdateInDB the Interpreter containing the numInterpreter and the fields to update.
-     * @return true if the Interpreter was successfully updated, false otherwise.
-     * @throws SQLException In case of any SQL problems encountered with this method.
+     * Updates status Absence fields in the table except its id
+     * Precondition: the Absence passed as a parameter cannot be null
+     * @param objectToUpdateInDB the Absence to update
+     * @return true if the Absence was successfully updated, false otherwise
+     * @throws SQLException In case of any SQL problems encountered with this method
      */
-
-
-    // TODO : Don't know if i should update the TimeSlotPunctual? Also the interpreter ? So many questions so little reponses
     public boolean update(Absence objectToUpdateInDB) throws SQLException {
         Connection connect = ConnectionOracle.getInstance();
         boolean updated = false;
         PreparedStatement preparedStatement = null;
 
         String query = "UPDATE Absence " +
-                "SET status = ?, FKTimeSlotPunctual = ? " +
+                "SET status = ? "+
                 "WHERE numAbsence = ?";
 
         try {
             preparedStatement = connect.prepareStatement(query);
             preparedStatement.setString(1, objectToUpdateInDB.getStatus());
-            preparedStatement.setInt(2, objectToUpdateInDB.getTimeSlotPunctual().getNumTimeSlot());
-            preparedStatement.setInt(3, objectToUpdateInDB.getNumAbsence());
+            preparedStatement.setInt(2, objectToUpdateInDB.getNumAbsence());
 
             if(preparedStatement.executeUpdate() > 0) {
                 updated = true;
@@ -170,6 +165,13 @@ public class DAOAbsence {
         return updated;
     }
 
+    /**
+     * Deletes the Absence whose numAbsence matches the numAbsence
+     * Precondition: the Absence passed as a parameter cannot be null
+     * @param objectToDeleteFormDB the Absence to be deleted from the table
+     * @return true if the Absence was successfully deleted, false otherwise
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
     public boolean delete(Absence objectToDeleteFormDB) throws SQLException {
         Connection connect = ConnectionOracle.getInstance();
         boolean isDeleted = false;
