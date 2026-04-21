@@ -17,31 +17,6 @@ import java.util.List;
 
 public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
 
-
-
-
-    public void closeStatement(PreparedStatement statement){
-        if(statement != null){
-            try{
-                statement.close();
-            }catch(SQLException e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void closeResultSet(ResultSet resultSet){
-        if(resultSet != null){
-            try{
-                resultSet.close();
-            }catch(SQLException e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-
     public TimeSlotBase find(int objectToSearchInDB)throws SQLException {
         TimeSlotBase timeSlotBase = null;
         String query = "SELECT * FROM TimeSlotBase WHERE numTimeSlot = ?";
@@ -62,8 +37,7 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
             }
 
         }finally{
-           closeStatement(prStat);
-           closeResultSet(resultSet);
+            closeStatementAndResultSet(prStat,resultSet);
         }
 
         return timeSlotBase;
@@ -89,8 +63,8 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
             }
 
         }finally{
-            closeStatement(prStat);
-            closeResultSet(resultSet);
+
+            closeStatementAndResultSet(prStat,resultSet);
         }
         return listTimeSlotBase;
 
@@ -151,7 +125,7 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
     }
 
 
-    public boolean delete(TimeSlotBase objectToDeleteFormDB) {
+    public boolean delete(TimeSlotBase objectToDeleteFormDB) throws SQLException {
 
         boolean estSupprime = false;
         String query = "DELETE FROM TimeSlotBase WHERE numTimeSlotBase = ?";
@@ -166,9 +140,6 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
             if (nbrLigneDelete > 0) {
                 estSupprime = true;
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
 
         } finally {
             closeStatement(prStat);
