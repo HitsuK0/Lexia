@@ -47,7 +47,7 @@ public class Interpreter {
     /**
      * Construct an interpreter with several attributes without ID
      * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s hashed password
+     * @param password the interpreter’s password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -65,7 +65,7 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
 
         this.login = login;
-        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+        this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -83,7 +83,7 @@ public class Interpreter {
      * Construct an interpreter with several attributes and the ID
      * @param numInterpreter ID of the interpreter
      * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s hashed password
+     * @param password the interpreter’s password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -107,7 +107,7 @@ public class Interpreter {
 
         this.numInterpreter = numInterpreter;
         this.login = login;
-        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+        this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -125,7 +125,7 @@ public class Interpreter {
      * Construct an interpreter with all attributes and ID
      * @param numInterpreter ID of the interpreter
      * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s hashed password
+     * @param password the interpreter’s password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -156,7 +156,7 @@ public class Interpreter {
 
         this.numInterpreter = numInterpreter;
         this.login = login;
-        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+        this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -173,7 +173,7 @@ public class Interpreter {
     /**
      * Construct an interpreter with all attributes without ID
      * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s hashed password
+     * @param password the interpreter’s password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -200,7 +200,7 @@ public class Interpreter {
             throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
 
         this.login = login;
-        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+        this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
@@ -229,7 +229,7 @@ public class Interpreter {
     }
 
     /**
-     * @return the hashed password of the interpreter
+     * @return the password of the interpreter
      */
     public String getPassword() {
         return password;
@@ -331,13 +331,13 @@ public class Interpreter {
     }
 
     /**
-     * Set the hashed password of the interpreter
-     * @param password The hashed password to set
+     * Set the password of the interpreter
+     * @param password The password to set
      */
     public void setPassword(String password) {
         if(password == null || password.isEmpty())
             throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
-        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+        this.password = password;
     }
 
     /**
