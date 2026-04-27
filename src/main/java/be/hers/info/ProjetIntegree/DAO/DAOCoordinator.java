@@ -12,40 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 /**
  * @author Halet Louis
- * @reviewer Nicolas Jean-Francois
+ * @reviewer Nicolas Jean-Francois, Wellinger Chloé
  */
 public class DAOCoordinator extends DAO<Coordinator> {
-    /**
-     * Close the PreparedStatement passed as a parameter
-     * @param prStat the PreparedStatement to close
-     */
-    public void closeStatement(PreparedStatement prStat){
-        if(prStat != null){
-            try{
-                prStat.close();
-            }
-            catch(SQLException ex){
-                ex.printStackTrace();
-            }
-        }
-    }
-    /**
-     * Close the PreparedStatement and the ResultSet passed as parameters
-     * @param prStat the PreparedStatement to close
-     * @param rs the ResultSet to close
-     */
-    public void closeStatementAndResultSet(PreparedStatement prStat, ResultSet rs){
-        if(rs != null){
-            try{
-                rs.close();
-            }
-            catch(SQLException ex){
-                ex.printStackTrace();
-            }
-        }
-
-        closeStatement(prStat);
-    }
 
     /**
      * Search for a coordinator based on their coordinator number
@@ -64,7 +33,7 @@ public class DAOCoordinator extends DAO<Coordinator> {
         ResultSet resultSet = null;
         Coordinator coordinator = null;
         DAOInterpreter daoInterpreter = new DAOInterpreter();
-        String query = "SELECT numCoordinator,isAdmin,FKnumInterpreter " +
+        String query = "SELECT isAdmin,FKnumInterpreter " +
                 "FROM Coordinator " +
                 "WHERE numCoordinator = ?";
         try {
@@ -77,14 +46,14 @@ public class DAOCoordinator extends DAO<Coordinator> {
                 coordinator = new Coordinator(
                         interpreter.getNumInterpreter(),
                         interpreter.getLogin(),
-                        interpreter.getPassword(), //Password déjà hasher va etre re-hasher
+                        interpreter.getPassword(),
                         interpreter.getLastName(),
                         interpreter.getFirstName(),
                         interpreter.getEmail(),
                         interpreter.getPhoneNumber(),
                         interpreter.getWeeklyWorkHours(),
                         interpreter.getAddress());
-                coordinator.setNumCoordinator(resultSet.getInt("numCoordinator"));
+                coordinator.setNumCoordinator(idToSearchInDB);
                 int bool = resultSet.getInt("isAdmin");
                 coordinator.setAdmin(bool!=0);
             }
@@ -118,7 +87,7 @@ public class DAOCoordinator extends DAO<Coordinator> {
                 Coordinator coordinator = new Coordinator(
                         interpreter.getNumInterpreter(),
                         interpreter.getLogin(),
-                        interpreter.getPassword(), //Password déjà hasher va etre re-hasher
+                        interpreter.getPassword(),
                         interpreter.getLastName(),
                         interpreter.getFirstName(),
                         interpreter.getEmail(),
@@ -154,7 +123,7 @@ public class DAOCoordinator extends DAO<Coordinator> {
         String local = null;
 
         String query = "INSERT INTO Coordinator (isAdmin,FKnumInterpreter) " +
-                "VALUES (?, ?) returning numCoordinator into ?";
+                "VALUES (?, ?) RETURNING numCoordinator INTO ?";
 
         try{
             prStat = (OraclePreparedStatement)connect.prepareStatement(query);
@@ -162,11 +131,15 @@ public class DAOCoordinator extends DAO<Coordinator> {
             prStat.setInt(2,objectToInsertInDB.getNumInterpreter());
             prStat.registerReturnParameter(3, OracleTypes.INTEGER);
             int nbLinesInsert = prStat.executeUpdate();
-            rs = prStat.getReturnResultSet();
-            int id = rs.getInt(3);
-            objectToInsertInDB.setNumCoordinator(id);
+
 
             if(nbLinesInsert > 0) {
+                rs = prStat.getReturnResultSet();
+                if(!rs.next()){
+                    throw new SQLException("[DAOCoordinator] Impossible de récupérer le numCoordinator généré.");
+                }
+                int id = rs.getInt(3);
+                objectToInsertInDB.setNumCoordinator(id);
                 isInserted = true;
             }
         }finally {
@@ -218,7 +191,7 @@ public class DAOCoordinator extends DAO<Coordinator> {
     public boolean update(Coordinator objectToUpdateInDB) throws SQLException {
         boolean isUpdated = false;
         PreparedStatement prStat = null;
-        String local = null;
+
 
         String query = "UPDATE Coordinator " +
                 "SET isAdmin = ?" +
