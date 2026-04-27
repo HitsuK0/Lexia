@@ -123,7 +123,8 @@ public class DAOCoordinator extends DAO<Coordinator> {
         String local = null;
 
         String query = "INSERT INTO Coordinator (isAdmin,FKnumInterpreter) " +
-                "VALUES (?, ?) RETURNING numCoordinator INTO ?";
+                "VALUES (?, ?) "+
+                "RETURNING numCoordinator INTO ?";
 
         try{
             prStat = (OraclePreparedStatement)connect.prepareStatement(query);
@@ -131,7 +132,6 @@ public class DAOCoordinator extends DAO<Coordinator> {
             prStat.setInt(2,objectToInsertInDB.getNumInterpreter());
             prStat.registerReturnParameter(3, OracleTypes.INTEGER);
             int nbLinesInsert = prStat.executeUpdate();
-
 
             if(nbLinesInsert > 0) {
                 rs = prStat.getReturnResultSet();
@@ -145,7 +145,6 @@ public class DAOCoordinator extends DAO<Coordinator> {
         }finally {
             closeStatementAndResultSet(prStat, rs);
         }
-
         return isInserted;
     }
     /**
@@ -192,7 +191,6 @@ public class DAOCoordinator extends DAO<Coordinator> {
         boolean isUpdated = false;
         PreparedStatement prStat = null;
 
-
         String query = "UPDATE Coordinator " +
                 "SET isAdmin = ?" +
                 " WHERE numCoordinator = ?";
@@ -212,7 +210,4 @@ public class DAOCoordinator extends DAO<Coordinator> {
         }
         return isUpdated;
     }
-
-
-
 }
