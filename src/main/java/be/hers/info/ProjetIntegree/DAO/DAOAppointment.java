@@ -10,43 +10,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.*;
+
 /**
  * @author Halet Louis
  * @reviewer Nicolas Jean-Francois
  */
 public class DAOAppointment extends DAO<Appointment> {
-    /**
-     * Close the PreparedStatement passed as a parameter
-     * @param prStat the PreparedStatement to close
-     */
-    public void closeStatement(PreparedStatement prStat){
-        if(prStat != null){
-            try{
-                prStat.close();
-            }
-            catch(SQLException ex){
-                ex.printStackTrace();
-            }
-        }
-    }
-    /**
-     * Close the PreparedStatement and the ResultSet passed as parameters
-     * @param prStat the PreparedStatement to close
-     * @param rs the ResultSet to close
-     */
-    public void closeStatementAndResultSet(PreparedStatement prStat, ResultSet rs){
-        if(rs != null){
-            try{
-                rs.close();
-            }
-            catch(SQLException ex){
-                ex.printStackTrace();
-            }
-        }
-
-        closeStatement(prStat);
-    }
 
     /**
      * Precondition :
@@ -66,38 +35,43 @@ public class DAOAppointment extends DAO<Appointment> {
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
         Appointment appointment = null;
-        String query = "SELECT numAppointment,status,local,FKnumBeneficiary,FKTimeSlotBase,FKTimeSlotPunctual,FKnumEtablishment " +
+
+        String query = "SELECT status,local,FKnumBeneficiary,FKTimeSlotBase,FKTimeSlotPunctual,FKnumEtablishment " +
                 "FROM Appointment " +
                 "WHERE numAppointment = ?";
+
         try {
             prStat = connect.prepareStatement(query);
             prStat.setInt(1, idToSearchInDB);
             resultSet = prStat.executeQuery();
-            DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
-            DAOEstablishment daoEstablishment = new DAOEstablishment();
+
             if (resultSet.next()) {
+                DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+                DAOEstablishment daoEstablishment = new DAOEstablishment();
                 String local = resultSet.getString("local");
                 List<String> listLocal = null;
+
                 if (local != null) {
                     listLocal = Arrays.asList(local.split(","));
 
                 }
                 TimeSlot timeSlot = null;
-                int numAppointment = resultSet.getInt("numAppointment");
+
                 if(resultSet.getObject("FKTimeSlotBase") == null){
                     DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
-                    timeSlot = daoTimeSlotPunctual.findFull(resultSet.getInt("FKTimeSlotPunctual"));
+                    timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
                 }else{
                     DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
-                    timeSlot = daoTimeSlotBase.findFull(resultSet.getInt("FKTimeSlotBase"));
+                    timeSlot = daoTimeSlotBase.find(resultSet.getInt("FKTimeSlotBase"));
                 }
+
                 appointment = new Appointment(
-                        numAppointment,
+                        idToSearchInDB,
                         resultSet.getString("status"),
                         listLocal,
-                        daoBeneficiary.findFull(resultSet.getInt("FKnumBeneficiary")),
+                        daoBeneficiary.find(resultSet.getInt("FKnumBeneficiary")),
                         timeSlot,
-                        daoEstablishment.findFull(resultSet.getInt("FKnumEtablishment"))
+                        daoEstablishment.find(resultSet.getInt("FKnumEtablishment"))
                         );
             }
         } finally {
@@ -123,36 +97,43 @@ public class DAOAppointment extends DAO<Appointment> {
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
         List<Appointment> appointmentList = new ArrayList<>();
-        String query = "SELECT numAppointment,status,local,FKnumBeneficiary " +
+        String query = "SELECT numAppointment,status,local,FKnumBeneficiary,FKTimeSlotBase " +
                 "FROM Appointment";
+
         try {
             prStat = connect.prepareStatement(query);
             resultSet = prStat.executeQuery();
+
             DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
             DAOEstablishment daoEstablishment = new DAOEstablishment();
+
             while(resultSet.next()){
                 String local = resultSet.getString("local");
                 List<String> listLocal = null;
+
                 if (local != null) {
                     listLocal = Arrays.asList(local.split(","));
 
                 }
+
                 TimeSlot timeSlot = null;
                 int numAppointment = resultSet.getInt("numAppointment");
+
                 if(resultSet.getObject("FKTimeSlotBase") == null){
                     DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
-                    timeSlot = daoTimeSlotPunctual.findFull(resultSet.getInt("FKTimeSlotPunctual"));
+                    timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
                 }else{
                     DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
-                    timeSlot = daoTimeSlotBase.findFull(resultSet.getInt("FKTimeSlotBase"));
+                    timeSlot = daoTimeSlotBase.find(resultSet.getInt("FKTimeSlotBase"));
                 }
+
                 appointmentList.add(new Appointment(
                         numAppointment,
                         resultSet.getString("status"),
                         listLocal,
-                        daoBeneficiary.findFull(resultSet.getInt("FKnumBeneficiary")),
+                        daoBeneficiary.find(resultSet.getInt("FKnumBeneficiary")),
                         timeSlot,
-                        daoEstablishment.findFull(resultSet.getInt("FKnumEtablishment"))));
+                        daoEstablishment.find(resultSet.getInt("FKnumEtablishment"))));
             }
         } finally {
             closeStatementAndResultSet(prStat, resultSet);
@@ -181,12 +162,14 @@ public class DAOAppointment extends DAO<Appointment> {
         if (objectToInsertInDB.getAppointmentLocals() != null){
             local = String.join(",", objectToInsertInDB.getAppointmentLocals());
         }
+
         String query = "INSERT INTO Appointment (status, local, FKnumEtablishment, FKnumBeneficiary, FKTimeSlotPunctual) " +
-                "VALUES (?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?) RETURNING numAppointment INTO ?";
         if(objectToInsertInDB.getTimeSlot() instanceof TimeSlotBase){
             query = "INSERT INTO Appointment (status, local, FKnumEtablishment, FKnumBeneficiary, FKTimeSlotBase) " +
-                    "VALUES (?, ?, ?, ?, ?) returning numAppointment into ?";
+                    "VALUES (?, ?, ?, ?, ?) RETURNING numAppointment INTO ?";
         }
+
         try{
             prStat = (OraclePreparedStatement)connect.prepareStatement(query);
             prStat.setString(1,objectToInsertInDB.getStatus());
@@ -195,40 +178,49 @@ public class DAOAppointment extends DAO<Appointment> {
             prStat.setInt(4,objectToInsertInDB.getBeneficiary().getNumBeneficiary());
             prStat.setInt(5,objectToInsertInDB.getTimeSlot().getNumTimeSlot());
             prStat.registerReturnParameter(6, OracleTypes.INTEGER);
+
             int nbLinesInsert = prStat.executeUpdate();
             rs = prStat.getReturnResultSet();
-            int id = rs.getInt(6);
-            objectToInsertInDB.setNumAppointment(id);
+            if(rs.next()){
+                int id = rs.getInt(6);
+                objectToInsertInDB.setNumAppointment(id);
 
-            if(nbLinesInsert > 0) {
-                isInserted = true;
-            }
-            if(!objectToInsertInDB.getInterpreters().isEmpty()){
-                for(Interpreter i : objectToInsertInDB.getInterpreters()){
-                    if(!addInterpreterAtAppointment(id, i.getNumInterpreter()))
-                        throw new SQLException("[DAOAppointment] erreur lors de l'ajout dans la table RDVInterpreter");
+                if(nbLinesInsert > 0) {
+                    isInserted = true;
+                }
+
+                if(!objectToInsertInDB.getInterpreters().isEmpty()){
+                    for(Interpreter i : objectToInsertInDB.getInterpreters()){
+                        if(!addInterpreterAtAppointment(id, i.getNumInterpreter()))
+                            throw new SQLException("[DAOAppointment] erreur lors de l'ajout dans la table RDVInterpreter");
+                    }
+                }
+
+                if(!objectToInsertInDB.getAcademicSkillsNeeded().isEmpty()){
+                    for(AcademicSkill a : objectToInsertInDB.getAcademicSkillsNeeded()){
+
+                        if(!addAcademicSkillAtAppointment(id, a.getNumAcademicSkill()))
+                            throw new SQLException("[DAOAppointment] erreur lors de l'ajout dans la table RequiredAcademicSkill");
+                    }
+                }
+
+                if(!objectToInsertInDB.getProfessionalSkillsNeeded().isEmpty()){
+                    for(ProfessionalSkill p : objectToInsertInDB.getProfessionalSkillsNeeded()){
+
+                        if(!addProfessionalSkillAtAppointment(id, p.getNumProfessionalSkill()))
+                            throw new SQLException("[DAOAppointment] erreur lors de l'ajout dans la table RequiredProfessionalSkill");
+                    }
                 }
             }
-            if(!objectToInsertInDB.getAcademicSkillsNeeded().isEmpty()){
-                for(AcademicSkill a : objectToInsertInDB.getAcademicSkillsNeeded()){
 
-                    if(!addAcademicSkillAtAppointment(id, a.getNumAcademicSkill()))
-                        throw new SQLException("[DAOAppointment] erreur lors de l'ajout dans la table RequiredAcademicSkill");
-                }
-            }
-            if(!objectToInsertInDB.getProfessionalSkillsNeeded().isEmpty()){
-                for(ProfessionalSkill p : objectToInsertInDB.getProfessionalSkillsNeeded()){
 
-                    if(!addProfessionalSkillAtAppointment(id, p.getNumProfessionalSkill()))
-                        throw new SQLException("[DAOAppointment] erreur lors de l'ajout dans la table RequiredProfessionalSkill");
-                }
-            }
         }finally {
             closeStatementAndResultSet(prStat, rs);
         }
 
         return isInserted;
     }
+
     /**
      * Insert a line into the database linking an interpreter to an Appointment.
      * Precondition :
@@ -240,10 +232,12 @@ public class DAOAppointment extends DAO<Appointment> {
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
     public boolean addInterpreterAtAppointment(int numAppointment, int numInterpreter) throws SQLException {
+
         boolean isInserted = false;
         PreparedStatement prStat = null;
         String query = "INSERT INTO RDVInterpreter (numAppointment, numInterpreter) " +
                 "VALUES (?, ?)";
+
         try{
             prStat = connect.prepareStatement(query);
             prStat.setInt(1,numAppointment);
@@ -255,8 +249,10 @@ public class DAOAppointment extends DAO<Appointment> {
         }finally {
             closeStatement(prStat);
         }
+
         return isInserted;
     }
+
     /**
      * Insert a line in the database linking an AcademicSkill to an Appointment.
      * Precondition :
@@ -268,10 +264,12 @@ public class DAOAppointment extends DAO<Appointment> {
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
     public boolean addAcademicSkillAtAppointment(int numAppointment, int numAcademicSkill) throws SQLException {
+
         boolean isInserted = false;
         PreparedStatement prStat = null;
         String query = "INSERT INTO RequiredAcademicSkill (numAppointment, numAcademicSkill) " +
                 "VALUES (?, ?)";
+
         try{
             prStat = connect.prepareStatement(query);
             prStat.setInt(1,numAppointment);
@@ -283,8 +281,10 @@ public class DAOAppointment extends DAO<Appointment> {
         }finally {
             closeStatement(prStat);
         }
+
         return isInserted;
     }
+
     /**
      * Insert a line in the database linking a numProfessionalSkill to an Appointment.
      * Precondition :
@@ -296,10 +296,12 @@ public class DAOAppointment extends DAO<Appointment> {
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
     public boolean addProfessionalSkillAtAppointment(int numAppointment, int numProfessionalSkill) throws SQLException {
+
         boolean isInserted = false;
         PreparedStatement prStat = null;
         String query = "INSERT INTO RequiredProfessionalSkill (numAppointment, numProfessionalSkill) " +
                 "VALUES (?, ?)";
+
         try{
             prStat = connect.prepareStatement(query);
             prStat.setInt(1,numAppointment);
@@ -311,8 +313,10 @@ public class DAOAppointment extends DAO<Appointment> {
         }finally {
             closeStatement(prStat);
         }
+
         return isInserted;
     }
+
     /**
      * Deletes the Appointment whose numAppointment matches the numAppointment
      * Precondition :
@@ -324,6 +328,7 @@ public class DAOAppointment extends DAO<Appointment> {
      */
     @Override
     public boolean delete(Appointment objectToDeleteFormDB) throws SQLException {
+
         boolean isDeleted = false;
         PreparedStatement prStat = null;
 
@@ -341,8 +346,10 @@ public class DAOAppointment extends DAO<Appointment> {
         } finally {
             closeStatement(prStat);
         }
+
         return isDeleted;
     }
+
     /**
      * Updates all Appointment fields in the table (except its numInterpreter and his list)
      * Precondition :
@@ -353,6 +360,7 @@ public class DAOAppointment extends DAO<Appointment> {
      */
     @Override
     public boolean update(Appointment objectToUpdateInDB) throws SQLException {
+
         boolean isUpdated = false;
         PreparedStatement prStat = null;
         String local = null;
@@ -364,21 +372,32 @@ public class DAOAppointment extends DAO<Appointment> {
         String query = "UPDATE Appointment " +
                 "SET status = ?, local = ?, FKnumEtablishment = ?, FKnumBeneficiary = ?, FKTimeSlotBase = ?, FKTimeSlotPunctual = ?" +
                 " WHERE numAppointment = ?";
+
         Integer timeSlotBase = null;
         Integer timeSlotPunctual = null;
+
         if(objectToUpdateInDB.getTimeSlot() instanceof TimeSlotBase){
             timeSlotBase = objectToUpdateInDB.getTimeSlot().getNumTimeSlot();
         }else{
             timeSlotPunctual = objectToUpdateInDB.getTimeSlot().getNumTimeSlot();
         }
+
         try {
             prStat = connect.prepareStatement(query);
             prStat.setString(1, objectToUpdateInDB.getStatus());
             prStat.setString(2, local);
             prStat.setInt(3, objectToUpdateInDB.getEstablishment().getNumEstablishment());
             prStat.setInt(4, objectToUpdateInDB.getBeneficiary().getNumBeneficiary());
-            prStat.setInt(5, (timeSlotBase == null) ? java.sql.Types.INTEGER : timeSlotBase);
-            prStat.setInt(6, (timeSlotPunctual == null) ? java.sql.Types.INTEGER : timeSlotPunctual);
+            if(timeSlotBase == null){
+                prStat.setNull(5, java.sql.Types.INTEGER);
+            }else{
+                prStat.setInt(5,timeSlotBase);
+            }
+            if((timeSlotPunctual == null)){
+                prStat.setNull(6, java.sql.Types.INTEGER);
+            }else{
+                prStat.setInt(6, timeSlotPunctual);
+            }
             prStat.setInt(7, objectToUpdateInDB.getNumAppointment());
 
             int nbLinesUpdate = prStat.executeUpdate();
@@ -389,6 +408,7 @@ public class DAOAppointment extends DAO<Appointment> {
         } finally {
             closeStatement(prStat);
         }
+
         return isUpdated;
     }
 
