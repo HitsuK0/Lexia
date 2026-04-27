@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author Vatafu Jean
- * @reviewer Nicolas Jean-François, Halet Louis
+ * @reviewer Wellinger Chloe, Nicolas Jean-François, Halet Louis
  */
 public class DAOBeneficiary extends DAO<Beneficiary> {
 
@@ -231,6 +231,10 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                         if (preparedStatementAppointment.executeUpdate() > 0) {
                             generateAppointmentID = preparedStatementAppointment.getReturnResultSet();
                             if (generateAppointmentID.next()) {
+
+                                generateAppointmentID.close();
+                                generateAppointmentID = null;
+
                                 int numAppointmentGenerated = generateAppointmentID.getInt(1);
                                 appt.setNumAppointment(numAppointmentGenerated);
 
