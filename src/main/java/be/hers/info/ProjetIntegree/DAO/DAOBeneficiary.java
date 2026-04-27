@@ -232,9 +232,6 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                             generateAppointmentID = preparedStatementAppointment.getReturnResultSet();
                             if (generateAppointmentID.next()) {
 
-                                generateAppointmentID.close();
-                                generateAppointmentID = null;
-
                                 int numAppointmentGenerated = generateAppointmentID.getInt(1);
                                 appt.setNumAppointment(numAppointmentGenerated);
 
@@ -247,6 +244,8 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                                 }
                             }
                         }
+                        generateAppointmentID.close();
+                        generateAppointmentID = null;
                     }
                 }
                 isCreated = true;
