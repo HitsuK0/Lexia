@@ -16,12 +16,13 @@ public class AcademicSkill
      * @param designation the name of the academic skill
      * @throws NullPointerException if designation is null
      */
-    public AcademicSkill(String designation){
+    public AcademicSkill(int num, String designation){
 
         if(designation == null){
             throw new IllegalArgumentException("[POJOAcademicSkill] la désignation ne peut pas être null ou vide");
         }
         this.designation = designation;
+        this.numAcademicSkill = num;
     }
 
     /**
@@ -31,6 +32,15 @@ public class AcademicSkill
         this.designation = "";
 
     }
+
+    /**
+     * Set the numAcademicSkill field with num
+     * @param num is the id to put in numAcademicSkill.
+     */
+    public void setNumAcademicSkill(int num){
+        this.numAcademicSkill = num;
+    }
+
 
     /**
      * @param designation  the name of the AcademicSkill
