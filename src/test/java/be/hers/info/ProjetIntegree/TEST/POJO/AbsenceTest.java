@@ -184,7 +184,7 @@ public class AbsenceTest {
      */
     @Test
     void getTimeSlotPunctual_ReturnsTheCorrectValue(){
-        assertEquals(timeSlot, absence.getTimeSlotuual());
+        assertEquals(timeSlot, absence.getTimeSlotPunctual());
     }
 
     // setNumAbsence //
