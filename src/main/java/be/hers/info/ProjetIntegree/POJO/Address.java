@@ -77,6 +77,29 @@ public class Address {
     }
 
     /**
+     * Initialize an address with numAddress, postcode, postOfficeBox, locality, numStreet, hamlet, establishment, beneficiaries, interpreters
+     * @param numAddress the id
+     * @param postcode the postcode
+     * @param postOfficeBox the post office box. It can only have 1 post office box
+     * @param locality the locality. It can only have 1 locality
+     * @param hamlet the hamlet
+     * @param establishment the establishment linked. It can have 0 or 1 establishment
+     * @throws IllegalArgumentException if postOfficeBox, locality, numStreet, beneficiaries or interpreters is null
+     */
+    public Address(int numAddress, int postcode, String postOfficeBox, String locality, String hamlet, Establishment establishment) {
+        if(postOfficeBox == null || locality == null){
+            throw new IllegalArgumentException("[POJOAddress] : postOfficeBox et/ou locality est null");
+        }
+
+        this.numAddress = numAddress;
+        this.postcode = postcode;
+        this.postOfficeBox = postOfficeBox;
+        this.locality = locality;
+        this.hamlet = hamlet;
+        this.establishment = establishment;
+    }
+
+    /**
      * Initialize an address with no elements
      */
     public Address() {
