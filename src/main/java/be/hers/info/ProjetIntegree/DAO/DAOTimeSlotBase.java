@@ -28,7 +28,10 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
      */
     public TimeSlotBase find(int objectToSearchInDB)throws SQLException {
         TimeSlotBase timeSlotBase = null;
-        String query = "SELECT * FROM TimeSlotBase WHERE numTimeSlot = ?";
+        String query = "SELECT * " +
+                        "FROM TimeSlotBase " +
+                        "WHERE numTimeSlot = ?";
+
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
 
@@ -57,7 +60,9 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
      */
     public List<TimeSlotBase> findAll() throws SQLException {
         List<TimeSlotBase> listTimeSlotBase = new ArrayList<>();
-        String query = "SELECT * FROM TimeSlotBase";
+        String query = "SELECT * " +
+                        "FROM TimeSlotBase";
+
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
 
@@ -87,7 +92,10 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
      */
     public boolean create(TimeSlotBase objectToInsertInDB) throws SQLException {
         boolean isInserted = false;
-        String query = "INSERT INTO TimeSlotBase(startTime,duration,dayNumber)  VALUES (?,?,?)";
+        String query = "INSERT INTO TimeSlotBase(startTime,duration,dayNumber) " +
+                        "VALUES (?,?,?) " +
+                        "RETURNING numTimeSlot INTO ?";
+
         OraclePreparedStatement prStat = null;
         ResultSet generateID = null;
         try{
@@ -126,7 +134,10 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
     public boolean update(TimeSlotBase objectToUpdateInDB) throws SQLException {
 
         boolean isUpdated = false;
-        String query = "UPDATE TimeSlotBase SET startTime = ?, duration = ?, dayNumber = ? where numTimeSlot = ?";
+        String query = "UPDATE TimeSlotBase " +
+                        "SET startTime = ?, duration = ?, dayNumber = ? " +
+                        "WHERE numTimeSlot = ?";
+
         PreparedStatement prStat = null;
 
         try {
@@ -158,7 +169,9 @@ public class DAOTimeSlotBase  extends DAO<TimeSlotBase> {
     public boolean delete(TimeSlotBase objectToDeleteFormDB) throws SQLException {
 
         boolean isDeleted = false;
-        String query = "DELETE FROM TimeSlotBase WHERE numTimeSlot = ?";
+        String query = "DELETE FROM TimeSlotBase " +
+                        "WHERE numTimeSlot = ?";
+
         PreparedStatement prStat = null;
 
         try {
