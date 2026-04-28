@@ -7,6 +7,7 @@ package be.hers.info.ProjetIntegree.DAO;
 
 import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
+import oracle.jdbc.OracleTypes;
 import oracle.jdbc.internal.OraclePreparedStatement;
 
 import java.sql.PreparedStatement;
@@ -16,32 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DAOAddress implements DAO<Address> {
-
-    //Bien ou pas ces deux méthodes ? Peut-être mettre les signatures dans la classe abstract DAO si on décide que tous le monde les adoptes
-    public void closeStatement(PreparedStatement prStat){
-        if(prStat != null){
-            try{
-                prStat.close();
-            }
-            catch(SQLException ex){
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    public void closeStatementAndResultSet(PreparedStatement prStat, ResultSet rs){
-        if(rs != null){
-            try{
-                rs.close();
-            }
-            catch(SQLException ex){
-                ex.printStackTrace();
-            }
-        }
-
-        closeStatement(prStat);
-    }
-
     @Override
     public Address find(int objectToSearchInDB) throws SQLException {
         Address addressFind = null;
@@ -54,11 +29,11 @@ public class DAOAddress implements DAO<Address> {
             rs = prStat.executeQuery();
 
             if(rs.next()){
-                DAOEstablishment daoEstablishment = new DAOEstablishment<>();
-                Establishment establishmentFind = daoEstablishment.find(objectToSearchInDB); //renvoie l'établissement qui contient l'adresse d'id objectToSearchInDB
-                addressFind = new Address(objectToSearchInDB, rs.getInt("postalCode"),
-                              rs.getString("postalBox"), rs.getString("locality"), rs.getString("hamlet"),
-                              establishmentFind);
+                DAOEstablishment daoEstablishment = new DAOEstablishment();
+                Establishment establishmentFind = daoEstablishment.find(objectToSearchInDB);
+                addressFind = new Address(rs.getInt("numAddress"), rs.getInt("postalCode"),
+                              rs.getString("postalBox"), rs.getString("locality"),
+                              rs.getString("hamlet"), establishmentFind);
             }
         }
         finally{
@@ -69,7 +44,7 @@ public class DAOAddress implements DAO<Address> {
     }
 
     @Override
-    public List findAll() throws SQLException {
+    public List<Address> findAll() throws SQLException {
         List<Address> listAddressFind = new ArrayList<>();
         String query = "SELECT * FROM Address";
         PreparedStatement prStat = null;
@@ -78,9 +53,9 @@ public class DAOAddress implements DAO<Address> {
             prStat = connect.prepareStatement(query);
             rs = prStat.executeQuery();
 
-            if(rs.next()){
-                DAOEstablishment daoEstablishment = new DAOEstablishment<>();
-                Establishment establishmentFind = daoEstablishment.find(rs.getInt("NumAddress")); //renvoie l'établissement qui contient l'adresse d'id objectToSearchInDB
+            while(rs.next()){
+                DAOEstablishment daoEstablishment = new DAOEstablishment();
+                Establishment establishmentFind = daoEstablishment.find(rs.getInt("NumAddress"));
                 Address addressFind = new Address(rs.getInt("NumAddress"), rs.getInt("postalCode"),
                         rs.getString("postalBox"), rs.getString("locality"),
                         rs.getString("hamlet"),
@@ -100,13 +75,14 @@ public class DAOAddress implements DAO<Address> {
      */
     @Override
     public boolean create(Address objectToInsertInDB) throws SQLException {
+        boolean isInserted = false;
         OraclePreparedStatement prStat = null;
-        ResultSet rs = null;
         ResultSet generateID = null;
 
         String query = """
                        INSERT INTO Address (postalCode, postalBox, locality, hamlet)
-                       VALUES (?, ?, ?, ?, ?) returning numAddress into ?
+                       VALUES (?, ?, ?, ?) 
+                       RETURNING numAddress INTO ?
                        """;
 
         try{
@@ -115,26 +91,33 @@ public class DAOAddress implements DAO<Address> {
             prStat.setString(2, objectToInsertInDB.getPostOfficeBox());
             prStat.setString(3, objectToInsertInDB.getLocality());
             prStat.setString(4, objectToInsertInDB.getHamlet());
+            prStat.registerReturnParameter(5, OracleTypes.INTEGER);
 
-            if(prStat.executeUpdate() > 0)
+            if(prStat.executeUpdate() > 0) {
                 generateID = prStat.getReturnResultSet();
-                if(!generateID.next()) {
-                    throw new SQLException("[DAOInterpreter] Impossible de récupérer le numInterpreter généré.");
+                if (!generateID.next()) {
+                    throw new SQLException("[DAOAddress] Impossible de récupérer le numInterpreter généré.");
                 }
                 int numAddressGenerated = generateID.getInt(1);
                 objectToInsertInDB.setNumAddress(numAddressGenerated);
 
-                return true;
-            return false;
+                isInserted = true;
+            }
+
         }
         finally{
-            closeStatement(prStat);
+            closeStatementAndResultSet(prStat, generateID);
         }
+        return isInserted;
     }
 
     @Override
     public boolean update(Address objectToUpdateInDB) throws SQLException {
-        String query = "UPDATE Address SET postalCode = ?, postalBox ? , locality = ?, hamlet = ? WHERE numAddress = ?";
+        boolean isUpdated = false;
+        String query = """
+                       UPDATE Address SET postalCode = ?, postalBox = ? , locality = ?, hamlet = ? 
+                       WHERE numAddress = ?
+                       """;
 
         PreparedStatement prStat = null;
         try{
@@ -146,17 +129,22 @@ public class DAOAddress implements DAO<Address> {
             prStat.setInt(5, objectToUpdateInDB.getNumAddress());
 
             if(prStat.executeUpdate() > 0)
-                return true;
-            return false;
+                isUpdated = true;
         }
         finally{
             closeStatement(prStat);
         }
+
+        return isUpdated;
     }
 
     @Override
     public boolean delete(Address objectToDeleteFormDB) throws SQLException {
-        String query = "DELETE FROM Address WHERE NumAddress = ?";
+        boolean isDeleted = false;
+
+        String query = """
+                       DELETE FROM Address WHERE NumAddress = ?
+                       """;
 
         PreparedStatement prStat = null;
         try{
@@ -164,11 +152,12 @@ public class DAOAddress implements DAO<Address> {
             prStat.setInt(1, objectToDeleteFormDB.getNumAddress());
 
             if(prStat.executeUpdate() > 0)
-                return true;
-            return false;
+                isDeleted = true;
         }
         finally{
             closeStatement(prStat);
         }
+
+        return isDeleted;
     }
 }
