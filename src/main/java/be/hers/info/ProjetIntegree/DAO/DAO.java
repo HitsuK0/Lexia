@@ -1,4 +1,8 @@
+package be.hers.info.ProjetIntegree.DAO;
+
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -6,8 +10,37 @@ public abstract class DAO<T> {
     /**
      * the connection to the database.
      */
-
     public Connection connect = ConnectionOracle.getInstance();
+
+    /**
+     * Close the PreparedStatement given in param.
+     * @param statement is the statement to close.
+     */
+    public void closeStatement(PreparedStatement statement){
+        if(statement != null){
+            try{
+                statement.close();
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Close the ResultSet and the PrepareStatement given in param.
+     * @param resultSet is the ResutlSet to close.
+     */
+    public void closeStatementAndResultSet(PreparedStatement pr, ResultSet resultSet){
+        if(resultSet != null){
+            try{
+                resultSet.close();
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+        closeStatement(pr);
+    }
+
     /**
      * Searches for the object whose identifier matches the String passed as a parameter.
      * @param objectToSearchInDB the identifier of the object to search for in the table.
@@ -15,12 +48,14 @@ public abstract class DAO<T> {
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
     public abstract T find(int objectToSearchInDB) throws SQLException;
+
     /**
      * Create a list containing all the objects in the table.
      * @return a list containing all the objects in the table or an empty list if the table is empty.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
     public abstract List<T> findAll() throws SQLException;
+
     /**
      * Precondition: the object passed as a parameter cannot be null.
      * Adds the object passed as a parameter to the table.
@@ -29,6 +64,7 @@ public abstract class DAO<T> {
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
     public abstract boolean create(T objectToInsertInDB) throws SQLException;
+
     /**
      * Precondition: the object passed as a parameter cannot be null.
      * Updates all object fields in the table (except its identifier) ​​that correspond to the object identifier passed as a parameter.
@@ -37,6 +73,7 @@ public abstract class DAO<T> {
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
     public abstract boolean update(T objectToUpdateInDB) throws SQLException;
+
     /**
      * Precondition: the object passed as a parameter cannot be null.
      * Deletes the object where its identifier matches the identifier of the object passed as a parameter.
