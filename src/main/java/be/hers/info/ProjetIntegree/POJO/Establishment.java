@@ -81,6 +81,18 @@ public class Establishment {
     }
 
     /**
+     * Initialize an establishment with numEstablishment, nameBuilding, phoneNumber
+     * @param numEstablishment the id of the establishment
+     * @param nameBuilding the name of the building
+     * @param phoneNumber the phone number
+     */
+    public Establishment(int numEstablishment, String nameBuilding, String phoneNumber) {
+        this.numEstablishment = numEstablishment;
+        this.nameBuilding = nameBuilding;
+        this.phoneNumber = phoneNumber;
+    }
+
+    /**
      * Initialize an establishment with no elements
      */
     public Establishment() {
