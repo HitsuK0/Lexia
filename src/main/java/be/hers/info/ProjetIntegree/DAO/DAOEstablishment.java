@@ -15,6 +15,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Searches for the establishment whose identifier matches the int passed as a parameter.
+ * @param objectToSearchInDB the identifier of the establishment to search for in the table.
+ * @return The establishment whose identifier matches the int passed as a parameter.
+ * null if there is no object matching the int passed as a parameter.
+ * @throws SQLException In case of any SQL problems encountered with this method.
+ */
 public class DAOEstablishment extends DAO<Establishment>{
     @Override
     public Establishment find(int objectToSearchInDB) throws SQLException {
@@ -46,9 +53,15 @@ public class DAOEstablishment extends DAO<Establishment>{
         return establishmentFind;
     }
 
+    /**
+     * Create a list containing all the establishments in the table.
+     * @return a list containing all the establishments in the table or an empty list if the table is empty.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
     @Override
     public List findAll() throws SQLException {
         List<Establishment> listEstablishmentFind = new ArrayList();
+        Establishment establishmentFind = null;
 
         PreparedStatement prStat = null;
         ResultSet rs = null;
@@ -60,7 +73,7 @@ public class DAOEstablishment extends DAO<Establishment>{
             rs = prStat.executeQuery();
 
             while(rs.next()) {
-                Establishment establishmentFind = new Establishment(
+                establishmentFind = new Establishment(
                         rs.getInt("numEstablishment"),
                         rs.getString("name"),
                         rs.getString("phoneNumber")
@@ -76,6 +89,13 @@ public class DAOEstablishment extends DAO<Establishment>{
         return listEstablishmentFind;
     }
 
+    /**
+     * Precondition: the establishment passed as a parameter cannot be null.
+     * Adds the establishment passed as a parameter to the table.
+     * @param objectToInsertInDB the establishment to be inserted into the table.
+     * @return true if the establishment was successfully inserted, false otherwise.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
     @Override
     public boolean create(Establishment objectToInsertInDB) throws SQLException {
         boolean isInserted = false;
@@ -104,6 +124,14 @@ public class DAOEstablishment extends DAO<Establishment>{
         return isInserted;
     }
 
+    /**
+     * Precondition: the establishment passed as a parameter cannot be null.
+     * Updates all establishment fields in the table (except its identifier) that correspond to
+     * the establishment identifier passed as a parameter.
+     * @param objectToUpdateInDB the establishment containing the identifier and the fields to be updated in the table.
+     * @return true if the establishment has been successfully updated, false otherwise.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
     @Override
     public boolean update(Establishment objectToUpdateInDB) throws SQLException {
         boolean isUpdated = false;
@@ -131,6 +159,13 @@ public class DAOEstablishment extends DAO<Establishment>{
         return isUpdated;
     }
 
+    /**
+     * Precondition: the establishment passed as a parameter cannot be null.
+     * Deletes the establishment where its identifier matches the identifier of the establishment passed as a parameter.
+     * @param objectToDeleteFormDB the establishment to be deleted from the table.
+     * @return true if the establishment was successfully deleted, false otherwise.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
     @Override
     public boolean delete(Establishment objectToDeleteFormDB) throws SQLException {
         boolean isDeleted = false;
