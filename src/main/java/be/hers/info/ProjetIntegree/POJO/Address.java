@@ -2,7 +2,7 @@ package be.hers.info.ProjetIntegree.POJO;
 
 /*
 @author Rosman Loïs
-@reviewer Nicolas Jean-François, Halet Louis
+@reviewer Nicolas Jean-François
  */
 
 import java.util.ArrayList;
@@ -25,11 +25,11 @@ public class Address {
      * @param locality the locality. It can only have 1 locality
      * @param hamlet the hamlet
      * @param establishment the establishment linked. It can have 0 or 1 establishment
-     * @throws IllegalArgumentException if postOfficeBox, locality, beneficiaries or interpreters is null
+     * @throws IllegalArgumentException if postOfficeBox or locality is null
      */
-    public Address(int numAddress, int postcode, String postOfficeBox, String locality, String hamlet, Establishment establishment) {
+    public Address(int numAddress, int postcode, String postOfficeBox, String locality, String hamlet, Establishment establishment, List<Beneficiary> beneficiaries, List<Interpreter> interpreters) {
         if(postOfficeBox == null || locality == null){
-            throw new IllegalArgumentException("[POJOAddress] : postOfficeBox et/ou locality");
+            throw new IllegalArgumentException("[POJOAddress] : postOfficeBox et/ou locality est null");
         }
 
         this.numAddress = numAddress;
@@ -47,13 +47,36 @@ public class Address {
      * @param locality the locality. It can only have 1 locality
      * @param hamlet the hamlet
      * @param establishment the establishment linked. It can have 0 or 1 establishment
-     * @throws IllegalArgumentException if postOfficeBox, locality is null
+     * @throws IllegalArgumentException if postOfficeBox or locality is null
      */
-    public Address(int postcode, String postOfficeBox, String locality, String hamlet, Establishment establishment) {
+    public Address(int postcode, String postOfficeBox, String locality, String hamlet, Establishment establishment, List<Beneficiary> beneficiaries, List<Interpreter> interpreters) {
         if(postOfficeBox == null || locality == null){
             throw new IllegalArgumentException("[POJOAddress] : postOfficeBox et/ou locality est null");
         }
 
+        this.postcode = postcode;
+        this.postOfficeBox = postOfficeBox;
+        this.locality = locality;
+        this.hamlet = hamlet;
+        this.establishment = establishment;
+    }
+
+    /**
+     * Initialize an address with numAddress, postcode, postOfficeBox, locality, hamlet, establishment
+     * @param numAddress the id
+     * @param postcode the postcode
+     * @param postOfficeBox the post office box. It can only have 1 post office box
+     * @param locality the locality. It can only have 1 locality
+     * @param hamlet the hamlet
+     * @param establishment the establishment linked. It can have 0 or 1 establishment
+     * @throws IllegalArgumentException if postOfficeBox or locality is null
+     */
+    public Address(int numAddress, int postcode, String postOfficeBox, String locality, String hamlet, Establishment establishment) {
+        if(postOfficeBox == null || locality == null){
+            throw new IllegalArgumentException("[POJOAddress] : postOfficeBox et/ou locality est null");
+        }
+
+        this.numAddress = numAddress;
         this.postcode = postcode;
         this.postOfficeBox = postOfficeBox;
         this.locality = locality;
@@ -168,8 +191,7 @@ public class Address {
     }
 
     /**
-     * @return a String containing the numAddress, postcode, postOfficeBox, locality, hamlet, establishment,
-     *         beneficiaries, interpreters
+     * @return a String containing the numAddress, postcode, postOfficeBox, locality, hamlet and establishment
      */
     public String toString() {
         return "Adresse" +
