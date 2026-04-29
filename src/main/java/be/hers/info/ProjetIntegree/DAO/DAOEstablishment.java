@@ -5,7 +5,9 @@ package be.hers.info.ProjetIntegree.DAO;
 @reviewer Nicolas Jean-Francois, Halet Louis
  */
 
+import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
+import be.hers.info.ProjetIntegree.POJO.Referrer;
 import oracle.jdbc.OracleTypes;
 import oracle.jdbc.internal.OraclePreparedStatement;
 
@@ -14,12 +16,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Searches for the establishment whose identifier matches the int passed as a parameter.
+ * Searches for the establishment whose identifier matches the int passed as a parameter and
+ * create this establishment with his numEstablishment, his name and his phoneNumber.
  * @param objectToSearchInDB the identifier of the establishment to search for in the table.
  * @return The establishment whose identifier matches the int passed as a parameter.
- * null if there is no object matching the int passed as a parameter.
+ * null if there is no establishment matching the int passed as a parameter.
  * @throws SQLException In case of any SQL problems encountered with this method.
  */
 public class DAOEstablishment extends DAO<Establishment>{
@@ -54,7 +58,8 @@ public class DAOEstablishment extends DAO<Establishment>{
     }
 
     /**
-     * Create a list containing all the establishments in the table.
+     * Create a list containing all the establishments in the table. It initializes each establishment with
+     * his numEstablishment, his name and his phoneNumber.
      * @return a list containing all the establishments in the table or an empty list if the table is empty.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
@@ -91,6 +96,8 @@ public class DAOEstablishment extends DAO<Establishment>{
 
     /**
      * Precondition: the establishment passed as a parameter cannot be null.
+     * Precondition: the educationLevel list in objectToInsertInDB contains only valid integers (between 0 and 4)
+     * and doesn't contain duplicates.
      * Adds the establishment passed as a parameter to the table.
      * @param objectToInsertInDB the establishment to be inserted into the table.
      * @return true if the establishment was successfully inserted, false otherwise.
@@ -99,22 +106,35 @@ public class DAOEstablishment extends DAO<Establishment>{
     @Override
     public boolean create(Establishment objectToInsertInDB) throws SQLException {
         boolean isInserted = false;
+        List<String> listStrEducationLevel = objectToInsertInDB.getEducationLevel().stream()
+                .map(String::valueOf)
+                .collect(Collectors.toList());
+        List<Address> addresses = objectToInsertInDB.getAddresses();
         OraclePreparedStatement prStat = null;
         ResultSet rs = null;
 
         String query = """
-                INSERT INTO Establishment (name, phoneNumber) VALUES (?, ?)
+                INSERT INTO Establishment (name, phoneNumber, educationLevel, FKAddress) VALUES (?, ?, ?, ?)
                 RETURNING numEstablishment INTO ?
                 """;
 
         try {
             prStat = (OraclePreparedStatement) connect.prepareStatement(query);
-            prStat.setString(1, objectToInsertInDB.getNameBuilding());
-            prStat.setString(2, objectToInsertInDB.getPhoneNumber());
-            prStat.registerReturnParameter(3, OracleTypes.INTEGER);
+            String strEducationLevel = String.join(",", listStrEducationLevel);
 
-            int nbLinesInsert = prStat.executeUpdate();
-            if(nbLinesInsert > 0)
+            int nbLinesInsert = 0;
+            for(int indexAddresses = 0; indexAddresses < addresses.size(); indexAddresses++){
+                prStat.setString(1, objectToInsertInDB.getNameBuilding());
+                prStat.setString(2, objectToInsertInDB.getPhoneNumber());
+                prStat.setString(3, strEducationLevel);
+                Address address = addresses.get(indexAddresses);
+                prStat.setInt(4, address.getNumAddress());
+                prStat.registerReturnParameter(5, OracleTypes.INTEGER);
+
+                nbLinesInsert += prStat.executeUpdate();
+            }
+
+            if(nbLinesInsert == addresses.size())
                 isInserted = true;
         }
         finally {
@@ -127,7 +147,7 @@ public class DAOEstablishment extends DAO<Establishment>{
     /**
      * Precondition: the establishment passed as a parameter cannot be null.
      * Updates all establishment fields in the table (except its identifier) that correspond to
-     * the establishment identifier passed as a parameter.
+     * the establishment identifier passed as a parameter. It updated the name and the phoneNumber of the establishment
      * @param objectToUpdateInDB the establishment containing the identifier and the fields to be updated in the table.
      * @return true if the establishment has been successfully updated, false otherwise.
      * @throws SQLException In case of any SQL problems encountered with this method.
