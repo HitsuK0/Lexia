@@ -24,6 +24,7 @@ public class AppointmentTest {
     private Beneficiary beneficiary;
     private List<Interpreter> interpreters;
     private List<ProfessionalSkill> professionalSkills;
+    private List<AcademicSkill> academicSkills;
     private TimeSlot timeSlot;
 
     // Set Up //
@@ -38,8 +39,10 @@ public class AppointmentTest {
         interpreters.add(new Interpreter());
         professionalSkills = new ArrayList<>();
         professionalSkills.add(new ProfessionalSkill("Traduction"));
+        academicSkills = new ArrayList<>();
+        academicSkills.add(new AcademicSkill("Mathématiques"));
         timeSlot = new TimeSlotPunctual(LocalTime.of(8, 0), LocalTime.of(1, 0), LocalDate.of(2025, 6, 1));
-        appointment = new Appointment(1, beneficiary, null, interpreters, null, professionalSkills, timeSlot);
+        appointment = new Appointment(1, beneficiary, null, interpreters, academicSkills, professionalSkills, timeSlot);
     }
 
     // Default Constructor //
@@ -48,7 +51,8 @@ public class AppointmentTest {
      * Tests that the default constructor sets status to "en attente" and initializes all lists to empty lists.
      * Given : no argument
      * When  : an Appointment is created with the default constructor
-     * Then  : getStatus() must return "en attente" and all lists must be empty
+     * Then  : getStatus() must return "en attente", getAppointmentLocals(), getInterpreters(),
+     *         getAcademicSkillsNeeded() and getProfessionalSkillsNeeded() must all be empty
      */
     @Test
     void defaultConstructor_StatusIsEnAttenteAndListsAreEmpty() {
@@ -56,13 +60,15 @@ public class AppointmentTest {
         assertEquals("en attente", a.getStatus());
         assertTrue(a.getAppointmentLocals().isEmpty());
         assertTrue(a.getInterpreters().isEmpty());
+        assertTrue(a.getAcademicSkillsNeeded().isEmpty());
+        assertTrue(a.getProfessionalSkillsNeeded().isEmpty());
     }
 
     // Constructor (numAppointment, all fields) //
 
     /**
      * Tests that the full constructor correctly sets all fields when valid arguments are provided.
-     * Given : valid numAppointment=1, beneficiary, interpreters, professionalSkills and timeSlot
+     * Given : valid numAppointment=1, beneficiary, interpreters, academicSkills, professionalSkills and timeSlot
      * When  : an Appointment is created with these arguments
      * Then  : all getters must return the expected values and status must be "en attente"
      */
@@ -71,6 +77,7 @@ public class AppointmentTest {
         assertEquals(1, appointment.getNumAppointment());
         assertEquals(beneficiary, appointment.getBeneficiary());
         assertEquals(interpreters, appointment.getInterpreters());
+        assertEquals(academicSkills, appointment.getAcademicSkillsNeeded());
         assertEquals(professionalSkills, appointment.getProfessionalSkillsNeeded());
         assertEquals(timeSlot, appointment.getTimeSlot());
         assertEquals("en attente", appointment.getStatus());
@@ -85,7 +92,7 @@ public class AppointmentTest {
     @Test
     void constructor_WithNullBeneficiary_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1, null, null, interpreters, null, professionalSkills, timeSlot));
+                () -> new Appointment(1, null, null, interpreters, academicSkills, professionalSkills, timeSlot));
     }
 
     /**
@@ -97,7 +104,7 @@ public class AppointmentTest {
     @Test
     void constructor_WithNullInterpreters_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1, beneficiary, null, null, null, professionalSkills, timeSlot));
+                () -> new Appointment(1, beneficiary, null, null, academicSkills, professionalSkills, timeSlot));
     }
 
     /**
@@ -109,7 +116,7 @@ public class AppointmentTest {
     @Test
     void constructor_WithEmptyInterpreters_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1, beneficiary, null, new ArrayList<>(), null, professionalSkills, timeSlot));
+                () -> new Appointment(1, beneficiary, null, new ArrayList<>(), academicSkills, professionalSkills, timeSlot));
     }
 
     /**
@@ -121,7 +128,7 @@ public class AppointmentTest {
     @Test
     void constructor_WithNullProfessionalSkills_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1, beneficiary, null, interpreters, null, null, timeSlot));
+                () -> new Appointment(1, beneficiary, null, interpreters, academicSkills, null, timeSlot));
     }
 
     /**
@@ -133,7 +140,7 @@ public class AppointmentTest {
     @Test
     void constructor_WithEmptyProfessionalSkills_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1, beneficiary, null, interpreters, null, new ArrayList<>(), timeSlot));
+                () -> new Appointment(1, beneficiary, null, interpreters, academicSkills, new ArrayList<>(), timeSlot));
     }
 
     /**
@@ -145,7 +152,20 @@ public class AppointmentTest {
     @Test
     void constructor_WithNullTimeSlot_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1, beneficiary, null, interpreters, null, professionalSkills, null));
+                () -> new Appointment(1, beneficiary, null, interpreters, academicSkills, professionalSkills, null));
+    }
+
+    /**
+     * Tests that the full constructor accepts a null academicSkills list without throwing.
+     * Given : a null academicSkills list
+     * When  : an Appointment is created with null academicSkills
+     * Then  : no exception must be thrown and getAcademicSkillsNeeded() must return null
+     */
+    @Test
+    void constructor_WithNullAcademicSkills_DoesNotRaiseAnException() {
+        Appointment a = assertDoesNotThrow(
+                () -> new Appointment(1, beneficiary, null, interpreters, null, professionalSkills, timeSlot));
+        assertNull(a.getAcademicSkillsNeeded());
     }
 
     // setNumAppointment //
@@ -246,6 +266,44 @@ public class AppointmentTest {
     @Test
     void setInterpreters_WithEmptyList_RaisesAnException() {
         assertThrows(IllegalArgumentException.class, () -> appointment.setInterpreters(new ArrayList<>()));
+    }
+
+    // setAcademicSkillsNeeded //
+
+    /**
+     * Tests that {@code setAcademicSkillsNeeded()} correctly updates the list.
+     * Given : a non-empty list of academic skills
+     * When  : setAcademicSkillsNeeded() is called with this list
+     * Then  : getAcademicSkillsNeeded() must return the new list
+     */
+    @Test
+    void setAcademicSkillsNeeded_UpdatesTheCorrectValue() {
+        List<AcademicSkill> newSkills = new ArrayList<>();
+        newSkills.add(new AcademicSkill("Physique"));
+        appointment.setAcademicSkillsNeeded(newSkills);
+        assertEquals(newSkills, appointment.getAcademicSkillsNeeded());
+    }
+
+    /**
+     * Tests that {@code setAcademicSkillsNeeded()} throws an {@link IllegalArgumentException} when null is passed.
+     * Given : a null list
+     * When  : setAcademicSkillsNeeded(null) is called
+     * Then  : an IllegalArgumentException must be thrown
+     */
+    @Test
+    void setAcademicSkillsNeeded_WithNull_RaisesAnException() {
+        assertThrows(IllegalArgumentException.class, () -> appointment.setAcademicSkillsNeeded(null));
+    }
+
+    /**
+     * Tests that {@code setAcademicSkillsNeeded()} throws an {@link IllegalArgumentException} when an empty list is passed.
+     * Given : an empty list
+     * When  : setAcademicSkillsNeeded() is called with an empty list
+     * Then  : an IllegalArgumentException must be thrown
+     */
+    @Test
+    void setAcademicSkillsNeeded_WithEmptyList_RaisesAnException() {
+        assertThrows(IllegalArgumentException.class, () -> appointment.setAcademicSkillsNeeded(new ArrayList<>()));
     }
 
     // setTimeSlot //
