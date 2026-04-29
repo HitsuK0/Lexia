@@ -4,11 +4,8 @@ import be.hers.info.ProjetIntegree.POJO.TimeSlotPunctual;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleTypes;
 
-import java.sql.Date;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 
 
@@ -92,6 +89,10 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
 
     /**
      * Insert a TimeSlotPunctual in the DB
+     * The startTime is inserted with the StartDate in it.
+     * The duration is registered with the StartDate in it.
+     * The StartDate is inserted with the startTime in it.
+     * The End Date is registered with 0 : 0 for the time.
      * @param objectToInsertInDB is the object TimeSlotPunctual to insert
      * @return true if the insert did well, else false
      * @throws SQLException if an errors occurs during the database request
@@ -107,9 +108,10 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
 
         try{
             prStat = (OraclePreparedStatement)connect.prepareStatement(query);
-            prStat.setDate(1, Date.valueOf(objectToInsertInDB.getStartTime().atDate(objectToInsertInDB.getStartDate()).toLocalDate()));
-            prStat.setDate(2, Date.valueOf(objectToInsertInDB.getDuration().atDate(objectToInsertInDB.getStartDate()).toLocalDate()));            prStat.setDate(3, Date.valueOf(objectToInsertInDB.getStartDate()));
-            prStat.setDate(4, Date.valueOf(objectToInsertInDB.getEndDate()));
+            prStat.setTimestamp(1, Timestamp.valueOf(objectToInsertInDB.getStartTime().atDate(objectToInsertInDB.getStartDate())));
+            prStat.setTimestamp(2, Timestamp.valueOf(objectToInsertInDB.getDuration().atDate(objectToInsertInDB.getStartDate())));
+            prStat.setTimestamp(3, Timestamp.valueOf(objectToInsertInDB.getStartDate().atTime(objectToInsertInDB.getStartTime())));
+            prStat.setTimestamp(4, Timestamp.valueOf(objectToInsertInDB.getEndDate().atTime(0, 0)));
             prStat.registerReturnParameter(5, OracleTypes.INTEGER);
             int nbreLine = prStat.executeUpdate();
             if(nbreLine > 0){
