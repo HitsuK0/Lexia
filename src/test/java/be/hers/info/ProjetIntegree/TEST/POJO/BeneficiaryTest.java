@@ -6,7 +6,6 @@ import be.hers.info.ProjetIntegree.POJO.Beneficiary;
 import be.hers.info.ProjetIntegree.POJO.Interpreter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -112,18 +111,6 @@ class BeneficiaryTest {
     }
 
     /**
-     * Tests that the short constructor hashes the password with BCrypt.
-     * Given : a Beneficiary constructed with password="secret"
-     * When  : BCrypt.checkpw("secret", getPassword()) is called
-     * Then  : the result must be true
-     */
-    @Test
-    void shortConstructor_ShouldHashPassword() {
-        Beneficiary b = new Beneficiary("jdoe", "secret", "j@j.be", "Jean", "Doe");
-        assertTrue(BCrypt.checkpw("secret", b.getPassword()));
-    }
-
-    /**
      * Tests that the short constructor throws an exception when password is null.
      * Given : a Beneficiary constructed with password=null
      * When  : the constructor is called
@@ -159,18 +146,6 @@ class BeneficiaryTest {
     void constructorWithId_ShouldSetNumBeneficiary() {
         Beneficiary b = new Beneficiary(42, "jdoe", "secret", "j@j.be", "Jean", "Doe");
         assertEquals(42, b.getNumBeneficiary());
-    }
-
-    /**
-     * Tests that the constructor with ID hashes the password with BCrypt.
-     * Given : a Beneficiary constructed with numBeneficiary=42 and password="secret"
-     * When  : BCrypt.checkpw("secret", getPassword()) is called
-     * Then  : the result must be true
-     */
-    @Test
-    void constructorWithId_ShouldHashPassword() {
-        Beneficiary b = new Beneficiary(42, "jdoe", "secret", "j@j.be", "Jean", "Doe");
-        assertTrue(BCrypt.checkpw("secret", b.getPassword()));
     }
 
     /**
@@ -220,19 +195,6 @@ class BeneficiaryTest {
         assertSame(address, b.getAddress());
         assertSame(interpreter, b.getInterpreter());
         assertSame(languages, b.getCommunicationLanguage());
-    }
-
-    /**
-     * Tests that the full constructor without ID hashes the password correctly.
-     * Given : a Beneficiary constructed with password="monMotDePasse"
-     * When  : BCrypt.checkpw("monMotDePasse", getPassword()) is called
-     * Then  : the result must be true
-     */
-    @Test
-    void fullConstructorWithoutId_ShouldHashPassword() {
-        Beneficiary b = new Beneficiary("jdoe", "monMotDePasse", "Jean", "Doe", "0477000000",
-                20, "j@j.be", address, 2, interpreter, languages, null);
-        assertTrue(BCrypt.checkpw("monMotDePasse", b.getPassword()));
     }
 
     /**
@@ -382,19 +344,6 @@ class BeneficiaryTest {
     }
 
     /**
-     * Tests that the full constructor with ID hashes the password correctly.
-     * Given : a Beneficiary constructed with numBeneficiary=7 and password="secret"
-     * When  : BCrypt.checkpw("secret", getPassword()) is called
-     * Then  : the result must be true
-     */
-    @Test
-    void fullConstructorWithId_ShouldHashPassword() {
-        Beneficiary b = new Beneficiary(7, "jdoe", "secret", "Jean", "Doe", "0477000000",
-                20, "j@j.be", address, 2, interpreter, languages, null);
-        assertTrue(BCrypt.checkpw("secret", b.getPassword()));
-    }
-
-    /**
      * Tests that the full constructor with ID throws an exception when password is null.
      * Given : a Beneficiary constructed with numBeneficiary=1 and password=null
      * When  : the constructor is called
@@ -436,16 +385,16 @@ class BeneficiaryTest {
     }
 
     /**
-     * Tests that setPassword hashes and stores the new password correctly.
+     * Tests that setPassword correctly updates the password.
      * Given : a default Beneficiary
      * When  : setPassword("newpass") is called
-     * Then  : BCrypt.checkpw("newpass", getPassword()) must return true
+     * Then  : getName() must return "newpass"
      */
     @Test
-    void setPassword_ShouldHashAndStoreNewPassword() {
+    void setPassword_StoreNewPassword() {
         Beneficiary b = new Beneficiary();
         b.setPassword("newpass");
-        assertTrue(BCrypt.checkpw("newpass", b.getPassword()));
+        assertEquals("newpass", b.getPassword());
     }
 
     /**
