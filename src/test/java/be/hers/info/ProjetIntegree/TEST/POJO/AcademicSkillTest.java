@@ -151,4 +151,5 @@ public class AcademicSkillTest {
         String s = "Compétence académique\nDesignation : Mathématiques\n";
         assertEquals(s, skill.toString());
     }
+
 }
