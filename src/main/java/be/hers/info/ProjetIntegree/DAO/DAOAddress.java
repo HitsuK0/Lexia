@@ -2,7 +2,7 @@ package be.hers.info.ProjetIntegree.DAO;
 
 /*
 @author Rosman Loïs
-@reviewer Nicolas Jean-Francois, Halet Louis
+@reviewer Wellinger Chloé
  */
 
 import be.hers.info.ProjetIntegree.POJO.Address;
@@ -20,7 +20,11 @@ public class DAOAddress implements DAO<Address> {
     @Override
     public Address find(int objectToSearchInDB) throws SQLException {
         Address addressFind = null;
-        String query = "SELECT * FROM Address WHERE numAddress = ?";
+        String query = """
+                       SELECT * 
+                       FROM Address 
+                       WHERE numAddress = ?
+                       """;
         PreparedStatement prStat = null;
         ResultSet rs = null;
         try{
@@ -46,7 +50,10 @@ public class DAOAddress implements DAO<Address> {
     @Override
     public List<Address> findAll() throws SQLException {
         List<Address> listAddressFind = new ArrayList<>();
-        String query = "SELECT * FROM Address";
+        String query = """
+                SELECT * 
+                FROM Address
+                """;
         PreparedStatement prStat = null;
         ResultSet rs = null;
         try{
@@ -96,7 +103,7 @@ public class DAOAddress implements DAO<Address> {
             if(prStat.executeUpdate() > 0) {
                 generateID = prStat.getReturnResultSet();
                 if (!generateID.next()) {
-                    throw new SQLException("[DAOAddress] Impossible de récupérer le numInterpreter généré.");
+                    throw new SQLException("[DAOAddress] Impossible de récupérer le numAddress généré.");
                 }
                 int numAddressGenerated = generateID.getInt(1);
                 objectToInsertInDB.setNumAddress(numAddressGenerated);
@@ -115,7 +122,8 @@ public class DAOAddress implements DAO<Address> {
     public boolean update(Address objectToUpdateInDB) throws SQLException {
         boolean isUpdated = false;
         String query = """
-                       UPDATE Address SET postalCode = ?, postalBox = ? , locality = ?, hamlet = ? 
+                       UPDATE Address 
+                       SET postalCode = ?, postalBox = ? , locality = ?, hamlet = ? 
                        WHERE numAddress = ?
                        """;
 
@@ -143,7 +151,8 @@ public class DAOAddress implements DAO<Address> {
         boolean isDeleted = false;
 
         String query = """
-                       DELETE FROM Address WHERE NumAddress = ?
+                       DELETE FROM Address 
+                       WHERE NumAddress = ?
                        """;
 
         PreparedStatement prStat = null;
