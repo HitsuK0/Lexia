@@ -24,7 +24,7 @@ public class AcademicSkillTest {
      */
     @BeforeEach
     void setUp(){
-        skill = new AcademicSkill("Mathématiques");
+        skill = new AcademicSkill(1,"Mathématiques");
     }
 
     // Constructor with parameter //
@@ -37,7 +37,7 @@ public class AcademicSkillTest {
      */
     @Test
     void constructor_WithValidDesignation() {
-        AcademicSkill s = new AcademicSkill("Informatique");
+        AcademicSkill s = new AcademicSkill(2,"Informatique");
         assertEquals("Informatique", s.getDesignation());
     }
 
@@ -49,7 +49,7 @@ public class AcademicSkillTest {
      */
     @Test
     void constructor_WithNullDesignationRaiseAnException() {
-        assertThrows(IllegalArgumentException.class, () -> new AcademicSkill(null));
+        assertThrows(IllegalArgumentException.class, () -> new AcademicSkill(3,null));
     }
 
     // Default Constructor //
