@@ -1,118 +1,119 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
-<head th:replace="~{common/head :: head('Mon Planning')}"></head>
+    <head th:replace="~{common/head :: head('Mon Planning')}"></head>
 
-<body>
+    <body>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole='INTERPRETER', userName='Jean Dupont')}"></nav>
 
-<nav th:replace="~{common/navbar :: navbar('planning')}"></nav>
+        <div class="container-fluid py-4">
 
-<div class="container-fluid py-4">
+            <div class="text-center mb-4">
+                <h1 class="fw-bold text-primary">Votre horaire de la semaine</h1>
+                <p class="text-muted fst-italic">Consultez vos interventions planifiées</p>
+            </div>
 
-    <div class="text-center mb-4">
-        <h1 class="fw-bold text-primary">Votre horaire de la semaine</h1>
-        <p class="text-muted fst-italic">Consultez vos interventions planifiées</p>
-    </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="btn-group">
+                    <a th:href="@{/interprete/planning}" class="btn btn-primary">Mon Planning</a>
+                    <a th:href="@{/interprete/planning/beneficiaires}" class="btn btn-outline-primary">Mes Bénéficiaires</a>
+                </div>
 
-        <div class="btn-group">
-            <a th:href="@{/interprete/planning}" class="btn btn-primary">Mon Planning</a>
-            <a th:href="@{/interprete/planning/beneficiaires}" class="btn btn-outline-primary">Mes Bénéficiaires</a>
+                <a th:href="@{/interprete/indisponibilites}" class="btn btn-primary">
+                    + Déclarer une indisponibilité
+                </a>
+
+            </div>
+
+            <div id="calendar"></div>
+
+            <div class="d-flex justify-content-center gap-4 mt-3">
+                <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;&nbsp;&nbsp;</span> Indisponibilités confirmée</span>
+                <span><span class="badge"
+                            style="background-color:#f28b82;">&nbsp;&nbsp;&nbsp;</span> Intervention annulée</span>
+                <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;&nbsp;</span> Horaire de Base</span>
+            </div>
+
         </div>
 
-        <a th:href="@{/interprete/indisponibilites}" class="btn btn-primary">
-            + Déclarer une indisponibilité
-        </a>
+        <script th:src="@{/js/fullcalendar.min.js}"></script>
 
-    </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
 
-    <div id="calendar"></div>
+                const events = [
+                    {
+                        title: 'Mathématiques\nTranscription\nBénéficiaire : V.Jean\nLocal M5',
+                        start: '2026-03-02T08:30:00',
+                        end: '2026-03-02T10:30:00',
+                        color: '#b39ddb'
+                    },
+                    {
+                        title: 'Annulé – Anglais\nTranscription\nBénéficiaire : V.Jean\nLocal A2',
+                        start: '2026-03-02T11:00:00',
+                        end: '2026-03-02T13:00:00',
+                        color: '#f28b82'
+                    },
+                    {
+                        title: 'Cours\nCompétence métier\nBénéficiaire : N.Prenom\nLocal nºX',
+                        start: '2026-03-02T14:00:00',
+                        end: '2026-03-02T15:30:00',
+                        color: '#b39ddb'
+                    },
+                    {
+                        title: 'Histoire\nTranscription\nBénéficiaire : N.Jean-François',
+                        start: '2026-03-03T10:00:00',
+                        end: '2026-03-03T11:00:00',
+                        color: '#b39ddb'
+                    },
+                    {
+                        title: 'Indisponibilité\nRaison : XX',
+                        start: '2026-03-04T14:00:00',
+                        end: '2026-03-04T16:00:00',
+                        color: '#f0ad4e'
+                    },
+                    {
+                        title: 'Sciences\nTranslittération\nBénéficiaire : D.Ryan\nLabo scientifique Nº2',
+                        start: '2026-03-05T14:30:00',
+                        end: '2026-03-05T16:30:00',
+                        color: '#b39ddb'
+                    },
+                    {
+                        title: 'Indisponibilité\nRdv médical',
+                        start: '2026-03-06T08:30:00',
+                        end: '2026-03-06T12:30:00',
+                        color: '#f0ad4e'
+                    }
+                ];
 
-    <div class="d-flex justify-content-center gap-4 mt-3">
-        <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;&nbsp;&nbsp;</span> Indisponibilités confirmée</span>
-        <span><span class="badge" style="background-color:#f28b82;">&nbsp;&nbsp;&nbsp;</span> Intervention annulée</span>
-        <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;&nbsp;</span> Horaire de Base</span>
-    </div>
+                const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+                    locale: 'fr',
+                    initialView: 'timeGridWeek',
+                    initialDate: '2026-03-02',
+                    headerToolbar: {
+                        left: 'prev',
+                        center: 'title',
+                        right: 'next'
+                    },
+                    slotMinTime: '08:00:00',
+                    slotMaxTime: '19:00:00',
+                    allDaySlot: false,
+                    height: 'auto',
+                    events: events,
+                    eventContent: function (arg) {
+                        const lines = arg.event.title.split('\n');
+                        const html = lines.map((l, i) =>
+                            `<div class="${i === 0 ? 'fw-bold' : 'small'}">${l}</div>`
+                        ).join('');
+                        return {html: `<div class="p-1">${html}</div>`};
+                    }
+                });
 
-</div>
+                calendar.render();
+            });
+        </script>
 
-<script th:src="@{/js/fullcalendar.min.js}"></script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-
-const events = [
-{
-title: 'Mathématiques\nTranscription\nBénéficiaire : V.Jean\nLocal M5',
-start: '2026-03-02T08:30:00',
-end:   '2026-03-02T10:30:00',
-color: '#b39ddb'
-},
-{
-title: 'Annulé – Anglais\nTranscription\nBénéficiaire : V.Jean\nLocal A2',
-start: '2026-03-02T11:00:00',
-end:   '2026-03-02T13:00:00',
-color: '#f28b82'
-},
-{
-title: 'Cours\nCompétence métier\nBénéficiaire : N.Prenom\nLocal nºX',
-start: '2026-03-02T14:00:00',
-end:   '2026-03-02T15:30:00',
-color: '#b39ddb'
-},
-{
-title: 'Histoire\nTranscription\nBénéficiaire : N.Jean-François',
-start: '2026-03-03T10:00:00',
-end:   '2026-03-03T11:00:00',
-color: '#b39ddb'
-},
-{
-title: 'Indisponibilité\nRaison : XX',
-start: '2026-03-04T14:00:00',
-end:   '2026-03-04T16:00:00',
-color: '#f0ad4e'
-},
-{
-title: 'Sciences\nTranslittération\nBénéficiaire : D.Ryan\nLabo scientifique Nº2',
-start: '2026-03-05T14:30:00',
-end:   '2026-03-05T16:30:00',
-color: '#b39ddb'
-},
-{
-title: 'Indisponibilité\nRdv médical',
-start: '2026-03-06T08:30:00',
-end:   '2026-03-06T12:30:00',
-color: '#f0ad4e'
-}
-];
-
-const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-locale: 'fr',
-initialView: 'timeGridWeek',
-initialDate: '2026-03-02',
-headerToolbar: {
-left:   'prev',
-center: 'title',
-right:  'next'
-},
-slotMinTime: '08:00:00',
-slotMaxTime: '19:00:00',
-allDaySlot: false,
-height: 'auto',
-events: events,
-eventContent: function (arg) {
-const lines = arg.event.title.split('\n');
-const html = lines.map((l, i) =>
-`<div class="${i === 0 ? 'fw-bold' : 'small'}">${l}</div>`
-).join('');
-return { html: `<div class="p-1">${html}</div>` };
-}
-});
-
-calendar.render();
-});
-</script>
-
-</body>
+        <div th:replace="~{common/footer :: footer}"></div>
+    </body>
 </html>
