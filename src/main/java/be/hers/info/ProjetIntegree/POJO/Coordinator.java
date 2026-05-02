@@ -2,7 +2,7 @@ package be.hers.info.ProjetIntegree.POJO;
 
 import java.util.List;
 
-/*
+/**
     @author Halet Louis
     @reviewer Nicolas Jean-Francois
 */
@@ -23,6 +23,8 @@ public class Coordinator extends Interpreter {
     /**
      * Create a resa coordinator without his numCoordinator. There isn't the numInterpreter.
      * The numCoordinator and isAdmin must be initialised with a setter
+     * @param login the login so that the interpreter can log in
+     * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -30,16 +32,18 @@ public class Coordinator extends Interpreter {
      * @param weeklyWorkHours the number of hours worked over the week
      * @param address the address of the interpreter
      */
-    public Coordinator(String login, String password, String lastName, String firstName,
-                       String email, String phoneNumber, int weeklyWorkHours, Address address) {
-        super(login, password, lastName, firstName, email, phoneNumber, weeklyWorkHours, address);
+    public Coordinator(String login, String password, String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address) {
+        super(login,password,lastName,firstName,email,phoneNumber,weeklyWorkHours,address);
         this.isAdmin = false;
+
     }
 
     /**
      * Create a resa coordinator without his numCoordinator.
      * The numCoordinator and isAdmin must be initialised with a setter
      * @param numInterpreter ID of the interpreter
+     * @param login the login so that the interpreter can log in
+     * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -47,16 +51,18 @@ public class Coordinator extends Interpreter {
      * @param weeklyWorkHours the number of hours worked over the week
      * @param address the address of the interpreter
      */
-    public Coordinator(int numInterpreter, String login, String password, String lastName,
-                       String firstName, String email, String phoneNumber,
+    public Coordinator(int numInterpreter,String login, String password, String lastName, String firstName, String email, String phoneNumber,
                        int weeklyWorkHours, Address address) {
-        super(numInterpreter, login, password, lastName, firstName, email, phoneNumber, weeklyWorkHours, address);
+        super(numInterpreter,login, password,lastName,firstName,email,phoneNumber,weeklyWorkHours,address);
         this.isAdmin = false;
+
     }
     /**
      * Create a coordinator with his list of Appointment, ProfessionalSkill, AcademicSkill and Beneficiary without his numCoordinator
      * The numCoordinator and isAdmin must be initialised with a setter
      * @param numInterpreter ID of the interpreter
+     * @param login the login so that the interpreter can log in
+     * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -69,14 +75,11 @@ public class Coordinator extends Interpreter {
      * @param academicSkillsList the academic skill's of the interpreter
      * @param beneficiariesList the beneficiaries's list of the interpreter
      */
-    public Coordinator(int numInterpreter, String login, String password, String lastName,
-                       String firstName, String email, String phoneNumber,
+    public Coordinator(int numInterpreter,String login, String password, String lastName, String firstName, String email, String phoneNumber,
                        int weeklyWorkHours, Address address, List<Absence> absences,
                        List<Appointment> appointmentsList, List<ProfessionalSkill> professionalSkillsList,
-                       List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList) {
-        super(numInterpreter, login, password, lastName, firstName, email, phoneNumber,
-                weeklyWorkHours, address, absences, appointmentsList,
-                professionalSkillsList, academicSkillsList, beneficiariesList);
+                       List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList ){
+        super(numInterpreter, login, password,lastName,firstName,email,phoneNumber,weeklyWorkHours,address,absences, appointmentsList, professionalSkillsList,academicSkillsList,beneficiariesList);
         this.isAdmin = false;
     }
 
@@ -85,6 +88,8 @@ public class Coordinator extends Interpreter {
     /**
      * Create a complete coordinator.
      * @param numInterpreter ID of the interpreter
+     * @param login the login so that the interpreter can log in
+     * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
      * @param email the email of the interpreter
@@ -99,16 +104,12 @@ public class Coordinator extends Interpreter {
      * @param numCoordinator the numero of the coordinator
      * @param isAdmin If isAdmin is true, the coordinator will be the main coordinator. false if it's a resa
      */
-    public Coordinator(int numInterpreter, String login, String password, String lastName,
-                       String firstName, String email, String phoneNumber,
+    public Coordinator(int numInterpreter,String login, String password, String lastName, String firstName, String email, String phoneNumber,
                        int weeklyWorkHours, Address address, List<Absence> absences,
                        List<Appointment> appointmentsList, List<ProfessionalSkill> professionalSkillsList,
-                       List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList,
-                       int numCoordinator, boolean isAdmin) {
-        super(numInterpreter, login, password, lastName, firstName, email, phoneNumber,
-                weeklyWorkHours, address, absences, appointmentsList,
-                professionalSkillsList, academicSkillsList, beneficiariesList);
-        this.numCoordinator = numCoordinator;
+                       List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList,int numCoordinator,boolean isAdmin ){
+        super(numInterpreter,login,password, lastName,firstName,email,phoneNumber,weeklyWorkHours,address,absences, appointmentsList, professionalSkillsList,academicSkillsList,beneficiariesList);
+        this.numCoordinator=numCoordinator;
         this.isAdmin = isAdmin;
     }
     /**

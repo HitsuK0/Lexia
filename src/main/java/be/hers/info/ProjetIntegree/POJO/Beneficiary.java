@@ -7,7 +7,6 @@ package be.hers.info.ProjetIntegree.POJO;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.mindrot.jbcrypt.BCrypt;
 
 public class Beneficiary {
     private int numBeneficiary;
@@ -54,7 +53,7 @@ public class Beneficiary {
      * address, educationLevel, communicationLanguage and appointmentList
      * @param numBeneficiary the id of the Beneficiary
      * @param login The id login the user
-     * @param password The password of the user, it hashes it automatically
+     * @param password The password of the user
      * @param name the name
      * @param surname the surname
      * @param phoneNumber the phone number
@@ -77,7 +76,7 @@ public class Beneficiary {
 
         this.numBeneficiary = numBeneficiary;
         this.login = login;
-        this.password = BCrypt.hashpw(password,  BCrypt.gensalt());
+        this.password = password;
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -94,7 +93,7 @@ public class Beneficiary {
      * Initialize a Beneficiary with emailAddress, name and surname.
      * The parameter numBeneficiary can only be initialized with setNumBeneficiary
      * @param login the login of the user
-     * @param password the password of the user, it hashes it automatically
+     * @param password the password of the user
      * @param emailAddress the email address of the Beneficiary
      * @param name the name of the Beneficiary
      * @param surname the surname of the Beneficiary
@@ -111,7 +110,7 @@ public class Beneficiary {
         }
 
         this.login = login;
-        this.password = BCrypt.hashpw(password,  BCrypt.gensalt());
+        this.password = password;
         this.name = name;
         this.surname = surname;
         this.phoneNumber = "";
@@ -128,7 +127,7 @@ public class Beneficiary {
      * Initialize a Beneficiary with numBeneficiary, emailAddress, name and surname
      * @param numBeneficiary the id of the Beneficiary
      * @param login the login of the user
-     * @param password the password of the user, it hashes it automatically
+     * @param password the password of the user
      * @param emailAddress the email address of the Beneficiary
      * @param name the name of the Beneficiary
      * @param surname the surname of the Beneficiary
@@ -146,7 +145,7 @@ public class Beneficiary {
 
         this.numBeneficiary = numBeneficiary;
         this.login = login;
-        this.password = BCrypt.hashpw(password,  BCrypt.gensalt());
+        this.password = password;
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -164,7 +163,7 @@ public class Beneficiary {
      * address, educationLevel, communicationLanguage and appointmentList
      * @param numBeneficiary the id of the Beneficiary
      * @param login The id login the user
-     * @param password The password of the user, it hashes it automatically
+     * @param password The password of the user
      * @param name the name
      * @param surname the surname
      * @param phoneNumber the phone number
@@ -201,7 +200,7 @@ public class Beneficiary {
 
         this.numBeneficiary = numBeneficiary;
         this.login = login;
-        this.password = BCrypt.hashpw(password,  BCrypt.gensalt());
+        this.password = password;
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -224,7 +223,7 @@ public class Beneficiary {
      * address, educationLevel, communicationLanguage and appointmentList.
      * The parameter numBeneficiary can only be initialized with setNumBeneficiary
      * @param login The login of the user
-     * @param password The password of the user, it hashes it automatically
+     * @param password The password of the user
      * @param name the name
      * @param surname the surname
      * @param phoneNumber the phone number
@@ -260,7 +259,7 @@ public class Beneficiary {
         }
 
         this.login = login;
-        this.password = BCrypt.hashpw(password,  BCrypt.gensalt());
+        this.password = password;
         this.name = name;
         this.surname = surname;
         this.emailAddress = emailAddress;
@@ -295,7 +294,7 @@ public class Beneficiary {
     }
 
     /**
-     * @return the password of the Beneficiary, it hashes it automatically
+     * @return the password of the Beneficiary
      */
     public String getPassword() {
 
@@ -422,7 +421,7 @@ public class Beneficiary {
      */
     public void setPassword(String password) {
 
-        this.password = BCrypt.hashpw(password, BCrypt.gensalt());;
+        this.password = password;
     }
 
     /**
