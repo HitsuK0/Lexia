@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DAOAddress implements DAO<Address> {
+public class DAOAddress extends DAO<Address> {
     @Override
     public Address find(int objectToSearchInDB) throws SQLException {
         Address addressFind = null;
