@@ -26,6 +26,7 @@ public class AppointmentTest {
     private List<ProfessionalSkill> professionalSkills;
     private List<AcademicSkill> academicSkills;
     private TimeSlot timeSlot;
+    private Establishment establishment;
 
     // Set Up //
 
@@ -35,14 +36,15 @@ public class AppointmentTest {
     @BeforeEach
     void setUp() {
         beneficiary = new Beneficiary();
+        establishment = new Establishment();
         interpreters = new ArrayList<>();
         interpreters.add(new Interpreter());
         professionalSkills = new ArrayList<>();
         professionalSkills.add(new ProfessionalSkill("Traduction"));
         academicSkills = new ArrayList<>();
-        academicSkills.add(new AcademicSkill("Mathématiques"));
+        academicSkills.add(new AcademicSkill(1,"Mathématiques"));
         timeSlot = new TimeSlotPunctual(LocalTime.of(8, 0), LocalTime.of(1, 0), LocalDate.of(2025, 6, 1));
-        appointment = new Appointment(1, beneficiary, null, interpreters, academicSkills, professionalSkills, timeSlot);
+        appointment = new Appointment(1, beneficiary, null, interpreters, academicSkills, professionalSkills, timeSlot, establishment);
     }
 
     // Default Constructor //
@@ -92,7 +94,7 @@ public class AppointmentTest {
     @Test
     void constructor_WithNullBeneficiary_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1, null, null, interpreters, academicSkills, professionalSkills, timeSlot));
+                () -> new Appointment(1, null, null, interpreters, academicSkills, professionalSkills, timeSlot, establishment));
     }
 
     /**
@@ -104,7 +106,7 @@ public class AppointmentTest {
     @Test
     void constructor_WithNullInterpreters_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1, beneficiary, null, null, academicSkills, professionalSkills, timeSlot));
+                () -> new Appointment(1, beneficiary, null, null, academicSkills, professionalSkills, timeSlot, establishment));
     }
 
     /**
@@ -116,7 +118,7 @@ public class AppointmentTest {
     @Test
     void constructor_WithEmptyInterpreters_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1, beneficiary, null, new ArrayList<>(), academicSkills, professionalSkills, timeSlot));
+                () -> new Appointment(1, beneficiary, null, new ArrayList<>(), academicSkills, professionalSkills, timeSlot, establishment));
     }
 
     /**
@@ -128,7 +130,7 @@ public class AppointmentTest {
     @Test
     void constructor_WithNullProfessionalSkills_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1, beneficiary, null, interpreters, academicSkills, null, timeSlot));
+                () -> new Appointment(1, beneficiary, null, interpreters, academicSkills, null, timeSlot, establishment));
     }
 
     /**
@@ -140,7 +142,7 @@ public class AppointmentTest {
     @Test
     void constructor_WithEmptyProfessionalSkills_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1, beneficiary, null, interpreters, academicSkills, new ArrayList<>(), timeSlot));
+                () -> new Appointment(1, beneficiary, null, interpreters, academicSkills, new ArrayList<>(), timeSlot, establishment));
     }
 
     /**
@@ -152,7 +154,7 @@ public class AppointmentTest {
     @Test
     void constructor_WithNullTimeSlot_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1, beneficiary, null, interpreters, academicSkills, professionalSkills, null));
+                () -> new Appointment(1, beneficiary, null, interpreters, academicSkills, professionalSkills, null, establishment));
     }
 
     /**
@@ -164,7 +166,7 @@ public class AppointmentTest {
     @Test
     void constructor_WithNullAcademicSkills_DoesNotRaiseAnException() {
         Appointment a = assertDoesNotThrow(
-                () -> new Appointment(1, beneficiary, null, interpreters, null, professionalSkills, timeSlot));
+                () -> new Appointment(1, beneficiary, null, interpreters, null, professionalSkills, timeSlot, establishment));
         assertNull(a.getAcademicSkillsNeeded());
     }
 
@@ -279,7 +281,7 @@ public class AppointmentTest {
     @Test
     void setAcademicSkillsNeeded_UpdatesTheCorrectValue() {
         List<AcademicSkill> newSkills = new ArrayList<>();
-        newSkills.add(new AcademicSkill("Physique"));
+        newSkills.add(new AcademicSkill(2,"Physique"));
         appointment.setAcademicSkillsNeeded(newSkills);
         assertEquals(newSkills, appointment.getAcademicSkillsNeeded());
     }
