@@ -19,4 +19,10 @@ public class InterpreteController {
     public String planningBeneficiaires(Model model) {
         return "interprete/planning-beneficiaires";
     }
+
+    @GetMapping("/profil")
+    public String profil(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        return "interprete/profil";
+    }
 }
