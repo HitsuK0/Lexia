@@ -6,13 +6,13 @@
     <body>
         <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole='INTERPRETER', userName='Jean Dupont')}"></nav>
 
-        <div class="container-fluid py-2">
+        <div class="container-fluid py-2 px-5">
 
             <div class="text-center mb-2">
                 <h1 class="fw-bold text-primary">Votre horaire de la semaine</h1>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-2 px-5">
+            <div class="d-flex justify-content-between align-items-center mb-2">
 
                 <div class="btn-group">
                     <a th:href="@{/interprete/planning}" class="btn btn-primary btn-sm">Mon Planning</a>
