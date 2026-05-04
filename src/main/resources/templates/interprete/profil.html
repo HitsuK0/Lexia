@@ -53,17 +53,9 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small fw-semibold">Date de Naissance</label>
-                                    <div class="d-flex align-items-center gap-1">
-                                        <input type="text" class="form-control form-control-sm text-center" value="10"
-                                               maxlength="2" style="width:52px" readonly id="inputJour"/>
-                                        <input type="text" class="form-control form-control-sm text-center" value="12"
-                                               maxlength="2" style="width:52px" readonly id="inputMois"/>
-                                        <input type="text" class="form-control form-control-sm text-center" value="1992"
-                                               maxlength="4" style="width:68px" readonly id="inputAnnee"/>
-                                        <button class="btn-edit"
-                                                onclick="toggleEditMulti(['inputJour','inputMois','inputAnnee'], this)"
-                                                title="Modifier">&#9998;
-                                        </button>
+                                    <div class="input-edit-group">
+                                        <input type="date" class="form-control form-control-sm" value="2003-12-10" readonly id="inputDateNaissance"/>
+                                        <button class="btn-edit" onclick="toggleEdit('inputDateNaissance', this)" title="Modifier">&#9998;</button>
                                     </div>
                                 </div>
                             </div>
@@ -154,6 +146,13 @@
                                             </button>
                                         </div>
                                     </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" style="font-size:0.75rem; color:#888;">Pays</label>
+                                        <div class="input-edit-group">
+                                            <input type="text" class="form-control form-control-sm" value="Belgique" readonly id="inputPays"/>
+                                            <button class="btn-edit" onclick="toggleEdit('inputPays', this)" title="Modifier">&#9998;</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -171,8 +170,6 @@
                             <p class="small text-muted mb-3">Compétences possédées</p>
                             <div class="d-flex flex-wrap gap-2" id="badgesMetiers">
                                 <span class="badge-competence">&#10003; Transcription</span>
-                                <span class="badge-competence">&#10003; Translittération</span>
-                                <span class="badge-competence">&#10003; Translation</span>
                             </div>
                         </div>
 
@@ -188,14 +185,11 @@
                             <p class="small text-muted mb-3">Matières possédées</p>
                             <div class="d-flex flex-wrap gap-2" id="badgesAcademiques">
                                 <span class="badge-competence">&#10003; Histoire</span>
-                                <span class="badge-competence">&#10003; Anglais</span>
-                                <span class="badge-competence">&#10003; Sciences</span>
                                 <span class="badge-competence">&#10003; Mathématiques</span>
                                 <span class="badge-competence">&#10003; Economie</span>
                             </div>
                         </div>
 
-                        <!-- ══ SECTION : Compte ══ -->
                         <div id="section-compte" class="profil-section">
                             <div class="mb-4">
                                 <label class="form-label small fw-semibold">Identifiant</label>
@@ -214,7 +208,6 @@
                             </div>
                         </div>
 
-                        <!-- Bouton Sauvegarder -->
                         <div class="d-flex justify-content-end mt-4 pt-2 border-top">
                             <button class="btn btn-primary btn-sm px-4">
                                 Sauvegarder &#128190;
@@ -305,21 +298,6 @@
                 }
             }
 
-            function toggleEditMulti(ids, btn) {
-                const first = document.getElementById(ids[0]);
-                const isReadonly = first.hasAttribute('readonly');
-                ids.forEach(id => {
-                    const input = document.getElementById(id);
-                    if (isReadonly) {
-                        input.removeAttribute('readonly');
-                    } else {
-                        input.setAttribute('readonly', true);
-                    }
-                });
-                btn.style.color = isReadonly ? '#593196' : '';
-                if (isReadonly) document.getElementById(ids[0]).focus();
-            }
-
             const competences = {
                 metier: ['Transcription', 'Translittération', 'Translation'],
                 academique: ['Histoire', 'Anglais', 'Sciences', 'Mathématiques', 'Economie', 'Français', 'Géographie']
@@ -329,13 +307,19 @@
                 const type = e.relatedTarget.dataset.type;
                 const select = document.getElementById('selectCompetence');
 
+                const badgesId = type === 'metier' ? 'badgesMetiers' : 'badgesAcademiques';
+                const possedees = Array.from(document.querySelectorAll(`#${badgesId} .badge-competence`))
+                    .map(b => b.textContent.replace('✓ ', '').trim());
+
                 select.innerHTML = '<option value="" disabled selected>Choisissez une compétence</option>';
-                competences[type].forEach(comp => {
-                    const option = document.createElement('option');
-                    option.value = comp.toLowerCase();
-                    option.textContent = comp;
-                    select.appendChild(option);
-                });
+                competences[type]
+                    .filter(c => !possedees.includes(c))
+                    .forEach(comp => {
+                        const option = document.createElement('option');
+                        option.value = comp.toLowerCase();
+                        option.textContent = comp;
+                        select.appendChild(option);
+                    });
             });
         </script>
     </body>
