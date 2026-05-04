@@ -1,10 +1,28 @@
+<!--
+@author Vanderheyden Quentin
+@reviewer Halet Louis, Nicolas Jean-François
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/lexia.css">
+    <meta charset="UTF-8">
+    <title>Gestion d'Etablissemenet</title>
+    <link rel="icon" type="image/png" href="/images/logo_lexia.png">
 </head>
 <body>
-$END$
+<script src="/js/bootstrap.bundle.min.js"></script>
+<div th:replace="~{common/navbar :: navbar('accueil', 'COORDINATOR', 'Vanderheyden Quentin')}"></div>
+
+<div class="text-center my-5">
+    <p class="h1 ">
+        Listes des Etablissements
+    </p>
+</div>
+
+
+<div th:replace="~{common/footer :: footer}"></div>
 </body>
 </html>
