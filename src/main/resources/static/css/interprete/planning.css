@@ -1,0 +1,20 @@
+/* Réduire la toolbar FullCalendar */
+.fc .fc-toolbar {
+    padding: 4px 8px !important;
+}
+
+.fc .fc-toolbar-title {
+    font-size: 1.3rem !important;
+}
+
+.fc .fc-button {
+    padding: 2px 8px !important;
+    font-size: 1rem !important;
+}
+
+#modalIndispo .modal-content,
+#modalRDV .modal-content,
+#modalEnvoi .modal-content {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
