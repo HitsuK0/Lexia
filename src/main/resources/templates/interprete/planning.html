@@ -26,7 +26,7 @@
                 </div>
 
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalIndispo">
-                    + Déclarer une indisponibilité
+                    <i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité
                 </button>
             </div>
 
@@ -95,14 +95,45 @@
                     slotMinTime: '08:00:00',
                     slotMaxTime: '19:00:00',
                     allDaySlot: false,
+
+                    dateClick: function (info) {
+                        document.getElementById('dateDebut').value = info.dateStr.split('T')[0];
+                        document.getElementById('dateFin').value = info.dateStr.split('T')[0];
+
+                        if (info.dateStr.includes('T')) {
+                            const heureStr = info.dateStr.split('T')[1].substring(0, 5);
+                            const [h, m] = heureStr.split(':').map(Number);
+                            const minutesArrondies = m < 30 ? '00' : '30';
+                            const heureArrondie = `${h}:${minutesArrondies}`;
+
+                            const heureDebut = document.getElementById('heureDebut');
+                            const optionExiste = Array.from(heureDebut.options).some(o => o.value === heureArrondie);
+                            if (optionExiste) heureDebut.value = heureArrondie;
+                        }
+
+                        const modal = new bootstrap.Modal(document.getElementById('modalIndispo'));
+                        modal.show();
+                    },
+
                     height: 'calc(100vh - 170px)',
                     events: events,
+
                     eventContent: function (arg) {
                         const lines = arg.event.title.split('\n');
+                        const isAnnule = lines[0].startsWith('Annulé');
+                        const isIndispo = lines[0].startsWith('Indisponibilité');
+
+                        const icone = isAnnule
+                            ? '<i class="bi bi-x-circle" style="float:right; font-size:0.85rem;"></i>'
+                            : isIndispo
+                                ? '<i class="bi bi-slash-circle" style="float:right; font-size:0.85rem;"></i>'
+                                : '';
+
                         const html = lines.map((l, i) =>
                             `<div class="${i === 0 ? 'fw-bold' : 'small'}">${l}</div>`
                         ).join('');
-                        return {html: `<div class="p-1">${html}</div>`};
+
+                        return {html: `<div class="p-1">${icone}${html}</div>`};
                     }
                 });
 
@@ -117,15 +148,17 @@
 
                 document.getElementById('heureDebut').addEventListener('change', function () {
                     const heureFin = document.getElementById('heureFin');
-                    const valDebut = parseInt(this.value);
+                    const [h, m] = this.value.split(':').map(Number);
+                    const totalMinutes = h * 60 + m;
 
-                    Array.from(heureFin.options).forEach(option => {
-                        const valOption = parseInt(option.value);
-                        option.disabled = valOption <= valDebut;
-                    });
-
-                    if (parseInt(heureFin.value) <= valDebut) {
-                        heureFin.value = "";
+                    heureFin.innerHTML = '<option value="" disabled selected>Heure Fin</option>';
+                    for (let t = totalMinutes + 30; t <= 19 * 60; t += 30) {
+                        const hh = Math.floor(t / 60);
+                        const mm = t % 60 === 0 ? '00' : '30';
+                        const option = document.createElement('option');
+                        option.value = `${hh}:${mm}`;
+                        option.textContent = `${hh}:${mm}`;
+                        heureFin.appendChild(option);
                     }
                 });
             });
@@ -160,17 +193,54 @@
                             <div class="d-flex gap-2" id="plageHoraire">
                                 <select id="heureDebut" class="form-select form-select-sm">
                                     <option value="" disabled selected>Heure Début</option>
-                                    <option th:each="h : ${#numbers.sequence(8, 18)}"
-                                            th:value="${h + ':00'}"
-                                            th:text="${h + ':00'}">
-                                    </option>
+                                    <option value="8:00">8:00</option>
+                                    <option value="8:30">8:30</option>
+                                    <option value="9:00">9:00</option>
+                                    <option value="9:30">9:30</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="10:30">10:30</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="11:30">11:30</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="12:30">12:30</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="13:30">13:30</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="14:30">14:30</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="15:30">15:30</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="16:30">16:30</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="17:30">17:30</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="18:30">18:30</option>
                                 </select>
+
                                 <select id="heureFin" class="form-select form-select-sm">
                                     <option value="" disabled selected>Heure Fin</option>
-                                    <option th:each="h : ${#numbers.sequence(9, 19)}"
-                                            th:value="${h + ':00'}"
-                                            th:text="${h + ':00'}">
-                                    </option>
+                                    <option value="8:30">8:30</option>
+                                    <option value="9:00">9:00</option>
+                                    <option value="9:30">9:30</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="10:30">10:30</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="11:30">11:30</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="12:30">12:30</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="13:30">13:30</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="14:30">14:30</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="15:30">15:30</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="16:30">16:30</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="17:30">17:30</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="18:30">18:30</option>
+                                    <option value="19:00">19:00</option>
                                 </select>
                             </div>
                         </div>
