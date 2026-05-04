@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+
+    <head th:replace="~{common/head :: head('Mes Indisponibilités', '/css/interprete/indisponibilites.css')}"></head>
+
+    <body>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='indisponibilites', userRole='INTERPRETER', userName='Jean Dupont')}"></nav>
+
+        <div class="container py-4">
+
+            <div class="text-center mb-4">
+                <h1 class="fw-bold text-primary">Mes indisponibilités</h1>
+                <p class="text-muted fst-italic">Déclarez et suivez vos absences et indisponibilités</p>
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
+                <div class="dropdown">
+                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
+                            id="dropdownStatut" data-bs-toggle="dropdown" aria-expanded="false">
+                        Statut
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownStatut">
+                        <li><a class="dropdown-item" href="#" onclick="filtrerStatut('tous')">Tous</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="filtrerStatut('valide')">Validé</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="filtrerStatut('refuse')">Refusé</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="filtrerStatut('attente')">En Attente</a></li>
+                    </ul>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm"
+                        data-bs-toggle="modal" data-bs-target="#modalIndispo">
+                    + Déclarer une indisponibilité
+                </button>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="table table-indispo">
+                    <thead>
+                    <tr>
+                        <th>Date Indisponibilité</th>
+                        <th>Plage Horaire</th>
+                        <th>Motif (Facultatif)</th>
+                        <th>Date Demande</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    <tr data-statut="valide">
+                        <td>23 Février</td>
+                        <td>8h30 - 9h30</td>
+                        <td>Rendez-vous médical</td>
+                        <td>20 Février 2026</td>
+                        <td><span class="badge-statut valide">Validé</span></td>
+                        <td class="actions-cell">
+                            <button class="btn-action edit" disabled title="Non modifiable">&#9998;</button>
+                            <button class="btn-action delete" disabled title="Non modifiable">&#128465;</button>
+                        </td>
+                    </tr>
+                    <tr data-statut="refuse">
+                        <td>02 Mars</td>
+                        <td>Toute la journée</td>
+                        <td>/</td>
+                        <td>01 Mars 2026</td>
+                        <td><span class="badge-statut refuse">Refusé</span></td>
+                        <td class="actions-cell">
+                            <button class="btn-action edit" disabled title="Non modifiable">&#9998;</button>
+                            <button class="btn-action delete" disabled title="Non modifiable">&#128465;</button>
+                        </td>
+                    </tr>
+                    <tr data-statut="attente">
+                        <td>06 au 08 Mars</td>
+                        <td>Toute la journée</td>
+                        <td>Maladie : grippe</td>
+                        <td>06 Mars 2026</td>
+                        <td><span class="badge-statut attente">En Attente</span></td>
+                        <td class="actions-cell">
+                            <button class="btn-action edit active"
+                                    data-bs-toggle="modal" data-bs-target="#modalModifierIndispo"
+                                    data-date-debut="2026-03-06"
+                                    data-date-fin="2026-03-08"
+                                    data-heure-debut=""
+                                    data-heure-fin=""
+                                    data-journee-complete="true"
+                                    data-motif="Maladie : grippe"
+                                    title="Modifier">&#9998;
+                            </button>
+                            <button class="btn-action delete active"
+                                    data-bs-toggle="modal" data-bs-target="#modalSupprimerIndispo"
+                                    title="Supprimer">&#128465;
+                            </button>
+                        </td>
+                    </tr>
+                    <tr data-statut="attente">
+                        <td>08 Mars</td>
+                        <td>14h - 17h</td>
+                        <td>/</td>
+                        <td>08 Mars 2026</td>
+                        <td><span class="badge-statut attente">En Attente</span></td>
+                        <td class="actions-cell">
+                            <button class="btn-action edit active"
+                                    data-bs-toggle="modal" data-bs-target="#modalModifierIndispo"
+                                    data-date-debut="2026-03-08"
+                                    data-date-fin="2026-03-08"
+                                    data-heure-debut="14:00"
+                                    data-heure-fin="17:00"
+                                    data-journee-complete="false"
+                                    data-motif=""
+                                    title="Modifier">&#9998;
+                            </button>
+                            <button class="btn-action delete active"
+                                    data-bs-toggle="modal" data-bs-target="#modalSupprimerIndispo"
+                                    title="Supprimer">&#128465;
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav class="d-flex justify-content-center mt-4">
+                <ul class="pagination pagination-sm">
+                    <li class="page-item">
+                        <a class="page-link" href="#">&#8592; Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                    <li class="page-item"><a class="page-link" href="#">9</a></li>
+                    <li class="page-item"><a class="page-link" href="#">10</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next &#8594;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="modal fade" id="modalModifierIndispo" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center">Modifier l'indisponibilité</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body px-4 py-3">
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Date début</label>
+                                <input type="date" id="modifDateDebut" class="form-control form-control-sm"/>
+                            </div>
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Date fin</label>
+                                <input type="date" id="modifDateFin" class="form-control form-control-sm"/>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Plage Horaire</label>
+                            <div class="d-flex gap-2" id="modifPlageHoraire">
+                                <select id="modifHeureDebut" class="form-select form-select-sm">
+                                    <option value="" disabled>Heure Début</option>
+                                    <option th:each="h : ${#numbers.sequence(8, 18)}"
+                                            th:value="${h + ':00'}"
+                                            th:text="${h + ':00'}">
+                                    </option>
+                                </select>
+                                <select id="modifHeureFin" class="form-select form-select-sm">
+                                    <option value="" disabled>Heure Fin</option>
+                                    <option th:each="h : ${#numbers.sequence(9, 19)}"
+                                            th:value="${h + ':00'}"
+                                            th:text="${h + ':00'}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="modifJourneeComplete"/>
+                                <label class="form-check-label small" for="modifJourneeComplete">Journée complète</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Motif <span class="text-muted fw-normal">(facultatif)</span></label>
+                            <textarea id="modifMotif" class="form-control form-control-sm" rows="3" placeholder="Texte ..."></textarea>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="modifMotifPrive"/>
+                            <label class="form-check-label small" for="modifMotifPrive">Rendre le motif privé</label>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.78rem; margin-left: 1.5rem;">
+                            Seule la coordinatrice pourra voir le motif
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">Sauvegarder</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalSupprimerIndispo" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold w-100 text-center">Supprimer l'indisponibilité</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <hr class="mx-3 mt-2"/>
+
+                    <div class="modal-body px-4 text-center">
+                        <p class="mb-0">Êtes-vous sûr de vouloir supprimer cette indisponibilité ?</p>
+                        <p class="text-muted small mt-1">Cette action est irréversible.</p>
+                    </div>
+
+                    <div class="modal-footer border-0 justify-content-center gap-3">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm px-4">Supprimer</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalIndispo" tabindex="-1" aria-labelledby="modalIndispoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalIndispoLabel">Déclarer une indisponibilité</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body px-4 py-3">
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Date début</label>
+                                <input type="date" id="dateDebut" class="form-control form-control-sm"/>
+                            </div>
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Date fin</label>
+                                <input type="date" id="dateFin" class="form-control form-control-sm"/>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Plage Horaire</label>
+                            <div class="d-flex gap-2" id="plageHoraire">
+                                <select id="heureDebut" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Heure Début</option>
+                                    <option th:each="h : ${#numbers.sequence(8, 18)}"
+                                            th:value="${h + ':00'}"
+                                            th:text="${h + ':00'}">
+                                    </option>
+                                </select>
+                                <select id="heureFin" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Heure Fin</option>
+                                    <option th:each="h : ${#numbers.sequence(9, 19)}"
+                                            th:value="${h + ':00'}"
+                                            th:text="${h + ':00'}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="journeeComplete"/>
+                                <label class="form-check-label small" for="journeeComplete">Journée complète</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Motif <span class="text-muted fw-normal">(facultatif)</span></label>
+                            <textarea id="motif" class="form-control form-control-sm" rows="3" placeholder="Texte ..."></textarea>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="motifPrive"/>
+                            <label class="form-check-label small" for="motifPrive">Rendre le motif privé</label>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.78rem; margin-left: 1.5rem;">
+                            Seule la coordinatrice pourra voir le motif
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">Envoyez la demande</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="~{common/footer :: footer}"></div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                document.getElementById('journeeComplete').addEventListener('change', function () {
+                    document.getElementById('heureDebut').disabled = this.checked;
+                    document.getElementById('heureFin').disabled = this.checked;
+                });
+
+                document.getElementById('heureDebut').addEventListener('change', function () {
+                    const heureFin = document.getElementById('heureFin');
+                    const valDebut = parseInt(this.value);
+                    Array.from(heureFin.options).forEach(option => {
+                        option.disabled = parseInt(option.value) <= valDebut;
+                    });
+                    if (parseInt(heureFin.value) <= valDebut) heureFin.value = "";
+                });
+
+                document.getElementById('modalModifierIndispo').addEventListener('show.bs.modal', function (e) {
+                    const btn = e.relatedTarget;
+                    document.getElementById('modifDateDebut').value = btn.dataset.dateDebut;
+                    document.getElementById('modifDateFin').value = btn.dataset.dateFin;
+                    document.getElementById('modifMotif').value = btn.dataset.motif || '';
+
+                    const journee = btn.dataset.journeeComplete === 'true';
+                    document.getElementById('modifJourneeComplete').checked = journee;
+                    document.getElementById('modifHeureDebut').disabled = journee;
+                    document.getElementById('modifHeureFin').disabled = journee;
+
+                    if (!journee) {
+                        document.getElementById('modifHeureDebut').value = btn.dataset.heureDebut;
+                        document.getElementById('modifHeureFin').value = btn.dataset.heureFin;
+                    }
+                });
+
+                document.getElementById('modifJourneeComplete').addEventListener('change', function () {
+                    document.getElementById('modifHeureDebut').disabled = this.checked;
+                    document.getElementById('modifHeureFin').disabled = this.checked;
+                });
+            });
+
+            function filtrerStatut(statut) {
+                const rows = document.querySelectorAll('#tableBody tr');
+                rows.forEach(row => {
+                    row.style.display = (statut === 'tous' || row.dataset.statut === statut) ? '' : 'none';
+                });
+            }
+        </script>
+    </body>
+</html>

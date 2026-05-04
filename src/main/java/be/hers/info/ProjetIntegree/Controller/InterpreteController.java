@@ -25,4 +25,10 @@ public class InterpreteController {
         model.addAttribute("userName", "NOM Prenom");
         return "interprete/profil";
     }
+
+    @GetMapping("/indisponibilites")
+    public String indisponibilites(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        return "interprete/indisponibilites";
+    }
 }
