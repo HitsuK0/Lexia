@@ -11,13 +11,11 @@ main {
     padding-bottom: 60px;
 }
 
-/* Navbar : fond lavande + ombre subtile */
 .navbar {
     background-color: #f0ecf8 !important;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* Lien actif dans la navbar : badge violet arrondi */
 .navbar .nav-link.active {
     background-color: #593196;
     color: #ffffff !important;
@@ -25,18 +23,19 @@ main {
     padding: 6px 14px;
 }
 
-/* Taille des liens navbar */
 .navbar .nav-link {
     font-size: 0.875rem;
 }
 
-/* Bouton déconnexion navbar */
 .navbar .btn {
     font-size: 0.875rem;
     padding: 4px 10px;
 }
 
-/* Calendrier : fond blanc, coins arrondis, ombre */
+.btn {
+    border-radius: 8px !important;
+}
+
 #calendar {
     background-color: #ffffff;
     border-radius: 12px;
