@@ -1,40 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
-    <head th:replace="~{common/head :: head('Mon Planning')}"></head>
+<head th:replace="~{common/head :: head('Mon Planning', '/css/interprete/planning.css')}"></head>
 
     <body>
         <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole='INTERPRETER', userName='Jean Dupont')}"></nav>
 
-        <div class="container-fluid py-4">
+        <div class="container-fluid py-2">
 
-            <div class="text-center mb-4">
+            <div class="text-center mb-2">
                 <h1 class="fw-bold text-primary">Votre horaire de la semaine</h1>
-                <p class="text-muted fst-italic">Consultez vos interventions planifiées</p>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
 
                 <div class="btn-group">
-                    <a th:href="@{/interprete/planning}" class="btn btn-primary">Mon Planning</a>
-                    <a th:href="@{/interprete/planning/beneficiaires}" class="btn btn-outline-primary">Mes Bénéficiaires</a>
+                    <a th:href="@{/interprete/planning}" class="btn btn-primary btn-sm">Mon Planning</a>
+                    <a th:href="@{/interprete/planning/beneficiaires}" class="btn btn-outline-primary btn-sm">Mes Bénéficiaires</a>
                 </div>
 
-                <a th:href="@{/interprete/indisponibilites}" class="btn btn-primary">
-                    + Déclarer une indisponibilité
-                </a>
+                <div class="d-flex gap-3 small text-muted">
+                    <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;&nbsp;</span> Indisponibilité</span>
+                    <span><span class="badge" style="background-color:#f28b82;">&nbsp;&nbsp;</span> Annulée</span>
+                    <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
+                </div>
 
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalIndispo">
+                    + Déclarer une indisponibilité
+                </button>
             </div>
 
             <div id="calendar"></div>
-
-            <div class="d-flex justify-content-center gap-4 mt-3">
-                <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;&nbsp;&nbsp;</span> Indisponibilités confirmée</span>
-                <span><span class="badge"
-                            style="background-color:#f28b82;">&nbsp;&nbsp;&nbsp;</span> Intervention annulée</span>
-                <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;&nbsp;</span> Horaire de Base</span>
-            </div>
-
         </div>
 
         <script th:src="@{/js/fullcalendar.min.js}"></script>
@@ -99,7 +95,7 @@
                     slotMinTime: '08:00:00',
                     slotMaxTime: '19:00:00',
                     allDaySlot: false,
-                    height: 'auto',
+                    height: 'calc(100vh - 170px)',
                     events: events,
                     eventContent: function (arg) {
                         const lines = arg.event.title.split('\n');
@@ -111,8 +107,104 @@
                 });
 
                 calendar.render();
+
+                document.getElementById('journeeComplete').addEventListener('change', function () {
+                    const heureDebut = document.getElementById('heureDebut');
+                    const heureFin = document.getElementById('heureFin');
+                    heureDebut.disabled = this.checked;
+                    heureFin.disabled = this.checked;
+                });
+
+                document.getElementById('heureDebut').addEventListener('change', function () {
+                    const heureFin = document.getElementById('heureFin');
+                    const valDebut = parseInt(this.value);
+
+                    Array.from(heureFin.options).forEach(option => {
+                        const valOption = parseInt(option.value);
+                        option.disabled = valOption <= valDebut;
+                    });
+
+                    if (parseInt(heureFin.value) <= valDebut) {
+                        heureFin.value = "";
+                    }
+                });
             });
         </script>
+
+        <div class="modal fade" id="modalIndispo" tabindex="-1" aria-labelledby="modalIndispoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold" id="modalIndispoLabel">Déclarer une indisponibilité</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body px-4 py-3">
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Date début</label>
+                                <input type="date" id="dateDebut" class="form-control form-control-sm"
+                                       placeholder="Choisissez une date"/>
+                            </div>
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Date fin</label>
+                                <input type="date" id="dateFin" class="form-control form-control-sm"
+                                       placeholder="Choisissez une date"/>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Plage Horaire</label>
+                            <div class="d-flex gap-2" id="plageHoraire">
+                                <select id="heureDebut" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Heure Début</option>
+                                    <option th:each="h : ${#numbers.sequence(8, 18)}"
+                                            th:value="${h + ':00'}"
+                                            th:text="${h + ':00'}">
+                                    </option>
+                                </select>
+                                <select id="heureFin" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Heure Fin</option>
+                                    <option th:each="h : ${#numbers.sequence(9, 19)}"
+                                            th:value="${h + ':00'}"
+                                            th:text="${h + ':00'}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="journeeComplete"/>
+                                <label class="form-check-label small" for="journeeComplete">Journée complète</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Motif <span class="text-muted fw-normal">(facultatif)</span></label>
+                            <textarea id="motif" class="form-control form-control-sm" rows="3" placeholder="Texte ..."></textarea>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="motifPrive"/>
+                            <label class="form-check-label small" for="motifPrive">Rendre le motif privé</label>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.78rem; margin-left: 1.5rem;">
+                            Seule la coordinatrice pourra voir le motif
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer border-top">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnEnvoyer">Envoyez la demande</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
         <div th:replace="~{common/footer :: footer}"></div>
     </body>
