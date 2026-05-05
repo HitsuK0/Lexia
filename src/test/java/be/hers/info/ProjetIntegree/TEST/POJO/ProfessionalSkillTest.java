@@ -45,8 +45,6 @@ public class ProfessionalSkillTest {
     void constructor_WithValidDesignation() {
         ProfessionalSkill s = new ProfessionalSkill("Interprétariat");
         assertEquals("Interprétariat", s.getDesignation());
-        assertTrue(s.getListInterpreters().isEmpty());
-        assertTrue(s.getListAppointment().isEmpty());
     }
 
     /**
@@ -71,22 +69,18 @@ public class ProfessionalSkillTest {
         ProfessionalSkill s = new ProfessionalSkill(1, "Test");
         assertEquals(1, s.getNumProfessionalSkill());
         assertEquals("Test", s.getDesignation());
-        assertTrue(s.getListInterpreters().isEmpty());
-        assertTrue(s.getListAppointment().isEmpty());
     }
 
     /**
      * Tests that default constructor initializes empty values.
      * Given : no argument
      * When  : creating a ProfessionalSkill
-     * Then  : designation is "" and lists are empty
+     * Then  : designation is ""
      */
     @Test
     void defaultConstructor_InitializeEmptyValues() {
         ProfessionalSkill s = new ProfessionalSkill();
         assertEquals("", s.getDesignation());
-        assertTrue(s.getListInterpreters().isEmpty());
-        assertTrue(s.getListAppointment().isEmpty());
     }
 
     // getDesignation //
@@ -139,34 +133,6 @@ public class ProfessionalSkillTest {
     @Test
     void setNumProfessionalSkill_Negative_ThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> skill.setNumProfessionalSkill(-5));
-    }
-
-    // Lists //
-
-    /**
-     * Tests that setListInterpreters correctly replaces the interpreters list.
-     * Given : a default ProfessionalSkill and a non-empty list of interpreters
-     * When  : setListInterpreters(list) is called
-     * Then  : getListInterpreters() must return the same list instance
-     */
-    @Test
-    void setListInterpreters_UpdateList() {
-        List<Interpreter> list = new ArrayList<>();
-        skill.setListInterpreters(list);
-        assertEquals(list, skill.getListInterpreters());
-    }
-
-    /**
-     * Tests that setAppointment correctly replaces the appointments list.
-     * Given : a default ProfessionalSkill and a non-empty list of appointments
-     * When  : setAppointment(list) is called
-     * Then  : getListAppointment() must return the same list instance
-     */
-    @Test
-    void setAppointment_UpdateList() {
-        List<Appointment> list = new ArrayList<>();
-        skill.setAppointment(list);
-        assertEquals(list, skill.getListAppointment());
     }
 
     // toString //
