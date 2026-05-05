@@ -334,13 +334,45 @@
                     if (!valide) return;
 
                     bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
+
+                    document.getElementById('btnEnvoyerRDV').addEventListener('click', function () {
+                        let valide = true;
+
+                        const rdvBeneficiaire = document.getElementById('rdvBeneficiaire');
+                        const rdvDate = document.getElementById('rdvDate');
+                        const rdvHeureDebut = document.getElementById('rdvHeureDebut');
+                        const rdvHeureFin = document.getElementById('rdvHeureFin');
+                        const rdvMatiere = document.getElementById('rdvMatiere');
+
+                        [rdvBeneficiaire, rdvDate, rdvHeureDebut, rdvHeureFin, rdvMatiere].forEach(el => {
+                            el.classList.remove('is-invalid');
+                            const feedback = el.nextElementSibling;
+                            if (feedback && feedback.classList.contains('invalid-feedback')) {
+                                feedback.remove();
+                            }
+                        });
+
+                        function afficherErreur(input, message) {
+                            input.classList.add('is-invalid');
+                            const div = document.createElement('div');
+                            div.classList.add('invalid-feedback');
+                            div.textContent = message;
+                            input.insertAdjacentElement('afterend', div);
+                            valide = false;
+                        }
+
+                        if (!rdvBeneficiaire.value) afficherErreur(rdvBeneficiaire, 'Veuillez sélectionner un bénéficiaire.');
+                        if (!rdvDate.value) afficherErreur(rdvDate, 'La date est obligatoire.');
+                        if (!rdvHeureDebut.value) afficherErreur(rdvHeureDebut, 'L\'heure de début est obligatoire.');
+                        if (!rdvHeureFin.value) afficherErreur(rdvHeureFin, 'L\'heure de fin est obligatoire.');
+                        if (!rdvMatiere.value) afficherErreur(rdvMatiere, 'Veuillez sélectionner une matière.');
+
+                        if (!valide) return;
+
+                        bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
+                    });
                 });
             });
-
-            function changerBeneficiaire(nom) {
-                document.getElementById('beneficiaireSelectionne').textContent = nom;
-                // TODO : recharger les events du calendrier selon le bénéficiaire sélectionné
-            }
         </script>
 
         <div th:replace="~{common/footer :: footer}"></div>
