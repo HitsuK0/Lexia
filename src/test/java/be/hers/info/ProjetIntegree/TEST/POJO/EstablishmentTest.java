@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -178,6 +179,34 @@ public class EstablishmentTest {
     void setEducationLevel_WithNull_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
                 () -> establishment.setEducationLevel(null));
+    }
+
+    /**
+     * Tests that setEducationLevel() throws an {@link IllegalArgumentException} when the list contains a value greater than 4.
+     * Given : a list containing the value 5
+     * When  : setEducationLevel() is called with this list
+     * Then  : an IllegalArgumentException must be thrown
+     */
+    @Test
+    void setEducationLevel_WithValueTooHigh_RaisesAnException() {
+        List<Integer> educationTest = new ArrayList<>();
+        educationTest.add(5);
+        assertThrows(IllegalArgumentException.class,
+                () -> establishment.setEducationLevel(educationTest));
+    }
+
+    /**
+     * Tests that setEducationLevel() throws an {@link IllegalArgumentException} when the list contains a value less than 0.
+     * Given : a list containing the value -1
+     * When  : setEducationLevel() is called with this list
+     * Then  : an IllegalArgumentException must be thrown
+     */
+    @Test
+    void setEducationLevel_WithValueTooLow_RaisesAnException() {
+        List<Integer> educationTest = new ArrayList<>();
+        educationTest.add(-1);
+        assertThrows(IllegalArgumentException.class,
+                () -> establishment.setEducationLevel(educationTest));
     }
 
     // setAddresses //
