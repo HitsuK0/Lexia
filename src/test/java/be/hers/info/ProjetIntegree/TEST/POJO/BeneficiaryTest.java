@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Nicolas Jean-François
  * @reviewer Halet Louis
  */
-class BeneficiaryTest {
+public class BeneficiaryTest {
 
     private Interpreter interpreter;
     private Address address;
