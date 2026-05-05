@@ -192,8 +192,7 @@ public abstract class User {
      *         the phone number and the address
      */
     public String toString() {
-        return "Utilisateur" +
-                "\nNom d'utilisateur : " + login +
+        return "\nNom d'utilisateur : " + login +
                 "\nMot de passe : " + password +
                 "\nNom : " + lastName +
                 "\nPrenom : " + firstName +
