@@ -5,20 +5,19 @@ import java.util.List;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
- * @author Wellinger Chloé
+ * @author Wellinger Chloé, Rosman Loïs
  * @reviewer Nicolas Jean-François, Halet Louis
  */
 
-public class Interpreter {
-    private int numInterpreter;
+public class Interpreter extends User{
     private String login;
     private String password;
     private String lastName;
     private String firstName;
-    private String email;
     private String phoneNumber;
-    private int weeklyWorkHours;
+    private String emailAddress;
     private Address address;
+    private int weeklyWorkHours;
     private List<Absence> absences;
     private List<Appointment> appointmentsList;
     private List<ProfessionalSkill> professionalSkillsList;
@@ -29,14 +28,8 @@ public class Interpreter {
      * Default Constructor
      */
     public Interpreter() {
-        this.login = "";
-        this.password = "";
-        this.lastName = "";
-        this.firstName = "";
-        this.email = "";
-        this.phoneNumber = "";
+        super();
         this.weeklyWorkHours = 0;
-        this.address = new Address();
         this.absences = new ArrayList<>();
         this.appointmentsList = new ArrayList<>();
         this.professionalSkillsList = new ArrayList<>();
@@ -45,33 +38,26 @@ public class Interpreter {
     }
 
     /**
-     * Construct an interpreter with several attributes without ID
+     * Construct an interpreter with several attributes
      * @param login the login so that the interpreter can log in
      * @param password the interpreter’s password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
-     * @param email the email of the interpreter
      * @param phoneNumber the phone number of the interpreter
-     * @param weeklyWorkHours the number of hours worked over the week
+     * @param emailAddress the email address of the interpreter
      * @param address the address of the interpreter
-     * @throws IllegalArgumentException if address is null / empty and if weeklyWorkHours is negative
+     * @param weeklyWorkHours the number of hours worked over the week
+     * @throws IllegalArgumentException if weeklyWorkHours is negative
+     *                                  if address is null
+     *                                  if password is null or empty
      */
-    public Interpreter(String login, String password, String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address) {
+    public Interpreter(String login, String password, String lastName, String firstName, String phoneNumber,
+                       String emailAddress, int weeklyWorkHours, Address address) {
         if (weeklyWorkHours < 0)
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
-        if (address == null)
-            throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
-        if (password == null || password.isEmpty())
-            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
 
-        this.login = login;
-        this.password = password;
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
+        super(login, password, lastName, firstName, phoneNumber, emailAddress, address);
         this.weeklyWorkHours = weeklyWorkHours;
-        this.address = address;
         this.absences = new ArrayList<>();
         this.appointmentsList = new ArrayList<>();
         this.professionalSkillsList = new ArrayList<>();
@@ -80,133 +66,33 @@ public class Interpreter {
     }
 
     /**
-     * Construct an interpreter with several attributes and the ID
-     * @param numInterpreter ID of the interpreter
+     * Construct an interpreter with all attributes
      * @param login the login so that the interpreter can log in
      * @param password the interpreter’s password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
-     * @param email the email of the interpreter
      * @param phoneNumber the phone number of the interpreter
-     * @param weeklyWorkHours the number of hours worked over the week
+     * @param emailAddress the email address of the interpreter
      * @param address the address of the interpreter
-     * @throws IllegalArgumentException if numInterpreter is negative
-     *                                  if weeklyWorkHours is negative
-     *                                  if address is null / empty
-     */
-    public Interpreter(int numInterpreter,String login, String password, String lastName, String firstName, String email, String phoneNumber,
-                       int weeklyWorkHours, Address address) {
-        if (numInterpreter < 0)
-            throw new IllegalArgumentException("[POJOInterpreter] L'identifiant de l'interprète ne peut pas être négatif");
-        if (weeklyWorkHours < 0)
-            throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
-        if (address == null)
-            throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
-        if (password == null || password.isEmpty())
-            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
-
-        this.numInterpreter = numInterpreter;
-        this.login = login;
-        this.password = password;
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.weeklyWorkHours = weeklyWorkHours;
-        this.address = address;
-        this.absences = new ArrayList<>();
-        this.appointmentsList = new ArrayList<>();
-        this.professionalSkillsList = new ArrayList<>();
-        this.academicSkillsList = new ArrayList<>();
-        this.beneficiariesList = new ArrayList<>();
-    }
-
-    /**
-     * Construct an interpreter with all attributes and ID
-     * @param numInterpreter ID of the interpreter
-     * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s password
-     * @param lastName the last name of the interpreter
-     * @param firstName the first name of the interpreter
-     * @param email the email of the interpreter
-     * @param phoneNumber the phone number of the interpreter
      * @param weeklyWorkHours the number of hours worked over the week
-     * @param address the address of the interpreter
-     * @param absences the absence's list of the interpreter
-     * @param appointmentsList the appointment's list of the interpreter
-     * @param professionalSkillsList the professional skill's of the interpreter
-     * @param academicSkillsList the academic skill's of the interpreter
-     * @param beneficiariesList the beneficiaries's list of the interpreter
-     * @throws IllegalArgumentException if numInterpreter is negative
-     *                                  if weeklyWorkHours is negative
-     *                                  if address is null / empty
-     */
-    public Interpreter(int numInterpreter,String login, String password, String lastName, String firstName, String email, String phoneNumber,
-                       int weeklyWorkHours, Address address, List<Absence> absences,
-                       List<Appointment> appointmentsList, List<ProfessionalSkill> professionalSkillsList,
-                       List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList) {
-        if (numInterpreter < 0)
-            throw new IllegalArgumentException("[POJOInterpreter] L'identifiant de l'interprète ne peut pas être négatif");
-        if (weeklyWorkHours < 0)
-            throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
-        if (address == null)
-            throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
-        if (password == null || password.isEmpty())
-            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
-
-        this.numInterpreter = numInterpreter;
-        this.login = login;
-        this.password = password;
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.weeklyWorkHours = weeklyWorkHours;
-        this.address = address;
-        this.absences = absences;
-        this.professionalSkillsList = professionalSkillsList;
-        this.appointmentsList = appointmentsList;
-        this.academicSkillsList = academicSkillsList;
-        this.beneficiariesList = beneficiariesList;
-    }
-
-    /**
-     * Construct an interpreter with all attributes without ID
-     * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s password
-     * @param lastName the last name of the interpreter
-     * @param firstName the first name of the interpreter
-     * @param email the email of the interpreter
-     * @param phoneNumber the phone number of the interpreter
-     * @param weeklyWorkHours the number of hours worked over the week
-     * @param address the address of the interpreter
      * @param absences the absence's list of the interpreter
      * @param appointmentsList the appointment's list of the interpreter
      * @param professionalSkillsList the professional skill's of the interpreter
      * @param academicSkillsList the academic skill's of the interpreter
      * @param beneficiariesList the beneficiaries's list of the interpreter
      * @throws IllegalArgumentException if weeklyWorkHours is negative
-     *                                  if address is null / empty
+     *                                  if address is null
+     *                                  if password is null or empty
      */
-    public Interpreter(String login, String password, String lastName, String firstName, String email, String phoneNumber,
-                       int weeklyWorkHours, Address address, List<Absence> absences,
+    public Interpreter(String login, String password, String lastName, String firstName, String phoneNumber,
+                       String emailAddress, Address address, int weeklyWorkHours, List<Absence> absences,
                        List<Appointment> appointmentsList, List<ProfessionalSkill> professionalSkillsList,
                        List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList) {
         if (weeklyWorkHours < 0)
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
-        if (address == null)
-            throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
-        if (password == null || password.isEmpty())
-            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
 
-        this.login = login;
-        this.password = password;
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
+        super(login, password, lastName, firstName, phoneNumber, emailAddress, address);
         this.weeklyWorkHours = weeklyWorkHours;
-        this.address = address;
         this.absences = absences;
         this.professionalSkillsList = professionalSkillsList;
         this.appointmentsList = appointmentsList;
@@ -215,66 +101,17 @@ public class Interpreter {
     }
 
     /**
-     * @return the identifiant of the interpreter
+     * @return The number of hours worked over the week
      */
-    public int getNumInterpreter() {
-        return numInterpreter;
+    public int getWeeklyWorkHours() {
+        return weeklyWorkHours;
     }
 
     /**
-     * @return the login of the interpreter
+     * @return The list of absences
      */
-    public String getLogin() {
-        return login;
-    }
-
-    /**
-     * @return the password of the interpreter
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * @return the first name of the interpreter
-     */
-    public String getFirstName() {
-        return firstName;
-    }
-
-    /**
-     * @return the last name of the interpreter
-     */
-    public String getLastName() {
-        return lastName;
-    }
-
-    /**
-     * @return the email of the interpreter
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @return the phone number of the interpreter
-     */
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    /**
-     * @return the address of the interpreter
-     */
-    public Address getAddress() {
-        return address;
-    }
-
-    /**
-     * @return The interpreter’s appointment list
-     */
-    public List<Appointment> getAppointmentsList() {
-        return appointmentsList;
+    public List<Absence> getAbsences() {
+        return absences;
     }
 
     /**
@@ -282,6 +119,13 @@ public class Interpreter {
      */
     public List<ProfessionalSkill> getProfessionalSkillsList() {
         return professionalSkillsList;
+    }
+
+    /**
+     * @return The interpreter’s appointment list
+     */
+    public List<Appointment> getAppointmentsList() {
+        return appointmentsList;
     }
 
     /**
@@ -299,80 +143,6 @@ public class Interpreter {
     }
 
     /**
-     * @return The list of absences
-     */
-    public List<Absence> getAbsences() {
-        return absences;
-    }
-
-    /**
-     * @return The number of hours worked over the week
-     */
-    public int getWeeklyWorkHours() {
-        return weeklyWorkHours;
-    }
-
-    /**
-     * Set the identifiant of the interpreter
-     * @param numInterpreter The identifiant to set
-     */
-    public void setNumInterpreter(int numInterpreter) {
-        if (numInterpreter < 0)
-            throw new IllegalArgumentException("[POJOInterpreter] L'identifiant de l'interprète ne peut pas être négatif");
-        this.numInterpreter = numInterpreter;
-    }
-
-    /**
-     * Set the login of the interpreter
-     * @param login The login to set
-     */
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    /**
-     * Set the password of the interpreter
-     * @param password The password to set
-     */
-    public void setPassword(String password) {
-        if(password == null || password.isEmpty())
-            throw new IllegalArgumentException("[POJOInterpreter] Le mot de passe ne peut pas être vide ou null");
-        this.password = password;
-    }
-
-    /**
-     * Set the last name of the interpreter
-     * @param lastName The last name to set
-     */
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    /**
-     * Set the first name of the interpreter
-     * @param firstName The first name to set
-     */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    /**
-     * Set the email of the interpreter
-     * @param email The email to set
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * Set the phone number of the interpreter
-     * @param phoneNumber The phone number to set
-     */
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    /**
      * Set the number of hours worked this week
      * @param weeklyWorkHours The number of hours worked this week
      */
@@ -380,17 +150,6 @@ public class Interpreter {
         if (weeklyWorkHours < 0)
             throw new IllegalArgumentException("weeklyWorkHours cannot be negative");
         this.weeklyWorkHours = weeklyWorkHours;
-    }
-
-    /**
-     * Set the address of the interpreter
-     * @param address The address to set
-     * @throws IllegalArgumentException if address is null or empty
-     */
-    public void setAddress(Address address) {
-        if (address == null)
-            throw new IllegalArgumentException("[POJOInterpreter] L'adresse de l'interpète ne peut pas être vide ou null");
-        this.address = address;
     }
 
     /**
@@ -402,19 +161,19 @@ public class Interpreter {
     }
 
     /**
-     * Set the appointment's list for the interpreter
-     * @param appointmentsList The list to set
-     */
-    public void setAppointmentsList(List<Appointment> appointmentsList) {
-        this.appointmentsList = appointmentsList;
-    }
-
-    /**
      * Set the professional skill's list for the interpreter
      * @param professionalSkillsList The list to set
      */
     public void setProfessionalSkillsList(List<ProfessionalSkill> professionalSkillsList) {
         this.professionalSkillsList = professionalSkillsList;
+    }
+
+    /**
+     * Set the appointment's list for the interpreter
+     * @param appointmentsList The list to set
+     */
+    public void setAppointmentsList(List<Appointment> appointmentsList) {
+        this.appointmentsList = appointmentsList;
     }
 
     /**
@@ -434,22 +193,17 @@ public class Interpreter {
     }
 
     /**
-     * @return a String containing the interpreter ID, last name, first name, email,
-     *         phone number, weekly work hours, address, list of absences, list of appointment,
-     *         list of professional skill, list of academic skill and list of beneficiaries
+     * @return a String containing the interpreter login, password, last name, first name, phone number, email address,
+     *         address, weekly work hours, list of absences, list of professional skill, list of appointment,
+     *         list of academic skill and list of beneficiaries
      */
     @Override
     public String toString() {
         return "Interpreter" +
-                "\nNumero ID: " + numInterpreter +
-                "\nNom : " + lastName +
-                "\nPrenom : " + firstName +
-                "\nMail : " + email +
-                "\nNuméro Téléphone : " + phoneNumber +
+                "\n" + super() +
                 "\nNombres d'heures prestées cette semaine : " + weeklyWorkHours +
-                "\nAdresse : " + address +
                 "\nListes d'absences : " + absences +
-                "\nListes de rendez vous : " + appointmentsList +
+                "\nListes de rendez-vous : " + appointmentsList +
                 "\nListe de compétences métiers : " + professionalSkillsList +
                 "\nListe de compétences académiques : " + academicSkillsList +
                 "\nListe des bénéficiaires référents : " + beneficiariesList;
