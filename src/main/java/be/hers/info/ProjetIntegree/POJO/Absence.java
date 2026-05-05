@@ -136,7 +136,7 @@ public class Absence {
 
     /**
      *
-     * @return the status of the absence (it can only be among these values: 'en attente', 'accepte', 'refuse', 'absent')
+     * @return the status of the absence (it can only be among these values: 'en attente', 'accepte' or 'refuse')
      */
     public String getStatus() {
         return status;
@@ -144,11 +144,11 @@ public class Absence {
 
     /**
      *
-     * @param status the status of the absence (it can only be among these values: 'en attente', 'accepte', 'refuse', 'absent')
-     * @throws BadStatusException If the absence status is not among these values: 'en attente', 'accepte', 'refuse', 'absent'
+     * @param status the status of the absence (it can only be among these values: 'en attente', 'accepte' or 'refuse')
+     * @throws BadStatusException If the absence status is not among these values: 'en attente', 'accepte' or 'refuse'
      */
     public void setStatus(String status) throws BadStatusException {
-        if (!status.equals("en attente") && !status.equals("accepte") && !status.equals("refuse") && !status.equals("absent"))
+        if (!status.equals("en attente") && !status.equals("accepte") && !status.equals("refuse"))
             throw new BadStatusException("[POJOAbsence] Mauvais status de l'absence");
         this.status = status;
     }
