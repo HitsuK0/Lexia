@@ -60,22 +60,33 @@
                 <div class="row">
                     <div class="mb-3 col">
                         <label class="form-label">Nom</label>
-                        <input type="text" class="form-control rounded-3 w-50">
+                        <input type="text" class="form-control rounded-3 w-75">
                         <i class="bi bi-pencil-square"></i>
                     </div>
                     <div class="mb-3 col">
                         <label class="form-label">Prénom</label>
-                        <input type="text" class="form-control rounded-3">
+                        <input type="text" class="form-control rounded-3 w-75">
                         <i class="bi bi-pencil-square"></i>
                     </div>
                     <div class="mb-3 col">
                         <label class="form-label">Date de Naissance</label>
-                        <input type="text" class="form-control rounded-3">
+                        <div class="row">
+                            <div class="col">
+                                <input type="number" class="form-control rounded-3">
+                            </div>
+                            <div class="col">
+                                <input type="number" class="form-control rounded-3">
+                            </div>
+                            <div class="col">
+                                <input type="number" class="form-control rounded-3">
+                            </div>
+                        </div>
                         <i class="bi bi-pencil-square"></i>
                     </div>
 
                 </div>
                 <div class="mb-3">
+                    <p>Genre</p>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
                         <label class="form-check-label" for="inlineRadio1">Homme</label>
@@ -90,7 +101,7 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
+                    <label for="exampleFormControlTextarea1" class="form-label">Diplômes</label>
                     <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
                 </div>
                 <p class="h5">Coordonnées</p>
@@ -105,8 +116,21 @@
                     </div>
                 </div>
                 <p>Adresse</p>
-
-                <button class="btn btn-primary rounded-3">Suivant</button>
+                <div class="row">
+                    <div class="mb-3 col">
+                        <label class="form-label">Rue et numéro</label>
+                        <input type="text" class="form-control rounded-3">
+                    </div>
+                    <div class="mb-3 col">
+                        <label class="form-label">Code Postal</label>
+                        <input type="text" class="form-control rounded-3">
+                    </div>
+                    <div class="mb-3 col">
+                        <label class="form-label">Ville</label>
+                        <input type="text" class="form-control rounded-3">
+                    </div>
+                </div>
+                <button class="btn btn-primary rounded-3">Sauvegarder</button>
             </form>
         </div>
     </div>
