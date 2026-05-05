@@ -10,13 +10,6 @@ import org.mindrot.jbcrypt.BCrypt;
  */
 
 public class Interpreter extends User{
-    private String login;
-    private String password;
-    private String lastName;
-    private String firstName;
-    private String phoneNumber;
-    private String emailAddress;
-    private Address address;
     private int weeklyWorkHours;
     private List<Absence> absences;
     private List<Appointment> appointmentsList;
