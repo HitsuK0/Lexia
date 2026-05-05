@@ -55,6 +55,107 @@
             <div id="calendar"></div>
         </div>
 
+        <div class="modal fade" id="modalRDV" tabindex="-1" aria-labelledby="modalRDVLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalRDVLabel">Demander un Rendez-vous</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body px-4 py-3">
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Bénéficiaires</label>
+                            <select id="rdvBeneficiaire" class="form-select form-select-sm">
+                                <option value="" disabled>Choisissez un bénéficiaire</option>
+                                <option value="vatafu-jean">Vatafu Jean</option>
+                                <option value="dupont-marie">Dupont Marie</option>
+                                <option value="martin-paul">Martin Paul</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Date</label>
+                            <input type="date" id="rdvDate" class="form-control form-control-sm"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Plage Horaire</label>
+                            <div class="d-flex gap-2">
+                                <select id="rdvHeureDebut" class="form-select form-select-sm" size="5"></select>
+                                <select id="rdvHeureFin" class="form-select form-select-sm" size="5"></select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Matières</label>
+                            <select id="rdvMatiere" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une matière</option>
+                                <option value="mathematiques">Mathématiques</option>
+                                <option value="francais">Français</option>
+                                <option value="anglais">Anglais</option>
+                                <option value="sciences">Sciences</option>
+                                <option value="histoire">Histoire</option>
+                                <option value="cours">Cours</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Compétences requises</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="compTranscription" checked/>
+                                    <label class="form-check-label small" for="compTranscription">Transcription</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="compTranslitteration" checked/>
+                                    <label class="form-check-label small" for="compTranslitteration">Translittération</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="compTranslation" checked/>
+                                    <label class="form-check-label small" for="compTranslation">Translation</label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm px-4" id="btnEnvoyerRDV">Envoyez la demande</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalEnvoi" tabindex="-1" aria-labelledby="modalEnvoiLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalEnvoiLabel">Envoyer les demandes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body px-4 py-3 text-center">
+                        <p class="mb-1">Vous êtes sur le point d'envoyer</p>
+                        <p class="fw-bold fs-4 text-primary mb-1" id="nombreDemandes">0</p>
+                        <p class="mb-1">demande(s) à la coordinatrice.</p>
+                        <p class="text-muted small">Cette action est irréversible.</p>
+                    </div>
+
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">Confirmer l'envoi</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
         <script th:src="@{/js/fullcalendar.min.js}"></script>
 
         <script>
@@ -131,12 +232,11 @@
                         if (info.dateStr.includes('T')) {
                             const heureStr = info.dateStr.split('T')[1].substring(0, 5);
                             const [h, m] = heureStr.split(':').map(Number);
-                            const minutesArrondies = m < 30 ? '00' : '30';
-                            const heureArrondie = `${h}:${minutesArrondies}`;
-
-                            const rdvHeureDebut = document.getElementById('rdvHeureDebut');
-                            const optionExiste = Array.from(rdvHeureDebut.options).some(o => o.value === heureArrondie);
-                            if (optionExiste) rdvHeureDebut.value = heureArrondie;
+                            const minutesArrondies = m < 5 ? 0 : m;
+                            const totalMinutes = h * 60 + minutesArrondies;
+                            genererHeuresRdv('rdvHeureFin', totalMinutes + 5, 19 * 60);
+                            const heureArrondie = `${String(h).padStart(2, '0')}:${String(minutesArrondies).padStart(2, '0')}`;
+                            document.getElementById('rdvHeureDebut').value = heureArrondie;
                         }
 
                         const modal = new bootstrap.Modal(document.getElementById('modalRDV'));
@@ -172,25 +272,68 @@
                     });
                 });
 
-                document.getElementById('rdvHeureDebut').addEventListener('change', function () {
-                    const rdvHeureFin = document.getElementById('rdvHeureFin');
-                    const [h, m] = this.value.split(':').map(Number);
-                    const totalMinutes = h * 60 + m;
-
-                    rdvHeureFin.innerHTML = '<option value="" disabled selected>Heure Fin</option>';
-                    for (let t = totalMinutes + 30; t <= 19 * 60; t += 30) {
-                        const hh = Math.floor(t / 60);
-                        const mm = t % 60 === 0 ? '00' : '30';
+                function genererHeuresRdv(selectId, debut, fin) {
+                    const select = document.getElementById(selectId);
+                    select.innerHTML = '<option value="" disabled selected>-- Heure --</option>';
+                    for (let t = debut; t <= fin; t += 5) {
+                        const hh = String(Math.floor(t / 60)).padStart(2, '0');
+                        const mm = String(t % 60).padStart(2, '0');
                         const option = document.createElement('option');
                         option.value = `${hh}:${mm}`;
                         option.textContent = `${hh}:${mm}`;
-                        rdvHeureFin.appendChild(option);
+                        select.appendChild(option);
                     }
+                }
+
+                genererHeuresRdv('rdvHeureDebut', 8 * 60, 18 * 60 + 55);
+                genererHeuresRdv('rdvHeureFin', 8 * 60 + 5, 19 * 60);
+
+                document.getElementById('rdvHeureDebut').addEventListener('change', function () {
+                    const [h, m] = this.value.split(':').map(Number);
+                    const totalMinutes = h * 60 + m;
+                    genererHeuresRdv('rdvHeureFin', totalMinutes + 5, 19 * 60);
                 });
 
                 document.getElementById('modalEnvoi').addEventListener('show.bs.modal', function () {
                     const countRdv = events.filter(e => e.extendedProps.enAttente).length;
                     document.getElementById('nombreDemandes').textContent = countRdv;
+                });
+
+                document.getElementById('btnEnvoyerRDV').addEventListener('click', function () {
+                    let valide = true;
+
+                    const rdvBeneficiaire = document.getElementById('rdvBeneficiaire');
+                    const rdvDate = document.getElementById('rdvDate');
+                    const rdvHeureDebut = document.getElementById('rdvHeureDebut');
+                    const rdvHeureFin = document.getElementById('rdvHeureFin');
+                    const rdvMatiere = document.getElementById('rdvMatiere');
+
+                    [rdvBeneficiaire, rdvDate, rdvHeureDebut, rdvHeureFin, rdvMatiere].forEach(el => {
+                        el.classList.remove('is-invalid');
+                        const feedback = el.nextElementSibling;
+                        if (feedback && feedback.classList.contains('invalid-feedback')) {
+                            feedback.remove();
+                        }
+                    });
+
+                    function afficherErreur(input, message) {
+                        input.classList.add('is-invalid');
+                        const div = document.createElement('div');
+                        div.classList.add('invalid-feedback');
+                        div.textContent = message;
+                        input.insertAdjacentElement('afterend', div);
+                        valide = false;
+                    }
+
+                    if (!rdvBeneficiaire.value) afficherErreur(rdvBeneficiaire, 'Veuillez sélectionner un bénéficiaire.');
+                    if (!rdvDate.value) afficherErreur(rdvDate, 'La date est obligatoire.');
+                    if (!rdvHeureDebut.value) afficherErreur(rdvHeureDebut, 'L\'heure de début est obligatoire.');
+                    if (!rdvHeureFin.value) afficherErreur(rdvHeureFin, 'L\'heure de fin est obligatoire.');
+                    if (!rdvMatiere.value) afficherErreur(rdvMatiere, 'Veuillez sélectionner une matière.');
+
+                    if (!valide) return;
+
+                    bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
                 });
             });
 
@@ -199,155 +342,6 @@
                 // TODO : recharger les events du calendrier selon le bénéficiaire sélectionné
             }
         </script>
-
-        <div class="modal fade" id="modalRDV" tabindex="-1" aria-labelledby="modalRDVLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalRDVLabel">Demander un Rendez-vous</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body px-4 py-3">
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Bénéficiaires</label>
-                            <select id="rdvBeneficiaire" class="form-select form-select-sm">
-                                <option value="" disabled>Choisissez un bénéficiaire</option>
-                                <option value="vatafu-jean">Vatafu Jean</option>
-                                <option value="dupont-marie">Dupont Marie</option>
-                                <option value="martin-paul">Martin Paul</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Date</label>
-                            <input type="date" id="rdvDate" class="form-control form-control-sm"/>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Plage Horaire</label>
-                            <div class="d-flex gap-2">
-                                <select id="rdvHeureDebut" class="form-select form-select-sm">
-                                    <option value="" disabled selected>Heure Début</option>
-                                    <option value="8:00">8:00</option>
-                                    <option value="8:30">8:30</option>
-                                    <option value="9:00">9:00</option>
-                                    <option value="9:30">9:30</option>
-                                    <option value="10:00">10:00</option>
-                                    <option value="10:30">10:30</option>
-                                    <option value="11:00">11:00</option>
-                                    <option value="11:30">11:30</option>
-                                    <option value="12:00">12:00</option>
-                                    <option value="12:30">12:30</option>
-                                    <option value="13:00">13:00</option>
-                                    <option value="13:30">13:30</option>
-                                    <option value="14:00">14:00</option>
-                                    <option value="14:30">14:30</option>
-                                    <option value="15:00">15:00</option>
-                                    <option value="15:30">15:30</option>
-                                    <option value="16:00">16:00</option>
-                                    <option value="16:30">16:30</option>
-                                    <option value="17:00">17:00</option>
-                                    <option value="17:30">17:30</option>
-                                    <option value="18:00">18:00</option>
-                                    <option value="18:30">18:30</option>
-                                </select>
-                                <select id="rdvHeureFin" class="form-select form-select-sm">
-                                    <option value="" disabled selected>Heure Fin</option>
-                                    <option value="8:30">8:30</option>
-                                    <option value="9:00">9:00</option>
-                                    <option value="9:30">9:30</option>
-                                    <option value="10:00">10:00</option>
-                                    <option value="10:30">10:30</option>
-                                    <option value="11:00">11:00</option>
-                                    <option value="11:30">11:30</option>
-                                    <option value="12:00">12:00</option>
-                                    <option value="12:30">12:30</option>
-                                    <option value="13:00">13:00</option>
-                                    <option value="13:30">13:30</option>
-                                    <option value="14:00">14:00</option>
-                                    <option value="14:30">14:30</option>
-                                    <option value="15:00">15:00</option>
-                                    <option value="15:30">15:30</option>
-                                    <option value="16:00">16:00</option>
-                                    <option value="16:30">16:30</option>
-                                    <option value="17:00">17:00</option>
-                                    <option value="17:30">17:30</option>
-                                    <option value="18:00">18:00</option>
-                                    <option value="18:30">18:30</option>
-                                    <option value="19:00">19:00</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Matières</label>
-                            <select id="rdvMatiere" class="form-select form-select-sm">
-                                <option value="" disabled selected>Choisissez une matière</option>
-                                <option value="mathematiques">Mathématiques</option>
-                                <option value="francais">Français</option>
-                                <option value="anglais">Anglais</option>
-                                <option value="sciences">Sciences</option>
-                                <option value="histoire">Histoire</option>
-                                <option value="cours">Cours</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Compétences requises</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranscription" checked/>
-                                    <label class="form-check-label small" for="compTranscription">Transcription</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranslitteration" checked/>
-                                    <label class="form-check-label small" for="compTranslitteration">Translittération</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranslation" checked/>
-                                    <label class="form-check-label small" for="compTranslation">Translation</label>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm">Envoyer la demande</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="modalEnvoi" tabindex="-1" aria-labelledby="modalEnvoiLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalEnvoiLabel">Envoyer les demandes</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body px-4 py-3 text-center">
-                        <p class="mb-1">Vous êtes sur le point d'envoyer</p>
-                        <p class="fw-bold fs-4 text-primary mb-1" id="nombreDemandes">0</p>
-                        <p class="mb-1">demande(s) à la coordinatrice.</p>
-                        <p class="text-muted small">Cette action est irréversible.</p>
-                    </div>
-
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm">Confirmer l'envoi</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
 
         <div th:replace="~{common/footer :: footer}"></div>
     </body>
