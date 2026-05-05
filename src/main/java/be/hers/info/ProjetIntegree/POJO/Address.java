@@ -5,10 +5,6 @@ package be.hers.info.ProjetIntegree.POJO;
 @reviewer Nicolas Jean-François
  */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 public class Address {
     private int numAddress;
     private int postcode;
@@ -16,29 +12,6 @@ public class Address {
     private String locality;
     private String hamlet;
     private Establishment establishment;
-
-    /**
-     * Initialize an address with numAddress, postcode, postOfficeBox, locality, hamlet, establishment
-     * @param numAddress the id
-     * @param postcode the postcode
-     * @param postOfficeBox the post office box. It can only have 1 post office box
-     * @param locality the locality. It can only have 1 locality
-     * @param hamlet the hamlet
-     * @param establishment the establishment linked. It can have 0 or 1 establishment
-     * @throws IllegalArgumentException if postOfficeBox or locality is null
-     */
-    public Address(int numAddress, int postcode, String postOfficeBox, String locality, String hamlet, Establishment establishment, List<Beneficiary> beneficiaries, List<Interpreter> interpreters) {
-        if(postOfficeBox == null || locality == null){
-            throw new IllegalArgumentException("[POJOAddress] : postOfficeBox et/ou locality est null");
-        }
-
-        this.numAddress = numAddress;
-        this.postcode = postcode;
-        this.postOfficeBox = postOfficeBox;
-        this.locality = locality;
-        this.hamlet = hamlet;
-        this.establishment = establishment;
-    }
 
     /**
      * Initialize an address with postcode, postOfficeBox, locality, hamlet, establishment
@@ -49,7 +22,7 @@ public class Address {
      * @param establishment the establishment linked. It can have 0 or 1 establishment
      * @throws IllegalArgumentException if postOfficeBox or locality is null
      */
-    public Address(int postcode, String postOfficeBox, String locality, String hamlet, Establishment establishment, List<Beneficiary> beneficiaries, List<Interpreter> interpreters) {
+    public Address(int postcode, String postOfficeBox, String locality, String hamlet, Establishment establishment) {
         if(postOfficeBox == null || locality == null){
             throw new IllegalArgumentException("[POJOAddress] : postOfficeBox et/ou locality est null");
         }
