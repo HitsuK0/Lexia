@@ -90,6 +90,9 @@ public class Establishment {
         this.numEstablishment = numEstablishment;
         this.nameBuilding = nameBuilding;
         this.phoneNumber = phoneNumber;
+        this.educationLevel = new ArrayList<>();
+        this.referrers = new ArrayList<>();
+        this.addresses = new ArrayList<>();
     }
 
     /**
