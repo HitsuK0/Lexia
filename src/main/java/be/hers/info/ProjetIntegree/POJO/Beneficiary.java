@@ -1,22 +1,14 @@
 package be.hers.info.ProjetIntegree.POJO;
 
 /**
- * @author Vatafu Jean
+ * @author Vatafu Jean, Rosman Loïs
  * @reviewer Halet Louis
  */
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Beneficiary {
-    private int numBeneficiary;
-    private String login;
-    private String password;
-    private String name;
-    private String surname;
-    private String phoneNumber;
-    private String emailAddress;
-    private Address address;
+public class Beneficiary extends User{
     private int hourQuota;
     private int educationLevel;
     private Interpreter interpreter;
@@ -31,16 +23,9 @@ public class Beneficiary {
 
     /**
      * Initialize a Beneficiary with no elements
-     * The parameter numBeneficiary can only be initialized with setNumBeneficiary
      */
     public Beneficiary() {
-        this.login = "";
-        this.password = "";
-        this.name = "";
-        this.surname = "";
-        this.phoneNumber = "";
-        this.emailAddress = "";
-        this.address = null;
+        super();
         this.hourQuota = 0;
         this.educationLevel = EDUCATION_LEVEL_MIN;
         this.interpreter = null;
@@ -49,145 +34,80 @@ public class Beneficiary {
     }
 
     /**
-     * Initialize a Beneficiary with numBeneficiary, name, surname, phoneNumber, emailAddress,
-     * address, educationLevel, communicationLanguage and appointmentList
-     * @param numBeneficiary the id of the Beneficiary
-     * @param login The id login the user
-     * @param password The password of the user
-     * @param name the name
-     * @param surname the surname
-     * @param phoneNumber the phone number
-     * @param emailAddress the email address
-     * @param hourQuota the quota hours
-     * @param educationLevel the level of education
-     * @param communicationLanguage the list of communication languages used by the beneficiary
-     * @throws IllegalArgumentException if the password is null
-     *                                  if the password is empty
+     * Initialize a Beneficiary with login, password, lastName, firstName and emailAddress
+     * @param login the login of the Beneficiary
+     * @param password the password of the Beneficiary
+     * @param lastName the last name of the Beneficiary
+     * @param firstName the first name of the Beneficiary
+     * @param emailAddress the email address of the Beneficiary
+     * @throws IllegalArgumentException if the password is null or empty
      */
-    public Beneficiary(int numBeneficiary, String login, String password, String name, String surname, String phoneNumber, Address address, int hourQuota, String emailAddress, int educationLevel,
+    public Beneficiary(String login, String password, String lastName, String firstName, String emailAddress) {
+        super(login, password, lastName, firstName, emailAddress);
+        this.hourQuota = 0;
+        this.educationLevel = EDUCATION_LEVEL_MIN;
+        this.interpreter = null;
+        this.communicationLanguage = new ArrayList<String>();
+        this.appointmentList = new ArrayList<Appointment>();
+    }
+
+    /**
+     * Initialize a Beneficiary with login, password, lastName, firstName, phoneNumber, emailAddress,
+     * address, hourQuota, educationLevel, interpreter, communicationLanguage
+     * @param login The id login the beneficiary
+     * @param password The password of the beneficiary
+     * @param lastName the last name of the beneficiary
+     * @param firstName the first name of the beneficiary
+     * @param phoneNumber the phone number of the beneficiary
+     * @param emailAddress the email address of the beneficiary
+     * @param address the address of the beneficiary
+     * @param hourQuota the quota hours of the beneficiary
+     * @param educationLevel the level of education of the beneficiary
+     * @param interpreter the interpreter of the beneficiary
+     * @param communicationLanguage the list of communication languages used by the beneficiary
+     * @throws IllegalArgumentException if the password is null or empty
+     */
+    public Beneficiary(String login, String password, String lastName, String firstName, String phoneNumber,
+                       String emailAddress, Address address, int hourQuota, int educationLevel,
                        Interpreter interpreter, List<String> communicationLanguage) {
-        if(password == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le mot de passe ne peut pas être null.");
-        }
-
-        if(password.isEmpty()) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le mot de passe ne peut pas être vide.");
-        }
-
-        this.numBeneficiary = numBeneficiary;
-        this.login = login;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.emailAddress = emailAddress;
-        this.phoneNumber = phoneNumber;
-        this.educationLevel = educationLevel;
-        this.address = address;
+        super(login, password, lastName, firstName, phoneNumber, emailAddress, address);
         this.hourQuota = hourQuota;
+        this.educationLevel = educationLevel;
         this.interpreter = interpreter;
         this.communicationLanguage = communicationLanguage;
         this.appointmentList = new ArrayList<Appointment>();
     }
 
     /**
-     * Initialize a Beneficiary with emailAddress, name and surname.
-     * The parameter numBeneficiary can only be initialized with setNumBeneficiary
-     * @param login the login of the user
-     * @param password the password of the user
-     * @param emailAddress the email address of the Beneficiary
-     * @param name the name of the Beneficiary
-     * @param surname the surname of the Beneficiary
-     * @throws IllegalArgumentException if the password is empty
-     *                                  if the password is null
-     */
-    public Beneficiary(String login, String password, String emailAddress, String name, String surname) {
-        if(password == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le mot de passe ne peut pas être null.");
-        }
-
-        if(password.isEmpty()) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le mot de passe ne peut pas être vide.");
-        }
-
-        this.login = login;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.phoneNumber = "";
-        this.emailAddress = emailAddress;
-        this.address = null;
-        this.hourQuota = 0;
-        this.educationLevel = EDUCATION_LEVEL_MIN;
-        this.interpreter = null;
-        this.communicationLanguage = new ArrayList<String>();
-        this.appointmentList = new ArrayList<Appointment>();
-    }
-
-    /**
-     * Initialize a Beneficiary with numBeneficiary, emailAddress, name and surname
-     * @param numBeneficiary the id of the Beneficiary
-     * @param login the login of the user
-     * @param password the password of the user
-     * @param emailAddress the email address of the Beneficiary
-     * @param name the name of the Beneficiary
-     * @param surname the surname of the Beneficiary
-     * @throws IllegalArgumentException if the password is empty
-     *                                  if the password is null
-     */
-    public Beneficiary(int numBeneficiary, String login, String password, String emailAddress, String name, String surname) {
-        if(password == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le mot de passe ne peut pas être null.");
-        }
-
-        if(password.isEmpty()) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le mot de passe ne peut pas être vide.");
-        }
-
-        this.numBeneficiary = numBeneficiary;
-        this.login = login;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.emailAddress = emailAddress;
-        this.phoneNumber = "";
-        this.address = null;
-        this.hourQuota = 0;
-        this.educationLevel = EDUCATION_LEVEL_MIN;
-        this.interpreter = null;
-        this.appointmentList = new ArrayList<Appointment>();
-        this.communicationLanguage = new ArrayList<String>();
-    }
-
-    /**
-     * Initialize a Beneficiary with numBeneficiary, name, surname, phoneNumber, emailAddress,
-     * address, educationLevel, communicationLanguage and appointmentList
-     * @param numBeneficiary the id of the Beneficiary
-     * @param login The id login the user
-     * @param password The password of the user
-     * @param name the name
-     * @param surname the surname
-     * @param phoneNumber the phone number
-     * @param emailAddress the email address
-     * @param address the address
-     * @param hourQuota the quota hours
-     * @param educationLevel the level of education
-     * @param interpreter the interpreter of reference
+     * Initialize a Beneficiary with login, password, lastName, firstName, phoneNumber, emailAddress,
+     * address, hourQuota, educationLevel, interpreter, communicationLanguage and appointmentList
+     * @param login The id login of the beneficiary
+     * @param password The password of the beneficiary
+     * @param lastName the last name of the beneficiary
+     * @param firstName the first name of the beneficiary
+     * @param phoneNumber the phone number of the beneficiary
+     * @param emailAddress the email address of the beneficiary
+     * @param address the address of the beneficiary
+     * @param hourQuota the quota hours of the beneficiary
+     * @param educationLevel the level of education of the beneficiary
+     * @param interpreter the interpreter of reference of the beneficiary
      * @param communicationLanguage the list of communication languages used by the beneficiary
-     * @param appointmentList the list of Appointments, can be null
+     * @param appointmentList the list of Appointments of the beneficiary, can be null
      * @throws IllegalArgumentException if address, communicationLanguage, interpreter or password is null
      *                                  if communicationLanguage or password is empty
      *                                  if hourQuota is negative
      *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
      */
-    public Beneficiary(int numBeneficiary, String login, String password, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
-                       Interpreter interpreter, List<String> communicationLanguage, List<Appointment> appointmentList) {
+    public Beneficiary(String login, String password, String lastName, String firstName, String phoneNumber,
+                       String emailAddress, Address address, int hourQuota, int educationLevel, Interpreter interpreter,
+                       List<String> communicationLanguage, List<Appointment> appointmentList) {
 
-        if(address == null || communicationLanguage == null || interpreter == null || password == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse, l'interprète de référence, langue(s) de communication et le mot de passe ne peuvent pas être null");
+        if(communicationLanguage == null || interpreter == null) {
+            throw new IllegalArgumentException("[POJOBeneficiary] L'interprète de référence et langue(s) de communication ne peuvent pas être null");
         }
 
-        if(communicationLanguage.isEmpty() || password.isEmpty()) {
-            throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de communication ou le mot de passe ne peut pas être vide");
+        if(communicationLanguage.isEmpty()) {
+            throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de communication ne peut pas être vide");
         }
 
         if(hourQuota < 0) {
@@ -198,14 +118,7 @@ public class Beneficiary {
             throw new IllegalArgumentException("[POJOBeneficiary] Le niveau d'éducation doit être compris entre "+EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
         }
 
-        this.numBeneficiary = numBeneficiary;
-        this.login = login;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.emailAddress = emailAddress;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
+        super(login, password, lastName, firstName, phoneNumber, emailAddress, address);
         this.educationLevel = educationLevel;
         this.hourQuota = hourQuota;
         this.interpreter = interpreter;
@@ -216,136 +129,12 @@ public class Beneficiary {
         } else {
             this.appointmentList = appointmentList;
         }
-    }
-
-    /**
-     * Initialize a Beneficiary with numBeneficiary, name, surname, phoneNumber, emailAddress,
-     * address, educationLevel, communicationLanguage and appointmentList.
-     * The parameter numBeneficiary can only be initialized with setNumBeneficiary
-     * @param login The login of the user
-     * @param password The password of the user
-     * @param name the name
-     * @param surname the surname
-     * @param phoneNumber the phone number
-     * @param emailAddress the email address
-     * @param address the address
-     * @param hourQuota the quota hours
-     * @param educationLevel the level of education
-     * @param interpreter the interpreter of reference
-     * @param communicationLanguage the list of communication languages used by the beneficiary
-     * @param appointmentList the list of Appointments, can be null
-     * @throws IllegalArgumentException if address, communicationLanguage, interpreter or password is null
-     *                                  if communicationLanguage or password is empty
-     *                                  if hourQuota is negative
-     *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
-     */
-    public Beneficiary(String login, String password, String name, String surname, String phoneNumber, int hourQuota, String emailAddress, Address address, int educationLevel,
-                       Interpreter interpreter, List<String> communicationLanguage, List<Appointment> appointmentList) {
-
-        if(address == null || communicationLanguage == null || interpreter == null || password == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse, l'interprète de référence, langue(s) de communication et mot de passe ne peuvent pas être null");
-        }
-
-        if(communicationLanguage.isEmpty() || password.isEmpty()) {
-            throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de  et mot de passe ne peut pas être vide");
-        }
-
-        if(hourQuota < 0) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le quota d'heures ne peut pas être négatif");
-        }
-
-        if(educationLevel < EDUCATION_LEVEL_MIN || educationLevel > EDUCATION_LEVEL_MAX) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le niveau d'éducation doit être compris entre "+EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
-        }
-
-        this.login = login;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.emailAddress = emailAddress;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.educationLevel = educationLevel;
-        this.hourQuota = hourQuota;
-        this.interpreter = interpreter;
-        this.communicationLanguage = communicationLanguage;
-
-        if(appointmentList == null) {
-            this.appointmentList = new ArrayList<Appointment>();
-        } else {
-            this.appointmentList = appointmentList;
-        }
-    }
-
-    /**
-     * @return the id of the Beneficiary
-     */
-    public int getNumBeneficiary() {
-
-        return numBeneficiary;
-    }
-
-    /**
-     * @return the login of the Beneficiary
-     */
-    public String getLogin() {
-
-        return login;
-    }
-
-    /**
-     * @return the password of the Beneficiary
-     */
-    public String getPassword() {
-
-        return password;
-    }
-
-    /**
-     * @return the name
-     */
-    public String getName() {
-
-        return name;
-    }
-
-    /**
-     * @return the surname
-     */
-    public String getSurname() {
-
-        return surname;
-    }
-
-    /**
-     * @return the phone number
-     */
-    public String getPhoneNumber() {
-
-        return phoneNumber;
-    }
-
-    /**
-     * @return the email address
-     */
-    public String getEmailAddress() {
-
-        return emailAddress;
-    }
-
-    /**
-     * @return the address
-     */
-    public Address getAddress() {
-
-        return address;
     }
 
     /**
      * @return the number of quota hours
      */
     public int getHourQuota() {
-
         return hourQuota;
     }
 
@@ -353,7 +142,6 @@ public class Beneficiary {
      * @return the education level
      */
     public int getEducationLevel() {
-
         return educationLevel;
     }
 
@@ -361,7 +149,6 @@ public class Beneficiary {
      * @return the interpreter
      */
     public Interpreter getInterpreter() {
-
         return interpreter;
     }
 
@@ -369,7 +156,6 @@ public class Beneficiary {
      * @return the communication languages
      */
     public List<String> getCommunicationLanguage() {
-
         return communicationLanguage;
     }
 
@@ -401,66 +187,6 @@ public class Beneficiary {
     }
 
     /**
-     * @param numBeneficiary the id to set
-     */
-    public void setNumBeneficiary(int numBeneficiary) {
-
-        this.numBeneficiary = numBeneficiary;
-    }
-
-    /**
-     * @param login the login to set
-     */
-    public void setLogin(String login) {
-
-        this.login = login;
-    }
-
-    /**
-     * @param password the password to set
-     */
-    public void setPassword(String password) {
-
-        this.password = password;
-    }
-
-    /**
-     * @param phoneNumber the phone number to set
-     * @throws IllegalArgumentException if phoneNumber is null
-     */
-    public void setPhoneNumber(String phoneNumber) {
-        if(phoneNumber == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le numéro de téléphone ne peut pas être vide");
-        }
-
-        this.phoneNumber = phoneNumber;
-    }
-
-    /**
-     * @param emailAddress the email address to set
-     * @throws IllegalArgumentException if emailAddress is null
-     */
-    public void setEmailAddress(String emailAddress) {
-        if(emailAddress == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse email ne peut pas être vide");
-        }
-
-        this.emailAddress = emailAddress;
-    }
-
-    /**
-     * @param address the address to set
-     * @throws IllegalArgumentException if address is null
-     */
-    public void setAddress(Address address) {
-        if(address == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] L'adresse ne peut pas être nulle");
-        }
-
-        this.address = address;
-    }
-
-    /**
      * @param hourQuota the hour quota to set
      * @throws IllegalArgumentException if hourQuota is negative
      */
@@ -474,11 +200,13 @@ public class Beneficiary {
 
     /**
      * @param educationLevel the level of education to set
-     * @throws IllegalArgumentException if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
+     * @throws IllegalArgumentException if educationLevel is smaller than EDUCATION_LEVEL_MIN or
+     * greater than EDUCATION_LEVEL_MAX
      */
     public void setEducationLevel(int educationLevel) {
         if(educationLevel < EDUCATION_LEVEL_MIN || educationLevel > EDUCATION_LEVEL_MAX) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le niveau d'éducation est compris entre "+EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
+            throw new IllegalArgumentException("[POJOBeneficiary] Le niveau d'éducation est compris entre " +
+                    EDUCATION_LEVEL_MIN + " et " + EDUCATION_LEVEL_MAX);
         }
 
         this.educationLevel = educationLevel;
@@ -531,63 +259,19 @@ public class Beneficiary {
     }
 
     /**
-     * @param name the name to set
-     * @throws IllegalArgumentException if name is null
-     */
-    public void setName(String name) {
-        if(name == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le nom ne peut pas être nul");
-        }
-
-        this.name = name;
-    }
-
-    /**
-     * @param surname the surname to set
-     * @throws IllegalArgumentException if surname is null
-     */
-    public void setSurname(String surname) {
-        if(surname == null) {
-            throw new IllegalArgumentException("[POJOBeneficiary] Le prénom ne peut pas être nul");
-        }
-
-        this.surname = surname;
-    }
-
-    /**
      * @return a String containing the beneficiary ID, name, surname, phone number,
      *         email address, interpreter, address, hour quota, education level, communication languages
      *         and appointments
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Bénéficiaire n°").append(this.numBeneficiary).append(" :\n");
-        sb.append("Login : ").append(this.login).append("\n");
-        sb.append("Nom : ").append(this.name).append("\n");
-        sb.append("Prénom : ").append(this.surname).append("\n");
-
-        if(phoneNumber.isEmpty()) {
-            sb.append("Numéro de téléphone : Non renseigné\n");
-        } else {
-            sb.append("Numéro de téléphone : ").append(this.phoneNumber).append("\n");
-        }
-
-        if(emailAddress.isEmpty()) {
-            sb.append("Adresse email : Non renseigné\n");
-        } else {
-            sb.append("Adresse email : ").append(this.emailAddress).append("\n");
-        }
+        sb.append("Bénéficiaire").append(" :\n");
+        sb.append(super.toString());
 
         if(this.interpreter == null) {
             sb.append("Interprète de référence : Non renseignée\n");
         } else {
             sb.append("Interprète de référence : ").append(this.interpreter.toString()).append("\n");
-        }
-
-        if(this.address == null) {
-            sb.append("Adresse : Non renseignée\n");
-        } else {
-            sb.append("Adresse : ").append(this.address.toString()).append("\n");
         }
 
         sb.append("Quota d'heures : ").append(this.hourQuota).append("\n");
