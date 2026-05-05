@@ -38,7 +38,7 @@
                     <button type="button" class="btn-close rounded-3" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form class="p-4" method="post" th:object="${establissement}" th:action="@{'/etablissement/add'}">
+                <form class="p-4" method="post" th:object="${etablissement}" th:action="@{'/etablissement/add'}">
                     <div class="mb-3">
                         <label for="nomEtablissement" class="form-label">Nom de l'établissement</label>
                         <input th:field="*{nameBuilding}" type="text" class="form-control rounded-3" id="nomEtablissement" placeholder="Texte ...">
