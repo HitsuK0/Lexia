@@ -38,25 +38,25 @@
                     <button type="button" class="btn-close rounded-3" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form class="p-4" method="post" th:object="${etablissement}" th:action="@{'/etablissement/add'}">
+                <form class="p-4" method="post" >
                     <div class="mb-3">
                         <label for="nomEtablissement" class="form-label">Nom de l'établissement</label>
-                        <input th:field="*{nameBuilding}" type="text" class="form-control rounded-3" id="nomEtablissement" placeholder="Texte ...">
+                        <input type="text" class="form-control rounded-3" id="nomEtablissement" placeholder="Texte ...">
                     </div>
 
                     <div class="mb-3">
                         <label for="nomVille" class="form-label">Ville</label>
-                        <input  th:field="*{}" type="text" class="form-control rounded-3" id="nomVille" placeholder="Texte ...">
+                        <input   type="text" class="form-control rounded-3" id="nomVille" placeholder="Texte ...">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="adresse">Adresse complète</label>
-                        <textarea th:field="*{addresses}" class="form-control rounded-3" id="adresse" rows="3"></textarea>
+                        <textarea  class="form-control rounded-3" id="adresse" rows="3"></textarea>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="referant">Référant de l'établissement</label>
-                        <input th:field="*{referrers}" type="text" class="form-control rounded-3" id="referant">
+                        <input  type="text" class="form-control rounded-3" id="referant">
                         <div class="form-text">Peut être défini plus tard</div>
                     </div>
                     <div class="modal-footer">
