@@ -1,10 +1,78 @@
+<!--
+@author Vanderheyden Quentin
+@reviewer Halet Louis, Nicolas Jean-François
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
+<!--    <link rel="stylesheet" href="/css/lexia.css">-->
+        <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../../static/css/lexia.css">
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Gestion d'Etablissemenet</title>
+<!--    <link rel="icon" type="image/png" href="/images/logo_lexia.png">-->
+        <link rel="icon" type="image/png" href="../../static/images/logo_lexia.png">
 </head>
 <body>
+<!--<script src="/js/bootstrap.bundle.min.js"></script>-->
+<script src="../../static/js/bootstrap.bundle.min.js"></script>
+<div th:replace="~{common/navbar :: navbar('accueil', 'COORDINATOR', 'Vanderheyden Quentin')}"></div>
 
+<div class="my-4 text-center ">
+    <p class="h1 text-primary py-2 fw-bold">
+        MonProfil
+    </p>
+    <p class="text-secondary">
+        Gérez vos informations personnelles et vos compétences
+    </p>
+</div>
+
+<div class="w-75 vh-75 d-flex justify-content-center align-items-center">
+<div class="card rounded-3">
+    <div class="row">
+        <div class="col-3 border-end">
+            <ul class="nav flex-column p-4">
+                <li class="nav-item mb-3">
+                    <a class="nav-link active fw-bold" href="#">Étape 1<br><small class="text-muted">Informations</small></a>
+                </li>
+                <li class="nav-item mb-3">
+                    <a class="nav-link" href="#">Étape 2<br><small class="text-muted">Adresse</small></a>
+                </li>
+                <li class="nav-item mb-3">
+                    <a class="nav-link" href="#">Étape 3<br><small class="text-muted">Validation</small></a>
+                </li>
+            </ul>
+        </div>
+        <!-- CONTENU PRINCIPAL -->
+        <div class="col-9 p-4">
+            <h4 class="mb-4">Étape 1 : Informations</h4>
+            <form>
+                <div class="mb-3">
+                    <label class="form-label">Nom</label>
+                    <input type="text" class="form-control rounded-3">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Ville</label>
+                    <input type="text" class="form-control rounded-3">
+                </div>
+                <button class="btn btn-primary rounded-3">Suivant</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+    <div th:replace="~{common/footer :: footer}"></div>
 </body>
 </html>
