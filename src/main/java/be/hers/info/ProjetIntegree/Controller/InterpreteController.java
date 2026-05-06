@@ -9,12 +9,14 @@ import org.springframework.ui.Model;
 @RequestMapping("/interprete")
 public class InterpreteController {
 
+    // Temporaire
     @GetMapping("/planning")
     public String planning(Model model) {
         model.addAttribute("userName", "NOM Prenom");
         return "interprete/planning";
     }
 
+    // Temporaire
     @GetMapping("/planning/beneficiaires")
     public String planningBeneficiaires(Model model) {
         return "interprete/planning-beneficiaires";

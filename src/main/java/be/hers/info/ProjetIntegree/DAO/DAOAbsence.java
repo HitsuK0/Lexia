@@ -1,9 +1,6 @@
 package be.hers.info.ProjetIntegree.DAO;
 
-import be.hers.info.ProjetIntegree.POJO.Absence;
-import be.hers.info.ProjetIntegree.POJO.BadStatusException;
-import be.hers.info.ProjetIntegree.POJO.Interpreter;
-import be.hers.info.ProjetIntegree.POJO.TimeSlotPunctual;
+import be.hers.info.ProjetIntegree.POJO.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,7 +31,7 @@ public class DAOAbsence {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
-        String query = "SELECT status, FKTimeSlotPunctual " +
+        String query = "SELECT status, reasons, privateReason, FKTimeSlotBase, FKTimeSlotPunctual " +
                 "FROM Absence " +
                 "WHERE numAbsence = ?";
 
@@ -45,10 +42,18 @@ public class DAOAbsence {
             resultSet = preparedStatement.executeQuery();
 
             if(resultSet.next()) {
-                DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
-                TimeSlotPunctual timeSlotPunctual = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
+                TimeSlot timeSlot = null;
 
-                absence = new Absence(objectToSearchInDB, resultSet.getString("status"),timeSlotPunctual);
+                if(resultSet.getObject("FKTimeSlotBase") != null) {
+                    DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
+                    timeSlot = daoTimeSlotBase.find(resultSet.getInt("FKTimeSlotBase"));
+                } else {
+                    DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+                    timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
+                }
+
+                absence = new Absence(objectToSearchInDB, resultSet.getString("status"), timeSlot,
+                        resultSet.getString("reasons"), resultSet.getBoolean("privateReason"));
             }
         } finally {
             closeStatementAndResultSet(preparedStatement, resultSet);
@@ -70,7 +75,7 @@ public class DAOAbsence {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
-        String query = "SELECT numAbsence, status, FKTimeSlotPunctual " +
+        String query = "SELECT numAbsence, status, reasons, privateReason, FKTimeSlotBase, FKTimeSlotPunctual " +
                 "FROM Absence";
 
         try {
@@ -78,10 +83,18 @@ public class DAOAbsence {
             resultSet = preparedStatement.executeQuery();
 
             DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+            DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
+            TimeSlot timeSlot = null;
 
             while(resultSet.next()) {
+                if(resultSet.getObject("FKTimeSlotBase") != null) {
+                    timeSlot = daoTimeSlotBase.find(resultSet.getInt("FKTimeSlotBase"));
+                } else {
+                    timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
+                }
+
                 Absence absence = new Absence(resultSet.getInt("numAbsence"), resultSet.getString("status"),
-                        daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual")));
+                        timeSlot, resultSet.getString("reasons"), resultSet.getBoolean("privateReason"));
 
                 absenceList.add(absence);
             }
@@ -90,8 +103,6 @@ public class DAOAbsence {
         }
         return absenceList;
     }
-
-
 
     /**
      * Adds the Absence passed as a parameter to the Absence table,
@@ -115,15 +126,25 @@ public class DAOAbsence {
             throw new IllegalArgumentException("[DAOAbsence] L'id de l'interprète ne peut pas être négatif.");
         }
 
-        String query = "INSERT INTO Absence(status, FKTimeSlotPunctual, FKnumInterpreter) " +
-                "VALUES ( ?, ?, ?)";
+        String query = "INSERT INTO Absence(status, reasons, privateReason, FKTimeSlotBase, FKTimeSlotPunctual, FKnumInterpreter) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
             preparedStatement = connect.prepareStatement(query);
 
             preparedStatement.setString(1, objectToInsertInDB.getStatus());
-            preparedStatement.setInt(2, objectToInsertInDB.getTimeSlotPunctual().getNumTimeSlot());
-            preparedStatement.setInt(3, otherObjectID);
+            preparedStatement.setString(2, objectToInsertInDB.getReason());
+            preparedStatement.setBoolean(3, objectToInsertInDB.isPrivateReason());
+
+            if(objectToInsertInDB.getTimeSlot() instanceof TimeSlotBase) {
+                preparedStatement.setInt(4, objectToInsertInDB.getTimeSlot().getNumTimeSlot());
+                preparedStatement.setNull(5, java.sql.Types.INTEGER);
+            } else {
+                preparedStatement.setNull(4, java.sql.Types.INTEGER);
+                preparedStatement.setInt(5, objectToInsertInDB.getTimeSlot().getNumTimeSlot());
+            }
+
+            preparedStatement.setInt(6, otherObjectID);
 
             if(preparedStatement.executeUpdate() > 0) {
                 created = true;
@@ -131,7 +152,6 @@ public class DAOAbsence {
         } finally {
             closeStatement(preparedStatement);
         }
-
         return created;
     }
 
@@ -148,13 +168,25 @@ public class DAOAbsence {
         PreparedStatement preparedStatement = null;
 
         String query = "UPDATE Absence " +
-                "SET status = ? "+
+                "SET status = ?, reasons = ?, privateReason = ?, FKTimeSlotBase = ?, FKTimeSlotPunctual = ? "+
                 "WHERE numAbsence = ?";
 
         try {
             preparedStatement = connect.prepareStatement(query);
+
             preparedStatement.setString(1, objectToUpdateInDB.getStatus());
-            preparedStatement.setInt(2, objectToUpdateInDB.getNumAbsence());
+            preparedStatement.setString(2, objectToUpdateInDB.getReason());
+            preparedStatement.setBoolean(3, objectToUpdateInDB.isPrivateReason());
+
+            if(objectToUpdateInDB.getTimeSlot() instanceof TimeSlotBase) {
+                preparedStatement.setInt(4, objectToUpdateInDB.getTimeSlot().getNumTimeSlot());
+                preparedStatement.setNull(5, java.sql.Types.INTEGER);
+            } else {
+                preparedStatement.setNull(4, java.sql.Types.INTEGER);
+                preparedStatement.setInt(5, objectToUpdateInDB.getTimeSlot().getNumTimeSlot());
+            }
+
+            preparedStatement.setInt(6, objectToUpdateInDB.getNumAbsence());
 
             if(preparedStatement.executeUpdate() > 0) {
                 updated = true;
@@ -214,8 +246,6 @@ public class DAOAbsence {
      * @param resultSet the ResutlSet to close
      */
     public void closeStatementAndResultSet(PreparedStatement preparedStatement, ResultSet resultSet) {
-        closeStatement(preparedStatement);
-
         if(resultSet != null) {
             try {
                 resultSet.close();
@@ -223,5 +253,7 @@ public class DAOAbsence {
                 e.printStackTrace();
             }
         }
+
+        closeStatement(preparedStatement);
     }
 }

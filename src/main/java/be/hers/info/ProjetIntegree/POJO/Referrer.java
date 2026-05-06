@@ -20,11 +20,11 @@ public class Referrer {
      * @param phoneNumber the phone number
      * @param surname the surname of the referrer
      * @param name the name of the referrer
-     * @throws NullPointerException if refEstablishment, addressMail, phoneNumber,surname or name is null
+     * @throws IllegalArgumentException if refEstablishment, addressMail, phoneNumber,surname or name is null
      */
     public Referrer(Establishment refEstablishment, String addressMail, String phoneNumber, String surname, String name) {
         if(refEstablishment == null || addressMail == null || phoneNumber == null || surname == null || name == null ) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
 
         this.refEstablishment = refEstablishment;
@@ -53,14 +53,12 @@ public class Referrer {
         return name;
     }
 
-
     /**
      * @return the surname
      */
     public String getSurname() {
         return surname;
     }
-
 
     /**
      * @return the phone number
@@ -69,14 +67,12 @@ public class Referrer {
         return phoneNumber;
     }
 
-
     /**
      * @return the address mail
      */
     public String getAddressMail() {
         return addressMail;
     }
-
 
     /**
      * @return the establishment
@@ -85,24 +81,20 @@ public class Referrer {
         return refEstablishment;
     }
 
-
     /**
      * @param name the name
-     * @throws NullPointerException if name is null
+     * @throws IllegalArgumentException if name is null
      */
     public void setName(String name) {
         if(name == null ) {
             throw new IllegalArgumentException("[POJOReferrer] Le prénom ne peut pas être null");
         }
-
-
         this.name = name;
     }
 
-
     /**
      * @param surname the surname
-     * @throws NullPointerException if surname is null
+     * @throws IllegalArgumentException if surname is null
      */
     public void setSurname(String surname) {
         if(surname == null ) {
@@ -111,10 +103,9 @@ public class Referrer {
         this.surname = surname;
     }
 
-
     /**
      * @param phoneNumber the phone number
-     * @throws NullPointerException if phoneNumber is null
+     * @throws IllegalArgumentException if phoneNumber is null
      */
     public void setPhoneNumber(String phoneNumber) {
         if(phoneNumber == null ) {
@@ -123,10 +114,9 @@ public class Referrer {
         this.phoneNumber = phoneNumber;
     }
 
-
     /**
      * @param addressMail the mail address
-     * @throws NullPointerException if addressMail is null
+     * @throws IllegalArgumentException if addressMail is null
      */
     public void setAddressMail(String addressMail) {
         if(addressMail == null ) {
@@ -137,7 +127,7 @@ public class Referrer {
 
     /**
      * @param refEstablishment the establishment
-     * @throws NullPointerException if refEstablishment is null
+     * @throws IllegalArgumentException if refEstablishment is null
      */
     public void setRefEstablishment(Establishment refEstablishment) {
         if(refEstablishment == null ) {
@@ -158,6 +148,5 @@ public class Referrer {
                 "\nNuméro de téléphone : " + this.phoneNumber +
                 "\nAddresse mail : " + this.addressMail +
                 "\nEtablissement  :\n" + (refEstablishment != null ? refEstablishment.toString() : "Aucun établissement");
-
     }
 }
