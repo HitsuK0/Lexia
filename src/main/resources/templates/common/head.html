@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="head(pageTitle)">
+<head th:fragment="head(pageTitle, extraCss)">
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title th:text="${pageTitle} + ' – Lexia'">Lexia</title>
 
     <link rel="icon" type="image/png" th:href="@{/images/logo_lexia.png}"/>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/lexia.css}"/>
+    <link th:if="${extraCss != null}" rel="stylesheet" th:href="@{${extraCss}}"/>
 
     <script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
 </head>
