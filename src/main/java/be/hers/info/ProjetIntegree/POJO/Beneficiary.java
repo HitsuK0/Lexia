@@ -2,7 +2,7 @@ package be.hers.info.ProjetIntegree.POJO;
 
 /**
  * @author Vatafu Jean, Rosman Loïs
- * @reviewer Halet Louis
+ * @reviewer Halet Louis, Nicolas Jean-François
  */
 
 import java.util.ArrayList;
@@ -102,6 +102,8 @@ public class Beneficiary extends User{
                        String emailAddress, Address address, int hourQuota, int educationLevel, Interpreter interpreter,
                        List<String> communicationLanguage, List<Appointment> appointmentList) {
 
+        super(login, password, lastName, firstName, phoneNumber, emailAddress, address);
+
         if(communicationLanguage == null || interpreter == null) {
             throw new IllegalArgumentException("[POJOBeneficiary] L'interprète de référence et langue(s) de communication ne peuvent pas être null");
         }
@@ -118,7 +120,6 @@ public class Beneficiary extends User{
             throw new IllegalArgumentException("[POJOBeneficiary] Le niveau d'éducation doit être compris entre "+EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
         }
 
-        super(login, password, lastName, firstName, phoneNumber, emailAddress, address);
         this.educationLevel = educationLevel;
         this.hourQuota = hourQuota;
         this.interpreter = interpreter;
