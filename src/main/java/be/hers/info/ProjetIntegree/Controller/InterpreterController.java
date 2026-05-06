@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 
 @Controller
 @RequestMapping("/interprete")
-public class InterpreteController {
+public class InterpreterController {
 
     // Temporaire
     @GetMapping("/planning")
@@ -20,5 +20,11 @@ public class InterpreteController {
     @GetMapping("/planning/beneficiaires")
     public String planningBeneficiaires(Model model) {
         return "interprete/planning-beneficiaires";
+    }
+
+    @GetMapping("/profil")
+    public String profil(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        return "interprete/profil";
     }
 }
