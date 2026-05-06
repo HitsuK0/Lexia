@@ -31,7 +31,13 @@ public class Absence {
         this.numAbsence = numAbsence;
         this.status = status;
         this.timeSlot = timeSlot;
-        this.reason = reason;
+
+        if(reason == null) {
+            this.reason = "";
+        } else {
+            this.reason = reason;
+        }
+
         this.privateReason = privateReason;
     }
 
