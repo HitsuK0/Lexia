@@ -47,12 +47,12 @@
                         <div class="row mb-3">
                             <div class="col">
                                 <label class="form-label small fw-semibold">Date début</label>
-                                <input type="date" id="dateDebut" class="form-control form-control-sm"
+                                <input type="date" id="dateStart" class="form-control form-control-sm"
                                        placeholder="Choisissez une date"/>
                             </div>
                             <div class="col">
-                                <label class="form-label small fw-semibold">Date fin</label>
-                                <input type="date" id="dateFin" class="form-control form-control-sm"
+                                <label class="form-label small fw-semibold">Date end</label>
+                                <input type="date" id="dateEnd" class="form-control form-control-sm"
                                        placeholder="Choisissez une date"/>
                             </div>
                         </div>
@@ -60,15 +60,15 @@
                         <div class="mb-2">
                             <label class="form-label small fw-semibold">Plage Horaire</label>
                             <div class="d-flex gap-2" id="plageHoraire">
-                                <select id="heureDebut" class="form-select form-select-sm" size="5"></select>
-                                <select id="heureFin" class="form-select form-select-sm" size="5"></select>
+                                <select id="startHour" class="form-select form-select-sm" size="5"></select>
+                                <select id="endHour" class="form-select form-select-sm" size="5"></select>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="journeeComplete"/>
-                                <label class="form-check-label small" for="journeeComplete">Journée complète</label>
+                                <input class="form-check-input" type="checkbox" id="fullDay"/>
+                                <label class="form-check-label small" for="fullDay">Journée complète</label>
                             </div>
                         </div>
 
@@ -88,13 +88,12 @@
 
                     <div class="modal-footer border-top justify-content-center gap-2">
                         <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm" id="btnEnvoyer">Envoyez la demande</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnSend">Envoyez la demande</button>
                     </div>
 
                 </div>
             </div>
         </div>
-
 
         <script th:src="@{/js/fullcalendar.min.js}"></script>
 
@@ -159,9 +158,10 @@
                     slotMaxTime: '19:00:00',
                     allDaySlot: false,
 
+                    <!-- Function that allows you to click on a blank range and this opens the associated modal -->
                     dateClick: function (info) {
-                        document.getElementById('dateDebut').value = info.dateStr.split('T')[0];
-                        document.getElementById('dateFin').value = info.dateStr.split('T')[0];
+                        document.getElementById('dateStart').value = info.dateStr.split('T')[0];
+                        document.getElementById('dateEnd').value = info.dateStr.split('T')[0];
 
                         if (info.dateStr.includes('T')) {
                             const heureStr = info.dateStr.split('T')[1].substring(0, 5);
@@ -170,8 +170,8 @@
                             const totalMinutes = h * 60 + minutesArrondies;
                             const heureArrondie = `${String(h).padStart(2, '0')}:${minutesArrondies === 0 ? '00' : '30'}`;
 
-                            genererHeures('heureFin', totalMinutes + 30, 19 * 60);
-                            document.getElementById('heureDebut').value = heureArrondie;
+                            generateHours('endHour', totalMinutes + 30, 19 * 60);
+                            document.getElementById('startHour').value = heureArrondie;
                         }
 
                         const modal = new bootstrap.Modal(document.getElementById('modalIndispo'));
@@ -181,6 +181,7 @@
                     height: 'calc(100vh - 170px)',
                     events: events,
 
+                    <!-- Allows you to set the icon according to the status of the appointment -->
                     eventContent: function (arg) {
                         const lines = arg.event.title.split('\n');
                         const isAnnule = lines[0].startsWith('Annulé');
@@ -202,10 +203,10 @@
 
                 calendar.render();
 
-                function genererHeures(selectId, debut, fin) {
+                function generateHours(selectId, start, end) {
                     const select = document.getElementById(selectId);
                     select.innerHTML = '<option value="" disabled selected>-- Heure --</option>';
-                    for (let t = debut; t <= fin; t += 5) {
+                    for (let t = start; t <= end; t += 5) {
                         const hh = String(Math.floor(t / 60)).padStart(2, '0');
                         const mm = String(t % 60).padStart(2, '0');
                         const option = document.createElement('option');
@@ -215,30 +216,30 @@
                     }
                 }
 
-                genererHeures('heureDebut', 8 * 60, 18 * 60 + 55);
-                genererHeures('heureFin', 8 * 60 + 5, 19 * 60);
+                generateHours('startHour', 8 * 60, 18 * 60 + 55);
+                generateHours('endHour', 8 * 60 + 5, 19 * 60);
 
-                document.getElementById('heureDebut').addEventListener('change', function () {
+                document.getElementById('startHour').addEventListener('change', function () {
                     const [h, m] = this.value.split(':').map(Number);
                     const totalMinutes = h * 60 + m;
-                    genererHeures('heureFin', totalMinutes + 5, 19 * 60);
+                    generateHours('endHour', totalMinutes + 5, 19 * 60);
                 });
 
-                document.getElementById('journeeComplete').addEventListener('change', function () {
-                    document.getElementById('heureDebut').disabled = this.checked;
-                    document.getElementById('heureFin').disabled = this.checked;
+                document.getElementById('fullDay').addEventListener('change', function () {
+                    document.getElementById('startHour').disabled = this.checked;
+                    document.getElementById('endHour').disabled = this.checked;
                 });
 
-                document.getElementById('btnEnvoyer').addEventListener('click', function () {
-                    let valide = true;
+                document.getElementById('btnSend').addEventListener('click', function () {
+                    let valid = true;
 
-                    const dateDebut = document.getElementById('dateDebut');
-                    const dateFin = document.getElementById('dateFin');
-                    const heureDebut = document.getElementById('heureDebut');
-                    const heureFin = document.getElementById('heureFin');
-                    const journeeComplete = document.getElementById('journeeComplete').checked;
+                    const dateStart = document.getElementById('dateStart');
+                    const dateEnd = document.getElementById('dateEnd');
+                    const startHour = document.getElementById('startHour');
+                    const endHour = document.getElementById('endHour');
+                    const fullDay = document.getElementById('fullDay').checked;
 
-                    [dateDebut, dateFin, heureDebut, heureFin].forEach(el => {
+                    [dateStart, dateEnd, startHour, endHour].forEach(el => {
                         el.classList.remove('is-invalid');
                         const feedback = el.nextElementSibling;
                         if (feedback && feedback.classList.contains('invalid-feedback')) {
@@ -246,27 +247,27 @@
                         }
                     });
 
-                    function afficherErreur(input, message) {
+                    function displayError(input, message) {
                         input.classList.add('is-invalid');
                         const div = document.createElement('div');
                         div.classList.add('invalid-feedback');
                         div.textContent = message;
                         input.insertAdjacentElement('afterend', div);
-                        valide = false;
+                        valid = false;
                     }
 
-                    if (!dateDebut.value) afficherErreur(dateDebut, 'La date de début est obligatoire.');
-                    if (!dateFin.value) afficherErreur(dateFin, 'La date de fin est obligatoire.');
-                    if (dateDebut.value && dateFin.value && dateFin.value < dateDebut.value) {
-                        afficherErreur(dateFin, 'La date de fin doit être après la date de début.');
+                    if (!dateStart.value) displayError(dateStart, 'La date de début est obligatoire.');
+                    if (!dateEnd.value) displayError(dateEnd, 'La date de end est obligatoire.');
+                    if (dateStart.value && dateEnd.value && dateEnd.value < dateStart.value) {
+                        displayError(dateEnd, 'La date de end doit être après la date de début.');
                     }
 
-                    if (!journeeComplete) {
-                        if (!heureDebut.value) afficherErreur(heureDebut, 'L\'heure de début est obligatoire.');
-                        if (!heureFin.value) afficherErreur(heureFin, 'L\'heure de fin est obligatoire.');
+                    if (!fullDay) {
+                        if (!startHour.value) displayError(startHour, 'L\'heure de début est obligatoire.');
+                        if (!endHour.value) displayError(endHour, 'L\'heure de end est obligatoire.');
                     }
 
-                    if (!valide) return;
+                    if (!valid) return;
 
                     bootstrap.Modal.getInstance(document.getElementById('modalIndispo')).hide();
                 });
