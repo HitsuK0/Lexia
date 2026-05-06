@@ -4,80 +4,71 @@
 -->
 
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/lexia.css">
-    <meta charset="UTF-8">
-    <title>Page d'accueil Resa</title>
-    <link rel="icon" type="image/png" href="/images/logo_lexia.png">
-</head>
-<body>
-    <script src="/js/bootstrap.bundle.min.js"></script>
-    <div th:replace="~{common/navbar :: navbar('accueil', 'COORDINATOR', 'Vanderheyden Quentin')}"></div>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
-    <div class="text-center my-5">
-        <p class="h1 text-primary">
-            Bienvenue, <span th:text="${userName}"></span>
-        </p>
-        <p class="h5">Gérez les plannings, les utilisateurs et les établissements de l’application en toute simplicité</p>
-    </div>
+<head th:replace="~{common/head :: head('Accueil')}'"></head>
 
-    <div class="container">
-        <div class="row g-4 justify-content-center">
-            <div class="col-12 col-sm-6 col-lg-4 d-flex">
-                <div class="card px-4 pb-3 shadow p-3 mb-5 bg-body-tertiary rounded w-100">
-                    <div class="card-body d-flex flex-column text-center">
-                        <h5 class="card-title fs-3 pb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar-date" viewBox="0 0 16 16">
-                                <path d="M6.445 11.688V6.354h-.633A13 13 0 0 0 4.5 7.16v.695c.375-.257.969-.62 1.258-.777h.012v4.61zm1.188-1.305c.047.64.594 1.406 1.703 1.406 1.258 0 2-1.066 2-2.871 0-1.934-.781-2.668-1.953-2.668-.926 0-1.797.672-1.797 1.809 0 1.16.824 1.77 1.676 1.77.746 0 1.23-.376 1.383-.79h.027c-.004 1.316-.461 2.164-1.305 2.164-.664 0-1.008-.45-1.05-.82zm2.953-2.317c0 .696-.559 1.18-1.184 1.18-.601 0-1.144-.383-1.144-1.2 0-.823.582-1.21 1.168-1.21.633 0 1.16.398 1.16 1.23"/>
-                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-                            </svg>
-                            Plannings
-                        </h5>
-                        <p class="card-text flex-grow-1 d-flex justify-content-center align-items-center">
-                            Consultez, créez et modifiez les plannings de tous les interprètes.<br><br>
-                            Ajoutez, supprimez ou modifiez des rendez-vous selon les besoins
-                        </p>
+    <body>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='Accueil', userRole='COORDINATOR', userName='Vanderheyden Quentin')}"></nav>
 
-                        <a th:href="@{/resa/planning}" class="card-link link-offset-2 fw-bold mt-auto">
-                            Vers l'action
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16">
-                                <path d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-sm-6 col-lg-4 d-flex">
-                <div class="card px-3 pb-3 shadow p-3 mb-5 bg-body-tertiary rounded w-100">
-                    <div class="card-body d-flex flex-column text-center">
-                        <h5 class="card-title fs-3 pb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-building" viewBox="0 0 16 16">
-                                <path d="M4 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
-                                <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3z"/>
-                            </svg>
-                            Etablissement
-                        </h5>
-
-                        <p class="card-text flex-grow-1 d-flex justify-content-center align-items-center">
-                            Ajoutez et gérez les établissements partenaires ainsi que leurs référents.
-                        </p>
-
-                        <a th:href="@{/resa/etablissement}" class="card-link link-offset-2 fw-bold mt-auto">
-                            Vers l'action
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16">
-                                <path d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
+        <div class="text-center my-5">
+            <p class="h1 text-primary">
+                Bienvenue, <span th:text="${userName}"></span>
+            </p>
+            <p class="h5">Gérez les plannings, les utilisateurs et les établissements de l’application en toute simplicité</p>
         </div>
-    </div>
 
-    <div th:replace="~{common/footer :: footer}"></div>
-</body>
-</html>
+        <div class="container">
+            <div class="row g-4 justify-content-center">
+                <div class="col-12 col-sm-6 col-lg-4 d-flex">
+                    <a th:href="@{/resa/planning-resa}" class="card-link link-offset-2 fw-bold mt-auto">
+
+                        <div class="card px-4 pb-3 shadow p-3 mb-5 bg-body-tertiary rounded w-100">
+                            <div class="card-body d-flex flex-column text-center">
+                                <h5 class="card-title fs-3 pb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar-date" viewBox="0 0 16 16">
+                                        <path d="M6.445 11.688V6.354h-.633A13 13 0 0 0 4.5 7.16v.695c.375-.257.969-.62 1.258-.777h.012v4.61zm1.188-1.305c.047.64.594 1.406 1.703 1.406 1.258 0 2-1.066 2-2.871 0-1.934-.781-2.668-1.953-2.668-.926 0-1.797.672-1.797 1.809 0 1.16.824 1.77 1.676 1.77.746 0 1.23-.376 1.383-.79h.027c-.004 1.316-.461 2.164-1.305 2.164-.664 0-1.008-.45-1.05-.82zm2.953-2.317c0 .696-.559 1.18-1.184 1.18-.601 0-1.144-.383-1.144-1.2 0-.823.582-1.21 1.168-1.21.633 0 1.16.398 1.16 1.23"/>
+                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                                    </svg>
+                                    Plannings
+                                </h5>
+                                <p class="card-text flex-grow-1 d-flex justify-content-center align-items-center">
+                                    Consultez, créez et modifiez les plannings de tous les interprètes.<br><br>
+                                    Ajoutez, supprimez ou modifiez des rendez-vous selon les besoins
+                                </p>
+                            </div>
+                        </div>
+
+                        Vers l'action
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="col-12 col-sm-6 col-lg-4 d-flex">
+                    <a th:href="@{/resa/etablissement}" class="card-link link-offset-2 fw-bold mt-auto">
+                        <div class="card px-3 pb-3 shadow p-3 mb-5 bg-body-tertiary rounded w-100">
+                            <div class="card-body d-flex flex-column text-center">
+                                <h5 class="card-title fs-3 pb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-building" viewBox="0 0 16 16">
+                                        <path d="M4 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
+                                        <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3z"/>
+                                    </svg>
+                                    Etablissement
+                                </h5>
+
+                                <p class="card-text flex-grow-1 d-flex justify-content-center align-items-center">
+                                    Ajoutez et gérez les établissements partenaires ainsi que leurs référents.
+                                </p>
+
+
+                                    Vers l'action
+                                    <i class="bi bi-arrow-left"></i>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        <div th:replace="~{common/footer :: footer}"></div>
+    </body>
