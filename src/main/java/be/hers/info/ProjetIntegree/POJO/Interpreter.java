@@ -10,6 +10,7 @@ import org.mindrot.jbcrypt.BCrypt;
  */
 
 public class Interpreter extends User{
+    private int numInterpreter;
     private int weeklyWorkHours;
     private List<Absence> absences;
     private List<Appointment> appointmentsList;
@@ -96,6 +97,13 @@ public class Interpreter extends User{
     }
 
     /**
+     * @return The id of interpreter
+     */
+    public int getNumInterpreter() {
+        return numInterpreter;
+    }
+
+    /**
      * @return The number of hours worked over the week
      */
     public int getWeeklyWorkHours() {
@@ -135,6 +143,14 @@ public class Interpreter extends User{
      */
     public List<Beneficiary> getBeneficiariesList() {
         return beneficiariesList;
+    }
+
+    /**
+     * Set the id for the interpreter
+     * @param numInterpreter The id to set
+     */
+    public void setNumInterpreter(int numInterpreter) {
+        this.numInterpreter = numInterpreter;
     }
 
     /**
@@ -188,13 +204,13 @@ public class Interpreter extends User{
     }
 
     /**
-     * @return a String containing the interpreter login, password, last name, first name, phone number, email address,
+     * @return a String containing the interpreter id, login, password, last name, first name, phone number, email address,
      *         address, weekly work hours, list of absences, list of professional skill, list of appointment,
      *         list of academic skill and list of beneficiaries
      */
     @Override
     public String toString() {
-        return "Interpreter" +
+        return "Interpreter n°" + numInterpreter +
                 "\n" + super.toString() +
                 "\nNombres d'heures prestées cette semaine : " + weeklyWorkHours +
                 "\nListes d'absences : " + absences +
