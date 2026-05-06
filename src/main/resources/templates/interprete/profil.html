@@ -21,8 +21,8 @@
                         <ul class="sidebar-nav">
                             <li><a href="#" class="sidebar-link active" data-section="infos">Informations personnelles</a></li>
                             <li><a href="#" class="sidebar-link" data-section="metiers">Compétences métiers</a></li>
-                            <li><a href="#" class="sidebar-link" data-section="academiques">Compétences académiques</a></li>
-                            <li><a href="#" class="sidebar-link" data-section="compte">Compte</a></li>
+                            <li><a href="#" class="sidebar-link" data-section="academics">Compétences académiques</a></li>
+                            <li><a href="#" class="sidebar-link" data-section="account">Compte</a></li>
                         </ul>
                     </div>
 
@@ -37,7 +37,7 @@
                                         <input type="text" class="form-control form-control-sm" value="Dupont" readonly
                                                id="inputNom"/>
                                         <button class="btn-edit" onclick="toggleEdit('inputNom', this)" title="Modifier">
-                                            &#9998;
+                                            <i class="bi bi-pencil"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -47,7 +47,7 @@
                                         <input type="text" class="form-control form-control-sm" value="Jean" readonly
                                                id="inputPrenom"/>
                                         <button class="btn-edit" onclick="toggleEdit('inputPrenom', this)" title="Modifier">
-                                            &#9998;
+                                            <i class="bi bi-pencil"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -55,7 +55,7 @@
                                     <label class="form-label small fw-semibold">Date de Naissance</label>
                                     <div class="input-edit-group">
                                         <input type="date" class="form-control form-control-sm" value="2003-12-10" readonly id="inputDateNaissance"/>
-                                        <button class="btn-edit" onclick="toggleEdit('inputDateNaissance', this)" title="Modifier">&#9998;</button>
+                                        <button class="btn-edit" onclick="toggleEdit('inputDateNaissance', this)" title="Modifier"><i class="bi bi-pencil"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -83,7 +83,7 @@
                                 <div class="input-edit-group align-items-start">
                                         <textarea class="form-control form-control-sm" rows="3" readonly id="inputDiplomes">Diplôme lié au métier</textarea>
                                     <button class="btn-edit mt-1" onclick="toggleEdit('inputDiplomes', this)" title="Modifier">
-                                        &#9998;
+                                        <i class="bi bi-pencil"></i>
                                     </button>
                                 </div>
                             </div>
@@ -94,11 +94,14 @@
                                 <div class="col-md-4">
                                     <label class="form-label small fw-semibold">Numéro Téléphone</label>
                                     <div class="input-edit-group">
-                                        <input type="text" class="form-control form-control-sm" value="+32 476 80 31 15"
+                                        <input type="text" class="form-control form-control-sm" value="0476 80 31 15"
                                                readonly id="inputTel"/>
                                         <button class="btn-edit" onclick="toggleEdit('inputTel', this)" title="Modifier">
-                                            &#9998;
+                                            <i class="bi bi-pencil"></i>
                                         </button>
+                                    </div>
+                                    <div id="phoneError" style="display:none; color:#dc3545; font-size:0.875em;">
+                                        Numéro de téléphone invalide. (ex: 0476791845)
                                     </div>
                                 </div>
                                 <div class="col-md-5">
@@ -107,8 +110,11 @@
                                         <input type="email" class="form-control form-control-sm"
                                                value="dupontjean03@gmail.com" readonly id="inputEmail"/>
                                         <button class="btn-edit" onclick="toggleEdit('inputEmail', this)" title="Modifier">
-                                            &#9998;
+                                            <i class="bi bi-pencil"></i>
                                         </button>
+                                    </div>
+                                    <div id="emailError" style="display:none; color:#dc3545; font-size:0.875em;">
+                                        Adresse e-mail invalide. (ex: jean.dupont@gmail.com)
                                     </div>
                                 </div>
                             </div>
@@ -122,7 +128,7 @@
                                             <input type="text" class="form-control form-control-sm"
                                                    value="Rue de la victoire, 3" readonly id="inputRue"/>
                                             <button class="btn-edit" onclick="toggleEdit('inputRue', this)" title="Modifier">
-                                                &#9998;
+                                                <i class="bi bi-pencil"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -132,7 +138,7 @@
                                             <input type="text" class="form-control form-control-sm" value="1000" readonly
                                                    id="inputCP"/>
                                             <button class="btn-edit" onclick="toggleEdit('inputCP', this)" title="Modifier">
-                                                &#9998;
+                                                <i class="bi bi-pencil"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -142,15 +148,8 @@
                                             <input type="text" class="form-control form-control-sm" value="Bruxelles" readonly
                                                    id="inputVille"/>
                                             <button class="btn-edit" onclick="toggleEdit('inputVille', this)" title="Modifier">
-                                                &#9998;
+                                                <i class="bi bi-pencil"></i>
                                             </button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" style="font-size:0.75rem; color:#888;">Pays</label>
-                                        <div class="input-edit-group">
-                                            <input type="text" class="form-control form-control-sm" value="Belgique" readonly id="inputPays"/>
-                                            <button class="btn-edit" onclick="toggleEdit('inputPays', this)" title="Modifier">&#9998;</button>
                                         </div>
                                     </div>
                                 </div>
@@ -162,35 +161,35 @@
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h6 class="fw-bold mb-0">Gérez vos types d'interprétation</h6>
                                 <button class="btn btn-outline-primary btn-sm"
-                                        data-bs-toggle="modal" data-bs-target="#modalAjoutCompetence"
+                                        data-bs-toggle="modal" data-bs-target="#modalAddSkill"
                                         data-type="metier">
                                     + Ajouter une compétence métier
                                 </button>
                             </div>
                             <p class="small text-muted mb-3">Compétences possédées</p>
                             <div class="d-flex flex-wrap gap-2" id="badgesMetiers">
-                                <span class="badge-competence">&#10003; Transcription</span>
+                                <span class="badge-skill"><i class="bi bi-check-lg"></i> Transcription</span>
                             </div>
                         </div>
 
-                        <div id="section-academiques" class="profil-section">
+                        <div id="section-academics" class="profil-section">
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h6 class="fw-bold mb-0">Gérez vos différentes matières</h6>
                                 <button class="btn btn-outline-primary btn-sm"
-                                        data-bs-toggle="modal" data-bs-target="#modalAjoutCompetence"
-                                        data-type="academique">
+                                        data-bs-toggle="modal" data-bs-target="#modalAddSkill"
+                                        data-type="academic">
                                     + Ajouter une compétence académique
                                 </button>
                             </div>
                             <p class="small text-muted mb-3">Matières possédées</p>
-                            <div class="d-flex flex-wrap gap-2" id="badgesAcademiques">
-                                <span class="badge-competence">&#10003; Histoire</span>
-                                <span class="badge-competence">&#10003; Mathématiques</span>
-                                <span class="badge-competence">&#10003; Economie</span>
+                            <div class="d-flex flex-wrap gap-2" id="badge-academics">
+                                <span class="badge-skill"><i class="bi bi-check-lg"></i> Histoire</span>
+                                <span class="badge-skill"><i class="bi bi-check-lg"></i> Mathématiques</span>
+                                <span class="badge-skill"><i class="bi bi-check-lg"></i> Economie</span>
                             </div>
                         </div>
 
-                        <div id="section-compte" class="profil-section">
+                        <div id="section-account" class="profil-section">
                             <div class="mb-4">
                                 <label class="form-label small fw-semibold">Identifiant</label>
                                 <input type="text" class="form-control form-control-sm" value="IT01" readonly
@@ -201,8 +200,8 @@
                                 <div class="input-edit-group">
                                     <input type="password" class="form-control form-control-sm" value="motdepasse123" readonly
                                            style="max-width:220px"/>
-                                    <button class="btn-edit" data-bs-toggle="modal" data-bs-target="#modalMdp" title="Modifier">
-                                        &#9998;
+                                    <button class="btn-edit" data-bs-toggle="modal" data-bs-target="#modalPassword" title="Modifier">
+                                        <i class="bi bi-pencil"></i>
                                     </button>
                                 </div>
                             </div>
@@ -210,7 +209,7 @@
 
                         <div class="d-flex justify-content-end mt-4 pt-2 border-top">
                             <button class="btn btn-primary btn-sm px-4">
-                                Sauvegarder &#128190;
+                                Sauvegarder <i class="bi bi-floppy"></i>
                             </button>
                         </div>
 
@@ -219,11 +218,11 @@
             </div>
         </div>
 
-        <div class="modal fade" id="modalAjoutCompetence" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="modalAddSkill" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
                     <div class="modal-header border-0 pb-0">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalAjoutTitre">Ajouter une compétence</h5>
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalAddTitle">Ajouter une compétence</h5>
                         <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                     </div>
                     <hr class="mx-3 mt-2"/>
@@ -241,32 +240,37 @@
             </div>
         </div>
 
-        <div class="modal fade" id="modalMdp" tabindex="-1" aria-labelledby="modalMdpLabel" aria-hidden="true">
+        <div class="modal fade" id="modalPassword" tabindex="-1" aria-labelledby="modalPasswordLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
                     <div class="modal-header border-0 pb-0">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalMdpLabel">Modifier le mot de passe</h5>
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalPasswordLabel">Modifier le mot de passe</h5>
                         <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                     </div>
                     <hr class="mx-3 mt-2"/>
                     <div class="modal-body px-4">
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Ancien mot de passe</label>
-                            <input type="password" class="form-control form-control-sm"
+                            <input type="password" class="form-control form-control-sm" id="inputOldPassword"
                                    placeholder="Entrez l'ancien mot de passe ..."/>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Nouveau mot de passe</label>
-                            <input type="password" class="form-control form-control-sm"
+                            <input type="password" class="form-control form-control-sm" id="inputNewPassword"
                                    placeholder="Entrez le nouveau mot de passe ..."/>
+                            <div id="passwordError" style="display:none; color:#dc3545; font-size:0.875em;"></div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Confirmer le mot de passe</label>
-                            <input type="password" class="form-control form-control-sm" placeholder="Confirmation ..."/>
+                            <input type="password" class="form-control form-control-sm" id="inputConfirmPassword"
+                                   placeholder="Confirmation ..."/>
+                            <div id="confirmError" style="display:none; color:#dc3545; font-size:0.875em;">
+                                Les mots de passe ne correspondent pas.
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer border-0 justify-content-center">
-                        <button type="button" class="btn btn-primary btn-sm px-5">Sauvegarder</button>
+                        <button type="button" class="btn btn-primary btn-sm px-5" onclick="savePassword()">Sauvegarder</button>
                     </div>
                 </div>
             </div>
@@ -275,6 +279,8 @@
         <div th:replace="~{common/footer :: footer}"></div>
 
         <script>
+            /* Handles sidebar navigation: on click, removes 'active' from all links and sections,
+            then sets the clicked link and its corresponding section as active. */
             document.querySelectorAll('.sidebar-link').forEach(link => {
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -285,6 +291,20 @@
                 });
             });
 
+            /* Allows you to check the email format before saving */
+            function isValidEmail(email) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            }
+
+            /* Allows you to check the phone number format before saving */
+            function isValidPhone(phone) {
+                const regex = /^[0-9\s]{7,15}$/;
+                return regex.test(phone);
+            }
+
+            /* Toggles a form field between readonly and editable mode,
+            and updates the edit button color to indicate the current state. */
             function toggleEdit(id, btn) {
                 const input = document.getElementById(id);
                 const isReadonly = input.hasAttribute('readonly');
@@ -293,6 +313,19 @@
                     input.focus();
                     btn.style.color = '#593196';
                 } else {
+                    if (id === 'inputEmail' && !isValidEmail(input.value)) {
+                        input.classList.add('is-invalid');
+                        document.getElementById('emailError').style.display = 'block';
+                        return;
+                    }
+                    if (id === 'inputTel' && !isValidPhone(input.value)) {
+                        input.classList.add('is-invalid');
+                        document.getElementById('phoneError').style.display = 'block';
+                        return;
+                    }
+                    document.getElementById('emailError').style.display = 'none';
+                    document.getElementById('phoneError').style.display = 'none';
+                    input.classList.remove('is-invalid');
                     input.setAttribute('readonly', true);
                     btn.style.color = '';
                 }
@@ -300,20 +333,24 @@
 
             const competences = {
                 metier: ['Transcription', 'Translittération', 'Translation'],
-                academique: ['Histoire', 'Anglais', 'Sciences', 'Mathématiques', 'Economie', 'Français', 'Géographie']
+                academic: ['Histoire', 'Anglais', 'Sciences', 'Mathématiques', 'Economie', 'Français', 'Géographie']
             };
 
-            document.getElementById('modalAjoutCompetence').addEventListener('show.bs.modal', function (e) {
+            /* When the "Add Skill" modal opens, populates the dropdown with only the skills
+            the user doesn't already own, based on the badges currently displayed. */
+            document.getElementById('modalAddSkill').addEventListener('show.bs.modal', function (e) {
                 const type = e.relatedTarget.dataset.type;
                 const select = document.getElementById('selectCompetence');
 
-                const badgesId = type === 'metier' ? 'badgesMetiers' : 'badgesAcademiques';
-                const possedees = Array.from(document.querySelectorAll(`#${badgesId} .badge-competence`))
-                    .map(b => b.textContent.replace('✓ ', '').trim());
+                const badgesId = type === 'metier' ? 'badgesMetiers' : 'badge-academics';
+                const possessed = Array.from(document.querySelectorAll(`#${badgesId} .badge-skill`))
+                    .map(b => b.querySelector('i')
+                    ? b.textContent.trim()
+                    : b.textContent.replace('✓ ', '').trim());
 
                 select.innerHTML = '<option value="" disabled selected>Choisissez une compétence</option>';
                 competences[type]
-                    .filter(c => !possedees.includes(c))
+                    .filter(c => !possessed.includes(c))
                     .forEach(comp => {
                         const option = document.createElement('option');
                         option.value = comp.toLowerCase();
@@ -321,6 +358,42 @@
                         select.appendChild(option);
                     });
             });
+
+            /* Verifies that the password contains at least 8 characters, one uppercase,
+            one lowercase, one number, and a special character.*/
+            function isValidPassword(password) {
+                const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+                return regex.test(password);
+            }
+
+            /* Validates the new password and its confirmation before closing the modal,
+             otherwise displays the corresponding errors. */
+            function savePassword() {
+                const newPassword = document.getElementById('inputNewPassword').value;
+                const confirmPassword = document.getElementById('inputConfirmPassword').value;
+                const passwordError = document.getElementById('passwordError');
+                const confirmError = document.getElementById('confirmError');
+
+                passwordError.style.display = 'none';
+                confirmError.style.display = 'none';
+
+                if (!isValidPassword(newPassword)) {
+                    passwordError.innerHTML = 'Le mot de passe doit contenir au minimum :<br>' +
+                        '- 8 caractères<br>' +
+                        '- 1 majuscule<br>' +
+                        '- 1 chiffre<br>' +
+                        '- 1 caractère spécial (!@#$%...)';
+                    passwordError.style.display = 'block';
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    confirmError.style.display = 'block';
+                    return;
+                }
+
+                bootstrap.Modal.getInstance(document.getElementById('modalPassword')).hide();
+            }
         </script>
     </body>
 </html>
