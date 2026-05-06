@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Beneficiary extends User{
+    private int numBeneficiary;
     private int hourQuota;
     private int educationLevel;
     private Interpreter interpreter;
@@ -133,6 +134,13 @@ public class Beneficiary extends User{
     }
 
     /**
+     * @return the id
+     */
+    public int getNumBeneficiary() {
+        return numBeneficiary;
+    }
+
+    /**
      * @return the number of quota hours
      */
     public int getHourQuota() {
@@ -185,6 +193,13 @@ public class Beneficiary extends User{
     public List<Appointment> getAppointmentList() {
 
         return appointmentList;
+    }
+
+    /**
+     * @param numBeneficiary the numBeneficiary to set
+     */
+    public void setNumBeneficiary(int numBeneficiary) {
+        this.numBeneficiary = numBeneficiary;
     }
 
     /**
@@ -266,7 +281,7 @@ public class Beneficiary extends User{
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Bénéficiaire").append(" :\n");
+        sb.append("Bénéficiaire n°").append(this.numBeneficiary).append(" :\n");
         sb.append(super.toString());
 
         if(this.interpreter == null) {
