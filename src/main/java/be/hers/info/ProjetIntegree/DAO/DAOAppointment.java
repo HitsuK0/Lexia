@@ -4,9 +4,11 @@ import be.hers.info.ProjetIntegree.POJO.*;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleTypes;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -410,6 +412,68 @@ public class DAOAppointment extends DAO<Appointment> {
         }
 
         return isUpdated;
+    }
+
+    public List<Appointment> findAllAppointmentToInterpreterAndDate(Interpreter i, String start, String end)throws SQLException{
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<Appointment> appointmentList = new ArrayList<>();
+        String query = "SELECT ap.numAppointment, ap.status, ap.local,ap.FKnumEtablishment,ap.FKTimeSlotBase,ap.FKTimeSlotPunctual,ap.FKnumBeneficiary " +
+                "FROM Appointment ap " +
+                "JOIN RDVInterpreter rdv ON rdv.numAppointment = ap.numAppointment " +
+                "LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = ap.FKTimeSlotBase " +
+                "LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = ap.FKTimeSlotPunctual " +
+                "JOIN Establishment e ON e.numEstablishment = ap.FKnumEtablishment " +
+                "JOIN Beneficiary b ON b.numBeneficiary = ap.FKnumBeneficiary " +
+                "WHERE rdv.numInterpreter = ? " +
+                "  AND ( " +
+                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') " +
+                "      OR " +
+                "      tsb.numTimeSlot IS NOT NULL" +
+                ");";
+
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, i.getNumInterprete());
+            prStat.setString(2, end);
+            prStat.setString(3, start);
+            resultSet = prStat.executeQuery();
+            DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+            DAOEstablishment daoEstablishment = new DAOEstablishment();
+            while(resultSet.next()){
+                String local = resultSet.getString("local");
+                List<String> listLocal = null;
+
+                if (local != null) {
+                    listLocal = Arrays.asList(local.split(","));
+
+                }
+
+                TimeSlot timeSlot = null;
+                int numAppointment = resultSet.getInt("numAppointment");
+
+                if(resultSet.getObject("FKTimeSlotBase") == null){
+                    DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+                    timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
+                }else{
+                    DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
+                    timeSlot = daoTimeSlotBase.find(resultSet.getInt("FKTimeSlotBase"));
+                }
+
+                appointmentList.add(new Appointment(
+                        numAppointment,
+                        resultSet.getString("status"),
+                        listLocal,
+                        daoBeneficiary.find(resultSet.getInt("FKnumBeneficiary")),//Je ne sais pas encore dire si c'est un full ou pas car il doit être modifier
+                        timeSlot,
+                        daoEstablishment.find(resultSet.getInt("FKnumEtablishment"))));//Implémenter findFull;
+            }
+
+
+        }finally {
+            closeStatement(prStat);
+        }
     }
 
 }
