@@ -45,7 +45,7 @@
                     </button>
 
                     <button type="button" class="btn btn-outline-primary btn-sm"
-                            data-bs-toggle="modal" data-bs-target="#modalEnvoi">
+                            data-bs-toggle="modal" data-bs-target="#modalSend">
                         <i class="bi bi-send"></i> Envoyer demandes
                     </button>
                 </div>
@@ -68,7 +68,7 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Bénéficiaires</label>
-                            <select id="rdvBeneficiaire" class="form-select form-select-sm">
+                            <select id="rdvBeneficiary" class="form-select form-select-sm">
                                 <option value="" disabled>Choisissez un bénéficiaire</option>
                                 <option value="vatafu-jean">Vatafu Jean</option>
                                 <option value="dupont-marie">Dupont Marie</option>
@@ -84,14 +84,14 @@
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Plage Horaire</label>
                             <div class="d-flex gap-2">
-                                <select id="rdvHeureDebut" class="form-select form-select-sm" size="5"></select>
-                                <select id="rdvHeureFin" class="form-select form-select-sm" size="5"></select>
+                                <select id="rdvHourStart" class="form-select form-select-sm" size="5"></select>
+                                <select id="rdvHourEnd" class="form-select form-select-sm" size="5"></select>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Matières</label>
-                            <select id="rdvMatiere" class="form-select form-select-sm">
+                            <select id="rdvAcademicSkill" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez une matière</option>
                                 <option value="mathematiques">Mathématiques</option>
                                 <option value="francais">Français</option>
@@ -124,25 +124,25 @@
 
                     <div class="modal-footer border-top justify-content-center gap-2">
                         <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm px-4" id="btnEnvoyerRDV">Envoyez la demande</button>
+                        <button type="button" class="btn btn-primary btn-sm px-4" id="btnSendRDV">Envoyez la demande</button>
                     </div>
 
                 </div>
             </div>
         </div>
 
-        <div class="modal fade" id="modalEnvoi" tabindex="-1" aria-labelledby="modalEnvoiLabel" aria-hidden="true">
+        <div class="modal fade" id="modalSend" tabindex="-1" aria-labelledby="modalSendLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
 
                     <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalEnvoiLabel">Envoyer les demandes</h5>
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalSendLabel">Envoyer les demandes</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <div class="modal-body px-4 py-3 text-center">
                         <p class="mb-1">Vous êtes sur le point d'envoyer</p>
-                        <p class="fw-bold fs-4 text-primary mb-1" id="nombreDemandes">0</p>
+                        <p class="fw-bold fs-4 text-primary mb-1" id="numberRequests">0</p>
                         <p class="mb-1">demande(s) à la coordinatrice.</p>
                         <p class="text-muted small">Cette action est irréversible.</p>
                     </div>
@@ -226,17 +226,18 @@
                     slotMaxTime: '19:00:00',
                     allDaySlot: false,
 
+                    <!-- Function that allows you to click on a blank range and this opens the associated modal -->
                     dateClick: function (info) {
                         document.getElementById('rdvDate').value = info.dateStr.split('T')[0];
 
                         if (info.dateStr.includes('T')) {
-                            const heureStr = info.dateStr.split('T')[1].substring(0, 5);
-                            const [h, m] = heureStr.split(':').map(Number);
-                            const minutesArrondies = m < 5 ? 0 : m;
-                            const totalMinutes = h * 60 + minutesArrondies;
-                            genererHeuresRdv('rdvHeureFin', totalMinutes + 5, 19 * 60);
-                            const heureArrondie = `${String(h).padStart(2, '0')}:${String(minutesArrondies).padStart(2, '0')}`;
-                            document.getElementById('rdvHeureDebut').value = heureArrondie;
+                            const hourStr = info.dateStr.split('T')[1].substring(0, 5);
+                            const [h, m] = hourStr.split(':').map(Number);
+                            const roundedMinutes = m < 5 ? 0 : m;
+                            const totalMinutes = h * 60 + roundedMinutes;
+                            generateHoursRdv('rdvHourEnd', totalMinutes + 5, 19 * 60);
+                            const roundedHour = `${String(h).padStart(2, '0')}:${String(roundedMinutes).padStart(2, '0')}`;
+                            document.getElementById('rdvHourStart').value = roundedHour;
                         }
 
                         const modal = new bootstrap.Modal(document.getElementById('modalRDV'));
@@ -246,6 +247,7 @@
                     height: 'calc(100vh - 170px)',
                     events: events,
 
+                    <!-- Allows you to set the icon according to the status of the appointment -->
                     eventContent: function (arg) {
                         const lines = arg.event.title.split('\n');
                         const enAttente = arg.event.extendedProps.enAttente;
@@ -265,17 +267,17 @@
                 calendar.render();
 
                 document.getElementById('modalRDV').addEventListener('show.bs.modal', function () {
-                    const nomBenef = document.getElementById('beneficiaireSelectionne').textContent;
-                    const select = document.getElementById('rdvBeneficiaire');
+                    const nameBenef = document.getElementById('beneficiaireSelectionne').textContent;
+                    const select = document.getElementById('rdvBeneficiary');
                     Array.from(select.options).forEach(option => {
-                        if (option.text === nomBenef) option.selected = true;
+                        if (option.text === nameBenef) option.selected = true;
                     });
                 });
 
-                function genererHeuresRdv(selectId, debut, fin) {
+                function generateHoursRdv(selectId, start, end) {
                     const select = document.getElementById(selectId);
                     select.innerHTML = '<option value="" disabled selected>-- Heure --</option>';
-                    for (let t = debut; t <= fin; t += 5) {
+                    for (let t = start; t <= end; t += 5) {
                         const hh = String(Math.floor(t / 60)).padStart(2, '0');
                         const mm = String(t % 60).padStart(2, '0');
                         const option = document.createElement('option');
@@ -285,30 +287,30 @@
                     }
                 }
 
-                genererHeuresRdv('rdvHeureDebut', 8 * 60, 18 * 60 + 55);
-                genererHeuresRdv('rdvHeureFin', 8 * 60 + 5, 19 * 60);
+                generateHoursRdv('rdvHourStart', 8 * 60, 18 * 60 + 55);
+                generateHoursRdv('rdvHourEnd', 8 * 60 + 5, 19 * 60);
 
-                document.getElementById('rdvHeureDebut').addEventListener('change', function () {
+                document.getElementById('rdvHourStart').addEventListener('change', function () {
                     const [h, m] = this.value.split(':').map(Number);
                     const totalMinutes = h * 60 + m;
-                    genererHeuresRdv('rdvHeureFin', totalMinutes + 5, 19 * 60);
+                    generateHoursRdv('rdvHourEnd', totalMinutes + 5, 19 * 60);
                 });
 
-                document.getElementById('modalEnvoi').addEventListener('show.bs.modal', function () {
+                document.getElementById('modalSend').addEventListener('show.bs.modal', function () {
                     const countRdv = events.filter(e => e.extendedProps.enAttente).length;
-                    document.getElementById('nombreDemandes').textContent = countRdv;
+                    document.getElementById('numberRequests').textContent = countRdv;
                 });
 
-                document.getElementById('btnEnvoyerRDV').addEventListener('click', function () {
-                    let valide = true;
+                document.getElementById('btnSendRDV').addEventListener('click', function () {
+                    let valid = true;
 
-                    const rdvBeneficiaire = document.getElementById('rdvBeneficiaire');
+                    const rdvBeneficiary = document.getElementById('rdvBeneficiary');
                     const rdvDate = document.getElementById('rdvDate');
-                    const rdvHeureDebut = document.getElementById('rdvHeureDebut');
-                    const rdvHeureFin = document.getElementById('rdvHeureFin');
-                    const rdvMatiere = document.getElementById('rdvMatiere');
+                    const rdvHourStart = document.getElementById('rdvHourStart');
+                    const rdvHourEnd = document.getElementById('rdvHourEnd');
+                    const rdvAcademicSkill = document.getElementById('rdvAcademicSkill');
 
-                    [rdvBeneficiaire, rdvDate, rdvHeureDebut, rdvHeureFin, rdvMatiere].forEach(el => {
+                    [rdvBeneficiary, rdvDate, rdvHourStart, rdvHourEnd, rdvAcademicSkill].forEach(el => {
                         el.classList.remove('is-invalid');
                         const feedback = el.nextElementSibling;
                         if (feedback && feedback.classList.contains('invalid-feedback')) {
@@ -316,61 +318,24 @@
                         }
                     });
 
-                    function afficherErreur(input, message) {
+                    function displayError(input, message) {
                         input.classList.add('is-invalid');
                         const div = document.createElement('div');
                         div.classList.add('invalid-feedback');
                         div.textContent = message;
                         input.insertAdjacentElement('afterend', div);
-                        valide = false;
+                        valid = false;
                     }
 
-                    if (!rdvBeneficiaire.value) afficherErreur(rdvBeneficiaire, 'Veuillez sélectionner un bénéficiaire.');
-                    if (!rdvDate.value) afficherErreur(rdvDate, 'La date est obligatoire.');
-                    if (!rdvHeureDebut.value) afficherErreur(rdvHeureDebut, 'L\'heure de début est obligatoire.');
-                    if (!rdvHeureFin.value) afficherErreur(rdvHeureFin, 'L\'heure de fin est obligatoire.');
-                    if (!rdvMatiere.value) afficherErreur(rdvMatiere, 'Veuillez sélectionner une matière.');
+                    if (!rdvBeneficiary.value) displayError(rdvBeneficiary, 'Veuillez sélectionner un bénéficiaire.');
+                    if (!rdvDate.value) displayError(rdvDate, 'La date est obligatoire.');
+                    if (!rdvHourStart.value) displayError(rdvHourStart, 'L\'heure de début est obligatoire.');
+                    if (!rdvHourEnd.value) displayError(rdvHourEnd, 'L\'heure de end est obligatoire.');
+                    if (!rdvAcademicSkill.value) displayError(rdvAcademicSkill, 'Veuillez sélectionner une matière.');
 
-                    if (!valide) return;
+                    if (!valid) return;
 
                     bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
-
-                    document.getElementById('btnEnvoyerRDV').addEventListener('click', function () {
-                        let valide = true;
-
-                        const rdvBeneficiaire = document.getElementById('rdvBeneficiaire');
-                        const rdvDate = document.getElementById('rdvDate');
-                        const rdvHeureDebut = document.getElementById('rdvHeureDebut');
-                        const rdvHeureFin = document.getElementById('rdvHeureFin');
-                        const rdvMatiere = document.getElementById('rdvMatiere');
-
-                        [rdvBeneficiaire, rdvDate, rdvHeureDebut, rdvHeureFin, rdvMatiere].forEach(el => {
-                            el.classList.remove('is-invalid');
-                            const feedback = el.nextElementSibling;
-                            if (feedback && feedback.classList.contains('invalid-feedback')) {
-                                feedback.remove();
-                            }
-                        });
-
-                        function afficherErreur(input, message) {
-                            input.classList.add('is-invalid');
-                            const div = document.createElement('div');
-                            div.classList.add('invalid-feedback');
-                            div.textContent = message;
-                            input.insertAdjacentElement('afterend', div);
-                            valide = false;
-                        }
-
-                        if (!rdvBeneficiaire.value) afficherErreur(rdvBeneficiaire, 'Veuillez sélectionner un bénéficiaire.');
-                        if (!rdvDate.value) afficherErreur(rdvDate, 'La date est obligatoire.');
-                        if (!rdvHeureDebut.value) afficherErreur(rdvHeureDebut, 'L\'heure de début est obligatoire.');
-                        if (!rdvHeureFin.value) afficherErreur(rdvHeureFin, 'L\'heure de fin est obligatoire.');
-                        if (!rdvMatiere.value) afficherErreur(rdvMatiere, 'Veuillez sélectionner une matière.');
-
-                        if (!valide) return;
-
-                        bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
-                    });
                 });
             });
         </script>
