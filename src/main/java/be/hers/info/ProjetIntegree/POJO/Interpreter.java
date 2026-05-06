@@ -46,10 +46,11 @@ public class Interpreter extends User{
      */
     public Interpreter(String login, String password, String lastName, String firstName, String phoneNumber,
                        String emailAddress, int weeklyWorkHours, Address address) {
+        super(login, password, lastName, firstName, phoneNumber, emailAddress, address);
+
         if (weeklyWorkHours < 0)
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
 
-        super(login, password, lastName, firstName, phoneNumber, emailAddress, address);
         this.weeklyWorkHours = weeklyWorkHours;
         this.absences = new ArrayList<>();
         this.appointmentsList = new ArrayList<>();
@@ -81,10 +82,11 @@ public class Interpreter extends User{
                        String emailAddress, Address address, int weeklyWorkHours, List<Absence> absences,
                        List<Appointment> appointmentsList, List<ProfessionalSkill> professionalSkillsList,
                        List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList) {
+        super(login, password, lastName, firstName, phoneNumber, emailAddress, address);
+
         if (weeklyWorkHours < 0)
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
 
-        super(login, password, lastName, firstName, phoneNumber, emailAddress, address);
         this.weeklyWorkHours = weeklyWorkHours;
         this.absences = absences;
         this.professionalSkillsList = professionalSkillsList;
@@ -193,7 +195,7 @@ public class Interpreter extends User{
     @Override
     public String toString() {
         return "Interpreter" +
-                "\n" + super() +
+                "\n" + super.toString() +
                 "\nNombres d'heures prestées cette semaine : " + weeklyWorkHours +
                 "\nListes d'absences : " + absences +
                 "\nListes de rendez-vous : " + appointmentsList +
