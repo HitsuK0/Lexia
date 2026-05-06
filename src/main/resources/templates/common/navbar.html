@@ -42,7 +42,7 @@
                 <li class="nav-item">
                     <a th:href="@{/interprete/indisponibilites}"
                        th:class="${activeTab == 'indisponibilites'} ? 'nav-link active' : 'nav-link'">
-                        Mes Disponibilités
+                        Mes Indisponibilités
                     </a>
                 </li>
                 <li class="nav-item">
@@ -94,8 +94,8 @@
         <div class="d-flex align-items-center gap-3">
             <span class="fw-semibold"
                   th:text="${userName != null ? userName : 'NOM Prenom'}">NOM Prenom</span>
-            <a th:href="@{/logout}" class="btn btn-primary">
-                Se Déconnecter
+            <a th:href="@{/login}" class="btn btn-primary">
+                <i class="bi bi-box-arrow-right"></i> Se Déconnecter
             </a>
         </div>
     </div>

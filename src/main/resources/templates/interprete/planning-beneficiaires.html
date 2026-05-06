@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+
+    <head th:replace="~{common/head :: head('Mes Bénéficiaires', '/css/interprete/planning.css')}"></head>
+
+    <body>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole='INTERPRETER', userName='Jean Dupont')}"></nav>
+
+        <div class="container-fluid py-2 px-5">
+
+            <div class="text-center mb-2">
+                <h1 class="fw-bold text-primary">Planning de vos bénéficiaires</h1>
+            </div>
+
+            <div class="d-flex align-items-center mb-2" style="position: relative;">
+
+                <div class="btn-group">
+                    <a th:href="@{/interprete/planning}" class="btn btn-outline-primary btn-sm">Mon Planning</a>
+                    <a th:href="@{/interprete/planning/beneficiaires}" class="btn btn-primary btn-sm">Mes Bénéficiaires</a>
+                </div>
+
+                <div class="d-flex gap-3 small text-muted" style="position: absolute; left: 50%; transform: translateX(-50%);">
+                    <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;&nbsp;</span> Demande en attente</span>
+                    <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Rendez-vous confirmé</span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
+                                id="dropdownBeneficiaire" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="beneficiaireSelectionne">Vatafu Jean</span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownBeneficiaire">
+                            <li><a class="dropdown-item" href="#" onclick="changerBeneficiaire('Vatafu Jean')">Vatafu Jean</a>
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="changerBeneficiaire('Dupont Marie')">Dupont Marie</a>
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="changerBeneficiaire('Martin Paul')">Martin Paul</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#modalRDV">
+                        <i class="bi bi-plus-circle"></i> Demander un RDV
+                    </button>
+
+                    <button type="button" class="btn btn-outline-primary btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#modalSend">
+                        <i class="bi bi-send"></i> Envoyer demandes
+                    </button>
+                </div>
+
+            </div>
+
+            <div id="calendar"></div>
+        </div>
+
+        <div class="modal fade" id="modalRDV" tabindex="-1" aria-labelledby="modalRDVLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalRDVLabel">Demander un Rendez-vous</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body px-4 py-3">
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Bénéficiaires</label>
+                            <select id="rdvBeneficiary" class="form-select form-select-sm">
+                                <option value="" disabled>Choisissez un bénéficiaire</option>
+                                <option value="vatafu-jean">Vatafu Jean</option>
+                                <option value="dupont-marie">Dupont Marie</option>
+                                <option value="martin-paul">Martin Paul</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Date</label>
+                            <input type="date" id="rdvDate" class="form-control form-control-sm"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Plage Horaire</label>
+                            <div class="d-flex gap-2">
+                                <select id="rdvHourStart" class="form-select form-select-sm" size="5"></select>
+                                <select id="rdvHourEnd" class="form-select form-select-sm" size="5"></select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Matières</label>
+                            <select id="rdvAcademicSkill" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une matière</option>
+                                <option value="mathematiques">Mathématiques</option>
+                                <option value="francais">Français</option>
+                                <option value="anglais">Anglais</option>
+                                <option value="sciences">Sciences</option>
+                                <option value="histoire">Histoire</option>
+                                <option value="cours">Cours</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Compétences requises</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="compTranscription" checked/>
+                                    <label class="form-check-label small" for="compTranscription">Transcription</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="compTranslitteration" checked/>
+                                    <label class="form-check-label small" for="compTranslitteration">Translittération</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="compTranslation" checked/>
+                                    <label class="form-check-label small" for="compTranslation">Translation</label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm px-4" id="btnSendRDV">Envoyez la demande</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalSend" tabindex="-1" aria-labelledby="modalSendLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalSendLabel">Envoyer les demandes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body px-4 py-3 text-center">
+                        <p class="mb-1">Vous êtes sur le point d'envoyer</p>
+                        <p class="fw-bold fs-4 text-primary mb-1" id="numberRequests">0</p>
+                        <p class="mb-1">demande(s) à la coordinatrice.</p>
+                        <p class="text-muted small">Cette action est irréversible.</p>
+                    </div>
+
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">Confirmer l'envoi</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <script th:src="@{/js/fullcalendar.min.js}"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                const events = [
+                    {
+                        title: 'Mathématiques\n08h30 - 10h30\nTranscription • Mr.Houchard\nLocal M5',
+                        start: '2026-03-02T08:30:00',
+                        end: '2026-03-02T10:30:00',
+                        color: '#b39ddb',
+                        extendedProps: {enAttente: false}
+                    },
+                    {
+                        title: 'Cours\nTranscription • N.Prenom\nLocal X',
+                        start: '2026-03-04T09:00:00',
+                        end: '2026-03-04T11:00:00',
+                        color: '#b39ddb',
+                        extendedProps: {enAttente: false}
+                    },
+                    {
+                        title: 'Cours\nTranscription • N.Prenom\nLocal X',
+                        start: '2026-03-03T11:00:00',
+                        end: '2026-03-03T13:00:00',
+                        color: '#b39ddb',
+                        extendedProps: {enAttente: false}
+                    },
+                    {
+                        title: 'Cours\nTranslittération • N.Prenom\nLocal X',
+                        start: '2026-03-02T13:00:00',
+                        end: '2026-03-02T15:00:00',
+                        color: '#f0ad4e',
+                        extendedProps: {enAttente: true}
+                    },
+                    {
+                        title: 'Cours\nTranslittération • N.Prenom\nLabo X',
+                        start: '2026-03-05T09:00:00',
+                        end: '2026-03-05T11:30:00',
+                        color: '#f0ad4e',
+                        extendedProps: {enAttente: true}
+                    },
+                    {
+                        title: 'Cours\nTranslittération • N.Prenom\nLocal X',
+                        start: '2026-03-03T14:00:00',
+                        end: '2026-03-03T16:00:00',
+                        color: '#f0ad4e',
+                        extendedProps: {enAttente: true}
+                    },
+                    {
+                        title: 'Sciences\nTranslittération • Mme.Hendrix\nLabo Scientifique Nº2',
+                        start: '2026-03-04T15:00:00',
+                        end: '2026-03-04T17:00:00',
+                        color: '#f0ad4e',
+                        extendedProps: {enAttente: true}
+                    }
+                ];
+
+                const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+                    locale: 'fr',
+                    initialView: 'timeGridWeek',
+                    initialDate: '2026-03-02',
+                    headerToolbar: {
+                        left: 'prev',
+                        center: 'title',
+                        right: 'next'
+                    },
+                    slotMinTime: '08:00:00',
+                    slotMaxTime: '19:00:00',
+                    allDaySlot: false,
+
+                    <!-- Function that allows you to click on a blank range and this opens the associated modal -->
+                    dateClick: function (info) {
+                        document.getElementById('rdvDate').value = info.dateStr.split('T')[0];
+
+                        if (info.dateStr.includes('T')) {
+                            const hourStr = info.dateStr.split('T')[1].substring(0, 5);
+                            const [h, m] = hourStr.split(':').map(Number);
+                            const roundedMinutes = m < 5 ? 0 : m;
+                            const totalMinutes = h * 60 + roundedMinutes;
+                            generateHoursRdv('rdvHourEnd', totalMinutes + 5, 19 * 60);
+                            const roundedHour = `${String(h).padStart(2, '0')}:${String(roundedMinutes).padStart(2, '0')}`;
+                            document.getElementById('rdvHourStart').value = roundedHour;
+                        }
+
+                        const modal = new bootstrap.Modal(document.getElementById('modalRDV'));
+                        modal.show();
+                    },
+
+                    height: 'calc(100vh - 170px)',
+                    events: events,
+
+                    <!-- Allows you to set the icon according to the status of the appointment -->
+                    eventContent: function (arg) {
+                        const lines = arg.event.title.split('\n');
+                        const enAttente = arg.event.extendedProps.enAttente;
+
+                        const icone = enAttente
+                            ? '<i class="bi bi-hourglass-split" style="float:right; font-size:0.85rem;"></i>'
+                            : '';
+
+                        const html = lines.map((l, i) =>
+                            `<div class="${i === 0 ? 'fw-bold' : 'small'}">${l}</div>`
+                        ).join('');
+
+                        return {html: `<div class="p-1">${icone}${html}</div>`};
+                    }
+                });
+
+                calendar.render();
+
+                document.getElementById('modalRDV').addEventListener('show.bs.modal', function () {
+                    const nameBenef = document.getElementById('beneficiaireSelectionne').textContent;
+                    const select = document.getElementById('rdvBeneficiary');
+                    Array.from(select.options).forEach(option => {
+                        if (option.text === nameBenef) option.selected = true;
+                    });
+                });
+
+                function generateHoursRdv(selectId, start, end) {
+                    const select = document.getElementById(selectId);
+                    select.innerHTML = '<option value="" disabled selected>-- Heure --</option>';
+                    for (let t = start; t <= end; t += 5) {
+                        const hh = String(Math.floor(t / 60)).padStart(2, '0');
+                        const mm = String(t % 60).padStart(2, '0');
+                        const option = document.createElement('option');
+                        option.value = `${hh}:${mm}`;
+                        option.textContent = `${hh}:${mm}`;
+                        select.appendChild(option);
+                    }
+                }
+
+                generateHoursRdv('rdvHourStart', 8 * 60, 18 * 60 + 55);
+                generateHoursRdv('rdvHourEnd', 8 * 60 + 5, 19 * 60);
+
+                document.getElementById('rdvHourStart').addEventListener('change', function () {
+                    const [h, m] = this.value.split(':').map(Number);
+                    const totalMinutes = h * 60 + m;
+                    generateHoursRdv('rdvHourEnd', totalMinutes + 5, 19 * 60);
+                });
+
+                document.getElementById('modalSend').addEventListener('show.bs.modal', function () {
+                    const countRdv = events.filter(e => e.extendedProps.enAttente).length;
+                    document.getElementById('numberRequests').textContent = countRdv;
+                });
+
+                document.getElementById('btnSendRDV').addEventListener('click', function () {
+                    let valid = true;
+
+                    const rdvBeneficiary = document.getElementById('rdvBeneficiary');
+                    const rdvDate = document.getElementById('rdvDate');
+                    const rdvHourStart = document.getElementById('rdvHourStart');
+                    const rdvHourEnd = document.getElementById('rdvHourEnd');
+                    const rdvAcademicSkill = document.getElementById('rdvAcademicSkill');
+
+                    [rdvBeneficiary, rdvDate, rdvHourStart, rdvHourEnd, rdvAcademicSkill].forEach(el => {
+                        el.classList.remove('is-invalid');
+                        const feedback = el.nextElementSibling;
+                        if (feedback && feedback.classList.contains('invalid-feedback')) {
+                            feedback.remove();
+                        }
+                    });
+
+                    function displayError(input, message) {
+                        input.classList.add('is-invalid');
+                        const div = document.createElement('div');
+                        div.classList.add('invalid-feedback');
+                        div.textContent = message;
+                        input.insertAdjacentElement('afterend', div);
+                        valid = false;
+                    }
+
+                    if (!rdvBeneficiary.value) displayError(rdvBeneficiary, 'Veuillez sélectionner un bénéficiaire.');
+                    if (!rdvDate.value) displayError(rdvDate, 'La date est obligatoire.');
+                    if (!rdvHourStart.value) displayError(rdvHourStart, 'L\'heure de début est obligatoire.');
+                    if (!rdvHourEnd.value) displayError(rdvHourEnd, 'L\'heure de end est obligatoire.');
+                    if (!rdvAcademicSkill.value) displayError(rdvAcademicSkill, 'Veuillez sélectionner une matière.');
+
+                    if (!valid) return;
+
+                    bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
+                });
+            });
+        </script>
+
+        <div th:replace="~{common/footer :: footer}"></div>
+    </body>
+</html>
