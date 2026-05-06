@@ -2,7 +2,7 @@ package be.hers.info.ProjetIntegree.POJO;
 
 /**
  * @author Rosman Loïs
- * @reviewer
+ * @reviewer Nicolas Jean-François
  */
 
 public abstract class User {
