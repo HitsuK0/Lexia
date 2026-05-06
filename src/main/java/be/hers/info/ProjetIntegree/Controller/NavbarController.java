@@ -30,7 +30,7 @@ public class NavbarController {
      * @return HTML path interprete/indisponibilites if any user connected, redirect:/login if no user
      * connected (or in case of any other issue)
      */
-    @GetMapping("/interprete/indisponibilites")
+    @GetMapping("interprete/indisponibilites")
     public String displayAbsencesPage(HttpSession session, Model model) {
         User connectedUser = (User) session.getAttribute("user");
 
@@ -55,6 +55,6 @@ public class NavbarController {
         model.addAttribute("userName", connectedUser.getFirstName()+" "+connectedUser.getLastName());
         model.addAttribute("activeTab", "indisponibilites");
 
-        return "/interprete/indisponibilites";
+        return "interprete/indisponibilites";
     }
 }
