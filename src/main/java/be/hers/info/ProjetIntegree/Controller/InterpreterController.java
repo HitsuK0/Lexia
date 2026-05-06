@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 
 @Controller
 @RequestMapping("/interprete")
-public class InterpreteController {
+public class InterpreterController {
 
     // Temporaire
     @GetMapping("/planning")
