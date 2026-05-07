@@ -147,7 +147,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
             prStatInterpreter.setString(2, objectToInsertInDB.getPassword());
             prStatInterpreter.setString(3, objectToInsertInDB.getLastName());
             prStatInterpreter.setString(4, objectToInsertInDB.getFirstName());
-            prStatInterpreter.setString(5, objectToInsertInDB.getEmail());
+            prStatInterpreter.setString(5, objectToInsertInDB.getEmailAddress());
             prStatInterpreter.setString(6, objectToInsertInDB.getPhoneNumber());
             prStatInterpreter.setInt(7, objectToInsertInDB.getWeeklyWorkHours());
             prStatInterpreter.setInt(8, objectToInsertInDB.getAddress().getNumAddress());
@@ -216,7 +216,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
             prStat.setString(2, objectToUpdateInDB.getPassword());
             prStat.setString(3, objectToUpdateInDB.getLastName());
             prStat.setString(4, objectToUpdateInDB.getFirstName());
-            prStat.setString(5, objectToUpdateInDB.getEmail());
+            prStat.setString(5, objectToUpdateInDB.getEmailAddress());
             prStat.setString(6, objectToUpdateInDB.getPhoneNumber());
             prStat.setInt(7, objectToUpdateInDB.getWeeklyWorkHours());
             prStat.setInt(8, objectToUpdateInDB.getAddress().getNumAddress());

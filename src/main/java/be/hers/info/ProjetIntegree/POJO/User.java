@@ -1,5 +1,7 @@
 package be.hers.info.ProjetIntegree.POJO;
 
+import java.util.ArrayList;
+
 /**
  * @author Rosman Loïs
  * @reviewer Nicolas Jean-François
@@ -24,7 +26,7 @@ public abstract class User {
         this.firstName = "";
         this.phoneNumber = "";
         this.emailAddress = "";
-        this.address = null;
+        this.address = new Address();
     }
 
     /**
