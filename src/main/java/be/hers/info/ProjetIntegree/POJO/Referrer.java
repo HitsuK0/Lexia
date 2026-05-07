@@ -11,19 +11,22 @@ public class Referrer {
     private String surname;
     private String phoneNumber;
     private String addressMail;
+    private int numReferrer;
     private Establishment refEstablishment;
+
 
     /**
      * Initialize a Referrer with refEstablishment, addressMail, phoneNumber, surname and name
+     *
      * @param refEstablishment the establishment where the referrer works
-     * @param addressMail the mail of the referrer
-     * @param phoneNumber the phone number
-     * @param surname the surname of the referrer
-     * @param name the name of the referrer
+     * @param addressMail      the mail of the referrer
+     * @param phoneNumber      the phone number
+     * @param surname          the surname of the referrer
+     * @param name             the name of the referrer
      * @throws IllegalArgumentException if refEstablishment, addressMail, phoneNumber,surname or name is null
      */
     public Referrer(Establishment refEstablishment, String addressMail, String phoneNumber, String surname, String name) {
-        if(refEstablishment == null || addressMail == null || phoneNumber == null || surname == null || name == null ) {
+        if (refEstablishment == null || addressMail == null || phoneNumber == null || surname == null || name == null) {
             throw new IllegalArgumentException();
         }
 
@@ -82,11 +85,19 @@ public class Referrer {
     }
 
     /**
+     * @return the id of the referrer
+     */
+    public int getNumReferrer() {
+        return numReferrer;
+    }
+
+
+    /**
      * @param name the name
      * @throws IllegalArgumentException if name is null
      */
     public void setName(String name) {
-        if(name == null ) {
+        if (name == null) {
             throw new IllegalArgumentException("[POJOReferrer] Le prénom ne peut pas être null");
         }
         this.name = name;
@@ -97,7 +108,7 @@ public class Referrer {
      * @throws IllegalArgumentException if surname is null
      */
     public void setSurname(String surname) {
-        if(surname == null ) {
+        if (surname == null) {
             throw new IllegalArgumentException("[POJOReferrer] Le nom ne peut pas être null");
         }
         this.surname = surname;
@@ -108,7 +119,7 @@ public class Referrer {
      * @throws IllegalArgumentException if phoneNumber is null
      */
     public void setPhoneNumber(String phoneNumber) {
-        if(phoneNumber == null ) {
+        if (phoneNumber == null) {
             throw new IllegalArgumentException("[POJOReferrer] Le numéro de téléphone ne peut pas être null");
         }
         this.phoneNumber = phoneNumber;
@@ -119,7 +130,7 @@ public class Referrer {
      * @throws IllegalArgumentException if addressMail is null
      */
     public void setAddressMail(String addressMail) {
-        if(addressMail == null ) {
+        if (addressMail == null) {
             throw new IllegalArgumentException("[POJOReferrer] L'adresse mail ne peut pas être null");
         }
         this.addressMail = addressMail;
@@ -130,17 +141,25 @@ public class Referrer {
      * @throws IllegalArgumentException if refEstablishment is null
      */
     public void setRefEstablishment(Establishment refEstablishment) {
-        if(refEstablishment == null ) {
+        if (refEstablishment == null) {
             throw new IllegalArgumentException("[POJOReferrer] L'établissement ne peut pas être null ou vide");
         }
         this.refEstablishment = refEstablishment;
+    }
+
+
+    /**
+     * @param numReferrer the id of the referrer
+     */
+    public void setNumReferrer(int numReferrer) {
+        this.numReferrer = numReferrer;
     }
 
     /**
      * @return a String containing the name and the surname of the referrer, the phone number, the mail address,
      * and the establishment.
      */
-    public String toString(){
+    public String toString() {
 
         return "Rérérant" +
                 "\nNom : " + this.name +
@@ -149,4 +168,5 @@ public class Referrer {
                 "\nAddresse mail : " + this.addressMail +
                 "\nEtablissement  :\n" + (refEstablishment != null ? refEstablishment.toString() : "Aucun établissement");
     }
+
 }
