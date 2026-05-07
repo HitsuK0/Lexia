@@ -18,15 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Searches for the establishment whose identifier matches the int passed as a parameter and
- * create this establishment with his numEstablishment, his name and his phoneNumber.
- * @param objectToSearchInDB the identifier of the establishment to search for in the table.
- * @return The establishment whose identifier matches the int passed as a parameter.
- * null if there is no establishment matching the int passed as a parameter.
- * @throws SQLException In case of any SQL problems encountered with this method.
- */
 public class DAOEstablishment extends DAO<Establishment>{
+    /**
+     * Searches for the establishment whose identifier matches the int passed as a parameter and
+     * create this establishment with his numEstablishment, his name and his phoneNumber.
+     * @param objectToSearchInDB the identifier of the establishment to search for in the table.
+     * @return The establishment whose identifier matches the int passed as a parameter.
+     * null if there is no establishment matching the int passed as a parameter.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
     @Override
     public Establishment find(int objectToSearchInDB) throws SQLException {
         PreparedStatement prStat = null;
@@ -64,7 +64,7 @@ public class DAOEstablishment extends DAO<Establishment>{
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
     @Override
-    public List findAll() throws SQLException {
+    public List<Establishment> findAll() throws SQLException {
         List<Establishment> listEstablishmentFind = new ArrayList();
         Establishment establishmentFind = null;
 
@@ -123,7 +123,7 @@ public class DAOEstablishment extends DAO<Establishment>{
             String strEducationLevel = String.join(",", listStrEducationLevel);
 
             int nbLinesInsert = 0;
-            for(int indexAddresses = 0; indexAddresses < addresses.size(); indexAddresses++){
+            for(int indexAddresses = 0; indexAddresses < addresses.size(); indexAddresses++) {
                 prStat.setString(1, objectToInsertInDB.getNameBuilding());
                 prStat.setString(2, objectToInsertInDB.getPhoneNumber());
                 prStat.setString(3, strEducationLevel);
@@ -132,6 +132,19 @@ public class DAOEstablishment extends DAO<Establishment>{
                 prStat.registerReturnParameter(5, OracleTypes.INTEGER);
 
                 nbLinesInsert += prStat.executeUpdate();
+
+                rs = prStat.getReturnResultSet();
+                if (rs.next()) {
+                    int id = rs.getInt(5);
+                    objectToInsertInDB.setNumEstablishment(id);
+
+                    if (!objectToInsertInDB.getReferrers().isEmpty()) {
+                        for (Referrer i : objectToInsertInDB.getReferrers()) {
+                            if (!addReferrerAtEstablishment(id, i.getNumReferrer()))
+                                throw new SQLException("[DAOEstablishment] erreur lors de l'ajout dans la table Work");
+                        }
+                    }
+                }
             }
 
             if(nbLinesInsert == addresses.size())
@@ -143,6 +156,29 @@ public class DAOEstablishment extends DAO<Establishment>{
 
         return isInserted;
     }
+
+    public boolean addReferrerAtEstablishment(int numEstablishment, int numReferrer) throws SQLException {
+        boolean isInserted = false;
+        PreparedStatement prStat = null;
+        String query = """
+                INSERT INTO Work (numEstablishment, numReferrer)
+                VALUES (?, ?)
+                """;
+
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numEstablishment);
+            prStat.setInt(2, numReferrer);
+            int nbLinesInsert = prStat.executeUpdate();
+            if(nbLinesInsert > 0)
+                isInserted = true;
+        }finally {
+            closeStatement(prStat);
+        }
+
+        return isInserted;
+    }
+
 
     /**
      * Precondition: the establishment passed as a parameter cannot be null.
