@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+
+    <head th:replace="~{common/head :: head('Accueil', null)}"></head>
+
+    <body>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='accueil', userRole='COORDINATOR', userName=${userName})}"></nav>
+
+        <div class="container py-5">
+
+            <div class="text-center mb-5">
+                <h1 class="fw-bold text-primary">
+                    Bienvenue, <span th:text="${#strings.arraySplit(userName, ' ')[1]}"></span> !
+                </h1>
+                <p class="text-muted fs-5">
+                    Gérez les plannings, les utilisateurs et les établissements de l'application en toute simplicité
+                </p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+
+                <div class="col-md-5">
+                    <a th:href="@{/coordinatrice/plannings}" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 accueil-card">
+                            <div class="card-body text-center px-4 py-4">
+                                <h4 class="card-title fw-bold text-dark mb-3">
+                                    <i class="bi bi-calendar3 text-primary me-2"></i>Plannings
+                                </h4>
+                                <p class="card-text text-muted">
+                                    Consultez, créez et modifiez les plannings de tous les interprètes.
+                                </p>
+                                <p class="card-text text-muted">
+                                    Ajoutez, supprimez ou modifiez des rendez-vous selon les besoins.
+                                </p>
+                                <span class="text-primary fw-semibold">
+                                        Vers l'action <i class="bi bi-arrow-right-circle-fill"></i>
+                                    </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-5">
+                    <a th:href="@{/coordinatrice/validations}" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 accueil-card">
+                            <div class="card-body text-center px-4 py-4">
+                                <h4 class="card-title fw-bold text-dark mb-3">
+                                    <i class="bi bi-check-circle text-primary me-2"></i>Validations
+                                </h4>
+                                <p class="card-text text-muted">
+                                    Acceptez ou refusez les modifications de plannings soumises par les résas,
+                                    ainsi que les demandes d'absences des interprètes.
+                                </p>
+                                <span class="text-primary fw-semibold">
+                                        Vers l'action <i class="bi bi-arrow-right-circle-fill"></i>
+                                    </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-5">
+                    <a th:href="@{/coordinatrice/etablissements}" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 accueil-card">
+                            <div class="card-body text-center px-4 py-4">
+                                <h4 class="card-title fw-bold text-dark mb-3">
+                                    <i class="bi bi-building text-primary me-2"></i>Etablissements
+                                </h4>
+                                <p class="card-text text-muted">
+                                    Ajoutez et gérez les établissements partenaires ainsi que leurs référents.
+                                </p>
+                                <span class="text-primary fw-semibold">
+                                        Vers l'action <i class="bi bi-arrow-right-circle-fill"></i>
+                                    </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-5">
+                    <a th:href="@{/coordinatrice/utilisateurs}" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 accueil-card">
+                            <div class="card-body text-center px-4 py-4">
+                                <h4 class="card-title fw-bold text-dark mb-3">
+                                    <i class="bi bi-people text-primary me-2"></i>Utilisateurs
+                                </h4>
+                                <p class="card-text text-muted">
+                                    Créez et gérez les comptes des interprètes, bénéficiaires et résas.
+                                </p>
+                                <p class="card-text text-muted">
+                                    Modifiez l'interprète de référence d'un bénéficiaire.
+                                </p>
+                                <span class="text-primary fw-semibold">
+                                        Vers l'action <i class="bi bi-arrow-right-circle-fill"></i>
+                                    </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div th:replace="~{common/footer :: footer}"></div>
+
+        <style>
+            .accueil-card {
+                cursor: pointer;
+                transition: transform 0.15s ease, box-shadow 0.15s ease;
+                background-color: #f8f7ff;
+                border: 1px solid #e0ddf5 !important;
+            }
+            .accueil-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 24px rgba(99, 84, 196, 0.15) !important;
+            }
+        </style>
+
+    </body>
+</html>

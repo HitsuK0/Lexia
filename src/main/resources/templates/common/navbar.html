@@ -92,8 +92,12 @@
         </ul>
 
         <div class="d-flex align-items-center gap-3">
-            <span class="fw-semibold"
-                  th:text="${userName != null ? userName : 'NOM Prenom'}">NOM Prenom</span>
+            <a th:href="${userRole == 'COORDINATOR'} ? '/coordinatrice/profil'
+                        : (${userRole == 'INTERPRETER'} ? '/interprete/profil'
+                        : '/beneficiaire/profil')"
+               class="fw-semibold text-dark text-decoration-none"
+               th:text="${userName != null ? userName : 'NOM Prenom'}">NOM Prenom</a>
+            
             <a th:action="@{/logout}" th:method="post" class="btn btn-primary">
                 <i class="bi bi-box-arrow-right"></i> Se Déconnecter
             </a>
