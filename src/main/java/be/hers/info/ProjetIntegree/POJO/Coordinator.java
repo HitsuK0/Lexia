@@ -79,7 +79,7 @@ public class Coordinator extends Interpreter {
                        int weeklyWorkHours, Address address, List<Absence> absences,
                        List<Appointment> appointmentsList, List<ProfessionalSkill> professionalSkillsList,
                        List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList ){
-        super(numInterpreter, login, password,lastName,firstName,email,phoneNumber,weeklyWorkHours,address,absences, appointmentsList, professionalSkillsList,academicSkillsList,beneficiariesList);
+        super(numInterpreter, login, password,lastName,firstName,phoneNumber,email,address,weeklyWorkHours,absences, appointmentsList, professionalSkillsList,academicSkillsList,beneficiariesList);
         this.isAdmin = false;
     }
 
@@ -108,7 +108,7 @@ public class Coordinator extends Interpreter {
                        int weeklyWorkHours, Address address, List<Absence> absences,
                        List<Appointment> appointmentsList, List<ProfessionalSkill> professionalSkillsList,
                        List<AcademicSkill> academicSkillsList, List<Beneficiary> beneficiariesList,int numCoordinator,boolean isAdmin ){
-        super(numInterpreter,login,password, lastName,firstName,email,phoneNumber,weeklyWorkHours,address,absences, appointmentsList, professionalSkillsList,academicSkillsList,beneficiariesList);
+        super(numInterpreter, login, password,lastName,firstName,phoneNumber,email,address,weeklyWorkHours,absences, appointmentsList, professionalSkillsList,academicSkillsList,beneficiariesList);
         this.numCoordinator=numCoordinator;
         this.isAdmin = isAdmin;
     }
