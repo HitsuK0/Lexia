@@ -6,37 +6,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <body>
-        
+
         <!--
             /!\ Commentaire à laisser tant qu'on a pas de Services/Controllers
 
-            FRAGMENT : navbar(activeTab, userRole, userName, breadcrumb, isAdmin)
+            FRAGMENT : navbar(activeTab, userRole, userName, breadcrumb)
 
             userRole possible : 'INTERPRETER', 'COORDINATOR', 'BENEFICIARY'
-            isAdmin : true  → coordinatrice (accès complet)
-                      false → résa (accès restreint : accueil, etablissements, planning)
-                      null  → non applicable (INTERPRETER, BENEFICIARY)
 
             breadcrumb (optionnel) : texte de la page courante affiché après "Accueil >"
-                                     Ne passer que pour les sous-pages de COORDINATOR / RESA.
-                                     Laisser null pour l'accueil.
+                                     Ne passer que pour les sous-pages de COORDINATOR.
+                                     Laisser null ou ne pas passer pour l'accueil.
 
             Exemples d'appel :
-                th:replace="~{navbar :: navbar(activeTab='planning', userRole='INTERPRETER', userName='Jean Dupont', breadcrumb=null, isAdmin=null)}"
-                th:replace="~{navbar :: navbar(activeTab='accueil', userRole='COORDINATOR', userName='Marie Martin', breadcrumb=null, isAdmin=true)}"
-                th:replace="~{navbar :: navbar(activeTab='etablissements', userRole='COORDINATOR', userName='Marie Martin', breadcrumb='Etablissements', isAdmin=true)}"
-                th:replace="~{navbar :: navbar(activeTab='accueil', userRole='COORDINATOR', userName='Paul Durand', breadcrumb=null, isAdmin=false)}"
-                th:replace="~{navbar :: navbar(activeTab='etablissements', userRole='COORDINATOR', userName='Paul Durand', breadcrumb='Etablissements', isAdmin=false)}"
-                th:replace="~{navbar :: navbar(activeTab='planning', userRole='BENEFICIARY', userName='Paul Durand', breadcrumb=null, isAdmin=null)}"
+                th:replace="~{navbar :: navbar(activeTab='planning', userRole='INTERPRETER', userName='Jean Dupont', breadcrumb=null)}"
+                th:replace="~{navbar :: navbar(activeTab='accueil', userRole='COORDINATOR', userName='Marie Martin', breadcrumb=null)}"
+                th:replace="~{navbar :: navbar(activeTab='etablissements', userRole='COORDINATOR', userName='Marie Martin', breadcrumb='Etablissements')}"
+                th:replace="~{navbar :: navbar(activeTab='planning', userRole='BENEFICIARY', userName='Paul Durand', breadcrumb=null)}"
         -->
 
-        <nav th:fragment="navbar(activeTab, userRole, userName, breadcrumb, isAdmin)" class="navbar navbar-expand-lg bg-body-tertiary px-3 py-1">
+        <nav th:fragment="navbar(activeTab, userRole, userName, breadcrumb)" class="navbar navbar-expand-lg bg-body-tertiary px-3 py-1">
 
-            <a th:href="${userRole == 'INTERPRETER'} ? '/interprete/planning'
-                       : (${userRole == 'COORDINATOR' and isAdmin} ? '/coordinatrice/accueil'
-                       : (${userRole == 'COORDINATOR' and !isAdmin} ? '/resa/accueil'
-                       : '/beneficiaire/planning'))"
-               class="navbar-brand fw-bold">
+            <a th:href="@{/}" class="navbar-brand fw-bold">
                 <img th:src="@{/images/logo_lexia.png}" alt="Lexia" height="28" class="me-2"/>
                 Lexia
             </a>
@@ -44,6 +35,7 @@
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav me-auto">
 
+                    <!-- INTERPRETER -->
                     <th:block th:if="${userRole == 'INTERPRETER'}">
                         <li class="nav-item">
                             <a th:href="@{/interprete/planning}"
@@ -65,8 +57,7 @@
                         </li>
                     </th:block>
 
-                    <!-- COORDINATOR (isAdmin = true) : normal reception -->
-                    <th:block th:if="${userRole == 'COORDINATOR' and isAdmin and breadcrumb == null}">
+                    <th:block th:if="${userRole == 'COORDINATOR' and breadcrumb == null}">
                         <li class="nav-item">
                             <a th:href="@{/coordinatrice/accueil}"
                                th:class="${activeTab == 'accueil'} ? 'nav-link active' : 'nav-link'">
@@ -81,39 +72,11 @@
                         </li>
                     </th:block>
 
-                    <!-- COORDINATOR (isAdmin = true) : breadcrumb on subpage -->
-                    <th:block th:if="${userRole == 'COORDINATOR' and isAdmin and breadcrumb != null}">
+                    <th:block th:if="${userRole == 'COORDINATOR' and breadcrumb != null}">
                         <li class="nav-item">
-                            <a th:href="@{/coordinatrice/accueil}" class="nav-link">Accueil</a>
-                        </li>
-                        <li class="nav-item d-flex align-items-center px-1 text-muted">
-                            <span>&gt;</span>
-                        </li>
-                        <li class="nav-item">
-                            <span class="nav-link active pe-none" th:text="${breadcrumb}">Sous-page</span>
-                        </li>
-                    </th:block>
-
-                    <!-- RESA (isAdmin = false) : normal reception -->
-                    <th:block th:if="${userRole == 'COORDINATOR' and !isAdmin and breadcrumb == null}">
-                        <li class="nav-item">
-                            <a th:href="@{/resa/accueil}"
-                               th:class="${activeTab == 'accueil'} ? 'nav-link active' : 'nav-link'">
+                            <a th:href="@{/coordinatrice/accueil}" class="nav-link">
                                 Accueil
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a th:href="@{/resa/profil}"
-                               th:class="${activeTab == 'profil'} ? 'nav-link active' : 'nav-link'">
-                                Mon Profil
-                            </a>
-                        </li>
-                    </th:block>
-
-                    <!-- RESA (isAdmin = false) : breadcrumb on subpage -->
-                    <th:block th:if="${userRole == 'COORDINATOR' and !isAdmin and breadcrumb != null}">
-                        <li class="nav-item">
-                            <a th:href="@{/resa/accueil}" class="nav-link">Accueil</a>
                         </li>
                         <li class="nav-item d-flex align-items-center px-1 text-muted">
                             <span>&gt;</span>
@@ -146,10 +109,9 @@
                 </ul>
 
                 <div class="d-flex align-items-center gap-3">
-                    <a th:href="${userRole == 'COORDINATOR' and isAdmin} ? '/coordinatrice/profil'
-                                : (${userRole == 'COORDINATOR' and !isAdmin} ? '/resa/profil'
+                    <a th:href="${userRole == 'COORDINATOR'} ? '/coordinatrice/profil'
                                 : (${userRole == 'INTERPRETER'} ? '/interprete/profil'
-                                : '/beneficiaire/profil'))"
+                                : '/beneficiaire/profil')"
                        class="fw-semibold text-dark text-decoration-none"
                        th:text="${userName != null ? userName : 'NOM Prenom'}">NOM Prenom</a>
                     <a th:href="@{/logout}" class="btn btn-primary">
