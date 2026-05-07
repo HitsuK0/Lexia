@@ -34,7 +34,7 @@ public class InterpreterController {
         String dateEnd = end.substring(0, 10);
 
         List<Appointment> appointmentList = List.of();
-        
+
         
         HttpSession session = request.getSession();
         session.setAttribute("appointmentList", appointmentList);
