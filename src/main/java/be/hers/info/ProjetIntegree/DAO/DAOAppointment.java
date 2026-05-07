@@ -80,6 +80,75 @@ public class DAOAppointment extends DAO<Appointment> {
         return appointment;
     }
 
+    public List<Appointment> findAllAppointmentToBeneficiaryAndDate(int numBeneficiary, String start, String end) throws SQLException {
+        List<Appointment> appointmentList = new ArrayList<>();
+        Appointment appointmentFind = null;
+        DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+        Beneficiary beneficiary = null;
+        TimeSlot timeSlot = null;
+        DAOEstablishment daoEstablishment = new DAOEstablishment();
+        Establishment establishment = null;
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        String query = """
+                        SELECT *
+                        FROM Appointment a
+                        LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = a.FKTimeSlotBase
+                        LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = a.FKTimeSlotPunctual
+                        WHERE a.numBeneficiary = ?
+                        AND ((tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') 
+                        OR tsb.numTimeSlot IS NOT NULL)
+                       """;
+
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numBeneficiary);
+            prStat.setString(2, end);
+            prStat.setString(3, start);
+            rs = prStat.executeQuery();
+
+            while(rs.next()){
+                String local = rs.getString("local");
+                List<String> listLocal = null;
+
+                if (local != null)
+                    listLocal = Arrays.asList(local.split(","));
+
+                beneficiary = daoBeneficiary.find(rs.getInt("FKNumBeneficiary"));
+                establishment = daoEstablishment.find(rs.getInt("FKNumEstablishment"));
+
+                if(rs.getObject("FKTimeSlotBase") == null){
+                    DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+                    timeSlot = daoTimeSlotPunctual.find(rs.getInt("FKTimeSlotPunctual"));
+                }else{
+                    DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
+                    timeSlot = daoTimeSlotBase.find(rs.getInt("FKTimeSlotBase"));
+                }
+
+                appointmentFind = new Appointment(
+                        rs.getInt("numAppointment"),
+                        rs.getString("description"),
+                        rs.getString("status"),
+                        beneficiary,
+                        listLocal,
+                        findListInterpreter(numAppointment),
+                        findListAcademicSkillRequire(numAppointment),
+                        findListProfessionalSkillRequire(numAppointment),
+                        timeSlot,
+                        establishment
+                );
+
+                appointmentList.add(appointmentFind);
+            }
+        }
+        finally{
+            closeStatementAndResultSet(prStat, rs);
+        }
+
+        return appointmentList;
+    }
+
     /**
      * Creates a list containing all the Appointment in the table.
      * Precondition :
