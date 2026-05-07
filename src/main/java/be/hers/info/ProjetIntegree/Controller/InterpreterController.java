@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Controller
@@ -33,7 +34,8 @@ public class InterpreterController {
         String dateStart = start.substring(0, 10);
         String dateEnd = end.substring(0, 10);
 
-        List<Appointment> appointmentList = List.of();
+        List<Appointment> appointmentList = findAllAppointmentToBeneficiaryAndDate(
+                beneficiary.getNumBeneficiary(), start, end);
 
         
         HttpSession session = request.getSession();
