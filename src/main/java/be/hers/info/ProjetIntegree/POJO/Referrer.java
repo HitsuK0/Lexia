@@ -166,6 +166,7 @@ public class Referrer {
                 "\nPrenom : " + this.surname +
                 "\nNuméro de téléphone : " + this.phoneNumber +
                 "\nAddresse mail : " + this.addressMail +
+                "\nNuméro Référent  :\n" + this.numReferrer+
                 "\nEtablissement  :\n" + (refEstablishment != null ? refEstablishment.toString() : "Aucun établissement");
     }
 
