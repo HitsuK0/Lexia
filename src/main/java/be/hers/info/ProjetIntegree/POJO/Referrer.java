@@ -156,7 +156,7 @@ public class Referrer {
     }
 
     /**
-     * @return a String containing the name and the surname of the referrer, the phone number, the mail address,
+     * @return a String containing the name and the surname of the referrer, the phone number, the mail address, the id of the referrer
      * and the establishment.
      */
     public String toString() {
