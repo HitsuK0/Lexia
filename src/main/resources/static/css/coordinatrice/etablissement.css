@@ -1,0 +1,70 @@
+/* Allows you to put all the modals with rounded corners */
+#modalAjout .modal-content,
+#modalEdition .modal-content {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+
+/* Allows you to style the table wrapper */
+.table-wrapper {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    border: 1.5px solid #e8e0f5;
+}
+
+/* Allows you to style the etablissements table */
+.table-etablissements {
+    margin-bottom: 0;
+}
+
+.table-etablissements thead tr {
+    background-color: #f8f5ff;
+    border-bottom: 2px solid #e8e0f5;
+}
+
+.table-etablissements thead th {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #212529;
+    padding: 14px 16px;
+    border: none;
+    text-align: center;
+    background-color: #e9e5f4;
+}
+
+.table-etablissements tbody td {
+    font-size: 0.875rem;
+    padding: 14px 16px;
+    vertical-align: middle;
+    text-align: center;
+    border-bottom: 1px solid #f0ecf8;
+    color: #333;
+}
+
+.table-etablissements tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-etablissements tbody tr:hover {
+    background-color: #faf8ff;
+}
+
+/* Allows you to style the edit button on hover */
+.btn-link.text-dark:hover {
+    color: var(--bs-primary) !important;
+    transform: scale(1.15);
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+/* Allows you to style the active pagination item */
+.pagination .page-item.active .page-link {
+    font-weight: 600;
+}
+
+/* Allows you to style the disabled pagination items (Previous, ...) */
+.pagination .page-item.disabled .page-link {
+    opacity: 0.5;
+}
+
