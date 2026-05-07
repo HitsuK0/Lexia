@@ -64,7 +64,7 @@ public class DAOEstablishment extends DAO<Establishment>{
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
     @Override
-    public List findAll() throws SQLException {
+    public List<Establishment> findAll() throws SQLException {
         List<Establishment> listEstablishmentFind = new ArrayList();
         Establishment establishmentFind = null;
 
