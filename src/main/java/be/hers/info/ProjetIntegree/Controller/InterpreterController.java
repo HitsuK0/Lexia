@@ -15,11 +15,11 @@ import java.time.LocalDate;
 public class InterpreterController {
 
     /**
-     * Recherche tous les Appointments et Absences appartenant à l'interprete en paramètre sur une période définie par start et end.
-     * @param start
-     * @param end
-     * @param interpreter
-     * @param request
+     * Searches for all Appointments and Absences belonging to the interpreter as a parameter over a period defined by start and end.
+     * @param start the date retrieved via the URL
+     * @param end the date retrieved via the URL
+     * @param interpreter The interpreter linked to the appointment on the list
+     * @param request the request that triggered this function call
      * @return Redirect to the "interprete/planning" page
      */
     @GetMapping("/planning/events")

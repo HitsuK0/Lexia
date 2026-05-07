@@ -57,6 +57,13 @@ public class DAOEstablishment extends DAO<Establishment>{
 
         return establishmentFind;
     }
+
+    /**
+     * Create a list of Integers that correspond to the education levels of this institution.
+     * @param numEstablishment the establishment number
+     * @return A list of integers corresponding to the education levels of this establishment; an empty list is returned if no objects are found.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
     public List<Integer> findListEducationLevel(int numEstablishment) throws SQLException {
         PreparedStatement prStat = null;
         ResultSet rs = null;

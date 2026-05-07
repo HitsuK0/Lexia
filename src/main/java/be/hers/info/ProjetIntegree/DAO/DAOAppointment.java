@@ -418,6 +418,14 @@ public class DAOAppointment extends DAO<Appointment> {
         return isUpdated;
     }
 
+    /**
+     * Searches for all Appointments linked to the interpreter as a parameter available in the start and end slots.
+     * @param i the interpreter who will be linked to the appointment sought
+     * @param start the date in YYYY-MM-DD format
+     * @param end the date in YYYY-MM-DD format
+     * @return The appointment list meets the constraints; an empty list is returned if no object is found.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
     public List<Appointment> findAllAppointmentToInterpreterAndDate(Interpreter i, String start, String end)throws SQLException{
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
@@ -436,7 +444,6 @@ public class DAOAppointment extends DAO<Appointment> {
                 "      tsb.numTimeSlot IS NOT NULL" +
                 ")";
 
-
         try {
             prStat = connect.prepareStatement(query);
             prStat.setInt(1, i.getNumInterpreter());
@@ -446,7 +453,7 @@ public class DAOAppointment extends DAO<Appointment> {
             DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
             DAOEstablishment daoEstablishment = new DAOEstablishment();
             DAOReferrer daoReferrer = new DAOReferrer();
-
+            DAOAddress daoAddress = new DAOAddress();
             Appointment a = new Appointment();
             while(resultSet.next()){
                 String local = resultSet.getString("local");
@@ -454,7 +461,6 @@ public class DAOAppointment extends DAO<Appointment> {
 
                 if (local != null) {
                     listLocal = Arrays.asList(local.split(","));
-
                 }
 
                 TimeSlot timeSlot = null;
@@ -470,7 +476,7 @@ public class DAOAppointment extends DAO<Appointment> {
                 Establishment e = daoEstablishment.find(resultSet.getInt("FKnumEtablishment"));
                 e.setEducationLevel(daoEstablishment.findListEducationLevel(resultSet.getInt("FKnumEtablishment")));
                 e.getReferrers(daoReferrer.findListReferer(resultSet.getInt("FKnumEtablishment")));
-                e.getAddresses(daoEstablishment.findListAddress(e.getNameBuilding()));
+                e.getAddresses(daoAddress.findListAddress(e.getNameBuilding()));
 
                 a = new Appointment(
                         numAppointment,
@@ -495,6 +501,13 @@ public class DAOAppointment extends DAO<Appointment> {
         }
         return appointmentList;
     }
+
+    /**
+     * Create a list of Interpreters linked to the appointment.
+     * @param numAppointment the appointment number
+     * @return The list of Interpreters linked to the appointment; an empty list is returned if no object is found
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
     public List<Interpreter> findListInterpreter(int numAppointment) throws SQLException{
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
@@ -518,6 +531,12 @@ public class DAOAppointment extends DAO<Appointment> {
         return interpreterList;
     }
 
+    /**
+     * Create a list of AcademicSkills related to the appointment.
+     * @param numAppointment the appointment number
+     * @return The AcademicSkill list linked to the appointment; an empty list is returned if no item is found.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
     public List<AcademicSkill> findListAcademicSkillRequire(int numAppointment) throws SQLException{
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
@@ -542,6 +561,12 @@ public class DAOAppointment extends DAO<Appointment> {
         return academicSkillList;
     }
 
+    /**
+     * Create a list of Professional Skills related to the appointment.
+     * @param numAppointment the appointment number
+     * @return The ProfessionalSkill list linked to the appointment is returned as empty if no object is found.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
     public List<ProfessionalSkill> findListProfessionalSkillRequire(int numAppointment) throws SQLException{
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
@@ -565,7 +590,14 @@ public class DAOAppointment extends DAO<Appointment> {
 
         return ProfessionalSkillList;
     }
-
+    /**
+     * Searches for all absences related to the interpreter as a parameter available in the start and end slots.
+     * @param i the interpreter who will be linked to the appointment sought
+     * @param start the date in YYYY-MM-DD format
+     * @param end the date in YYYY-MM-DD format
+     * @return The Absence list meets the constraints; an empty list is returned if no object is found.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
     public List<Absence> findAllAbsenceToInterpreterAndDate(Interpreter i, String start, String end)throws SQLException{
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
