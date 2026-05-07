@@ -1,12 +1,12 @@
 package be.hers.info.ProjetIntegree.Controller;
 
 import be.hers.info.ProjetIntegree.POJO.Interpreter;
+import be.hers.info.ProjetIntegree.Services.PlanningService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.time.LocalDate;
 
@@ -14,11 +14,25 @@ import java.time.LocalDate;
 @RequestMapping("/interprete")
 public class InterpreterController {
 
-    // Temporaire
-    @GetMapping("/planning")
-    public String planning(@RequestParam("date") LocalDate date, @SessionAttribute("InterpreterConnected") Interpreter interpreter, Model model) {
+    /**
+     * Recherche tous les Appointments et Absences appartenant à l'interprete en paramètre sur une période définie par start et end.
+     * @param start
+     * @param end
+     * @param interpreter
+     * @param request
+     * @return Redirect to the "interprete/planning" page
+     */
+    @GetMapping("/planning/events")
+    public String planning(@RequestParam String start,
+                           @RequestParam String end, @SessionAttribute("InterpreterConnected") Interpreter interpreter, HttpServletRequest request) {
+        String dateStart = start.substring(0,10);
+        String dateEnd = end.substring(0,10);
+        PlanningService planningService = new PlanningService();
+        HttpSession session = request.getSession();
+        interpreter.setAppointmentsList(planningService.getListAppointmentWithDateAndInterpreter(interpreter,dateStart,dateEnd));
+        interpreter.setAbsences(planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd));
+        session.setAttribute("InterpreterConnected",interpreter );
 
-        //model.addAttribute("userName", "NOM Prenom");
         return "interprete/planning";
     }
 
