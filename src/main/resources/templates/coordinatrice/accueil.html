@@ -4,7 +4,7 @@
     <head th:replace="~{common/head :: head('Accueil', null)}"></head>
 
     <body>
-        <nav th:replace="~{common/navbar :: navbar(activeTab='accueil', userRole='COORDINATOR', userName=${userName})}"></nav>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='accueil', userRole='COORDINATOR', userName=${userName}, breadcrumb=null, isAdmin=true)}"></nav>
 
         <div class="container py-5">
 

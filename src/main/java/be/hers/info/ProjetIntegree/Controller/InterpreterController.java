@@ -24,7 +24,7 @@ public class InterpreterController {
      */
     @GetMapping("/planning/events")
     public String planning(@RequestParam String start,
-                           @RequestParam String end, @SessionAttribute("InterpreterConnected") Interpreter interpreter, HttpServletRequest request) {
+                           @RequestParam String end, @SessionAttribute("InterpreterConnected") Interpreter interpreter, HttpServletRequest request, Model model) {
         String dateStart = start.substring(0,10);
         String dateEnd = end.substring(0,10);
         PlanningService planningService = new PlanningService();
@@ -32,6 +32,7 @@ public class InterpreterController {
         interpreter.setAppointmentsList(planningService.getListAppointmentWithDateAndInterpreter(interpreter,dateStart,dateEnd));
         interpreter.setAbsences(planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd));
         session.setAttribute("InterpreterConnected",interpreter );
+        model.addAttribute("isAdmin",null);
 
         return "interprete/planning";
     }
@@ -39,18 +40,21 @@ public class InterpreterController {
     // Temporaire
     @GetMapping("/planning/beneficiaires")
     public String planningBeneficiaires(Model model) {
+        model.addAttribute("isAdmin", null);
         return "interprete/planning-beneficiaires";
     }
 
     @GetMapping("/profil")
     public String profil(Model model) {
         model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("isAdmin", null);
         return "interprete/profil";
     }
 
     @GetMapping("/indisponibilites")
     public String indisponibilites(Model model) {
         model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("isAdmin", null);
         return "interprete/indisponibilites";
     }
 }
