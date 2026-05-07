@@ -2,6 +2,7 @@ package be.hers.info.ProjetIntegree.Controller;
 
 import be.hers.info.ProjetIntegree.POJO.Appointment;
 import be.hers.info.ProjetIntegree.POJO.Beneficiary;
+import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -25,19 +26,17 @@ public class InterpreterController {
         return "interprete/planning";
     }
 
-    //Horaire :
-    // - Chercher tous les RDV des bénéficiaires de l'utilisateur connecté
     @GetMapping("/planning/beneficiaires")
     public String planningBeneficiaires(@RequestParam String start, @RequestParam String end,
-                                        @SessionAttribute("BeneficiaryConnected") Beneficiary beneficiary, Model model,
+                                        @SessionAttribute("BeneficiaryConnected") Beneficiary beneficiary,
                                         HttpServletRequest request) {
         String dateStart = start.substring(0, 10);
         String dateEnd = end.substring(0, 10);
 
-        List<Appointment> appointmentList =
+        PlanningService planningService = new PlanningService();
+        List<Appointment> appointmentList = planningService.getListAppointmentsToBeneficiaryAndDate(
+                beneficiary.getNumBeneficiary(), dateStart, dateEnd);
 
-
-        
         HttpSession session = request.getSession();
         session.setAttribute("appointmentList", appointmentList);
 
