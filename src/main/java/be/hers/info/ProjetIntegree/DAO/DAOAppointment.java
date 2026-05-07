@@ -80,6 +80,16 @@ public class DAOAppointment extends DAO<Appointment> {
         return appointment;
     }
 
+    /**
+     * Precondition :
+     * The beneficiary number passed as a parameter cannot be negative.
+     * Search for all appointments related to the beneficiary referenced by their number and indicating the start and end dates
+     * @param numBeneficiary the number of the beneficiary
+     * @param start the date of the first day of the week
+     * @param end the date of the last day of the week
+     * @return the list of appointments related to the beneficiary referenced by their number and indicating the start and end dates
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
     public List<Appointment> findAllAppointmentToBeneficiaryAndDate(int numBeneficiary, String start, String end) throws SQLException {
         List<Appointment> appointmentList = new ArrayList<>();
         Appointment appointmentFind = null;
