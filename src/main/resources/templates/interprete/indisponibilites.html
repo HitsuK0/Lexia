@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+
+    <head th:replace="~{common/head :: head('Mes Indisponibilités', '/css/interprete/indisponibilites.css')}"></head>
+
+    <body>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='indisponibilites', userRole='INTERPRETER', userName='Jean Dupont')}"></nav>
+
+        <div class="container py-4">
+
+            <div class="text-center mb-4">
+                <h1 class="fw-bold text-primary">Mes indisponibilités</h1>
+                <p class="text-muted fst-italic">Déclarez et suivez vos absences et indisponibilités</p>
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
+                <div class="dropdown">
+                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
+                            id="dropdownStatus" data-bs-toggle="dropdown" aria-expanded="false">
+                        Statut
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownStatus">
+                        <li><a class="dropdown-item" href="#" onclick="filterStatus('all')">Tous</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="filterStatus('approved')">Validé</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="filterStatus('refused')">Refusé</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="filterStatus('pending')">En Attente</a></li>
+                    </ul>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm"
+                        data-bs-toggle="modal" data-bs-target="#modalIndispo">
+                    <i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité
+                </button>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="table table-indispo">
+                    <thead>
+                    <tr>
+                        <th>Date Indisponibilité</th>
+                        <th>Plage Horaire</th>
+                        <th>Motif (Facultatif)</th>
+                        <th>Date Demande</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    <tr data-status="approved">
+                        <td>23 Février</td>
+                        <td>8h30 - 9h30</td>
+                        <td>Rendez-vous médical</td>
+                        <td>20 Février 2026</td>
+                        <td><span class="badge-statut approved">Validé</span></td>
+                        <td class="actions-cell">
+                            <button class="btn-action edit" disabled title="Non modifiable"><i class="bi bi-pencil"></i></button>
+                            <button class="btn-action delete" disabled title="Non modifiable"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr data-status="refused">
+                        <td>02 Mars</td>
+                        <td>Toute la journée</td>
+                        <td>/</td>
+                        <td>01 Mars 2026</td>
+                        <td><span class="badge-statut refused">Refusé</span></td>
+                        <td class="actions-cell">
+                            <button class="btn-action edit" disabled title="Non modifiable"><i class="bi bi-pencil"></i></button>
+                            <button class="btn-action delete" disabled title="Non modifiable"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr data-status="pending">
+                        <td>06 au 08 Mars</td>
+                        <td>Toute la journée</td>
+                        <td>Maladie : grippe</td>
+                        <td>06 Mars 2026</td>
+                        <td><span class="badge-statut pending">En Attente</span></td>
+                        <td class="actions-cell">
+                            <button class="btn-action edit active"
+                                    data-bs-toggle="modal" data-bs-target="#modalEditIndispo"
+                                    data-start-date="2026-03-06"
+                                    data-end-date="2026-03-08"
+                                    data-start-hour=""
+                                    data-end-hour=""
+                                    data-all-day="true"
+                                    data-reason="Maladie : grippe"
+                                    title="Modifier"><i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn-action delete active"
+                                    data-bs-toggle="modal" data-bs-target="#modalDeleteIndispo"
+                                    title="Supprimer"><i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr data-status="pending">
+                        <td>08 Mars</td>
+                        <td>14h - 17h</td>
+                        <td>/</td>
+                        <td>08 Mars 2026</td>
+                        <td><span class="badge-statut pending">En Attente</span></td>
+                        <td class="actions-cell">
+                            <button class="btn-action edit active"
+                                    data-bs-toggle="modal" data-bs-target="#modalEditIndispo"
+                                    data-start-date="2026-03-08"
+                                    data-end-date="2026-03-08"
+                                    data-start-hour="14:00"
+                                    data-end-hour="17:00"
+                                    data-all-day="false"
+                                    data-reason=""
+                                    title="Modifier"><i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn-action delete active"
+                                    data-bs-toggle="modal" data-bs-target="#modalDeleteIndispo"
+                                    title="Supprimer"><i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav class="d-flex justify-content-center mt-4">
+                <ul class="pagination pagination-sm" id="pagination"></ul>
+            </nav>
+        </div>
+
+        <!-- Modal Modifier -->
+        <div class="modal fade" id="modalEditIndispo" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center">Modifier l'indisponibilité</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body px-4 py-3">
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Date début</label>
+                                <input type="date" id="editStartDate" class="form-control form-control-sm"/>
+                            </div>
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Date fin</label>
+                                <input type="date" id="editEndDate" class="form-control form-control-sm"/>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Plage Horaire</label>
+                            <div class="d-flex gap-2" id="editTimeRange">
+                                <select id="editStartHour" class="form-select form-select-sm" size="5"></select>
+                                <select id="editEndHour" class="form-select form-select-sm" size="5"></select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="editAllDay"/>
+                                <label class="form-check-label small" for="editAllDay">Journée complète</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Motif <span class="text-muted fw-normal">(facultatif)</span></label>
+                            <textarea id="editReason" class="form-control form-control-sm" rows="3" placeholder="Texte ..."></textarea>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editReasonPrivate"/>
+                            <label class="form-check-label small" for="editReasonPrivate">Rendre le motif privé</label>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.78rem; margin-left: 1.5rem;">
+                            Seule la coordinatrice pourra voir le motif
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">Sauvegarder</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Supprimer -->
+        <div class="modal fade" id="modalDeleteIndispo" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold w-100 text-center">Supprimer l'indisponibilité</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <hr class="mx-3 mt-2"/>
+
+                    <div class="modal-body px-4 text-center">
+                        <p class="mb-0">Êtes-vous sûr de vouloir supprimer cette indisponibilité ?</p>
+                        <p class="text-muted small mt-1">Cette action est irréversible.</p>
+                    </div>
+
+                    <div class="modal-footer border-0 justify-content-center gap-3">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm px-4">Supprimer</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Déclarer -->
+        <div class="modal fade" id="modalIndispo" tabindex="-1" aria-labelledby="modalIndispoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalIndispoLabel">Déclarer une indisponibilité</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body px-4 py-3">
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Date début</label>
+                                <input type="date" id="startDate" class="form-control form-control-sm"/>
+                            </div>
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Date fin</label>
+                                <input type="date" id="endDate" class="form-control form-control-sm"/>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Plage Horaire</label>
+                            <div class="d-flex gap-2" id="timeRange">
+                                <select id="startHour" class="form-select form-select-sm" size="5"></select>
+                                <select id="endHour" class="form-select form-select-sm" size="5"></select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="allDay"/>
+                                <label class="form-check-label small" for="allDay">Journée complète</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Motif <span class="text-muted fw-normal">(facultatif)</span></label>
+                            <textarea id="reason" class="form-control form-control-sm" rows="3" placeholder="Texte ..."></textarea>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="reasonPrivate"/>
+                            <label class="form-check-label small" for="reasonPrivate">Rendre le motif privé</label>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.78rem; margin-left: 1.5rem;">
+                            Seule la coordinatrice pourra voir le motif
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">Envoyez la demande</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="~{common/footer :: footer}"></div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                /* Generates time options in 5-minute increments between a start and end time (in minutes)
+                and populates the given select element. */
+                function generateHours(select, start, end) {
+                    select.innerHTML = '';
+                    for (let t = start; t <= end; t += 5) {
+                        const hh = Math.floor(t / 60);
+                        const mm = String(t % 60).padStart(2, '0');
+                        const option = document.createElement('option');
+                        option.value = `${hh}:${mm}`;
+                        option.textContent = `${hh}:${mm}`;
+                        select.appendChild(option);
+                    }
+                }
+
+                generateHours(document.getElementById('startHour'), 8 * 60, 18 * 60 + 55);
+                generateHours(document.getElementById('endHour'), 8 * 60 + 5, 19 * 60);
+                generateHours(document.getElementById('editStartHour'), 8 * 60, 18 * 60 + 55);
+                generateHours(document.getElementById('editEndHour'), 8 * 60 + 5, 19 * 60);
+
+                document.getElementById('startHour').addEventListener('change', function () {
+                    const [h, m] = this.value.split(':').map(Number);
+                    generateHours(document.getElementById('endHour'), h * 60 + m + 5, 19 * 60);
+                });
+
+                document.getElementById('editStartHour').addEventListener('change', function () {
+                    const [h, m] = this.value.split(':').map(Number);
+                    generateHours(document.getElementById('editEndHour'), h * 60 + m + 5, 19 * 60);
+                });
+
+                document.getElementById('allDay').addEventListener('change', function () {
+                    document.getElementById('startHour').disabled = this.checked;
+                    document.getElementById('endHour').disabled = this.checked;
+                });
+
+                document.getElementById('modalEditIndispo').addEventListener('show.bs.modal', function (e) {
+                    const btn = e.relatedTarget;
+                    document.getElementById('editStartDate').value = btn.dataset.startDate;
+                    document.getElementById('editEndDate').value = btn.dataset.endDate;
+                    document.getElementById('editReason').value = btn.dataset.reason || '';
+
+                    const allDay = btn.dataset.allDay === 'true';
+                    document.getElementById('editAllDay').checked = allDay;
+                    document.getElementById('editStartHour').disabled = allDay;
+                    document.getElementById('editEndHour').disabled = allDay;
+
+                    if (!allDay) {
+                        document.getElementById('editStartHour').value = btn.dataset.startHour;
+                        document.getElementById('editEndHour').value = btn.dataset.endHour;
+                    }
+                });
+
+                document.getElementById('editAllDay').addEventListener('change', function () {
+                    document.getElementById('editStartHour').disabled = this.checked;
+                    document.getElementById('editEndHour').disabled = this.checked;
+                });
+            });
+
+            /* Filters the table rows by status, showing only rows matching the
+            given status or all rows if 'all' is passed. */
+            function filterStatus(status) {
+                const rows = document.querySelectorAll('#tableBody tr');
+                rows.forEach(row => {
+                    row.style.display = (status === 'all' || row.dataset.status === status) ? '' : 'none';
+                });
+            }
+
+            /* Renders the pagination bar with Previous/Next buttons and page numbers,
+                hiding Previous on page 1 and Next on the last page. */
+            function renderPagination(currentPage, totalPages) {
+                const pagination = document.getElementById('pagination');
+                pagination.innerHTML = '';
+
+                if (currentPage > 1) {
+                    pagination.innerHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="changePage(${currentPage - 1})">
+                            <i class="bi bi-arrow-left"></i> Previous
+                        </a>
+                    </li>`;
+                }
+
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                        pagination.innerHTML += `
+                                <li class="page-item ${i === currentPage ? 'active' : ''}">
+                                    <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                                </li>`;
+                    } else if (i === currentPage - 3 || i === currentPage + 3) {
+                        pagination.innerHTML += `<li class="page-item disabled"><a class="page-link">...</a></li>`;
+                    }
+                }
+
+                if (currentPage < totalPages) {
+                    pagination.innerHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="changePage(${currentPage + 1})">
+                            Next <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </li>`;
+                }
+            }
+
+            /* Calls renderPagination with the selected page number. */
+            function changePage(page) {
+                renderPagination(page, 10);
+            }
+
+            renderPagination(1, 10);
+        </script>
+    </body>
+</html>
