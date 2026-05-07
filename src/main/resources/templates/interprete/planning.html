@@ -4,7 +4,7 @@
 <head th:replace="~{common/head :: head('Mon Planning', '/css/interprete/planning.css')}"></head>
 
     <body>
-        <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole='INTERPRETER', userName='Jean Dupont')}"></nav>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole='INTERPRETER', userName='Jean Dupont', breadcrumb=null, isAdmin=null)}"></nav>
 
         <div class="container-fluid py-2 px-5">
 
@@ -12,7 +12,7 @@
                 <h1 class="fw-bold text-primary">Votre horaire de la semaine</h1>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-2  px-5">
 
                 <div class="btn-group">
                     <a th:href="@{/interprete/planning}" class="btn btn-primary btn-sm">Mon Planning</a>
