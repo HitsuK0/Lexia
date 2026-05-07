@@ -54,6 +54,7 @@ public class NavbarController {
         model.addAttribute("userRole", userRole);
         model.addAttribute("userName", connectedUser.getFirstName()+" "+connectedUser.getLastName());
         model.addAttribute("activeTab", "indisponibilites");
+        model.addAttribute("isAdmin",null);
 
         return "interprete/indisponibilites";
     }

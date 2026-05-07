@@ -5,104 +5,120 @@
 
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<body>
+    <body>
 
-<!--
-    /!\ Commentaire à laisser tant qu'on a pas de Services/Controllers
+        <!--
+            /!\ Commentaire à laisser tant qu'on a pas de Services/Controllers
 
-    FRAGMENT : navbar(activeTab, userRole, userName)
+            FRAGMENT : navbar(activeTab, userRole, userName, breadcrumb)
 
-    userRole possible : 'INTERPRETER', 'COORDINATOR', 'BENEFICIARY'
+            userRole possible : 'INTERPRETER', 'COORDINATOR', 'BENEFICIARY'
 
-    Exemples d'appel :
-        th:replace="~{navbar :: navbar(activeTab='planning', userRole='INTERPRETER', userName='Jean Dupont')}"
-        th:replace="~{navbar :: navbar(activeTab='accueil', userRole='COORDINATOR', userName='Marie Martin')}"
-        th:replace="~{navbar :: navbar(activeTab='planning', userRole='BENEFICIARY', userName='Paul Durand')}"
+            breadcrumb (optionnel) : texte de la page courante affiché après "Accueil >"
+                                     Ne passer que pour les sous-pages de COORDINATOR.
+                                     Laisser null ou ne pas passer pour l'accueil.
 
-    Pour tester sans backend, hardcoder le userRole directement dans l'appel du fragment.
--->
+            Exemples d'appel :
+                th:replace="~{navbar :: navbar(activeTab='planning', userRole='INTERPRETER', userName='Jean Dupont', breadcrumb=null)}"
+                th:replace="~{navbar :: navbar(activeTab='accueil', userRole='COORDINATOR', userName='Marie Martin', breadcrumb=null)}"
+                th:replace="~{navbar :: navbar(activeTab='etablissements', userRole='COORDINATOR', userName='Marie Martin', breadcrumb='Etablissements')}"
+                th:replace="~{navbar :: navbar(activeTab='planning', userRole='BENEFICIARY', userName='Paul Durand', breadcrumb=null)}"
+        -->
 
-<nav th:fragment="navbar(activeTab, userRole, userName)" class="navbar navbar-expand-lg bg-body-tertiary px-3 py-1">
+        <nav th:fragment="navbar(activeTab, userRole, userName, breadcrumb)" class="navbar navbar-expand-lg bg-body-tertiary px-3 py-1">
 
-    <a th:href="@{/}" class="navbar-brand fw-bold">
-        <img th:src="@{/images/logo_lexia.png}" alt="Lexia" height="28" class="me-2"/>
-        Lexia
-    </a>
-
-    <div class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto">
-
-            <th:block th:if="${userRole == 'INTERPRETER'}">
-                <li class="nav-item">
-                    <a th:href="@{/interprete/planning}"
-                       th:class="${activeTab == 'planning'} ? 'nav-link active' : 'nav-link'">
-                        Mon Planning
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/interprete/indisponibilites}"
-                       th:class="${activeTab == 'indisponibilites'} ? 'nav-link active' : 'nav-link'">
-                        Mes Indisponibilités
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/interprete/profil}"
-                       th:class="${activeTab == 'profil'} ? 'nav-link active' : 'nav-link'">
-                        Mon Profil
-                    </a>
-                </li>
-            </th:block>
-
-            <th:block th:if="${userRole == 'COORDINATOR'}">
-                <li class="nav-item">
-                    <a th:href="@{/coordinatrice/accueil}"
-                       th:class="${activeTab == 'accueil'} ? 'nav-link active' : 'nav-link'">
-                        Accueil
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/coordinatrice/profil}"
-                       th:class="${activeTab == 'profil'} ? 'nav-link active' : 'nav-link'">
-                        Mon Profil
-                    </a>
-                </li>
-            </th:block>
-
-            <th:block th:if="${userRole == 'BENEFICIARY'}">
-                <li class="nav-item">
-                    <a th:href="@{/beneficiaire/planning}"
-                       th:class="${activeTab == 'planning'} ? 'nav-link active' : 'nav-link'">
-                        Mon Planning
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/beneficiaire/demandes}"
-                       th:class="${activeTab == 'demandes'} ? 'nav-link active' : 'nav-link'">
-                        Mes Demandes
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/beneficiaire/profil}"
-                       th:class="${activeTab == 'profil'} ? 'nav-link active' : 'nav-link'">
-                        Mon Profil
-                    </a>
-                </li>
-            </th:block>
-
-        </ul>
-
-        <div class="d-flex align-items-center gap-3">
-            <a th:href="${userRole == 'COORDINATOR'} ? '/coordinatrice/profil'
-                        : (${userRole == 'INTERPRETER'} ? '/interprete/profil'
-                        : '/beneficiaire/profil')"
-               class="fw-semibold text-dark text-decoration-none"
-               th:text="${userName != null ? userName : 'NOM Prenom'}">NOM Prenom</a>
-            
-            <a th:action="@{/logout}" th:method="post" class="btn btn-primary">
-                <i class="bi bi-box-arrow-right"></i> Se Déconnecter
+            <a th:href="@{/}" class="navbar-brand fw-bold">
+                <img th:src="@{/images/logo_lexia.png}" alt="Lexia" height="28" class="me-2"/>
+                Lexia
             </a>
-        </div>
-    </div>
-</nav>
-</body>
+
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+
+                    <!-- INTERPRETER -->
+                    <th:block th:if="${userRole == 'INTERPRETER'}">
+                        <li class="nav-item">
+                            <a th:href="@{/interprete/planning}"
+                               th:class="${activeTab == 'planning'} ? 'nav-link active' : 'nav-link'">
+                                Mon Planning
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/interprete/indisponibilites}"
+                               th:class="${activeTab == 'indisponibilites'} ? 'nav-link active' : 'nav-link'">
+                                Mes Indisponibilités
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/interprete/profil}"
+                               th:class="${activeTab == 'profil'} ? 'nav-link active' : 'nav-link'">
+                                Mon Profil
+                            </a>
+                        </li>
+                    </th:block>
+
+                    <th:block th:if="${userRole == 'COORDINATOR' and breadcrumb == null}">
+                        <li class="nav-item">
+                            <a th:href="@{/coordinatrice/accueil}"
+                               th:class="${activeTab == 'accueil'} ? 'nav-link active' : 'nav-link'">
+                                Accueil
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/coordinatrice/profil}"
+                               th:class="${activeTab == 'profil'} ? 'nav-link active' : 'nav-link'">
+                                Mon Profil
+                            </a>
+                        </li>
+                    </th:block>
+
+                    <th:block th:if="${userRole == 'COORDINATOR' and breadcrumb != null}">
+                        <li class="nav-item">
+                            <a th:href="@{/coordinatrice/accueil}" class="nav-link">
+                                Accueil
+                            </a>
+                        </li>
+                        <li class="nav-item d-flex align-items-center px-1 text-muted">
+                            <span>&gt;</span>
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-link active pe-none" th:text="${breadcrumb}">Sous-page</span>
+                        </li>
+                    </th:block>
+
+                    <th:block th:if="${userRole == 'BENEFICIARY'}">
+                        <li class="nav-item">
+                            <a th:href="@{/beneficiaire/planning}"
+                               th:class="${activeTab == 'planning'} ? 'nav-link active' : 'nav-link'">
+                                Mon Planning
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/beneficiaire/demandes}"
+                               th:class="${activeTab == 'demandes'} ? 'nav-link active' : 'nav-link'">
+                                Mes Demandes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/beneficiaire/profil}"
+                               th:class="${activeTab == 'profil'} ? 'nav-link active' : 'nav-link'">
+                                Mon Profil
+                            </a>
+                        </li>
+                    </th:block>
+                </ul>
+
+                <div class="d-flex align-items-center gap-3">
+                    <a th:href="${userRole == 'COORDINATOR'} ? '/coordinatrice/profil'
+                                : (${userRole == 'INTERPRETER'} ? '/interprete/profil'
+                                : '/beneficiaire/profil')"
+                       class="fw-semibold text-dark text-decoration-none"
+                       th:text="${userName != null ? userName : 'NOM Prenom'}">NOM Prenom</a>
+                    <a th:href="@{/logout}" class="btn btn-primary">
+                        <i class="bi bi-box-arrow-right"></i> Se Déconnecter
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </body>
 </html>
