@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,28 @@ public class DAOEstablishment extends DAO<Establishment>{
         }
 
         return establishmentFind;
+    }
+    public List<Integer> findListEducationLevel(int numEstablishment) throws SQLException {
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+        List<Integer> EductationLevelList = new ArrayList<>();
+        String query = " SELECT educationLevel  FROM Establishment " +
+                "WHERE numEstablishment = ?";
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numEstablishment);
+            rs = prStat.executeQuery();
+            if (rs.next()) {
+                EductationLevelList = Arrays.stream(rs.getString("educationLevel").split(","))
+                        .map(String::trim)
+                        .map(Integer::valueOf)
+                        .toList();
+            }
+
+        } finally {
+            closeStatementAndResultSet(prStat, rs);
+        }
+        return EductationLevelList;
     }
 
     /**
