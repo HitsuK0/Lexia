@@ -57,9 +57,9 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                 }
 
                 beneficiary = new Beneficiary(resultSet.getInt("numBeneficiary"), resultSet.getString("login"),
-                        resultSet.getString("password"), resultSet.getString("firstName"),
-                        resultSet.getString("lastName"), resultSet.getString("phoneNumber"),
-                        address, resultSet.getInt("hourQuota"), resultSet.getString("emailAddress"),
+                        resultSet.getString("password"), resultSet.getString("lastName"),
+                        resultSet.getString("firstName"), resultSet.getString("phoneNumber"),
+                        resultSet.getString("emailAddress"), address, resultSet.getInt("hourQuota"),
                         resultSet.getInt("educationLevel"), interpreter, languages);
             }
         } finally {
@@ -103,9 +103,9 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                 }
 
                 Beneficiary beneficiary = new Beneficiary(resultSet.getInt("numBeneficiary"), resultSet.getString("login"),
-                        resultSet.getString("password"), resultSet.getString("firstName"),
-                        resultSet.getString("lastName"), resultSet.getString("phoneNumber"),
-                        address, resultSet.getInt("hourQuota"), resultSet.getString("emailAddress"),
+                        resultSet.getString("password"), resultSet.getString("lastName"),
+                        resultSet.getString("firstName"), resultSet.getString("phoneNumber"),
+                        resultSet.getString("emailAddress"), address, resultSet.getInt("hourQuota"),
                         resultSet.getInt("educationLevel"), interpreter, languages);
 
                 listBeneficiary.add(beneficiary);
@@ -165,8 +165,8 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
 
             preparedStatementBeneficiary.setString(1, objectToInsertInDB.getLogin());
             preparedStatementBeneficiary.setString(2, objectToInsertInDB.getPassword());
-            preparedStatementBeneficiary.setString(3, objectToInsertInDB.getName());
-            preparedStatementBeneficiary.setString(4, objectToInsertInDB.getSurname());
+            preparedStatementBeneficiary.setString(3, objectToInsertInDB.getFirstName());
+            preparedStatementBeneficiary.setString(4, objectToInsertInDB.getLastName());
             preparedStatementBeneficiary.setString(5, objectToInsertInDB.getPhoneNumber());
             preparedStatementBeneficiary.setString(6, objectToInsertInDB.getEmailAddress());
             preparedStatementBeneficiary.setInt(7, objectToInsertInDB.getHourQuota());
@@ -287,8 +287,8 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             }
 
             preparedStatement.setString(1, objectToUpdateInDB.getLogin());
-            preparedStatement.setString(2, objectToUpdateInDB.getName());
-            preparedStatement.setString(3, objectToUpdateInDB.getSurname());
+            preparedStatement.setString(2, objectToUpdateInDB.getFirstName());
+            preparedStatement.setString(3, objectToUpdateInDB.getLastName());
             preparedStatement.setString(4, objectToUpdateInDB.getPhoneNumber());
             preparedStatement.setString(5, objectToUpdateInDB.getEmailAddress());
             preparedStatement.setInt(6, objectToUpdateInDB.getHourQuota());

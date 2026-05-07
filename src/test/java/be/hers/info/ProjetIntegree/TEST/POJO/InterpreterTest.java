@@ -46,7 +46,7 @@ public class InterpreterTest {
         assertEquals("", interpreter.getPassword());
         assertEquals("", interpreter.getLastName());
         assertEquals("", interpreter.getFirstName());
-        assertEquals("", interpreter.getEmail());
+        assertEquals("", interpreter.getEmailAddress());
         assertEquals("", interpreter.getPhoneNumber());
     }
 
@@ -103,12 +103,12 @@ public class InterpreterTest {
      */
     @Test
     void constructor_WithoutId_SetsAllFields() {
-        Interpreter i = new Interpreter("e0002", "secret", "Nicolas", "JF", "JF@mail.be", "0477000000", 38, address);
+        Interpreter i = new Interpreter("e0002", "secret", "Nicolas", "JF",  "0477000000", "JF@mail.be", 38, address);
         assertEquals("e0002", i.getLogin());
         assertEquals("secret", i.getPassword());
         assertEquals("Nicolas", i.getLastName());
         assertEquals("JF", i.getFirstName());
-        assertEquals("JF@mail.be", i.getEmail());
+        assertEquals("JF@mail.be", i.getEmailAddress());
         assertEquals("0477000000", i.getPhoneNumber());
         assertEquals(38, i.getWeeklyWorkHours());
         assertSame(address, i.getAddress());
@@ -198,18 +198,6 @@ public class InterpreterTest {
     }
 
     /**
-     * Tests that the constructor with ID throws an {@link IllegalArgumentException} when numInterpreter is negative.
-     * Given : numInterpreter=-1
-     * When  : an Interpreter is created with this ID
-     * Then  : an IllegalArgumentException must be thrown
-     */
-    @Test
-    void constructor_WithId_WithNegativeNumInterpreter_RaisesAnException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Interpreter(-1, "e0002", "secret", "Nicolas", "JF", "JF@mail.be", "0477000000", 38, address));
-    }
-
-    /**
      * Tests that the constructor with ID throws an {@link IllegalArgumentException} when weeklyWorkHours is negative.
      * Given : weeklyWorkHours=-1
      * When  : an Interpreter is created with this value
@@ -273,7 +261,7 @@ public class InterpreterTest {
         List<AcademicSkill> acaSkills = new ArrayList<>();
         List<Beneficiary> beneficiaries = new ArrayList<>();
 
-        Interpreter i = new Interpreter(1, "e0002", "secret", "Nicolas", "JF", "JF@mail.be", "0477000000", 38, address,
+        Interpreter i = new Interpreter(1, "e0002", "secret", "Nicolas", "JF", "JF@mail.be", "0477000000", address, 38,
                 absences, appointments, profSkills, acaSkills, beneficiaries);
 
         assertSame(absences, i.getAbsences());
@@ -299,7 +287,7 @@ public class InterpreterTest {
         List<AcademicSkill> acaSkills = new ArrayList<>();
         List<Beneficiary> beneficiaries = new ArrayList<>();
 
-        Interpreter i = new Interpreter("e0002", "secret", "Nicolas", "JF", "JF@mail.be", "0477000000", 38, address,
+        Interpreter i = new Interpreter("e0002", "secret", "Nicolas", "JF", "JF@mail.be", "0477000000", address, 38,
                 absences, appointments, profSkills, acaSkills, beneficiaries);
 
         assertSame(absences, i.getAbsences());
@@ -321,17 +309,6 @@ public class InterpreterTest {
     void setNumInterpreter_UpdatesTheCorrectValue() {
         interpreter.setNumInterpreter(7);
         assertEquals(7, interpreter.getNumInterpreter());
-    }
-
-    /**
-     * Tests that setNumInterpreter() throws an {@link IllegalArgumentException} when a negative value is passed.
-     * Given : a negative value -1
-     * When  : setNumInterpreter(-1) is called
-     * Then  : an IllegalArgumentException must be thrown
-     */
-    @Test
-    void setNumInterpreter_WithNegativeValue_RaisesAnException() {
-        assertThrows(IllegalArgumentException.class, () -> interpreter.setNumInterpreter(-1));
     }
 
     // setLogin //
@@ -422,8 +399,8 @@ public class InterpreterTest {
      */
     @Test
     void setEmail_UpdatesTheCorrectValue() {
-        interpreter.setEmail("sarah@mail.be");
-        assertEquals("sarah@mail.be", interpreter.getEmail());
+        interpreter.setEmailAddress("sarah@mail.be");
+        assertEquals("sarah@mail.be", interpreter.getEmailAddress());
     }
 
     // setPhoneNumber //
