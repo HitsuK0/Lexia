@@ -96,7 +96,7 @@ public class DAOAppointment extends DAO<Appointment> {
                         FROM Appointment a
                         LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = a.FKTimeSlotBase
                         LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = a.FKTimeSlotPunctual
-                        WHERE a.numBeneficiary = ?
+                        WHERE a.FKNumBeneficiary = ?
                         AND ((tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') 
                         OR tsb.numTimeSlot IS NOT NULL)
                        """;
