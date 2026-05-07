@@ -34,8 +34,8 @@ public class InterpreterController {
         String dateStart = start.substring(0, 10);
         String dateEnd = end.substring(0, 10);
 
-        List<Appointment> appointmentList = findAllAppointmentToBeneficiaryAndDate(
-                beneficiary.getNumBeneficiary(), start, end);
+        List<Appointment> appointmentList =
+
 
         
         HttpSession session = request.getSession();
