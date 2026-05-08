@@ -84,6 +84,87 @@ public class DAOAppointment extends DAO<Appointment> {
     }
 
     /**
+     * Precondition :
+     * The beneficiary number passed as a parameter cannot be negative.
+     * Search for all appointments related to the beneficiary referenced by their number and indicating the start and end dates
+     * @param numBeneficiary the number of the beneficiary
+     * @param start the date of the first day of the week
+     * @param end the date of the last day of the week
+     * @return the list of appointments related to the beneficiary referenced by their number and indicating the start and end dates
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<Appointment> findAllAppointmentToBeneficiaryAndDate(int numBeneficiary, String start, String end) throws SQLException {
+        List<Appointment> appointmentList = new ArrayList<>();
+        Appointment appointmentFind = null;
+        DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+        Beneficiary beneficiary = null;
+        TimeSlot timeSlot = null;
+        DAOEstablishment daoEstablishment = new DAOEstablishment();
+        Establishment establishment = null;
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        String query = """
+                        SELECT *
+                        FROM Appointment a
+                        LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = a.FKTimeSlotBase
+                        LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = a.FKTimeSlotPunctual
+                        WHERE a.FKNumBeneficiary = ?
+                        AND ((tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') 
+                        OR tsb.numTimeSlot IS NOT NULL)
+                       """;
+
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numBeneficiary);
+            prStat.setString(2, end);
+            prStat.setString(3, start);
+            rs = prStat.executeQuery();
+
+            while(rs.next()){
+                String local = rs.getString("local");
+                List<String> listLocal = null;
+
+                if (local != null)
+                    listLocal = Arrays.asList(local.split(","));
+
+                beneficiary = daoBeneficiary.find(rs.getInt("FKNumBeneficiary"));
+                establishment = daoEstablishment.find(rs.getInt("FKNumEstablishment"));
+
+                if(rs.getObject("FKTimeSlotBase") == null){
+                    DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+                    timeSlot = daoTimeSlotPunctual.find(rs.getInt("FKTimeSlotPunctual"));
+                }else{
+                    DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
+                    timeSlot = daoTimeSlotBase.find(rs.getInt("FKTimeSlotBase"));
+                }
+
+                int numAppointment = rs.getInt("numAppointment");
+
+                appointmentFind = new Appointment(
+                        numAppointment,
+                        rs.getString("description"),
+                        rs.getString("status"),
+                        beneficiary,
+                        listLocal,
+                        findListInterpreter(numAppointment),
+                        findListAcademicSkillRequire(numAppointment),
+                        findListProfessionalSkillRequire(numAppointment),
+                        timeSlot,
+                        establishment
+                );
+
+                appointmentList.add(appointmentFind);
+            }
+        }
+        finally{
+            closeStatementAndResultSet(prStat, rs);
+        }
+
+        return appointmentList;
+    }
+
+    /**
      * Creates a list containing all the Appointment in the table.
      * Precondition :
      * For each Appointment, the Beneficiary, TimeSlot, and Establishment exist in the database.
@@ -475,8 +556,8 @@ public class DAOAppointment extends DAO<Appointment> {
                 }
                 Establishment e = daoEstablishment.find(resultSet.getInt("FKnumEtablishment"));
                 e.setEducationLevel(daoEstablishment.findListEducationLevel(resultSet.getInt("FKnumEtablishment")));
-                e.getReferrers(daoReferrer.findListReferer(resultSet.getInt("FKnumEtablishment")));
-                e.getAddresses(daoAddress.findListAddress(e.getNameBuilding()));
+                e.setReferrers(daoReferrer.findAllByEstablishment(resultSet.getInt("FKnumEtablishment")));
+                e.setAddresses(daoAddress.findAllByEstablishment(e.getNameBuilding()));
 
                 a = new Appointment(
                         numAppointment,
