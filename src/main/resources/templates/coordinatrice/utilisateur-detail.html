@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+
+    <head th:replace="~{common/head :: head('Fiche Utilisateur', '/css/coordinatrice/utilisateur-detail.css')}"></head>
+
+    <body>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='utilisateurs', userRole='COORDINATOR', userName=${userName}, breadcrumb='Gestion Utilisateurs', isAdmin=true)}"></nav>
+
+        <div class="container-fluid px-5 py-4">
+
+            <div class="d-flex align-items-center mb-4 gap-3">
+                <a th:href="@{/coordinatrice/utilisateurs}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Retour
+                </a>
+                <div class="flex-grow-1 text-center">
+                    <h1 class="fw-bold text-primary mb-0">Fiche Utilisateur</h1>
+                    <p class="text-muted fst-italic mb-0 small">Consultez et modifiez les informations de l'utilisateur</p>
+                </div>
+                <div style="width: 90px;"></div>
+            </div>
+
+            <div class="detail-wrapper mx-auto">
+
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <span th:class="${userRole == 'INTERPRETER'} ? 'badge-role interprete'
+                              : (${userRole == 'BENEFICIARY'} ? 'badge-role beneficiaire'
+                              : (${userRole == 'RESA'} ? 'badge-role resa'
+                              : 'badge-role coordinatrice'))"
+                                      th:text="${userRole == 'INTERPRETER'} ? 'Interprète'
+                              : (${userRole == 'BENEFICIARY'} ? 'Bénéficiaire'
+                              : (${userRole == 'RESA'} ? 'Résa' : 'Coordinatrice'))">
+                        </span>
+
+                        <span class="badge-statut actif">
+                                <i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i> Actif
+                            </span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-warning btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#modalResetPassword">
+                            <i class="bi bi-key me-1"></i> Réinitialiser mot de passe
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#modalDesactiver">
+                            <i class="bi bi-slash-circle me-1"></i> Désactiver le compte
+                        </button>
+                    </div>
+                </div>
+
+                <div class="detail-card mb-4">
+                    <h6 class="section-title">Informations personnelles</h6>
+                    <hr class="section-divider"/>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold">Nom</label>
+                            <div class="input-edit-group">
+                                <input type="text" class="form-control form-control-sm" value="Dupont" readonly id="inputNom"/>
+                                <button class="btn-edit" onclick="toggleEdit('inputNom', this)" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold">Prénom</label>
+                            <div class="input-edit-group">
+                                <input type="text" class="form-control form-control-sm" value="Jean" readonly id="inputPrenom"/>
+                                <button class="btn-edit" onclick="toggleEdit('inputPrenom', this)" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold">Date de naissance</label>
+                            <div class="input-edit-group">
+                                <input type="date" class="form-control form-control-sm" value="2003-12-10" readonly id="inputDateNaissance"/>
+                                <button class="btn-edit" onclick="toggleEdit('inputDateNaissance', this)" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold">Genre</label>
+                            <div class="d-flex gap-3 mt-1">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="genre" id="genreHomme" value="homme" checked/>
+                                    <label class="form-check-label small" for="genreHomme">Homme</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="genre" id="genreFemme" value="femme"/>
+                                    <label class="form-check-label small" for="genreFemme">Femme</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="genre" id="genreNR" value="nr"/>
+                                    <label class="form-check-label small" for="genreNR">NR</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Diplômes</label>
+                        <div class="input-edit-group align-items-start">
+                            <textarea class="form-control form-control-sm" rows="2" readonly id="inputDiplomes">Diplôme lié au métier</textarea>
+                            <button class="btn-edit mt-1" onclick="toggleEdit('inputDiplomes', this)" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-card mb-4">
+                    <h6 class="section-title">Coordonnées</h6>
+                    <hr class="section-divider"/>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Numéro de téléphone</label>
+                            <div class="input-edit-group">
+                                <input type="text" class="form-control form-control-sm" value="0476 80 31 15" readonly id="inputTel"/>
+                                <button class="btn-edit" onclick="toggleEdit('inputTel', this)" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </div>
+                            <div id="phoneError" style="display:none; color:#dc3545; font-size:0.875em;">
+                                Numéro de téléphone invalide. (ex: 0476791845)
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label small fw-semibold">Adresse e-mail</label>
+                            <div class="input-edit-group">
+                                <input type="email" class="form-control form-control-sm" value="dupontjean03@gmail.com" readonly id="inputEmail"/>
+                                <button class="btn-edit" onclick="toggleEdit('inputEmail', this)" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </div>
+                            <div id="emailError" style="display:none; color:#dc3545; font-size:0.875em;">
+                                Adresse e-mail invalide. (ex: jean.dupont@gmail.com)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Adresse</label>
+                        <div class="row g-2">
+                            <div class="col-md-5">
+                                <label class="form-label" style="font-size:0.75rem; color:#888;">Rue et numéro</label>
+                                <div class="input-edit-group">
+                                    <input type="text" class="form-control form-control-sm" value="Rue de la victoire, 3" readonly id="inputRue"/>
+                                    <button class="btn-edit" onclick="toggleEdit('inputRue', this)" title="Modifier">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" style="font-size:0.75rem; color:#888;">Code postal</label>
+                                <div class="input-edit-group">
+                                    <input type="text" class="form-control form-control-sm" value="1000" readonly id="inputCP"/>
+                                    <button class="btn-edit" onclick="toggleEdit('inputCP', this)" title="Modifier">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" style="font-size:0.75rem; color:#888;">Ville</label>
+                                <div class="input-edit-group">
+                                    <input type="text" class="form-control form-control-sm" value="Bruxelles" readonly id="inputVille"/>
+                                    <button class="btn-edit" onclick="toggleEdit('inputVille', this)" title="Modifier">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-card mb-4" id="sectionCompetences" th:style="${userRole == 'BENEFICIARY'} ? 'display:none' : ''">
+                <h6 class="section-title">Compétences</h6>
+                    <hr class="section-divider"/>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-semibold">Compétences métiers</label>
+                            <div class="d-flex flex-wrap gap-2 mt-1 mb-2" id="badgesMetiers">
+                        <span class="badge-skill">
+                            <i class="bi bi-check-lg"></i> Transcription
+                            <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesMetiers', 'Transcription')" title="Retirer">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </span>
+                                <span class="badge-skill">
+                            <i class="bi bi-check-lg"></i> Translittération
+                            <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesMetiers', 'Translittération')" title="Retirer">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </span>
+                            </div>
+                            <div class="d-flex gap-2 align-items-center">
+                                <select class="form-select form-select-sm" id="selectMetier" style="max-width: 200px;">
+                                    <option value="" disabled selected>Ajouter...</option>
+                                    <option value="Translation">Translation</option>
+                                </select>
+                                <button class="btn btn-outline-primary btn-sm" onclick="addSkill('selectMetier', 'badgesMetiers')">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-semibold">Compétences académiques</label>
+                            <div class="d-flex flex-wrap gap-2 mt-1 mb-2" id="badgesAcademics">
+                        <span class="badge-skill">
+                            <i class="bi bi-check-lg"></i> Histoire
+                            <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesAcademics', 'Histoire')" title="Retirer">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </span>
+                                <span class="badge-skill">
+                            <i class="bi bi-check-lg"></i> Mathématiques
+                            <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesAcademics', 'Mathématiques')" title="Retirer">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </span>
+                                <span class="badge-skill">
+                            <i class="bi bi-check-lg"></i> Economie
+                            <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesAcademics', 'Economie')" title="Retirer">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </span>
+                            </div>
+                            <div class="d-flex gap-2 align-items-center">
+                                <select class="form-select form-select-sm" id="selectAcademic" style="max-width: 200px;">
+                                    <option value="" disabled selected>Ajouter...</option>
+                                    <option value="Anglais">Anglais</option>
+                                    <option value="Sciences">Sciences</option>
+                                    <option value="Français">Français</option>
+                                    <option value="Géographie">Géographie</option>
+                                </select>
+                                <button class="btn btn-outline-primary btn-sm" onclick="addSkill('selectAcademic', 'badgesAcademics')">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-card mb-4" id="sectionInterpreteRef" th:style="${userRole == 'BENEFICIARY'} ? '' : 'display:none'">
+                    <h6 class="section-title">Interprète référent</h6>
+                    <hr class="section-divider"/>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold">Interprète assigné</label>
+                        <select class="form-select form-select-sm">
+                            <option value="">-- Aucun --</option>
+                            <option value="1" selected>BRASSEUR Frédéric</option>
+                            <option value="2">MARTIN Sophie</option>
+                            <option value="3">LEROY Thomas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="detail-card mb-4">
+                    <h6 class="section-title">Compte</h6>
+                    <hr class="section-divider"/>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold">Identifiant</label>
+                            <input type="text" class="form-control form-control-sm" value="IT01" readonly id="inputIdentifiant" style="max-width:160px;"/>
+                            <div id="idRegenWarning" style="display:none; color:#e67700; font-size:0.8em; margin-top:4px;">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                L'identifiant sera régénéré automatiquement à la sauvegarde.
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold">Rôle</label>
+                            <select class="form-select form-select-sm" id="roleSelectDetail" style="max-width:200px;">
+                                <option value="INTERPRETER"  th:selected="${userRole == 'INTERPRETER'}">Interprète</option>
+                                <option value="BENEFICIARY"  th:selected="${userRole == 'BENEFICIARY'}">Bénéficiaire</option>
+                                <option value="RESA"         th:selected="${userRole == 'RESA'}">Résa</option>
+                                <option value="COORDINATOR"  th:selected="${userRole == 'COORDINATOR'}">Coordinatrice</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalResetPassword" tabindex="-1" aria-labelledby="modalResetPasswordLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalResetPasswordLabel">Réinitialiser le mot de passe</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Nouveau mot de passe</label>
+                            <input type="password" class="form-control form-control-sm" id="inputNewPassword" placeholder="Nouveau mot de passe..."/>
+                            <div id="passwordError" style="display:none; color:#dc3545; font-size:0.875em;"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Confirmer le mot de passe</label>
+                            <input type="password" class="form-control form-control-sm" id="inputConfirmPassword" placeholder="Confirmation..."/>
+                            <div id="confirmError" style="display:none; color:#dc3545; font-size:0.875em;">
+                                Les mots de passe ne correspondent pas.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="savePassword()">
+                            <i class="bi bi-key me-1"></i> Réinitialiser
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalDesactiver" tabindex="-1" aria-labelledby="modalDesactiverLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalDesactiverLabel">Désactiver le compte</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3 text-center">
+                        <i class="bi bi-exclamation-triangle text-warning fs-1 mb-3 d-block"></i>
+                        <p class="mb-1">Vous êtes sur le point de désactiver le compte de</p>
+                        <p class="fw-bold mb-3">DUPONT Jean</p>
+                        <p class="text-muted small">L'utilisateur ne pourra plus se connecter. Vous pourrez réactiver le compte à tout moment.</p>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm">
+                            <i class="bi bi-slash-circle me-1"></i> Désactiver
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="btnSauvegarder" class="btn btn-primary btn-floating" style="display:none;"
+                onclick="sauvegarder()">
+            <i class="bi bi-floppy me-1"></i> Sauvegarder
+        </button>
+
+        <div th:replace="~{common/footer :: footer}"></div>
+
+        <script>
+            const allMetierSkills    = ['Transcription', 'Translittération', 'Translation'];
+            const allAcademicSkills  = ['Histoire', 'Mathématiques', 'Economie', 'Anglais', 'Sciences', 'Français', 'Géographie'];
+
+            /**
+             * Returns the list of skills currently displayed in a badge container.
+             */
+            function getCurrentSkills(containerId) {
+                return Array.from(document.querySelectorAll(`#${containerId} .badge-skill`))
+                    .map(b => b.childNodes[1]?.textContent?.trim() ?? '');
+            }
+
+            /**
+             * Rebuilds the options of a skill select based on skills not yet assigned.
+             */
+            function refreshSelectOptions(selectId, allSkills, containerId) {
+                const current = getCurrentSkills(containerId);
+                const select = document.getElementById(selectId);
+                const previousValue = select.value;
+                select.innerHTML = '<option value="" disabled selected>Ajouter...</option>';
+                allSkills.filter(s => !current.includes(s)).forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s;
+                    opt.textContent = s;
+                    select.appendChild(opt);
+                });
+                select.value = previousValue;
+            }
+
+            /**
+             * Adds a skill badge from the select into the badge container,
+             * then refreshes the select options.
+             */
+            function addSkill(selectId, containerId) {
+                const select = document.getElementById(selectId);
+                const value = select.value;
+                if (!value) return;
+
+                const allSkills = containerId === 'badgesMetiers' ? allMetierSkills : allAcademicSkills;
+
+                const span = document.createElement('span');
+                span.className = 'badge-skill';
+                span.innerHTML = `<i class="bi bi-check-lg"></i> ${value}
+                    <button class="btn-badge-remove" onclick="removeSkill(this, '${containerId}', '${value}')" title="Retirer">
+                        <i class="bi bi-x"></i>
+                    </button>`;
+                document.getElementById(containerId).appendChild(span);
+
+                refreshSelectOptions(selectId, allSkills, containerId);
+                select.value = '';
+            }
+
+            /**
+             * Removes a skill badge from the container and adds it back to the select options.
+             */
+            function removeSkill(btn, containerId, skillName) {
+                btn.closest('.badge-skill').remove();
+                const selectId    = containerId === 'badgesMetiers' ? 'selectMetier' : 'selectAcademic';
+                const allSkills   = containerId === 'badgesMetiers' ? allMetierSkills : allAcademicSkills;
+                refreshSelectOptions(selectId, allSkills, containerId);
+            }
+
+            const originalRole = document.getElementById('roleSelectDetail').value;
+
+            /**
+             * Initializes the visibility of competences and interpreter reference sections
+             * on page load based on the role loaded from the server.
+             */
+            document.addEventListener('DOMContentLoaded', function () {
+                const isBeneficiary = document.getElementById('roleSelectDetail').value === 'BENEFICIARY';
+                document.getElementById('sectionCompetences').style.display   = isBeneficiary ? 'none'  : 'block';
+                document.getElementById('sectionInterpreteRef').style.display = isBeneficiary ? 'block' : 'none';
+            });
+
+            /**
+             * Shows or hides competences/interpreter sections based on selected role.
+             * Also warns the coordinator that the user ID will be regenerated on save.
+             */
+            document.getElementById('roleSelectDetail').addEventListener('change', function () {
+                const isBeneficiary = this.value === 'BENEFICIARY';
+                const roleChanged   = this.value !== originalRole;
+
+                document.getElementById('sectionCompetences').style.display   = isBeneficiary ? 'none'  : 'block';
+                document.getElementById('sectionInterpreteRef').style.display = isBeneficiary ? 'block' : 'none';
+                document.getElementById('idRegenWarning').style.display        = roleChanged   ? 'block' : 'none';
+            });
+
+            function isValidEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            }
+            function isValidPhone(phone) {
+                return /^[0-9\s]{7,15}$/.test(phone);
+            }
+            function toggleEdit(id, btn) {
+                const input = document.getElementById(id);
+                if (input.hasAttribute('readonly')) {
+                    input.removeAttribute('readonly');
+                    input.focus();
+                    btn.style.color = '#593196';
+                } else {
+                    if (id === 'inputEmail' && !isValidEmail(input.value)) {
+                        input.classList.add('is-invalid');
+                        document.getElementById('emailError').style.display = 'block';
+                        return;
+                    }
+                    if (id === 'inputTel' && !isValidPhone(input.value)) {
+                        input.classList.add('is-invalid');
+                        document.getElementById('phoneError').style.display = 'block';
+                        return;
+                    }
+                    document.getElementById('emailError').style.display = 'none';
+                    document.getElementById('phoneError').style.display = 'none';
+                    input.classList.remove('is-invalid');
+                    input.setAttribute('readonly', true);
+                    btn.style.color = '';
+                }
+            }
+
+            function isValidPassword(password) {
+                return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/.test(password);
+            }
+
+            function savePassword() {
+                const newPassword     = document.getElementById('inputNewPassword').value;
+                const confirmPassword = document.getElementById('inputConfirmPassword').value;
+                const passwordError   = document.getElementById('passwordError');
+                const confirmError    = document.getElementById('confirmError');
+                passwordError.style.display = 'none';
+                confirmError.style.display  = 'none';
+                if (!isValidPassword(newPassword)) {
+                    passwordError.innerHTML = 'Le mot de passe doit contenir au minimum :<br>- 8 caractères<br>- 1 majuscule<br>- 1 chiffre<br>- 1 caractère spécial (!@#$%...)';
+                    passwordError.style.display = 'block';
+                    return;
+                }
+                if (newPassword !== confirmPassword) {
+                    confirmError.style.display = 'block';
+                    return;
+                }
+                bootstrap.Modal.getInstance(document.getElementById('modalResetPassword')).hide();
+            }
+
+            /**
+             * Shows the floating save button when any field has been modified.
+             */
+            function onFieldChanged() {
+                document.getElementById('btnSauvegarder').style.display = 'block';
+            }
+
+            function sauvegarder() {
+                document.getElementById('btnSauvegarder').style.display = 'none';
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('input:not([type="radio"]), textarea, select').forEach(el => {
+                    el.addEventListener('input', onFieldChanged);
+                    el.addEventListener('change', onFieldChanged);
+                });
+                document.querySelectorAll('input[type="radio"]').forEach(el => {
+                    el.addEventListener('change', onFieldChanged);
+                });
+            });
+        </script>
+    </body>
+</html>

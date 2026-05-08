@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+
+    <head th:replace="~{common/head :: head('Gestion Utilisateurs', '/css/coordinatrice/utilisateurs.css')}"></head>
+
+    <body>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='utilisateurs', userRole='COORDINATOR', userName=${userName}, breadcrumb='Gestion Utilisateurs', isAdmin=true)}"></nav>
+
+        <div class="container-fluid px-5 py-4">
+
+            <div class="text-center mb-3">
+                <h1 class="fw-bold text-primary mb-0">Liste des utilisateurs</h1>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-2 px-5">
+                <div class="d-flex gap-2" style="max-width: 590px;">
+                    <div class="input-group">
+                        <span class="input-group-text border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Rechercher un utilisateur..."/>
+                    </div>
+                    <select id="roleFilter" class="form-select" style="max-width: 160px; min-width: 160px;">
+                        <option value="" selected>Tous les rôles</option>
+                        <option value="coordinatrice">Coordinatrice</option>
+                        <option value="resa">Résa</option>
+                        <option value="interprete">Interprète</option>
+                        <option value="beneficiaire">Bénéficiaire</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAjout">
+                    <i class="bi bi-person-plus me-1"></i> Ajouter un utilisateur
+                </button>
+            </div>
+
+            <div class="px-5">
+                <div class="table-wrapper">
+                    <table class="table table-hover table-utilisateurs">
+                        <thead>
+                        <tr>
+                            <th>Nom et Prénom</th>
+                            <th>Rôle</th>
+                            <th>Date Création</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr data-role="resa">
+                        <td>DUBOIS Lucie</td>
+                            <td><span class="badge-role resa">Résa</span></td>
+                            <td>05 Juillet 2020</td>
+                            <td>
+                                <a th:href="@{/coordinatrice/utilisateurs/1}" class="btn btn-link p-0 text-dark me-2" title="Modifier">
+                                    <i class="bi bi-pencil-square fs-5"></i>
+                                </a>
+                                <button class="btn btn-link p-0 text-danger" data-bs-toggle="modal" data-bs-target="#modalSuppression" title="Supprimer">
+                                    <i class="bi bi-trash3 fs-5"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr data-role="interprete">
+                        <td>BRASSEUR Frédéric</td>
+                            <td><span class="badge-role interprete">Interprète</span></td>
+                            <td>05 Juillet 2020</td>
+                            <td>
+                                <a th:href="@{/coordinatrice/utilisateurs/2}" class="btn btn-link p-0 text-dark me-2" title="Modifier">
+                                    <i class="bi bi-pencil-square fs-5"></i>
+                                </a>
+                                <button class="btn btn-link p-0 text-danger" data-bs-toggle="modal" data-bs-target="#modalSuppression" title="Supprimer">
+                                    <i class="bi bi-trash3 fs-5"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr data-role="beneficiaire">
+                        <td>TOMASI Charles</td>
+                            <td><span class="badge-role beneficiaire">Bénéficiaire</span></td>
+                            <td>05 Juillet 2020</td>
+                            <td>
+                                <a th:href="@{/coordinatrice/utilisateurs/3}" class="btn btn-link p-0 text-dark me-2" title="Modifier">
+                                    <i class="bi bi-pencil-square fs-5"></i>
+                                </a>
+                                <button class="btn btn-link p-0 text-danger" data-bs-toggle="modal" data-bs-target="#modalSuppression" title="Supprimer">
+                                    <i class="bi bi-trash3 fs-5"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr data-role="coordinatrice">
+                        <td>DELOGNE Elena</td>
+                            <td><span class="badge-role coordinatrice">Coordinatrice</span></td>
+                            <td>05 Juillet 2020</td>
+                            <td>
+                                <a th:href="@{/coordinatrice/utilisateurs/4}" class="btn btn-link p-0 text-dark me-2" title="Modifier">
+                                    <i class="bi bi-pencil-square fs-5"></i>
+                                </a>
+                                <button class="btn btn-link p-0 text-danger" data-bs-toggle="modal" data-bs-target="#modalSuppression" title="Supprimer">
+                                    <i class="bi bi-trash3 fs-5"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <nav class="mt-4 d-flex justify-content-center" aria-label="Pagination utilisateurs">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#"><i class="bi bi-arrow-left"></i> Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                    <li class="page-item"><a class="page-link" href="#">9</a></li>
+                    <li class="page-item"><a class="page-link" href="#">10</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next <i class="bi bi-arrow-right"></i></a>
+                    </li>
+                </ul>
+            </nav>
+
+            <hr class="my-4"/>
+            <div class="row g-3 justify-content-center mb-4">
+                <div class="col-md-2">
+                    <div class="stat-card text-center p-3">
+                        <i class="bi bi-people fs-3 text-muted mb-2 d-block"></i>
+                        <div class="fw-bold fs-4">77</div>
+                        <div class="text-muted small">Utilisateurs Total</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat-card text-center p-3">
+                        <i class="bi bi-person fs-3 text-muted mb-2 d-block"></i>
+                        <div class="fw-bold fs-4">25</div>
+                        <div class="text-muted small">Interprètes</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat-card text-center p-3">
+                        <i class="bi bi-person fs-3 text-muted mb-2 d-block"></i>
+                        <div class="fw-bold fs-4">50</div>
+                        <div class="text-muted small">Bénéficiaires</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat-card text-center p-3">
+                        <i class="bi bi-person fs-3 text-muted mb-2 d-block"></i>
+                        <div class="fw-bold fs-4">2</div>
+                        <div class="text-muted small">Resas</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal fade" id="modalAjout" tabindex="-1" aria-labelledby="modalAjoutLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalAjoutLabel">Ajouter un utilisateur</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Nom</label>
+                                <input type="text" class="form-control form-control-sm" placeholder="Ex : DUBOIS"/>
+                            </div>
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Prénom</label>
+                                <input type="text" class="form-control form-control-sm" placeholder="Ex : Lucie"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Email</label>
+                            <input type="email" class="form-control form-control-sm" placeholder="Ex : lucie.dubois@mail.com"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Mot de passe</label>
+                            <input type="password" id="passwordInput" class="form-control form-control-sm" placeholder="Mot de passe..."/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Rôle</label>
+                            <select id="roleSelect" class="form-select form-select-sm">
+                                <option value="" disabled selected>-- Choisir un rôle --</option>
+                                <option value="INTERPRETER">Interprète</option>
+                                <option value="BENEFICIARY">Bénéficiaire</option>
+                                <option value="RESA">Résa</option>
+                                <option value="COORDINATOR">Coordinatrice</option>
+                            </select>
+                        </div>
+
+                        <div id="interpreteField" class="mb-3" style="display: none;">
+                            <label class="form-label small fw-semibold">
+                                Interprète référent
+                                <span class="text-muted fw-normal">(facultatif)</span>
+                            </label>
+                            <select class="form-select form-select-sm">
+                                <option value="" selected>-- Aucun --</option>
+                                <option value="1">BRASSEUR Frédéric</option>
+                                <option value="2">MARTIN Sophie</option>
+                                <option value="3">LEROY Thomas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus-lg me-1"></i> Ajouter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalEdition" tabindex="-1" aria-labelledby="modalEditionLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalEditionLabel">Modifier l'utilisateur</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Nom</label>
+                                <input type="text" class="form-control form-control-sm" value="DUBOIS"/>
+                            </div>
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Prénom</label>
+                                <input type="text" class="form-control form-control-sm" value="Lucie"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Email</label>
+                            <input type="email" class="form-control form-control-sm" value="lucie.dubois@mail.com"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Rôle</label>
+                            <select class="form-select form-select-sm">
+                                <option value="INTERPRETER">Interprète</option>
+                                <option value="BENEFICIARY">Bénéficiaire</option>
+                                <option value="RESA" selected>Résa</option>
+                                <option value="COORDINATOR">Coordinatrice</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <i class="bi bi-floppy me-1"></i> Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalSuppression" tabindex="-1" aria-labelledby="modalSuppressionLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalSuppressionLabel">Confirmer la suppression</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3 text-center">
+                        <i class="bi bi-exclamation-triangle text-danger fs-1 mb-3 d-block"></i>
+                        <p class="mb-1">Vous êtes sur le point de supprimer l'utilisateur</p>
+                        <p class="fw-bold mb-3">DUBOIS Lucie</p>
+                        <p class="text-muted small">Cette action est irréversible.</p>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash3 me-1"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="~{common/footer :: footer}"></div>
+
+        <script>
+            /**
+             * Filters the users table based on the search input and the role filter.
+             * Searches on the full name column (case-insensitive).
+             * Filters by role using the data-role attribute on each row.
+             */
+            document.addEventListener('DOMContentLoaded', function () {
+
+                const searchInput = document.getElementById('searchInput');
+                const roleFilter = document.getElementById('roleFilter');
+                const tableRows = document.querySelectorAll('.table-utilisateurs tbody tr');
+
+                function filterTable() {
+                    const searchValue = searchInput.value.toLowerCase().trim();
+                    const roleValue = roleFilter.value.toLowerCase();
+
+                    tableRows.forEach(function (row) {
+                        const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                        const role = row.getAttribute('data-role').toLowerCase();
+
+                        const matchesSearch = name.includes(searchValue);
+                        const matchesRole = roleValue === '' || role === roleValue;
+
+                        row.style.display = matchesSearch && matchesRole ? '' : 'none';
+                    });
+                }
+
+                searchInput.addEventListener('input', filterTable);
+                roleFilter.addEventListener('change', filterTable);
+
+                /**
+                 * Shows or hides the interpreter reference field
+                 * based on the selected role in the add user modal.
+                 */
+                const roleSelect = document.getElementById('roleSelect');
+                const interpreteField = document.getElementById('interpreteField');
+
+                roleSelect.addEventListener('change', function () {
+                    interpreteField.style.display = this.value === 'BENEFICIARY' ? 'block' : 'none';
+                });
+            });
+        </script>
+
+    </body>
+</html>
