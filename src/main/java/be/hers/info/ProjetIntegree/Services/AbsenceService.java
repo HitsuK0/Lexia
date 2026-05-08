@@ -1,4 +1,4 @@
-package be.hers.info.ProjetIntegree.Service;
+package be.hers.info.ProjetIntegree.Services;
 
 import be.hers.info.ProjetIntegree.DAO.DAOAbsence;
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
@@ -11,7 +11,7 @@ import java.time.Duration;
 import java.time.LocalTime;
 
 @Service
-public class ServiceAbsence {
+public class AbsenceService {
 
 
     public void createAbsence(DTOAbsence absenceDTO, Absence absence) {

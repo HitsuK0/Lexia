@@ -3,7 +3,7 @@ package be.hers.info.ProjetIntegree.Controller;
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
 import be.hers.info.ProjetIntegree.POJO.Absence;
 import be.hers.info.ProjetIntegree.POJO.Interpreter;
-import be.hers.info.ProjetIntegree.Service.ServiceAbsence;
+import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -68,15 +68,15 @@ public class InterpreterController {
     /**
      * Function called when the form is filled.
      * Also redirect to the indsponibilites page.
-     * @param dtoAbsence
+     * @param dtoAbsence the dto to convert into a pojo
      * @param model
-     * @return
+     * @return the page to redirect to.
      */
     @PostMapping("/indisponibilites")
     public String createIndisponibilite(@ModelAttribute("DTOAbsence") DTOAbsence dtoAbsence, Model model) {
-        ServiceAbsence serviceAbsence = new ServiceAbsence();
+        AbsenceService absenceService = new AbsenceService();
         Absence absence = new Absence();
-        serviceAbsence.createAbsence(dtoAbsence, absence);
+        absenceService.createAbsence(dtoAbsence, absence);
         return "interprete/indisponibilites";
     }
 }
