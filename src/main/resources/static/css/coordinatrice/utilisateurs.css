@@ -1,0 +1,128 @@
+/* Allows you to put all the modals with rounded corners */
+#modalAjout .modal-content,
+#modalEdition .modal-content,
+#modalSuppression .modal-content {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+
+/* Allows you to style the table wrapper */
+.table-wrapper {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    border: 1.5px solid #e8e0f5;
+}
+
+/* Allows you to style the utilisateurs table */
+.table-utilisateurs {
+    margin-bottom: 0;
+}
+
+.table-utilisateurs thead tr {
+    border-bottom: 2px solid #e8e0f5;
+}
+
+.table-utilisateurs thead th {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #212529;
+    padding: 14px 16px;
+    border: none;
+    text-align: center;
+    background-color: #e9e5f4;
+}
+
+.table-utilisateurs tbody td {
+    font-size: 0.875rem;
+    padding: 14px 16px;
+    vertical-align: middle;
+    text-align: center;
+    border-bottom: 1px solid #f0ecf8;
+    color: #333;
+}
+
+.table-utilisateurs tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-utilisateurs tbody tr:hover {
+    background-color: #faf8ff;
+}
+
+/* Allows you to left-align the name column */
+.table-utilisateurs th:nth-child(1),
+.table-utilisateurs td:nth-child(1) {
+    width: 25%;
+}
+
+/* Allows you to style the role badges */
+.badge-role {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.badge-role.coordinatrice { background-color: #6c5ce7; }
+.badge-role.resa          { background-color: #cc5de8; }
+.badge-role.beneficiaire  { background-color: #4dabf7; }
+.badge-role.interprete    { background-color: #51cf66; }
+
+/* Allows you to style action buttons on hover */
+.btn-link.text-dark:hover {
+    color: var(--bs-primary) !important;
+    transform: scale(1.15);
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.btn-link.text-danger:hover {
+    transform: scale(1.15);
+    transition: transform 0.15s ease;
+}
+
+/* Allows you to style the stats cards */
+.stat-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1.5px solid #e8e0f5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(99, 84, 196, 0.12);
+}
+
+.input-group .input-group-text {
+    background-color: white;
+    border-right: none;
+    border-color: #dee2e6;
+    transition: border-color 0.15s ease;
+}
+
+.input-group .form-control {
+    border-left: none;
+    border-color: #dee2e6;
+    box-shadow: none !important;
+    transition: border-color 0.15s ease;
+}
+
+.input-group:focus-within .input-group-text,
+.input-group:focus-within .form-control {
+    border-color: #6c5ce7 !important;
+}
+
+/* Allows you to style the active pagination item */
+.pagination .page-item.active .page-link {
+    font-weight: 600;
+}
+
+/* Allows you to style the disabled pagination items */
+.pagination .page-item.disabled .page-link {
+    opacity: 0.5;
+}
