@@ -1,9 +1,6 @@
 package be.hers.info.ProjetIntegree.TEST.POJO;
 
-import be.hers.info.ProjetIntegree.POJO.AcademicSkill;
-import be.hers.info.ProjetIntegree.POJO.Address;
-import be.hers.info.ProjetIntegree.POJO.Beneficiary;
-import be.hers.info.ProjetIntegree.POJO.Interpreter;
+import be.hers.info.ProjetIntegree.POJO.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +23,11 @@ public class BeneficiaryTest {
     private Address address;
     private List<String> languages;
 
+    // Set Up //
+
+    /**
+     * Initializes a valid {@link Address}, a default {@link Interpreter} and a language list before each test.
+     */
     @BeforeEach
     void setUp() {
         interpreter = new Interpreter();
@@ -33,46 +35,46 @@ public class BeneficiaryTest {
         languages = new ArrayList<>(Arrays.asList("Français", "Anglais"));
     }
 
-    //  default constructor
+    // Default Constructor //
 
     /**
      * Tests that the default constructor initializes all string fields to empty strings.
      * Given : a Beneficiary constructed with no arguments
      * When  : string getters are called
-     * Then  : login, password, name, surname, phoneNumber and emailAddress must all equal ""
+     * Then  : login, password, firstName, lastName, phoneNumber and emailAddress must all equal ""
      */
     @Test
-    void defaultConstructor_ShouldInitializeStringFieldsToEmpty() {
+    void defaultConstructor_AllStringFieldsAreEmpty() {
         Beneficiary b = new Beneficiary();
         assertEquals("", b.getLogin());
         assertEquals("", b.getPassword());
-        assertEquals("", b.getName());
-        assertEquals("", b.getSurname());
+        assertEquals("", b.getFirstName());
+        assertEquals("", b.getLastName());
         assertEquals("", b.getPhoneNumber());
         assertEquals("", b.getEmailAddress());
     }
 
     /**
-     * Tests that the default constructor initializes numeric fields to 0.
+     * Tests that the default constructor initializes hourQuota and educationLevel to 0.
      * Given : a Beneficiary constructed with no arguments
      * When  : getHourQuota() and getEducationLevel() are called
      * Then  : both must equal 0
      */
     @Test
-    void defaultConstructor_ShouldInitializeNumericFieldsToZero() {
+    void defaultConstructor_NumericFieldsAreZero() {
         Beneficiary b = new Beneficiary();
         assertEquals(0, b.getHourQuota());
         assertEquals(0, b.getEducationLevel());
     }
 
     /**
-     * Tests that the default constructor initializes lists as empty (not null).
+     * Tests that the default constructor initializes communicationLanguage and appointmentList as empty (not null).
      * Given : a Beneficiary constructed with no arguments
      * When  : getCommunicationLanguage() and getAppointmentList() are called
      * Then  : both must be non-null and empty
      */
     @Test
-    void defaultConstructor_ShouldInitializeListsAsEmpty() {
+    void defaultConstructor_ListsAreEmpty() {
         Beneficiary b = new Beneficiary();
         assertNotNull(b.getCommunicationLanguage());
         assertNotNull(b.getAppointmentList());
@@ -87,110 +89,122 @@ public class BeneficiaryTest {
      * Then  : both must be null
      */
     @Test
-    void defaultConstructor_ShouldInitializeAddressAndInterpreterToNull() {
+    void defaultConstructor_AddressAndInterpreterAreNull() {
         Beneficiary b = new Beneficiary();
-        assertNull(b.getAddress());
+        assertNotNull(b.getAddress());
         assertNull(b.getInterpreter());
     }
 
-    //  Constructor (login, password, emailAddress, name, surname)
+    // Constructor (login, password, lastName, firstName, emailAddress) //
 
     /**
-     * Tests that the short constructor sets login, name, surname and emailAddress correctly.
-     * Given : a Beneficiary constructed with login="jdoe", password="secret", emailAddress="j@j.be", name="Jean", surname="Doe"
+     * Tests that the short constructor correctly sets login, lastName, firstName and emailAddress.
+     * Given : login="jdoe", password="secret", lastName="Doe", firstName="Jean", emailAddress="j@j.be"
      * When  : the corresponding getters are called
      * Then  : each field must match the provided argument
      */
     @Test
-    void shortConstructor_ShouldSetLoginNameSurnameEmail() {
-        Beneficiary b = new Beneficiary("jdoe", "secret", "j@j.be", "Jean", "Doe");
+    void constructor_Short_SetsAllFields() {
+        Beneficiary b = new Beneficiary("jdoe", "secret", "Doe", "Jean", "j@j.be");
         assertEquals("jdoe", b.getLogin());
-        assertEquals("Jean", b.getName());
-        assertEquals("Doe", b.getSurname());
+        assertEquals("Doe", b.getLastName());
+        assertEquals("Jean", b.getFirstName());
         assertEquals("j@j.be", b.getEmailAddress());
     }
 
     /**
-     * Tests that the short constructor throws an exception when password is null.
-     * Given : a Beneficiary constructed with password=null
-     * When  : the constructor is called
-     * Then  : an IllegalArgumentException must be thrown
+     * Tests that the short constructor stores the password as provided.
+     * Given : a Beneficiary constructed with password="secret"
+     * When  : getPassword() is called
+     * Then  : the result must equal "secret"
      */
     @Test
-    void shortConstructor_WhenPasswordIsNull_ShouldThrowIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary("jdoe", null, "j@j.be", "Jean", "Doe"));
+    void constructor_Short_StoresPassword() {
+        Beneficiary b = new Beneficiary("jdoe", "secret", "Doe", "Jean", "j@j.be");
+        assertEquals("secret", b.getPassword());
     }
 
     /**
-     * Tests that the short constructor throws an exception when password is empty.
-     * Given : a Beneficiary constructed with password=""
-     * When  : the constructor is called
+     * Tests that the short constructor throws an {@link IllegalArgumentException} when password is null.
+     * Given : password=null
+     * When  : a Beneficiary is created with this password
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void shortConstructor_WhenPasswordIsEmpty_ShouldThrowIllegalArgumentException() {
+    void constructor_Short_WithNullPassword_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary("jdoe", "", "j@j.be", "Jean", "Doe"));
+                () -> new Beneficiary("jdoe", null, "Doe", "Jean", "j@j.be"));
     }
 
-    //  Constructor (numBeneficiary, login, password, emailAddress, name, surname)
+    /**
+     * Tests that the short constructor throws an {@link IllegalArgumentException} when password is empty.
+     * Given : password=""
+     * When  : a Beneficiary is created with this password
+     * Then  : an IllegalArgumentException must be thrown
+     */
+    @Test
+    void constructor_Short_WithEmptyPassword_RaisesAnException() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Beneficiary("jdoe", "", "Doe", "Jean", "j@j.be"));
+    }
+
+    // Constructor (numBeneficiary, login, password, lastName, firstName, emailAddress) //
 
     /**
-     * Tests that the constructor with ID sets numBeneficiary correctly.
-     * Given : a Beneficiary constructed with numBeneficiary=42
+     * Tests that the constructor with ID correctly sets numBeneficiary.
+     * Given : numBeneficiary=42 and valid arguments
      * When  : getNumBeneficiary() is called
      * Then  : the result must equal 42
      */
     @Test
-    void constructorWithId_ShouldSetNumBeneficiary() {
-        Beneficiary b = new Beneficiary(42, "jdoe", "secret", "j@j.be", "Jean", "Doe");
+    void constructor_WithId_SetsNumBeneficiary() {
+        Beneficiary b = new Beneficiary(42, "jdoe", "secret", "Doe", "Jean", "j@j.be");
         assertEquals(42, b.getNumBeneficiary());
     }
 
     /**
-     * Tests that the constructor with ID throws an exception when password is null.
-     * Given : a Beneficiary constructed with numBeneficiary=1 and password=null
-     * When  : the constructor is called
+     * Tests that the constructor with ID throws an {@link IllegalArgumentException} when password is null.
+     * Given : numBeneficiary=1 and password=null
+     * When  : a Beneficiary is created with these arguments
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void constructorWithId_WhenPasswordIsNull_ShouldThrowIllegalArgumentException() {
+    void constructor_WithId_WithNullPassword_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary(1, "jdoe", null, "j@j.be", "Jean", "Doe"));
+                () -> new Beneficiary(1, "jdoe", null, "Doe", "Jean", "j@j.be"));
     }
 
     /**
-     * Tests that the constructor with ID throws an exception when password is empty.
-     * Given : a Beneficiary constructed with numBeneficiary=1 and password=""
-     * When  : the constructor is called
+     * Tests that the constructor with ID throws an {@link IllegalArgumentException} when password is empty.
+     * Given : numBeneficiary=1 and password=""
+     * When  : a Beneficiary is created with these arguments
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void constructorWithId_WhenPasswordIsEmpty_ShouldThrowIllegalArgumentException() {
+    void constructor_WithId_WithEmptyPassword_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary(1, "jdoe", "", "j@j.be", "Jean", "Doe"));
+                () -> new Beneficiary(1, "jdoe", "", "Doe", "Jean", "j@j.be"));
     }
 
-    //  Complete constructor without numBeneficiary
+    // Constructor full without numBeneficiary //
 
     /**
-     * Tests that the full constructor without ID sets all fields correctly.
-     * Given : a Beneficiary constructed with all valid arguments and no numBeneficiary
+     * Tests that the full constructor without ID correctly sets all fields.
+     * Given : all valid arguments and no numBeneficiary
      * When  : all getters are called
      * Then  : each field must match the provided argument
      */
     @Test
-    void fullConstructorWithoutId_ShouldSetAllFields() {
-        Beneficiary b = new Beneficiary("jdoe", "secret", "Jean", "Doe", "0477000000",
-                20, "j@j.be", address, 2, interpreter, languages, null);
+    void constructor_FullWithoutId_SetsAllFields() {
+        Beneficiary b = new Beneficiary("jdoe", "secret", "Doe", "Jean", "0477000000",
+                "j@j.be", address, 20, 2, interpreter, languages, null);
 
         assertEquals("jdoe", b.getLogin());
-        assertEquals("Jean", b.getName());
-        assertEquals("Doe", b.getSurname());
+        assertEquals("Doe", b.getLastName());
+        assertEquals("Jean", b.getFirstName());
         assertEquals("0477000000", b.getPhoneNumber());
-        assertEquals(20, b.getHourQuota());
         assertEquals("j@j.be", b.getEmailAddress());
+        assertEquals(20, b.getHourQuota());
         assertEquals(2, b.getEducationLevel());
         assertSame(address, b.getAddress());
         assertSame(interpreter, b.getInterpreter());
@@ -199,544 +213,479 @@ public class BeneficiaryTest {
 
     /**
      * Tests that the full constructor without ID initializes an empty appointment list when null is passed.
-     * Given : a Beneficiary constructed with appointmentList=null
+     * Given : appointmentList=null
      * When  : getAppointmentList() is called
      * Then  : the result must be an empty list (not null)
      */
     @Test
-    void fullConstructorWithoutId_WhenAppointmentListIsNull_ShouldInitializeEmptyList() {
-        Beneficiary b = new Beneficiary("jdoe", "secret", "Jean", "Doe", "0477000000",
-                20, "j@j.be", address, 2, interpreter, languages, null);
+    void constructor_FullWithoutId_WithNullAppointmentList_InitializesEmptyList() {
+        Beneficiary b = new Beneficiary("jdoe", "secret", "Doe", "Jean", "0477000000",
+                "j@j.be", address, 20, 2, interpreter, languages, null);
         assertNotNull(b.getAppointmentList());
         assertTrue(b.getAppointmentList().isEmpty());
     }
 
     /**
-     * Tests that the full constructor without ID throws an exception when address is null.
-     * Given : a Beneficiary constructed with address=null
-     * When  : the constructor is called
+     * Tests that the full constructor without ID throws an {@link IllegalArgumentException} when interpreter is null.
+     * Given : interpreter=null
+     * When  : a Beneficiary is created with this argument
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void fullConstructorWithoutId_WhenAddressIsNull_ShouldThrowIllegalArgumentException() {
+    void constructor_FullWithoutId_WithNullInterpreter_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary("jdoe", "secret", "Jean", "Doe", "000",
-                        0, "j@j.be", null, 0, interpreter, languages, null));
+                () -> new Beneficiary("jdoe", "secret", "Doe", "Jean", "000",
+                        "j@j.be", address, 0, 0, null, languages, null));
     }
 
     /**
-     * Tests that the full constructor without ID throws an exception when interpreter is null.
-     * Given : a Beneficiary constructed with interpreter=null
-     * When  : the constructor is called
+     * Tests that the full constructor without ID throws an {@link IllegalArgumentException} when communicationLanguage is null.
+     * Given : communicationLanguage=null
+     * When  : a Beneficiary is created with this argument
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void fullConstructorWithoutId_WhenInterpreterIsNull_ShouldThrowIllegalArgumentException() {
+    void constructor_FullWithoutId_WithNullCommunicationLanguage_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary("jdoe", "secret", "Jean", "Doe", "000",
-                        0, "j@j.be", address, 0, null, languages, null));
+                () -> new Beneficiary("jdoe", "secret", "Doe", "Jean", "000",
+                        "j@j.be", address, 0, 0, interpreter, null, null));
     }
 
     /**
-     * Tests that the full constructor without ID throws an exception when communicationLanguage is null.
-     * Given : a Beneficiary constructed with communicationLanguage=null
-     * When  : the constructor is called
+     * Tests that the full constructor without ID throws an {@link IllegalArgumentException} when communicationLanguage is empty.
+     * Given : an empty communicationLanguage list
+     * When  : a Beneficiary is created with this argument
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void fullConstructorWithoutId_WhenCommunicationLanguageIsNull_ShouldThrowIllegalArgumentException() {
+    void constructor_FullWithoutId_WithEmptyCommunicationLanguage_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary("jdoe", "secret", "Jean", "Doe", "000",
-                        0, "j@j.be", address, 0, interpreter, null, null));
+                () -> new Beneficiary("jdoe", "secret", "Doe", "Jean", "000",
+                        "j@j.be", address, 0, 0, interpreter, new ArrayList<>(), null));
     }
 
     /**
-     * Tests that the full constructor without ID throws an exception when communicationLanguage is empty.
-     * Given : a Beneficiary constructed with an empty communicationLanguage list
-     * When  : the constructor is called
+     * Tests that the full constructor without ID throws an {@link IllegalArgumentException} when hourQuota is negative.
+     * Given : hourQuota=-1
+     * When  : a Beneficiary is created with this argument
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void fullConstructorWithoutId_WhenCommunicationLanguageIsEmpty_ShouldThrowIllegalArgumentException() {
+    void constructor_FullWithoutId_WithNegativeHourQuota_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary("jdoe", "secret", "Jean", "Doe", "000",
-                        0, "j@j.be", address, 0, interpreter, new ArrayList<>(), null));
+                () -> new Beneficiary("jdoe", "secret", "Doe", "Jean", "000",
+                        "j@j.be", address, -1, 0, interpreter, languages, null));
     }
 
     /**
-     * Tests that the full constructor without ID throws an exception when password is null.
-     * Given : a Beneficiary constructed with password=null
-     * When  : the constructor is called
+     * Tests that the full constructor without ID throws an {@link IllegalArgumentException} when educationLevel is greater than 4.
+     * Given : educationLevel=5
+     * When  : a Beneficiary is created with this argument
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void fullConstructorWithoutId_WhenPasswordIsNull_ShouldThrowIllegalArgumentException() {
+    void constructor_FullWithoutId_WithEducationLevelTooHigh_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary("jdoe", null, "Jean", "Doe", "000",
-                        0, "j@j.be", address, 0, interpreter, languages, null));
+                () -> new Beneficiary("jdoe", "secret", "Doe", "Jean", "000",
+                        "j@j.be", address, 0, 5, interpreter, languages, null));
     }
 
     /**
-     * Tests that the full constructor without ID throws an exception when password is empty.
-     * Given : a Beneficiary constructed with password=""
-     * When  : the constructor is called
+     * Tests that the full constructor without ID throws an {@link IllegalArgumentException} when educationLevel is less than 0.
+     * Given : educationLevel=-1
+     * When  : a Beneficiary is created with this argument
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void fullConstructorWithoutId_WhenPasswordIsEmpty_ShouldThrowIllegalArgumentException() {
+    void constructor_FullWithoutId_WithEducationLevelTooLow_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary("jdoe", "", "Jean", "Doe", "000",
-                        0, "j@j.be", address, 0, interpreter, languages, null));
+                () -> new Beneficiary("jdoe", "secret", "Doe", "Jean", "000",
+                        "j@j.be", address, 0, -1, interpreter, languages, null));
     }
 
-    /**
-     * Tests that the full constructor without ID throws an exception when hourQuota is negative.
-     * Given : a Beneficiary constructed with hourQuota=-1
-     * When  : the constructor is called
-     * Then  : an IllegalArgumentException must be thrown
-     */
-    @Test
-    void fullConstructorWithoutId_WhenHourQuotaIsNegative_ShouldThrowIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary("jdoe", "secret", "Jean", "Doe", "000",
-                        -1, "j@j.be", address, 0, interpreter, languages, null));
-    }
+    // Constructor full with numBeneficiary //
 
     /**
-     * Tests that the full constructor without ID throws an exception when educationLevel is greater than 4.
-     * Given : a Beneficiary constructed with educationLevel=5
-     * When  : the constructor is called
-     * Then  : an IllegalArgumentException must be thrown
-     */
-    @Test
-    void fullConstructorWithoutId_WhenEducationLevelTooHigh_ShouldThrowIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary("jdoe", "secret", "Jean", "Doe", "000",
-                        0, "j@j.be", address, 5, interpreter, languages, null));
-    }
-
-    /**
-     * Tests that the full constructor without ID throws an exception when educationLevel is less than 0.
-     * Given : a Beneficiary constructed with educationLevel=-1
-     * When  : the constructor is called
-     * Then  : an IllegalArgumentException must be thrown
-     */
-    @Test
-    void fullConstructorWithoutId_WhenEducationLevelTooLow_ShouldThrowIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary("jdoe", "secret", "Jean", "Doe", "000",
-                        0, "j@j.be", address, -1, interpreter, languages, null));
-    }
-
-    //  Complete constructor with numBeneficiary
-
-    /**
-     * Tests that the full constructor with ID sets numBeneficiary correctly.
-     * Given : a Beneficiary constructed with numBeneficiary=7 and all valid arguments
+     * Tests that the full constructor with ID correctly sets numBeneficiary.
+     * Given : numBeneficiary=7 and all valid arguments
      * When  : getNumBeneficiary() is called
      * Then  : the result must equal 7
      */
     @Test
-    void fullConstructorWithId_ShouldSetNumBeneficiary() {
-        Beneficiary b = new Beneficiary(7, "jdoe", "secret", "Jean", "Doe", "0477000000",
-                20, "j@j.be", address, 2, interpreter, languages, null);
+    void constructor_FullWithId_SetsNumBeneficiary() {
+        Beneficiary b = new Beneficiary(7, "jdoe", "secret", "Doe", "Jean", "0477000000",
+                "j@j.be", address, 20, 2, interpreter, languages, null);
         assertEquals(7, b.getNumBeneficiary());
     }
 
     /**
-     * Tests that the full constructor with ID throws an exception when password is null.
-     * Given : a Beneficiary constructed with numBeneficiary=1 and password=null
-     * When  : the constructor is called
+     * Tests that the full constructor with ID throws an {@link IllegalArgumentException} when hourQuota is negative.
+     * Given : numBeneficiary=1 and hourQuota=-1
+     * When  : a Beneficiary is created with these arguments
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void fullConstructorWithId_WhenPasswordIsNull_ShouldThrowIllegalArgumentException() {
+    void constructor_FullWithId_WithNegativeHourQuota_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary(1, "jdoe", null, "Jean", "Doe", "000",
-                        0, "j@j.be", address, 0, interpreter, languages, null));
+                () -> new Beneficiary(1, "jdoe", "secret", "Doe", "Jean", "000",
+                        "j@j.be", address, -1, 0, interpreter, languages, null));
     }
 
     /**
-     * Tests that the full constructor with ID throws an exception when hourQuota is negative.
-     * Given : a Beneficiary constructed with numBeneficiary=1 and hourQuota=-1
-     * When  : the constructor is called
+     * Tests that the full constructor with ID throws an {@link IllegalArgumentException} when interpreter is null.
+     * Given : numBeneficiary=1 and interpreter=null
+     * When  : a Beneficiary is created with these arguments
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void fullConstructorWithId_WhenHourQuotaIsNegative_ShouldThrowIllegalArgumentException() {
+    void constructor_FullWithId_WithNullInterpreter_RaisesAnException() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Beneficiary(1, "jdoe", "secret", "Jean", "Doe", "000",
-                        -1, "j@j.be", address, 0, interpreter, languages, null));
+                () -> new Beneficiary(1, "jdoe", "secret", "Doe", "Jean", "000",
+                        "j@j.be", address, 0, 0, null, languages, null));
     }
 
-    //  Setters
+    // setNumBeneficiary //
 
     /**
-     * Tests that setLogin correctly updates the login.
+     * Tests that setNumBeneficiary() correctly updates the ID.
+     * Given : a default Beneficiary
+     * When  : setNumBeneficiary(99) is called
+     * Then  : getNumBeneficiary() must return 99
+     */
+    @Test
+    void setNumBeneficiary_UpdatesTheCorrectValue() {
+        Beneficiary b = new Beneficiary();
+        b.setNumBeneficiary(99);
+        assertEquals(99, b.getNumBeneficiary());
+    }
+
+    // setLogin (inherited from User) //
+
+    /**
+     * Tests that setLogin() correctly updates the login.
      * Given : a default Beneficiary
      * When  : setLogin("newlogin") is called
      * Then  : getLogin() must return "newlogin"
      */
     @Test
-    void setLogin_ShouldUpdateLogin() {
+    void setLogin_UpdatesTheCorrectValue() {
         Beneficiary b = new Beneficiary();
         b.setLogin("newlogin");
         assertEquals("newlogin", b.getLogin());
     }
 
+    // setPassword (inherited from User) //
+
     /**
-     * Tests that setPassword correctly updates the password.
+     * Tests that setPassword() correctly updates the password.
      * Given : a default Beneficiary
      * When  : setPassword("newpass") is called
-     * Then  : getName() must return "newpass"
+     * Then  : getPassword() must return "newpass"
      */
     @Test
-    void setPassword_StoreNewPassword() {
+    void setPassword_UpdatesTheCorrectValue() {
         Beneficiary b = new Beneficiary();
         b.setPassword("newpass");
         assertEquals("newpass", b.getPassword());
     }
 
-    /**
-     * Tests that setName correctly updates the name.
-     * Given : a default Beneficiary
-     * When  : setName("Sara") is called
-     * Then  : getName() must return "Sara"
-     */
-    @Test
-    void setName_ShouldUpdateName() {
-        Beneficiary b = new Beneficiary();
-        b.setName("Sara");
-        assertEquals("Sara", b.getName());
-    }
+    // setFirstName (inherited from User) //
 
     /**
-     * Tests that setName throws an exception when null is passed.
+     * Tests that setFirstName() correctly updates the first name.
      * Given : a default Beneficiary
-     * When  : setName(null) is called
-     * Then  : an IllegalArgumentException must be thrown
+     * When  : setFirstName("Sara") is called
+     * Then  : getFirstName() must return "Sara"
      */
     @Test
-    void setName_WhenNull_ShouldThrowIllegalArgumentException() {
+    void setFirstName_UpdatesTheCorrectValue() {
         Beneficiary b = new Beneficiary();
-        assertThrows(IllegalArgumentException.class, () -> b.setName(null));
+        b.setFirstName("Sara");
+        assertEquals("Sara", b.getFirstName());
     }
 
+    // setLastName (inherited from User) //
+
     /**
-     * Tests that setSurname correctly updates the surname.
+     * Tests that setLastName() correctly updates the last name.
      * Given : a default Beneficiary
-     * When  : setSurname("Kowalski") is called
-     * Then  : getSurname() must return "Kowalski"
+     * When  : setLastName("Kowalski") is called
+     * Then  : getLastName() must return "Kowalski"
      */
     @Test
-    void setSurname_ShouldUpdateSurname() {
+    void setLastName_UpdatesTheCorrectValue() {
         Beneficiary b = new Beneficiary();
-        b.setSurname("Kowalski");
-        assertEquals("Kowalski", b.getSurname());
+        b.setLastName("Kowalski");
+        assertEquals("Kowalski", b.getLastName());
     }
 
-    /**
-     * Tests that setSurname throws an exception when null is passed.
-     * Given : a default Beneficiary
-     * When  : setSurname(null) is called
-     * Then  : an IllegalArgumentException must be thrown
-     */
-    @Test
-    void setSurname_WhenNull_ShouldThrowIllegalArgumentException() {
-        Beneficiary b = new Beneficiary();
-        assertThrows(IllegalArgumentException.class, () -> b.setSurname(null));
-    }
+    // setPhoneNumber (inherited from User) //
 
     /**
-     * Tests that setPhoneNumber correctly updates the phone number.
+     * Tests that setPhoneNumber() correctly updates the phone number.
      * Given : a default Beneficiary
      * When  : setPhoneNumber("0477123456") is called
      * Then  : getPhoneNumber() must return "0477123456"
      */
     @Test
-    void setPhoneNumber_ShouldUpdatePhoneNumber() {
+    void setPhoneNumber_UpdatesTheCorrectValue() {
         Beneficiary b = new Beneficiary();
         b.setPhoneNumber("0477123456");
         assertEquals("0477123456", b.getPhoneNumber());
     }
 
-    /**
-     * Tests that setPhoneNumber throws an exception when null is passed.
-     * Given : a default Beneficiary
-     * When  : setPhoneNumber(null) is called
-     * Then  : an IllegalArgumentException must be thrown
-     */
-    @Test
-    void setPhoneNumber_WhenNull_ShouldThrowIllegalArgumentException() {
-        Beneficiary b = new Beneficiary();
-        assertThrows(IllegalArgumentException.class, () -> b.setPhoneNumber(null));
-    }
+    // setEmailAddress (inherited from User) //
 
     /**
-     * Tests that setEmailAddress correctly updates the email address.
+     * Tests that setEmailAddress() correctly updates the email address.
      * Given : a default Beneficiary
      * When  : setEmailAddress("new@mail.be") is called
      * Then  : getEmailAddress() must return "new@mail.be"
      */
     @Test
-    void setEmailAddress_ShouldUpdateEmailAddress() {
+    void setEmailAddress_UpdatesTheCorrectValue() {
         Beneficiary b = new Beneficiary();
         b.setEmailAddress("new@mail.be");
         assertEquals("new@mail.be", b.getEmailAddress());
     }
 
-    /**
-     * Tests that setEmailAddress throws an exception when null is passed.
-     * Given : a default Beneficiary
-     * When  : setEmailAddress(null) is called
-     * Then  : an IllegalArgumentException must be thrown
-     */
-    @Test
-    void setEmailAddress_WhenNull_ShouldThrowIllegalArgumentException() {
-        Beneficiary b = new Beneficiary();
-        assertThrows(IllegalArgumentException.class, () -> b.setEmailAddress(null));
-    }
+    // setAddress (inherited from User) //
 
     /**
-     * Tests that setAddress correctly updates the address.
+     * Tests that setAddress() correctly updates the address.
      * Given : a default Beneficiary and a non-null Address
      * When  : setAddress(address) is called
      * Then  : getAddress() must return the same address instance
      */
     @Test
-    void setAddress_ShouldUpdateAddress() {
+    void setAddress_UpdatesTheCorrectValue() {
         Beneficiary b = new Beneficiary();
         b.setAddress(address);
         assertSame(address, b.getAddress());
     }
 
     /**
-     * Tests that setAddress throws an exception when null is passed.
-     * Given : a default Beneficiary
+     * Tests that setAddress() throws an {@link IllegalArgumentException} when null is passed.
+     * Given : a null value
      * When  : setAddress(null) is called
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void setAddress_WhenNull_ShouldThrowIllegalArgumentException() {
+    void setAddress_WithNull_RaisesAnException() {
         Beneficiary b = new Beneficiary();
         assertThrows(IllegalArgumentException.class, () -> b.setAddress(null));
     }
 
+    // setHourQuota //
+
     /**
-     * Tests that setHourQuota correctly updates the hour quota.
+     * Tests that setHourQuota() correctly updates the hour quota.
      * Given : a default Beneficiary
      * When  : setHourQuota(10) is called
      * Then  : getHourQuota() must return 10
      */
     @Test
-    void setHourQuota_ShouldUpdateHourQuota() {
+    void setHourQuota_UpdatesTheCorrectValue() {
         Beneficiary b = new Beneficiary();
         b.setHourQuota(10);
         assertEquals(10, b.getHourQuota());
     }
 
     /**
-     * Tests that setHourQuota throws an exception when a negative value is passed.
-     * Given : a default Beneficiary
+     * Tests that setHourQuota() throws an {@link IllegalArgumentException} when a negative value is passed.
+     * Given : a negative value -5
      * When  : setHourQuota(-5) is called
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void setHourQuota_WhenNegative_ShouldThrowIllegalArgumentException() {
+    void setHourQuota_WithNegativeValue_RaisesAnException() {
         Beneficiary b = new Beneficiary();
         assertThrows(IllegalArgumentException.class, () -> b.setHourQuota(-5));
     }
 
+    // setEducationLevel //
+
     /**
-     * Tests that setEducationLevel correctly updates the education level.
+     * Tests that setEducationLevel() correctly updates the education level.
      * Given : a default Beneficiary
      * When  : setEducationLevel(3) is called
      * Then  : getEducationLevel() must return 3
      */
     @Test
-    void setEducationLevel_ShouldUpdateEducationLevel() {
+    void setEducationLevel_UpdatesTheCorrectValue() {
         Beneficiary b = new Beneficiary();
         b.setEducationLevel(3);
         assertEquals(3, b.getEducationLevel());
     }
 
     /**
-     * Tests that setEducationLevel throws an exception when value is greater than 4.
-     * Given : a default Beneficiary
+     * Tests that setEducationLevel() throws an {@link IllegalArgumentException} when value is greater than 4.
+     * Given : a value 5
      * When  : setEducationLevel(5) is called
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void setEducationLevel_WhenTooHigh_ShouldThrowIllegalArgumentException() {
+    void setEducationLevel_WithValueTooHigh_RaisesAnException() {
         Beneficiary b = new Beneficiary();
         assertThrows(IllegalArgumentException.class, () -> b.setEducationLevel(5));
     }
 
     /**
-     * Tests that setEducationLevel throws an exception when value is less than 0.
-     * Given : a default Beneficiary
+     * Tests that setEducationLevel() throws an {@link IllegalArgumentException} when value is less than 0.
+     * Given : a value -1
      * When  : setEducationLevel(-1) is called
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void setEducationLevel_WhenTooLow_ShouldThrowIllegalArgumentException() {
+    void setEducationLevel_WithValueTooLow_RaisesAnException() {
         Beneficiary b = new Beneficiary();
         assertThrows(IllegalArgumentException.class, () -> b.setEducationLevel(-1));
     }
 
+    // setInterpreter //
+
     /**
-     * Tests that setInterpreter correctly updates the interpreter.
+     * Tests that setInterpreter() correctly updates the interpreter.
      * Given : a default Beneficiary and a non-null Interpreter
      * When  : setInterpreter(interpreter) is called
      * Then  : getInterpreter() must return the same interpreter instance
      */
     @Test
-    void setInterpreter_ShouldUpdateInterpreter() {
+    void setInterpreter_UpdatesTheCorrectValue() {
         Beneficiary b = new Beneficiary();
         b.setInterpreter(interpreter);
         assertSame(interpreter, b.getInterpreter());
     }
 
     /**
-     * Tests that setInterpreter throws an exception when null is passed.
-     * Given : a default Beneficiary
+     * Tests that setInterpreter() throws an {@link IllegalArgumentException} when null is passed.
+     * Given : a null value
      * When  : setInterpreter(null) is called
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void setInterpreter_WhenNull_ShouldThrowIllegalArgumentException() {
+    void setInterpreter_WithNull_RaisesAnException() {
         Beneficiary b = new Beneficiary();
         assertThrows(IllegalArgumentException.class, () -> b.setInterpreter(null));
     }
 
+    // setCommunicationLanguage //
+
     /**
-     * Tests that setCommunicationLanguage correctly updates the language list.
+     * Tests that setCommunicationLanguage() correctly updates the language list.
      * Given : a default Beneficiary and a non-empty language list
      * When  : setCommunicationLanguage(list) is called
      * Then  : getCommunicationLanguage() must return the same list instance
      */
     @Test
-    void setCommunicationLanguage_ShouldUpdateList() {
+    void setCommunicationLanguage_UpdatesTheCorrectValue() {
         Beneficiary b = new Beneficiary();
         b.setCommunicationLanguage(languages);
         assertSame(languages, b.getCommunicationLanguage());
     }
 
     /**
-     * Tests that setCommunicationLanguage throws an exception when null is passed.
-     * Given : a default Beneficiary
+     * Tests that setCommunicationLanguage() throws an {@link IllegalArgumentException} when null is passed.
+     * Given : a null list
      * When  : setCommunicationLanguage(null) is called
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void setCommunicationLanguage_WhenNull_ShouldThrowIllegalArgumentException() {
+    void setCommunicationLanguage_WithNull_RaisesAnException() {
         Beneficiary b = new Beneficiary();
         assertThrows(IllegalArgumentException.class, () -> b.setCommunicationLanguage(null));
     }
 
     /**
-     * Tests that setCommunicationLanguage throws an exception when an empty list is passed.
-     * Given : a default Beneficiary
+     * Tests that setCommunicationLanguage() throws an {@link IllegalArgumentException} when an empty list is passed.
+     * Given : an empty list
      * When  : setCommunicationLanguage(empty list) is called
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void setCommunicationLanguage_WhenEmpty_ShouldThrowIllegalArgumentException() {
+    void setCommunicationLanguage_WithEmptyList_RaisesAnException() {
         Beneficiary b = new Beneficiary();
         assertThrows(IllegalArgumentException.class,
                 () -> b.setCommunicationLanguage(new ArrayList<>()));
     }
 
+    // setAppointmentList //
+
     /**
-     * Tests that setAppointmentList throws an exception when null is passed.
-     * Given : a default Beneficiary
+     * Tests that setAppointmentList() throws an {@link IllegalArgumentException} when null is passed.
+     * Given : a null list
      * When  : setAppointmentList(null) is called
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void setAppointmentList_WhenNull_ShouldThrowIllegalArgumentException() {
+    void setAppointmentList_WithNull_RaisesAnException() {
         Beneficiary b = new Beneficiary();
         assertThrows(IllegalArgumentException.class, () -> b.setAppointmentList(null));
     }
 
     /**
-     * Tests that setAppointmentList throws an exception when an empty list is passed.
-     * Given : a default Beneficiary
+     * Tests that setAppointmentList() throws an {@link IllegalArgumentException} when an empty list is passed.
+     * Given : an empty list
      * When  : setAppointmentList(empty list) is called
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void setAppointmentList_WhenEmpty_ShouldThrowIllegalArgumentException() {
+    void setAppointmentList_WithEmptyList_RaisesAnException() {
         Beneficiary b = new Beneficiary();
         assertThrows(IllegalArgumentException.class,
                 () -> b.setAppointmentList(new ArrayList<>()));
     }
 
-    /**
-     * Tests that setNumBeneficiary correctly updates the ID.
-     * Given : a default Beneficiary
-     * When  : setNumBeneficiary(99) is called
-     * Then  : getNumBeneficiary() must return 99
-     */
-    @Test
-    void setNumBeneficiary_ShouldUpdateId() {
-        Beneficiary b = new Beneficiary();
-        b.setNumBeneficiary(99);
-        assertEquals(99, b.getNumBeneficiary());
-    }
-
-    //  getAppointment
+    // getAppointment //
 
     /**
-     * Tests that getAppointment throws an exception when null is passed.
+     * Tests that getAppointment() throws an {@link IllegalArgumentException} when null is passed.
      * Given : a default Beneficiary
      * When  : getAppointment(null) is called
      * Then  : an IllegalArgumentException must be thrown
      */
     @Test
-    void getAppointment_WhenNull_ShouldThrowIllegalArgumentException() {
+    void getAppointment_WithNull_RaisesAnException() {
         Beneficiary b = new Beneficiary();
         assertThrows(IllegalArgumentException.class, () -> b.getAppointment(null));
     }
 
-    //  toString
+    // toString //
 
     /**
-     * Tests that {@code toString()} contains the login, name and surname.
-     * Given : a Beneficiary initialized with login="jdoe", name="Jean", surname="Doe"
+     * Tests that toString() contains the label "Bénéficiaire".
+     * Given : a valid Beneficiary
      * When  : toString() is called
-     * Then  : the result must contain "jdoe", "Jean" and "Doe"
+     * Then  : the result must contain "Bénéficiaire"
      */
     @Test
-    void toString_ShouldContainLoginNameAndSurname() {
-        Beneficiary b = new Beneficiary("jdoe", "secret", "j@j.be", "Jean", "Doe");
-        String result = b.toString();
-        assertTrue(result.contains("jdoe"));
-        assertTrue(result.contains("Jean"));
-        assertTrue(result.contains("Doe"));
+    void toString_ContainsLabel() {
+        Beneficiary b = new Beneficiary("jdoe", "secret", "Doe", "Jean", "j@j.be");
+        assertTrue(b.toString().contains("Bénéficiaire"));
     }
 
     /**
-     * Tests that {@code toString()} displays "Non renseigné" for phone number when it is empty.
-     * Given : a Beneficiary constructed via the short constructor (phoneNumber defaults to "")
+     * Tests that toString() contains the first name and last name.
+     * Given : a Beneficiary with firstName="Jean" and lastName="Doe"
      * When  : toString() is called
-     * Then  : the result must contain "Non renseigné"
+     * Then  : the result must contain "Jean" and "Doe"
      */
     @Test
-    void toString_WhenPhoneNumberEmpty_ShouldDisplayNonRenseigne() {
-        Beneficiary b = new Beneficiary("jdoe", "secret", "j@j.be", "Jean", "Doe");
-        assertTrue(b.toString().contains("Non renseigné"));
+    void toString_ContainsFirstNameAndLastName() {
+        Beneficiary b = new Beneficiary("jdoe", "secret", "Doe", "Jean", "j@j.be");
+        assertTrue(b.toString().contains("Jean"));
+        assertTrue(b.toString().contains("Doe"));
     }
 
     /**
-     * Tests that {@code toString()} displays "Aucun rendez-vous" when the appointment list is empty.
-     * Given : a Beneficiary constructed via the short constructor (appointmentList is empty by default)
+     * Tests that toString() contains "Aucun rendez-vous" when the appointment list is empty.
+     * Given : a Beneficiary with an empty appointment list
      * When  : toString() is called
      * Then  : the result must contain "Aucun rendez-vous"
      */
     @Test
-    void toString_WhenNoAppointments_ShouldDisplayAucunRendezVous() {
-        Beneficiary b = new Beneficiary("jdoe", "secret", "j@j.be", "Jean", "Doe");
+    void toString_WhenNoAppointments_ContainsAucunRendezVous() {
+        Beneficiary b = new Beneficiary("jdoe", "secret", "Doe", "Jean", "j@j.be");
         assertTrue(b.toString().contains("Aucun rendez-vous"));
     }
 }

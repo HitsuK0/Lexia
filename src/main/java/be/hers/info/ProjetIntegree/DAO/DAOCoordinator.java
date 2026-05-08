@@ -49,7 +49,7 @@ public class DAOCoordinator extends DAO<Coordinator> {
                         interpreter.getPassword(),
                         interpreter.getLastName(),
                         interpreter.getFirstName(),
-                        interpreter.getEmail(),
+                        interpreter.getEmailAddress(),
                         interpreter.getPhoneNumber(),
                         interpreter.getWeeklyWorkHours(),
                         interpreter.getAddress());
@@ -90,7 +90,7 @@ public class DAOCoordinator extends DAO<Coordinator> {
                         interpreter.getPassword(),
                         interpreter.getLastName(),
                         interpreter.getFirstName(),
-                        interpreter.getEmail(),
+                        interpreter.getEmailAddress(),
                         interpreter.getPhoneNumber(),
                         interpreter.getWeeklyWorkHours(),
                         interpreter.getAddress());
