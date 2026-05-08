@@ -1,14 +1,20 @@
 package be.hers.info.ProjetIntegree.Controller;
 
+import be.hers.info.ProjetIntegree.POJO.Appointment;
+import be.hers.info.ProjetIntegree.POJO.Beneficiary;
 import be.hers.info.ProjetIntegree.POJO.Interpreter;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
-import java.time.LocalDate;
+import java.sql.SQLException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/interprete")
@@ -37,17 +43,34 @@ public class InterpreterController {
         return "interprete/planning";
     }
 
-    // Temporaire
+    /**
+     * Searches for all Appointments belonging to the beneficiary as a parameter over a period defined by start and end.
+     * @param start the date retrieved via the URL
+     * @param end the date retrieved via the URL
+     * @param beneficiary The beneficiary linked to the appointment on the list
+     * @param request the request that triggered this function call
+     * @return Redirect to the "interprete/planning-beneficiaires" page
+     */
     @GetMapping("/planning/beneficiaires")
-    public String planningBeneficiaires(Model model) {
-        model.addAttribute("isAdmin", null);
+    public String planningBeneficiaires(@RequestParam String start, @RequestParam String end,
+                                        @SessionAttribute("BeneficiaryConnected") Beneficiary beneficiary,
+                                        HttpServletRequest request) {
+        String dateStart = start.substring(0, 10);
+        String dateEnd = end.substring(0, 10);
+
+        PlanningService planningService = new PlanningService();
+        List<Appointment> appointmentList = planningService.getListAppointmentsToBeneficiaryAndDate(
+                beneficiary.getNumBeneficiary(), dateStart, dateEnd);
+
+        HttpSession session = request.getSession();
+        session.setAttribute("appointmentList", appointmentList);
+
         return "interprete/planning-beneficiaires";
     }
 
     @GetMapping("/profil")
     public String profil(Model model) {
         model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("isAdmin", null);
         return "interprete/profil";
     }
 
@@ -57,4 +80,5 @@ public class InterpreterController {
         model.addAttribute("isAdmin", null);
         return "interprete/indisponibilites";
     }
+
 }
