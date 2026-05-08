@@ -4,9 +4,11 @@ import be.hers.info.ProjetIntegree.POJO.*;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleTypes;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +38,7 @@ public class DAOAppointment extends DAO<Appointment> {
         ResultSet resultSet = null;
         Appointment appointment = null;
 
-        String query = "SELECT status,local,FKnumBeneficiary,FKTimeSlotBase,FKTimeSlotPunctual,FKnumEtablishment " +
+        String query = "SELECT description,status,local,FKnumBeneficiary,FKTimeSlotBase,FKTimeSlotPunctual,FKnumEtablishment " +
                 "FROM Appointment " +
                 "WHERE numAppointment = ?";
 
@@ -67,6 +69,7 @@ public class DAOAppointment extends DAO<Appointment> {
 
                 appointment = new Appointment(
                         idToSearchInDB,
+                        resultSet.getString("description"),
                         resultSet.getString("status"),
                         listLocal,
                         daoBeneficiary.find(resultSet.getInt("FKnumBeneficiary")),
@@ -78,6 +81,85 @@ public class DAOAppointment extends DAO<Appointment> {
             closeStatementAndResultSet(prStat, resultSet);
         }
         return appointment;
+    }
+
+    /**
+     * Precondition :
+     * The beneficiary number passed as a parameter cannot be negative.
+     * Search for all appointments related to the beneficiary referenced by their number and indicating the start and end dates
+     * @param numBeneficiary the number of the beneficiary
+     * @param start the date of the first day of the week
+     * @param end the date of the last day of the week
+     * @return the list of appointments related to the beneficiary referenced by their number and indicating the start and end dates
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<Appointment> findAllAppointmentToBeneficiaryAndDate(int numBeneficiary, String start, String end) throws SQLException {
+        List<Appointment> appointmentList = new ArrayList<>();
+        Appointment appointmentFind = null;
+        DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+        Beneficiary beneficiary = null;
+        TimeSlot timeSlot = null;
+        DAOEstablishment daoEstablishment = new DAOEstablishment();
+        Establishment establishment = null;
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        String query = """
+                        SELECT *
+                        FROM Appointment a
+                        LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = a.FKTimeSlotBase
+                        LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = a.FKTimeSlotPunctual
+                        WHERE a.FKNumBeneficiary = ?
+                        AND ((tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') 
+                        OR tsb.numTimeSlot IS NOT NULL)
+                       """;
+
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numBeneficiary);
+            prStat.setString(2, end);
+            prStat.setString(3, start);
+            rs = prStat.executeQuery();
+
+            while(rs.next()){
+                String local = rs.getString("local");
+                List<String> listLocal = null;
+
+                if (local != null)
+                    listLocal = Arrays.asList(local.split(","));
+
+                beneficiary = daoBeneficiary.find(rs.getInt("FKNumBeneficiary"));
+                establishment = daoEstablishment.find(rs.getInt("FKNumEstablishment"));
+
+                if(rs.getObject("FKTimeSlotBase") == null){
+                    DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+                    timeSlot = daoTimeSlotPunctual.find(rs.getInt("FKTimeSlotPunctual"));
+                }else{
+                    DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
+                    timeSlot = daoTimeSlotBase.find(rs.getInt("FKTimeSlotBase"));
+                }
+
+                appointmentFind = new Appointment(
+                        rs.getInt("numAppointment"),
+                        rs.getString("description"),
+                        rs.getString("status"),
+                        beneficiary,
+                        listLocal,
+                        findListInterpreter(numAppointment),
+                        findListAcademicSkillRequire(numAppointment),
+                        findListProfessionalSkillRequire(numAppointment),
+                        timeSlot,
+                        establishment
+                );
+
+                appointmentList.add(appointmentFind);
+            }
+        }
+        finally{
+            closeStatementAndResultSet(prStat, rs);
+        }
+
+        return appointmentList;
     }
 
     /**
@@ -97,7 +179,7 @@ public class DAOAppointment extends DAO<Appointment> {
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
         List<Appointment> appointmentList = new ArrayList<>();
-        String query = "SELECT numAppointment,status,local,FKnumBeneficiary,FKTimeSlotBase " +
+        String query = "SELECT numAppointment,description,status,local,FKnumBeneficiary,FKTimeSlotBase " +
                 "FROM Appointment";
 
         try {
@@ -129,6 +211,7 @@ public class DAOAppointment extends DAO<Appointment> {
 
                 appointmentList.add(new Appointment(
                         numAppointment,
+                        resultSet.getString("description"),
                         resultSet.getString("status"),
                         listLocal,
                         daoBeneficiary.find(resultSet.getInt("FKnumBeneficiary")),
@@ -163,26 +246,27 @@ public class DAOAppointment extends DAO<Appointment> {
             local = String.join(",", objectToInsertInDB.getAppointmentLocals());
         }
 
-        String query = "INSERT INTO Appointment (status, local, FKnumEtablishment, FKnumBeneficiary, FKTimeSlotPunctual) " +
-                "VALUES (?, ?, ?, ?, ?) RETURNING numAppointment INTO ?";
+        String query = "INSERT INTO Appointment (description,status, local, FKnumEtablishment, FKnumBeneficiary, FKTimeSlotPunctual) " +
+                "VALUES (?, ?, ?, ?, ?, ?) RETURNING numAppointment INTO ?";
         if(objectToInsertInDB.getTimeSlot() instanceof TimeSlotBase){
-            query = "INSERT INTO Appointment (status, local, FKnumEtablishment, FKnumBeneficiary, FKTimeSlotBase) " +
-                    "VALUES (?, ?, ?, ?, ?) RETURNING numAppointment INTO ?";
+            query = "INSERT INTO Appointment (description,status, local, FKnumEtablishment, FKnumBeneficiary, FKTimeSlotBase) " +
+                    "VALUES (?, ?, ?, ?, ?, ?) RETURNING numAppointment INTO ?";
         }
 
         try{
             prStat = (OraclePreparedStatement)connect.prepareStatement(query);
-            prStat.setString(1,objectToInsertInDB.getStatus());
-            prStat.setString(2,local);
-            prStat.setInt(3,objectToInsertInDB.getEstablishment().getNumEstablishment());
-            prStat.setInt(4,objectToInsertInDB.getBeneficiary().getNumBeneficiary());
-            prStat.setInt(5,objectToInsertInDB.getTimeSlot().getNumTimeSlot());
-            prStat.registerReturnParameter(6, OracleTypes.INTEGER);
+            prStat.setString(1,objectToInsertInDB.getDescription());
+            prStat.setString(2,objectToInsertInDB.getStatus());
+            prStat.setString(3,local);
+            prStat.setInt(4,objectToInsertInDB.getEstablishment().getNumEstablishment());
+            prStat.setInt(5,objectToInsertInDB.getBeneficiary().getNumBeneficiary());
+            prStat.setInt(6,objectToInsertInDB.getTimeSlot().getNumTimeSlot());
+            prStat.registerReturnParameter(7, OracleTypes.INTEGER);
 
             int nbLinesInsert = prStat.executeUpdate();
             rs = prStat.getReturnResultSet();
             if(rs.next()){
-                int id = rs.getInt(6);
+                int id = rs.getInt(7);
                 objectToInsertInDB.setNumAppointment(id);
 
                 if(nbLinesInsert > 0) {
@@ -370,7 +454,7 @@ public class DAOAppointment extends DAO<Appointment> {
         }
 
         String query = "UPDATE Appointment " +
-                "SET status = ?, local = ?, FKnumEtablishment = ?, FKnumBeneficiary = ?, FKTimeSlotBase = ?, FKTimeSlotPunctual = ?" +
+                "SET description = ? ,status = ?, local = ?, FKnumEtablishment = ?, FKnumBeneficiary = ?, FKTimeSlotBase = ?, FKTimeSlotPunctual = ?" +
                 " WHERE numAppointment = ?";
 
         Integer timeSlotBase = null;
@@ -384,21 +468,22 @@ public class DAOAppointment extends DAO<Appointment> {
 
         try {
             prStat = connect.prepareStatement(query);
-            prStat.setString(1, objectToUpdateInDB.getStatus());
-            prStat.setString(2, local);
-            prStat.setInt(3, objectToUpdateInDB.getEstablishment().getNumEstablishment());
-            prStat.setInt(4, objectToUpdateInDB.getBeneficiary().getNumBeneficiary());
+            prStat.setString(1, objectToUpdateInDB.getDescription());
+            prStat.setString(2, objectToUpdateInDB.getStatus());
+            prStat.setString(3, local);
+            prStat.setInt(4, objectToUpdateInDB.getEstablishment().getNumEstablishment());
+            prStat.setInt(5, objectToUpdateInDB.getBeneficiary().getNumBeneficiary());
             if(timeSlotBase == null){
-                prStat.setNull(5, java.sql.Types.INTEGER);
-            }else{
-                prStat.setInt(5,timeSlotBase);
-            }
-            if((timeSlotPunctual == null)){
                 prStat.setNull(6, java.sql.Types.INTEGER);
             }else{
-                prStat.setInt(6, timeSlotPunctual);
+                prStat.setInt(6,timeSlotBase);
             }
-            prStat.setInt(7, objectToUpdateInDB.getNumAppointment());
+            if((timeSlotPunctual == null)){
+                prStat.setNull(7, java.sql.Types.INTEGER);
+            }else{
+                prStat.setInt(7, timeSlotPunctual);
+            }
+            prStat.setInt(8, objectToUpdateInDB.getNumAppointment());
 
             int nbLinesUpdate = prStat.executeUpdate();
             if(nbLinesUpdate > 0) {
@@ -412,4 +497,226 @@ public class DAOAppointment extends DAO<Appointment> {
         return isUpdated;
     }
 
+    /**
+     * Searches for all Appointments linked to the interpreter as a parameter available in the start and end slots.
+     * @param i the interpreter who will be linked to the appointment sought
+     * @param start the date in YYYY-MM-DD format
+     * @param end the date in YYYY-MM-DD format
+     * @return The appointment list meets the constraints; an empty list is returned if no object is found.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<Appointment> findAllAppointmentToInterpreterAndDate(Interpreter i, String start, String end)throws SQLException{
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<Appointment> appointmentList = new ArrayList<>();
+        String query = "SELECT ap.numAppointment, ap.description, ap.status, ap.local,ap.FKnumEtablishment,ap.FKTimeSlotBase,ap.FKTimeSlotPunctual,ap.FKnumBeneficiary " +
+                "FROM Appointment ap " +
+                "JOIN RDVInterpreter rdv ON rdv.numAppointment = ap.numAppointment " +
+                "LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = ap.FKTimeSlotBase " +
+                "LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = ap.FKTimeSlotPunctual " +
+                "JOIN Establishment e ON e.numEstablishment = ap.FKnumEtablishment " +
+                "JOIN Beneficiary b ON b.numBeneficiary = ap.FKnumBeneficiary " +
+                "WHERE rdv.numInterpreter = ? " +
+                "  AND ( " +
+                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') " +
+                "      OR " +
+                "      tsb.numTimeSlot IS NOT NULL" +
+                ")";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, i.getNumInterpreter());
+            prStat.setString(2, end);
+            prStat.setString(3, start);
+            resultSet = prStat.executeQuery();
+            DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+            DAOEstablishment daoEstablishment = new DAOEstablishment();
+            DAOReferrer daoReferrer = new DAOReferrer();
+            DAOAddress daoAddress = new DAOAddress();
+            Appointment a = new Appointment();
+            while(resultSet.next()){
+                String local = resultSet.getString("local");
+                List<String> listLocal = null;
+
+                if (local != null) {
+                    listLocal = Arrays.asList(local.split(","));
+                }
+
+                TimeSlot timeSlot = null;
+                int numAppointment = resultSet.getInt("numAppointment");
+
+                if(resultSet.getObject("FKTimeSlotBase") == null){
+                    DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+                    timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
+                }else{
+                    DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
+                    timeSlot = daoTimeSlotBase.find(resultSet.getInt("FKTimeSlotBase"));
+                }
+                Establishment e = daoEstablishment.find(resultSet.getInt("FKnumEtablishment"));
+                e.setEducationLevel(daoEstablishment.findListEducationLevel(resultSet.getInt("FKnumEtablishment")));
+                e.getReferrers(daoReferrer.findListReferer(resultSet.getInt("FKnumEtablishment")));
+                e.getAddresses(daoAddress.findListAddress(e.getNameBuilding()));
+
+                a = new Appointment(
+                        numAppointment,
+                        resultSet.getString("description"),
+                        daoBeneficiary.find(resultSet.getInt("FKnumBeneficiary")),
+                        listLocal,
+                        findListInterpreter(numAppointment),
+                        findListAcademicSkillRequire(numAppointment),
+                        findListProfessionalSkillRequire(numAppointment),
+                        timeSlot,
+                        e);
+                try {
+                    a.setStatus(resultSet.getString("status"));
+                } catch (BadStatusException ex) {
+
+                }
+                appointmentList.add(a);
+
+            }
+        }finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return appointmentList;
+    }
+
+    /**
+     * Create a list of Interpreters linked to the appointment.
+     * @param numAppointment the appointment number
+     * @return The list of Interpreters linked to the appointment; an empty list is returned if no object is found
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<Interpreter> findListInterpreter(int numAppointment) throws SQLException{
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<Interpreter> interpreterList = new ArrayList<>();
+        String query = "SELECT numInterpreter "+
+                "FROM RDVInterpreter " +
+                "WHERE numAppointment = ?";
+
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numAppointment);
+            resultSet = prStat.executeQuery();
+            DAOInterpreter daoInterpreter = new DAOInterpreter();
+
+            while(resultSet.next()){
+                interpreterList.add(daoInterpreter.find(resultSet.getInt("numInterpreter")));
+            }
+        }finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return interpreterList;
+    }
+
+    /**
+     * Create a list of AcademicSkills related to the appointment.
+     * @param numAppointment the appointment number
+     * @return The AcademicSkill list linked to the appointment; an empty list is returned if no item is found.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<AcademicSkill> findListAcademicSkillRequire(int numAppointment) throws SQLException{
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<AcademicSkill> academicSkillList = new ArrayList<>();
+        String query = "SELECT numAcademicSkill "+
+                "FROM RequiredAcademicSkill " +
+                "WHERE numAppointment = ?";
+
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numAppointment);
+            resultSet = prStat.executeQuery();
+            DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
+
+            while(resultSet.next()){
+                academicSkillList.add(daoAcademicSkill.find(resultSet.getInt("numAcademicSkill")));
+            }
+        }finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+
+        return academicSkillList;
+    }
+
+    /**
+     * Create a list of Professional Skills related to the appointment.
+     * @param numAppointment the appointment number
+     * @return The ProfessionalSkill list linked to the appointment is returned as empty if no object is found.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<ProfessionalSkill> findListProfessionalSkillRequire(int numAppointment) throws SQLException{
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<ProfessionalSkill> ProfessionalSkillList = new ArrayList<>();
+        String query = "SELECT numProfessionalSkill "+
+                "FROM RequiredProfessionalSkill " +
+                "WHERE numAppointment = ?";
+
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numAppointment);
+            resultSet = prStat.executeQuery();
+            DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
+
+            while(resultSet.next()){
+                ProfessionalSkillList.add(daoProfessionalSkill.find(resultSet.getInt("numAcademicSkill")));
+            }
+        }finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+
+        return ProfessionalSkillList;
+    }
+    /**
+     * Searches for all absences related to the interpreter as a parameter available in the start and end slots.
+     * @param i the interpreter who will be linked to the appointment sought
+     * @param start the date in YYYY-MM-DD format
+     * @param end the date in YYYY-MM-DD format
+     * @return The Absence list meets the constraints; an empty list is returned if no object is found.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<Absence> findAllAbsenceToInterpreterAndDate(Interpreter i, String start, String end)throws SQLException{
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<Absence> absenceList = new ArrayList<>();
+        String query = "SELECT ab.numAbsence, ab.status, ab.reasons, ab.privateReason,ab.FKTimeSlotBase,ab.FKTimeSlotPunctual,ab.FKnumInterpreter " +
+                "FROM Absence ab " +
+                "LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = ab.FKTimeSlotBase " +
+                "LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = ab.FKTimeSlotPunctual " +
+                "WHERE ab.FKnumInterpreter = ? " +
+                "  AND ( " +
+                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') " +
+                "      OR " +
+                "      tsb.numTimeSlot IS NOT NULL" +
+                ")";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, i.getNumInterpreter());
+            prStat.setString(2, end);
+            prStat.setString(3, start);
+            resultSet = prStat.executeQuery();
+
+            TimeSlot timeSlot = null;
+            while(resultSet.next()){
+                if(resultSet.getObject("FKTimeSlotBase") != null) {
+                    DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
+                    timeSlot = daoTimeSlotBase.find(resultSet.getInt("FKTimeSlotBase"));
+                } else {
+                    DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+                    timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
+                }
+                try{
+                    absenceList.add(new Absence(resultSet.getInt("numAbsence"), resultSet.getString("status"), timeSlot,
+                            resultSet.getString("reasons"), resultSet.getBoolean("privateReason")));
+                }catch (BadStatusException e){
+                }
+            }
+        }finally {
+            closeStatement(prStat);
+        }
+        return absenceList;
+    }
 }

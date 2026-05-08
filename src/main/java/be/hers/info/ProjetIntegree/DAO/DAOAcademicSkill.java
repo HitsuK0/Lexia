@@ -17,9 +17,6 @@ import java.util.ArrayList;
 
 public class DAOAcademicSkill extends DAO<AcademicSkill>{
 
-
-
-
     /**
      * Search for an AcademicSkill where objectToSearchInDB == numAcademicSkill.
      * @param objectToSearchInDB is the id of the AcademicSkill.
@@ -28,7 +25,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
      */
     @Override
     public AcademicSkill find(int objectToSearchInDB) throws SQLException{
-        String query = "SELECT numAcademicSkill, designation" +
+        String query = "SELECT numAcademicSkill, designation " +
                         "FROM AcademicSkill " +
                         "WHERE numAcademicSkill = ?";
         AcademicSkill as = null;
@@ -84,8 +81,8 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
     @Override
     public boolean create(AcademicSkill objectToInsertInDB) throws SQLException {
         boolean isCreated = false;
-        String query = "INSERT INTO Academic_skill(designation) " +
-                "VALUES (?)" +
+        String query = "INSERT INTO AcademicSkill(designation) " +
+                "VALUES (?) " +
                 "RETURNING numAcademicSkill INTO ?";
 
         OraclePreparedStatement prStat = null;
@@ -119,7 +116,9 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
     @Override
     public boolean update(AcademicSkill objectToUpdateInDB) throws SQLException {
         boolean isUpdated = false;
-        String query = "UPDATE AcademicSkill SET designation = ? WHERE numAcademicSkill = ?";
+        String query = "UPDATE AcademicSkill " +
+                "SET designation = ? " +
+                "WHERE numAcademicSkill = ?";
         PreparedStatement prStat = null;
         try{
             prStat = connect.prepareStatement(query);
@@ -146,7 +145,9 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
     @Override
     public boolean delete(AcademicSkill objectToDeleteFormDB) throws SQLException {
         boolean isDeleted = false;
-        String query = "DELETE FROM AcademicSkill WHERE numAcademicSkill = ? AND designation = ?";
+        String query = "DELETE FROM AcademicSkill " +
+                "WHERE numAcademicSkill = ? " +
+                "AND designation = ?";
         PreparedStatement prStat = null;
         try {
             prStat = connect.prepareStatement(query);
@@ -162,5 +163,4 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         }
         return isDeleted;
     }
-
 }

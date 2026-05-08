@@ -11,20 +11,23 @@ public class Referrer {
     private String surname;
     private String phoneNumber;
     private String addressMail;
+    private int numReferrer;
     private Establishment refEstablishment;
+
 
     /**
      * Initialize a Referrer with refEstablishment, addressMail, phoneNumber, surname and name
+     *
      * @param refEstablishment the establishment where the referrer works
-     * @param addressMail the mail of the referrer
-     * @param phoneNumber the phone number
-     * @param surname the surname of the referrer
-     * @param name the name of the referrer
-     * @throws NullPointerException if refEstablishment, addressMail, phoneNumber,surname or name is null
+     * @param addressMail      the mail of the referrer
+     * @param phoneNumber      the phone number
+     * @param surname          the surname of the referrer
+     * @param name             the name of the referrer
+     * @throws IllegalArgumentException if refEstablishment, addressMail, phoneNumber,surname or name is null
      */
     public Referrer(Establishment refEstablishment, String addressMail, String phoneNumber, String surname, String name) {
-        if(refEstablishment == null || addressMail == null || phoneNumber == null || surname == null || name == null ) {
-            throw new NullPointerException();
+        if (refEstablishment == null || addressMail == null || phoneNumber == null || surname == null || name == null) {
+            throw new IllegalArgumentException();
         }
 
         this.refEstablishment = refEstablishment;
@@ -53,14 +56,12 @@ public class Referrer {
         return name;
     }
 
-
     /**
      * @return the surname
      */
     public String getSurname() {
         return surname;
     }
-
 
     /**
      * @return the phone number
@@ -69,14 +70,12 @@ public class Referrer {
         return phoneNumber;
     }
 
-
     /**
      * @return the address mail
      */
     public String getAddressMail() {
         return addressMail;
     }
-
 
     /**
      * @return the establishment
@@ -85,51 +84,53 @@ public class Referrer {
         return refEstablishment;
     }
 
-
     /**
-     * @param name the name
-     * @throws NullPointerException if name is null
+     * @return the id of the referrer
      */
-    public void setName(String name) {
-        if(name == null ) {
-            throw new IllegalArgumentException("[POJOReferrer] Le prénom ne peut pas être null");
-        }
-
-
-        this.name = name;
+    public int getNumReferrer() {
+        return numReferrer;
     }
 
 
     /**
+     * @param name the name
+     * @throws IllegalArgumentException if name is null
+     */
+    public void setName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("[POJOReferrer] Le prénom ne peut pas être null");
+        }
+        this.name = name;
+    }
+
+    /**
      * @param surname the surname
-     * @throws NullPointerException if surname is null
+     * @throws IllegalArgumentException if surname is null
      */
     public void setSurname(String surname) {
-        if(surname == null ) {
+        if (surname == null) {
             throw new IllegalArgumentException("[POJOReferrer] Le nom ne peut pas être null");
         }
         this.surname = surname;
     }
 
-
     /**
      * @param phoneNumber the phone number
-     * @throws NullPointerException if phoneNumber is null
+     * @throws IllegalArgumentException if phoneNumber is null
      */
     public void setPhoneNumber(String phoneNumber) {
-        if(phoneNumber == null ) {
+        if (phoneNumber == null) {
             throw new IllegalArgumentException("[POJOReferrer] Le numéro de téléphone ne peut pas être null");
         }
         this.phoneNumber = phoneNumber;
     }
 
-
     /**
      * @param addressMail the mail address
-     * @throws NullPointerException if addressMail is null
+     * @throws IllegalArgumentException if addressMail is null
      */
     public void setAddressMail(String addressMail) {
-        if(addressMail == null ) {
+        if (addressMail == null) {
             throw new IllegalArgumentException("[POJOReferrer] L'adresse mail ne peut pas être null");
         }
         this.addressMail = addressMail;
@@ -137,27 +138,36 @@ public class Referrer {
 
     /**
      * @param refEstablishment the establishment
-     * @throws NullPointerException if refEstablishment is null
+     * @throws IllegalArgumentException if refEstablishment is null
      */
     public void setRefEstablishment(Establishment refEstablishment) {
-        if(refEstablishment == null ) {
+        if (refEstablishment == null) {
             throw new IllegalArgumentException("[POJOReferrer] L'établissement ne peut pas être null ou vide");
         }
         this.refEstablishment = refEstablishment;
     }
 
+
     /**
-     * @return a String containing the name and the surname of the referrer, the phone number, the mail address,
+     * @param numReferrer the id of the referrer
+     */
+    public void setNumReferrer(int numReferrer) {
+        this.numReferrer = numReferrer;
+    }
+
+    /**
+     * @return a String containing the name and the surname of the referrer, the phone number, the mail address, the id of the referrer
      * and the establishment.
      */
-    public String toString(){
+    public String toString() {
 
         return "Rérérant" +
                 "\nNom : " + this.name +
                 "\nPrenom : " + this.surname +
                 "\nNuméro de téléphone : " + this.phoneNumber +
                 "\nAddresse mail : " + this.addressMail +
+                "\nNuméro Référent  :\n" + this.numReferrer+
                 "\nEtablissement  :\n" + (refEstablishment != null ? refEstablishment.toString() : "Aucun établissement");
-
     }
+
 }
