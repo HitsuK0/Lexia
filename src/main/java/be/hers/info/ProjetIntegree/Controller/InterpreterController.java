@@ -86,6 +86,7 @@ public class InterpreterController {
     /**
      * Function called when the form is filled.
      * Also redirect to the indsponibilites page.
+     * It create an Absence in the Database.
      * @param dtoAbsence the dto to convert into a pojo
      * @param model
      * @return the page to redirect to.

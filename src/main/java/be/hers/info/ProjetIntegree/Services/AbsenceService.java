@@ -10,10 +10,19 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalTime;
 
+
+/**
+ * Service link to the Absence.
+ */
 @Service
 public class AbsenceService {
 
 
+    /**
+     * It create an Absence in the database using the data in the absenceDTO given in param.
+     * @param absenceDTO is the DTOAbsence used by spring to copy the data in the form.
+     * @param absence is the Absence used to convert the DTOAbsence to Absence and create an Absence in the database.
+     */
     public void createAbsence(DTOAbsence absenceDTO, Absence absence) {
         absence.setReason(absenceDTO.getReason());
         try{
@@ -23,7 +32,7 @@ public class AbsenceService {
 
         }
         absence.setPrivateReason(absenceDTO.isPrivateReason());
-        TimeSlotPunctual timeSlotPunctual =  new TimeSlotPunctual();
+        TimeSlotPunctual timeSlotPunctual = new TimeSlotPunctual();
         timeSlotPunctual.setStartTime(absenceDTO.getStartTime());
         timeSlotPunctual.setStartDate(absenceDTO.getStartDate());
         timeSlotPunctual.setEndDate(absenceDTO.getEndDate());
