@@ -1,0 +1,109 @@
+.profil-wrapper {
+    max-width: 1060px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.profil-sidebar {
+    width: 220px;
+    min-width: 220px;
+    background-color: #f8f5ff;
+    padding: 24px 16px;
+    border-right: 1px solid #e8e0f5;
+}
+
+.sidebar-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #212529;
+    margin-bottom: 12px;
+    padding-left: 8px;
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav li {
+    margin-bottom: 4px;
+}
+
+.sidebar-link {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: #495057;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+.sidebar-link:hover {
+    background-color: #ede8f8;
+    color: #593196;
+}
+
+.sidebar-link.active {
+    background-color: #ddd5f5;
+    color: #593196;
+    font-weight: 600;
+}
+
+.profil-content {
+    padding: 28px 32px;
+}
+
+.profil-section {
+    display: none;
+}
+
+.profil-section.active {
+    display: block;
+}
+
+.input-edit-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.input-edit-group .form-control {
+    flex: 1;
+}
+
+.btn-edit {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 2px 4px;
+    line-height: 1;
+    transition: color 0.15s;
+    flex-shrink: 0;
+}
+
+.btn-edit:hover {
+    color: #593196;
+}
+
+.badge-competence {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #593196;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 8px;
+}
+
+.modal-rounded {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
