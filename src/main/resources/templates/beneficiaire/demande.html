@@ -5,7 +5,10 @@
 
     <body>
         <nav th:replace="~{common/navbar :: navbar(activeTab='Mes demandes', userRole='BENEFICIAIRE', userName=${userName}, breadcrumb='Demandes', isAdmin=null)}"></nav>
+
+
         <div class="container py-4">
+
             <div class="text-center mb-4">
                 <h1 class="fw-bold text-primary">Mes demandes</h1>
                 <p class="text-muted fst-italic">Déclarez et suivez vos absences et indisponibilités</p>
@@ -50,7 +53,7 @@
                         <td>Géographie</td>
                         <td>Transcription</td>
                         <td>20 Février 2026</td>
-                        <td class="btn btn-success disabled px-3">Validé</td>
+                        <td><span class="btn btn-success disabled px-3">Validé</span></td>
                         <td class="actions-cell">
                             <button class="btn-action active"
                                     data-bs-toggle="modal" data-bs-target="#modalDeleteDemande"
@@ -64,7 +67,7 @@
                         <td>Histoire</td>
                         <td>Translation</td>
                         <td>01 Mars 2026</td>
-                        <td class="btn btn-danger disabled px-3">Réfusé</td>
+                        <td><span class="btn btn-danger disabled px-3">Refusé</span></td>
                         <td class="actions-cell">
                             <button class="btn-action active"
                                     data-bs-toggle="modal" data-bs-target="#modalDeleteDemande"
@@ -78,7 +81,7 @@
                         <td>Droit</td>
                         <td>Translittération</td>
                         <td>06 Mars 2026</td>
-                        <td class="btn btn-warning disabled px-3">En Attente</td>
+                        <td><span class="btn btn-warning disabled px-3">En Attente</span></td>
                         <td class="actions-cell">
                             <button class="btn-action active"
                                     data-bs-toggle="modal" data-bs-target="#modalDeleteDemande"
@@ -92,7 +95,7 @@
                         <td>Sciences</td>
                         <td>Translation</td>
                         <td>08 Mars 2026</td>
-                        <td class="btn btn-warning disabled px-3">En Attente</td>
+                        <td><span class="btn btn-warning disabled px-3">En Attente</span></td>
                         <td class="actions-cell">
                             <button class="btn-action delete active"
                                     data-bs-toggle="modal" data-bs-target="#modalDeleteDemande"
