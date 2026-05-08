@@ -7,6 +7,7 @@ package be.hers.info.ProjetIntegree.DAO;
 
 import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
+import be.hers.info.ProjetIntegree.POJO.Referrer;
 import oracle.jdbc.OracleTypes;
 import oracle.jdbc.internal.OraclePreparedStatement;
 
@@ -168,5 +169,46 @@ public class DAOAddress extends DAO<Address> {
         }
 
         return isDeleted;
+    }
+
+    /**
+     * Searches for all Address objects linked to a given Establishment name.
+     * The Establishment object is not loaded (lazy loading).
+     *
+     * @param establishmentName the name of the Establishment
+     * @return a list of Address linked to the Establishment,
+     *         or an empty list if none are found
+     * @throws SQLException in case of any SQL problems encountered with this method
+     */
+    public List<Address> findAllByEstablishment(String establishmentName) throws SQLException {
+        String query = """
+                       SELECT a.numAddress, a.postalCode, a.postalBox, a.locality, a.hamlet
+                       FROM Address a
+                       JOIN Establishment e
+                       ON e.FKAddress = a.numAddress
+                       WHERE e.name = ?
+                       """;
+        List<Address> addressList = new ArrayList<>();
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setString(1, establishmentName);
+            rs = prStat.executeQuery();
+
+            while (rs.next()) {
+                Address address = new Address();
+                address.setNumAddress(rs.getInt("numAddress"));
+                address.setPostcode(rs.getInt("postalCode"));
+                address.setPostOfficeBox(rs.getString("postalBox"));
+                address.setLocality(rs.getString("locality"));
+                address.setHamlet(rs.getString("hamlet"));
+                addressList.add(address);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, rs);
+        }
+        return addressList;
     }
 }
