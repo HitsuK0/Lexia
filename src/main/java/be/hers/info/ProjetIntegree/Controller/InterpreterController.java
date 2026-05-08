@@ -2,6 +2,8 @@ package be.hers.info.ProjetIntegree.Controller;
 
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
 import be.hers.info.ProjetIntegree.POJO.Absence;
+import be.hers.info.ProjetIntegree.POJO.Appointment;
+import be.hers.info.ProjetIntegree.POJO.Beneficiary;
 import be.hers.info.ProjetIntegree.POJO.Interpreter;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
@@ -11,10 +13,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 
+import java.sql.SQLException;
+import java.util.List;
+
 @Controller
 @RequestMapping("/interprete")
 public class InterpreterController {
-
 
     /**
      * Searches for all Appointments and Absences belonging to the interpreter as a parameter over a period defined by start and end.
@@ -36,20 +40,32 @@ public class InterpreterController {
         session.setAttribute("InterpreterConnected",interpreter );
         model.addAttribute("isAdmin",null);
 
-        return "interprete/planning";
-    }
-
-    // Temporaire
-    @GetMapping("/planning")
-    public String planning(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
         model.addAttribute("DTOAbsence", new DTOAbsence());
         return "interprete/planning";
     }
 
-    // Temporaire
+    /**
+     * Searches for all Appointments belonging to the beneficiary as a parameter over a period defined by start and end.
+     * @param start the date retrieved via the URL
+     * @param end the date retrieved via the URL
+     * @param beneficiary The beneficiary linked to the appointment on the list
+     * @param request the request that triggered this function call
+     * @return Redirect to the "interprete/planning-beneficiaires" page
+     */
     @GetMapping("/planning/beneficiaires")
-    public String planningBeneficiaires(Model model) {
+    public String planningBeneficiaires(@RequestParam String start, @RequestParam String end,
+                                        @SessionAttribute("BeneficiaryConnected") Beneficiary beneficiary,
+                                        HttpServletRequest request) {
+        String dateStart = start.substring(0, 10);
+        String dateEnd = end.substring(0, 10);
+
+        PlanningService planningService = new PlanningService();
+        List<Appointment> appointmentList = planningService.getListAppointmentsToBeneficiaryAndDate(
+                beneficiary.getNumBeneficiary(), dateStart, dateEnd);
+
+        HttpSession session = request.getSession();
+        session.setAttribute("appointmentList", appointmentList);
+
         return "interprete/planning-beneficiaires";
     }
 
@@ -62,8 +78,10 @@ public class InterpreterController {
     @GetMapping("/indisponibilites")
     public String indisponibilites(Model model) {
         model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("isAdmin", null);
         return "interprete/indisponibilites";
     }
+
 
     /**
      * Function called when the form is filled.
@@ -79,4 +97,5 @@ public class InterpreterController {
         absenceService.createAbsence(dtoAbsence, absence);
         return "interprete/indisponibilites";
     }
+
 }
