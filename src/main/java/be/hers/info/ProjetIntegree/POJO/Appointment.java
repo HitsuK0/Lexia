@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Appointment {
     private int numAppointment;
+    private String description;
     private String status;
     private List<String> appointmentLocals;
     private Beneficiary beneficiary;
@@ -25,6 +26,7 @@ public class Appointment {
      */
     public Appointment() {
         this.status = "en attente";
+        this.description = "Aucune description";
         this.appointmentLocals = new ArrayList<String>();
         this.timeSlot = null;
         this.establishment = null;
@@ -32,6 +34,48 @@ public class Appointment {
         this.academicSkillsNeeded = new ArrayList<AcademicSkill>();
         this.professionalSkillsNeeded = new ArrayList<ProfessionalSkill>();
         this.interpreters = new ArrayList<Interpreter>();
+    }
+
+    /**
+     * Initialize an Appointment with numAppointment, description, status,
+     * beneficiary, appointmentLocals, interpreters, academicSkillsNeeded, professionalSkillsNeeded,
+     * timeSlot and establishment
+     * @param numAppointment The id of the Appointment
+     * @param description The description of the Appointement
+     * @param status The status
+     * @param beneficiary The Beneficiary concerned
+     * @param appointmentLocals List of local(s) where the Appointment will take place, can be null
+     * @param interpreters List of Interpreters that will participate
+     * @param academicSkillsNeeded List of academic skills needed, can be null
+     * @param professionalSkillsNeeded List of professional skills needed
+     * @param timeSlot For every repetitive or non-repetitive Appointment
+     * @param establishment The establishment, can be null
+     * @throws IllegalArgumentException If beneficiary, academicSkillsNeeded, professionalSkillsNeeded, interpreters or timeSlot is null
+     *                                  If interpreters or professionalSkillsNeeded is empty
+     */
+    public Appointment(int numAppointment, String description, String status, Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters,
+                       List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded, TimeSlot timeSlot, Establishment establishment) {
+        if(beneficiary == null || interpreters == null || academicSkillsNeeded == null || professionalSkillsNeeded == null || timeSlot == null) {
+            throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes, la tranche horaire, les compétences académiques et les compétences professionnelles ne peuvent pas être null.");
+        }
+
+        if(interpreters.isEmpty()|| professionalSkillsNeeded.isEmpty()) {
+            throw new IllegalArgumentException("[POJOAppointment] Les listes d'interprètes et de compétences professionnelles ne peuvent pas être vides.");
+        }
+
+        this.numAppointment = numAppointment;
+        this.description = description;
+        this.status = status;
+        this.beneficiary = beneficiary;
+        this.appointmentLocals = appointmentLocals;
+        this.interpreters = interpreters;
+        this.academicSkillsNeeded = academicSkillsNeeded;
+        this.professionalSkillsNeeded = professionalSkillsNeeded;
+        this.timeSlot = timeSlot;
+
+        if(establishment != null) {
+            this.establishment = establishment;
+        }
     }
 
     /**
@@ -43,8 +87,9 @@ public class Appointment {
      * @param timeSlot For every repetitive or non-repetitive Appointment
      * @param establishment The establishment, can be null
      */
-    public Appointment(int numAppointment, String status, List<String> appointmentLocals, Beneficiary beneficiary, TimeSlot timeSlot,
+    public Appointment(int numAppointment, String description, String status, List<String> appointmentLocals, Beneficiary beneficiary, TimeSlot timeSlot,
                        Establishment establishment) {
+        this.description = description;
         this.numAppointment = numAppointment;
         this.status = status;
         this.appointmentLocals = appointmentLocals;
@@ -65,15 +110,15 @@ public class Appointment {
      * @param numAppointment The id of the Appointment
      * @param beneficiary The Beneficiary concerned
      * @param appointmentLocals List of local(s) where the Appointment will take place, can be null
-     * @param interpreters List of Interpretes that will participate
+     * @param interpreters List of Interpreters that will participate
      * @param academicSkillsNeeded List of academic skills needed, can be null
-     * @param professionalSkillsNeeded List of business skills needed
+     * @param professionalSkillsNeeded List of professional skills needed
      * @param timeSlot For every repetitive or non-repetitive Appointment
      * @param establishment The establishment, can be null
      * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters or timeSlot is null
      *                                  If interpreters or professionalSkillsNeeded is empty
      */
-    public Appointment(int numAppointment, Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
+    public Appointment(int numAppointment, String description, Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
             ,TimeSlot timeSlot, Establishment establishment) {
         if(beneficiary == null || interpreters == null || professionalSkillsNeeded == null || timeSlot == null) {
             throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes, la tranche horaire et les compétences professionnelles ne peuvent pas être null.");
@@ -83,6 +128,7 @@ public class Appointment {
             throw new IllegalArgumentException("[POJOAppointment] Les listes d'interprètes et de compétences professionnelles ne peuvent pas être vides.");
         }
 
+        this.description = description;
         this.numAppointment = numAppointment;
         this.beneficiary = beneficiary;
         this.status = "en attente";
@@ -102,15 +148,15 @@ public class Appointment {
      * timeSlot and sets the status to 'en attente' by default
      * @param beneficiary The Beneficiary concerned
      * @param appointmentLocals List of local(s) where the Appointment will take place, can be null
-     * @param interpreters List of Interpretes that will participate
+     * @param interpreters List of Interpreters that will participate
      * @param academicSkillsNeeded List of academic skills needed, can be null
-     * @param professionalSkillsNeeded List of business skills needed
+     * @param professionalSkillsNeeded List of professional skills needed
      * @param timeSlot For every repetitive and non-repetitive Appointment
      * @param establishment The establishment, can be null
      * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters or timeSlot is null
      *                                  If interpreters or professionalSkillsNeeded is empty
      */
-    public Appointment(Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
+    public Appointment(String description, Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
             ,TimeSlot timeSlot, Establishment establishment) {
         if(beneficiary == null || interpreters == null || professionalSkillsNeeded == null || timeSlot == null) {
             throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes, la tranche horaire et les compétences professionnelles ne peuvent pas être null.");
@@ -120,6 +166,7 @@ public class Appointment {
             throw new IllegalArgumentException("[POJOAppointment] Les listes d'interprètes et de compétences professionnelles ne peuvent pas être vides.");
         }
 
+        this.description = description;
         this.beneficiary = beneficiary;
         this.status = "en attente";
         this.appointmentLocals = appointmentLocals;
@@ -137,15 +184,20 @@ public class Appointment {
      * @return the id of the Appointment
      */
     public int getNumAppointment() {
-
         return numAppointment;
+    }
+
+    /**
+     * @return the description of the Appointment
+     */
+    public String getDescription() {
+        return description;
     }
 
     /**
      * @return the status of the Appointment
      */
     public String getStatus() {
-
         return status;
     }
 
@@ -153,7 +205,6 @@ public class Appointment {
      * @return the list of locals of the Appointment
      */
     public List<String> getAppointmentLocals() {
-
         return appointmentLocals;
     }
 
@@ -161,15 +212,13 @@ public class Appointment {
      * @return the beneficiary concerned by the Appointment
      */
     public Beneficiary getBeneficiary() {
-
         return beneficiary;
     }
 
     /**
-     * @return the list of interpretes concerned by the Appointment
+     * @return the list of interpreters concerned by the Appointment
      */
     public List<Interpreter> getInterpreters() {
-
         return interpreters;
     }
 
@@ -177,7 +226,6 @@ public class Appointment {
      * @return the time slot
      */
     public TimeSlot getTimeSlot() {
-
         return timeSlot;
     }
 
@@ -185,15 +233,13 @@ public class Appointment {
      * @return the list of academic skills needed for the Appointment
      */
     public List<AcademicSkill> getAcademicSkillsNeeded() {
-
         return academicSkillsNeeded;
     }
 
     /**
-     * @return the list of business skills needed for the Appointment
+     * @return the list of professional skills needed for the Appointment
      */
     public List<ProfessionalSkill> getProfessionalSkillsNeeded() {
-
         return professionalSkillsNeeded;
     }
 
@@ -201,7 +247,6 @@ public class Appointment {
      * @return the establishment of the Appointment
      */
     public Establishment getEstablishment() {
-
         return establishment;
     }
 
@@ -209,11 +254,17 @@ public class Appointment {
      * @param id the id
      */
     public void setNumAppointment(int id) {
-
         if(id < 0) {
             throw new IllegalArgumentException("[POJOAppointment] Le id ne peut pas être négatif.");
         }
         this.numAppointment = id;
+    }
+
+    /**
+     * @param description the description of the appointment
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
@@ -292,7 +343,7 @@ public class Appointment {
     }
 
     /**
-     * @param professionalSkillsNeeded the list of business skills needed
+     * @param professionalSkillsNeeded the list of professional skills needed
      * @throws IllegalArgumentException if professionalSkillsNeeded is null
      *                                  if professionalSkillsNeeded is empty
      */
@@ -356,6 +407,7 @@ public class Appointment {
 
         StringBuilder stringBuild = new StringBuilder();
         stringBuild.append("Rendez-vous\n");
+        stringBuild.append("Description : ").append(this.description).append("\n");
         stringBuild.append("Id : ").append(this.numAppointment).append("\n");
         stringBuild.append("Statut : ").append(this.status).append("\n");
 

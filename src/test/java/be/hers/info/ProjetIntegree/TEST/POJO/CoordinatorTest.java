@@ -56,11 +56,11 @@ public class CoordinatorTest {
     @Test
     void constructor_WithoutNumCoordinator_SetsAllFields() {
         Coordinator c = new Coordinator("e0001", "secret", "Nicolas", "JF",
-                "JF@mail.be", "0477000000", 38, address);
+                 "0477000000", "JF@mail.be", 38, address);
         assertEquals("e0001", c.getLogin());
         assertEquals("Nicolas", c.getLastName());
         assertEquals("JF", c.getFirstName());
-        assertEquals("JF@mail.be", c.getEmail());
+        assertEquals("JF@mail.be", c.getEmailAddress());
         assertEquals("0477000000", c.getPhoneNumber());
         assertEquals(38, c.getWeeklyWorkHours());
         assertSame(address, c.getAddress());
