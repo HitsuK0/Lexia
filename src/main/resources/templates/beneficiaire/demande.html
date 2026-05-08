@@ -4,7 +4,7 @@
 <head th:replace="~{common/head :: head(pageTitle='Mes demandes', extraCss=null)}"></head>
 
     <body>
-        <nav th:replace="~{common/navbar :: navbar(activeTab='Mes demandes', userRole='BENEFICIAIRE', userName=${userName}, breadcrumb='Demandes')}"></nav>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='Mes demandes', userRole='BENEFICIAIRE', userName=${userName}, breadcrumb='Demandes', isAdmin=null)}"></nav>
         <div class="container py-4">
             <div class="text-center mb-4">
                 <h1 class="fw-bold text-primary">Mes demandes</h1>
