@@ -11,6 +11,12 @@ import java.time.Duration;
 import java.time.LocalTime;
 
 
+
+/**
+ * @author Quentin Vanderheyden
+ * @reviewer Nicolas Jean-François, Halet Louis
+ */
+
 /**
  * Service link to the Absence.
  */
