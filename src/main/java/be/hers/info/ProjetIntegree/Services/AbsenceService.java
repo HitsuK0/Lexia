@@ -16,7 +16,7 @@ import java.time.LocalTime;
  */
 @Service
 public class AbsenceService {
-    
+
     /**
      * It create an Absence in the database using the data in the absenceDTO given in param.
      * @param absenceDTO is the DTOAbsence used by spring to copy the data in the form.
