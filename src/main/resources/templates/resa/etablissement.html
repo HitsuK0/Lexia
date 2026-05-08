@@ -9,7 +9,7 @@
 <head th:replace="~{common/head :: head(pageTitle='Accueil', extraCss=null)}"></head>
 
     <body>
-        <div th:replace="~{common/navbar :: navbar(activeTab='accueil', userRole='COORDINATOR', userName='Vanderheyden Quentin')}"></div>
+        <div th:replace="~{common/navbar :: navbar(activeTab='accueil', userRole='COORDINATOR', userName=${userName}, breadcrumb='Etablissement')}"></div>
 
         <div class="my-4 d-flex justify-content-center">
             <p class="h1 text-primary">
