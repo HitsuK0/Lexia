@@ -1,5 +1,6 @@
 package be.hers.info.ProjetIntegree.Controller;
 
+import be.hers.info.ProjetIntegree.POJO.Coordinator;
 import be.hers.info.ProjetIntegree.POJO.User;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -57,5 +58,33 @@ public class NavbarController {
         model.addAttribute("isAdmin",null);
 
         return "interprete/indisponibilites";
+    }
+
+
+    /**
+     * Redirects the user to their schedule
+     * @param session The session containing the connected user
+     *@return The HTML path to the schedule page if a user is logged in;else redirects to /login
+     */
+    @GetMapping("/planning")
+    public String displayPlanningPage(HttpSession session) {
+        User connectedUser = (User) session.getAttribute("user");
+        char userRole = connectedUser.getLogin().charAt(0);
+        String redirection = "redirect:/login";
+
+        if(userRole == 'C'){
+            if(((Coordinator) connectedUser).isAdmin()){
+                redirection = "redirect:coordinatrice/accueil";
+            }else{
+                redirection = "redirect:resa/accueil";
+            }
+
+        }else if(userRole == 'I'){
+            redirection = "redirect:/interprete/planning";
+        }else if(userRole == 'B'){
+            redirection = "redirect:interprete/planning-beneficiaires";
+        }
+
+        return redirection;
     }
 }
