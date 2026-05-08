@@ -16,8 +16,7 @@ import java.time.LocalTime;
  */
 @Service
 public class AbsenceService {
-
-
+    
     /**
      * It create an Absence in the database using the data in the absenceDTO given in param.
      * @param absenceDTO is the DTOAbsence used by spring to copy the data in the form.
@@ -32,22 +31,23 @@ public class AbsenceService {
 
         }
         absence.setPrivateReason(absenceDTO.isPrivateReason());
-        TimeSlotPunctual timeSlotPunctual = new TimeSlotPunctual();
-        timeSlotPunctual.setStartTime(absenceDTO.getStartTime());
+        TimeSlotPunctual timeSlotPunctual =  new TimeSlotPunctual();
         timeSlotPunctual.setStartDate(absenceDTO.getStartDate());
         timeSlotPunctual.setEndDate(absenceDTO.getEndDate());
         LocalTime duration;
         if(absenceDTO.isFullDay()){
+            timeSlotPunctual.setStartTime(LocalTime.MIDNIGHT);
             duration = LocalTime.MIDNIGHT.plus(Duration.ofHours(24));
         }
         else{
+            timeSlotPunctual.setStartTime(absenceDTO.getStartTime());
             Duration d = Duration.between(absenceDTO.getStartTime(), absenceDTO.getEndTime());
             duration = LocalTime.MIDNIGHT.plus(d);
         }
         timeSlotPunctual.setDuration(duration);
 
         absence.setTimeSlot(timeSlotPunctual);
-        DAOAbsence DAOabsence = new DAOAbsence();
+        DAOAbsence daoAbsence = new DAOAbsence();
         DAOabsence.create(absence);
     }
 }
