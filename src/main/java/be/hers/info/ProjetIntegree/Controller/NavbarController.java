@@ -64,25 +64,29 @@ public class NavbarController {
     /**
      * Redirects the user to their schedule
      * @param session The session containing the connected user
-     *@return The HTML path to the schedule page if a user is logged in;else redirects to /login
+     *@return The HTML path to the schedule page if a user is logged in, else redirects to /login.
      */
     @GetMapping("/planning")
-    public String displayPlanningPage(HttpSession session) {
+    public String displayHomePage(HttpSession session) {
+        String redirection = "";
         User connectedUser = (User) session.getAttribute("user");
         char userRole = connectedUser.getLogin().charAt(0);
-        String redirection = "redirect:/login";
+
+        if(connectedUser == null) {
+            redirection = "redirect:/login";
+        }
 
         if(userRole == 'C'){
             if(((Coordinator) connectedUser).isAdmin()){
-                redirection = "redirect:coordinatrice/accueil";
+                redirection = "redirect:/coordinatrice/accueil";
             }else{
-                redirection = "redirect:resa/accueil";
+                redirection = "redirect:/resa/accueil";
             }
 
         }else if(userRole == 'I'){
             redirection = "redirect:/interprete/planning";
         }else if(userRole == 'B'){
-            redirection = "redirect:interprete/planning-beneficiaires";
+            redirection = "redirect:/interprete/planning/beneficiaires";
         }
 
         return redirection;
