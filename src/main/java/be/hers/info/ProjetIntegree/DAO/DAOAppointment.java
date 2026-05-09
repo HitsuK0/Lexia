@@ -139,8 +139,10 @@ public class DAOAppointment extends DAO<Appointment> {
                     timeSlot = daoTimeSlotBase.find(rs.getInt("FKTimeSlotBase"));
                 }
 
+                int numAppointment = rs.getInt("numAppointment");
+
                 appointmentFind = new Appointment(
-                        rs.getInt("numAppointment"),
+                        numAppointment,
                         rs.getString("description"),
                         rs.getString("status"),
                         beneficiary,
@@ -554,8 +556,8 @@ public class DAOAppointment extends DAO<Appointment> {
                 }
                 Establishment e = daoEstablishment.find(resultSet.getInt("FKnumEtablishment"));
                 e.setEducationLevel(daoEstablishment.findListEducationLevel(resultSet.getInt("FKnumEtablishment")));
-                e.getReferrers(daoReferrer.findListReferer(resultSet.getInt("FKnumEtablishment")));
-                e.getAddresses(daoAddress.findListAddress(e.getNameBuilding()));
+                e.setReferrers(daoReferrer.findAllByEstablishment(resultSet.getInt("FKnumEtablishment")));
+                e.setAddresses(daoAddress.findAllByEstablishment(e.getNameBuilding()));
 
                 a = new Appointment(
                         numAppointment,
