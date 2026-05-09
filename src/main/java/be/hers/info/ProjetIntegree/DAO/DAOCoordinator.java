@@ -138,7 +138,7 @@ public class DAOCoordinator extends DAO<Coordinator> {
                 if(!rs.next()){
                     throw new SQLException("[DAOCoordinator] Impossible de récupérer le numCoordinator généré.");
                 }
-                int id = rs.getInt(3);
+                int id = rs.getInt(1);
                 objectToInsertInDB.setNumCoordinator(id);
                 isInserted = true;
             }
@@ -198,7 +198,7 @@ public class DAOCoordinator extends DAO<Coordinator> {
         try {
             prStat = connect.prepareStatement(query);
             prStat.setInt(1, (objectToUpdateInDB.isAdmin() ? 1 : 0));
-
+            prStat.setInt(2, objectToUpdateInDB.getNumCoordinator());
 
             int nbLinesUpdate = prStat.executeUpdate();
             if(nbLinesUpdate > 0) {
