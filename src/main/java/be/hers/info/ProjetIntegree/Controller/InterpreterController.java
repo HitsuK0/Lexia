@@ -1,14 +1,12 @@
 package be.hers.info.ProjetIntegree.Controller;
 
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
-import be.hers.info.ProjetIntegree.POJO.Absence;
-import be.hers.info.ProjetIntegree.POJO.Appointment;
-import be.hers.info.ProjetIntegree.POJO.Beneficiary;
-import be.hers.info.ProjetIntegree.POJO.Interpreter;
+import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -19,6 +17,10 @@ import java.util.List;
 @Controller
 @RequestMapping("/interprete")
 public class InterpreterController {
+
+    @Autowired
+    private AbsenceService absenceService;
+
 
     /**
      * Searches for all Appointments and Absences belonging to the interpreter as a parameter over a period defined by start and end.
@@ -92,10 +94,18 @@ public class InterpreterController {
      * @return the page to redirect to.
      */
     @PostMapping("/indisponibilites")
-    public String createIndisponibilite(@ModelAttribute("DTOAbsence") DTOAbsence dtoAbsence, Model model) {
-        AbsenceService absenceService = new AbsenceService();
-        Absence absence = new Absence();
-        absenceService.createAbsence(dtoAbsence, absence);
+    public String createIndisponibilite(@ModelAttribute("DTOAbsence") DTOAbsence dtoAbsence, Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Interpreter interpreter = (Interpreter) session.getAttribute("InterpreterConnected");
+        try{
+            absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter());
+        }
+        catch(SQLException sql){
+            // afficher la page d'erreur
+        }
+        catch(BadStatusException bse){
+            // afficher la page d'erreur
+        }
         return "interprete/indisponibilites";
     }
 

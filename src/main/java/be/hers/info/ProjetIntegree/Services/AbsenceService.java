@@ -7,6 +7,7 @@ import be.hers.info.ProjetIntegree.POJO.BadStatusException;
 import be.hers.info.ProjetIntegree.POJO.TimeSlotPunctual;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalTime;
 
@@ -26,16 +27,12 @@ public class AbsenceService {
     /**
      * It create an Absence in the database using the data in the absenceDTO given in param.
      * @param absenceDTO is the DTOAbsence used by spring to copy the data in the form.
-     * @param absence is the Absence used to convert the DTOAbsence to Absence and create an Absence in the database.
-     */
-    public void createAbsence(DTOAbsence absenceDTO, Absence absence) {
-        absence.setReason(absenceDTO.getReason());
-        try{
-            absence.setStatus("en attente");
-        }
-        catch(BadStatusException e){
 
-        }
+     */
+    public void createAbsence(DTOAbsence absenceDTO, int numInterpreter) throws BadStatusException, SQLException {
+        Absence absence = new Absence();
+        absence.setReason(absenceDTO.getReason());
+        absence.setStatus("en attente");
         absence.setPrivateReason(absenceDTO.isPrivateReason());
         TimeSlotPunctual timeSlotPunctual =  new TimeSlotPunctual();
         timeSlotPunctual.setStartDate(absenceDTO.getStartDate());
@@ -54,6 +51,7 @@ public class AbsenceService {
 
         absence.setTimeSlot(timeSlotPunctual);
         DAOAbsence daoAbsence = new DAOAbsence();
-        DAOabsence.create(absence);
+        daoAbsence.create(absence, numInterpreter);
     }
+
 }
