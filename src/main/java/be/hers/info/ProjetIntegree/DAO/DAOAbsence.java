@@ -286,6 +286,17 @@ public class DAOAbsence extends DAO<Absence>{
         return isDeleted;
     }
 
+    /**
+     * Retrieves a list of punctual absences for a specific interpreter within a given date range
+     * Each Absence is populated with its corresponding TimeSlotPunctual details
+     * @param interpreter The interpreter whose absences are being searched
+     * @param startDate The start date of the period to check
+     * @param endDate The end date of the period to check
+     * @return A list of Absence objects matching the criteria, or an empty list if no absences are found
+     * @throws SQLException If a database access error occurs or the SQL query fails
+     * @throws BadStatusException If the absence status in the database does not match
+     * the expected values ('en attente', 'refuse', or 'accepte')
+     */
     public List<Absence> findPunctualAbsencesInterpreter(Interpreter interpreter, String startDate, String endDate) throws SQLException, BadStatusException {
         Connection connect = ConnectionOracle.getInstance();
         PreparedStatement preparedStatement = null;
@@ -330,7 +341,16 @@ public class DAOAbsence extends DAO<Absence>{
         return punctualAbsenceList;
     }
 
-    /// WOAH
+    /**
+     * Retrieves all recurring base absences for a specific interpreter
+     * This method joins the Absence table with TimeSlotBase and populates each
+     * Absence object with its corresponding base time slot details
+     * @param interpreter The interpreter whose base absences are being retrieved
+     * @return A list containing all base Absence objects found, or an empty list if none exist
+     * @throws SQLException If a database access error occurs during the process.
+     * @throws BadStatusException If the absence status in the database does not match
+     * the expected values ('en attente', 'refuse', or 'accepte')
+     */
     public List<Absence> findBaseAbsencesInterpreter(Interpreter interpreter) throws SQLException, BadStatusException {
         Connection connect = ConnectionOracle.getInstance();
         PreparedStatement preparedStatement = null;

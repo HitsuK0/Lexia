@@ -25,6 +25,12 @@ public class NavbarController {
         return "redirect:/login";
     }
 
+    /**
+     * Retrieves the currently authenticated user from the session
+     * This object is added to the model under the name "connectedUser"
+     * @param session The current session
+     * @return The User object stored in the session, or null if no user is connected
+     */
     @ModelAttribute("connectedUser")
     public User getConnectedUser(HttpSession session) {
         return (User) session.getAttribute("userConnected");
@@ -32,6 +38,13 @@ public class NavbarController {
         // On sait pas qui il est mais on sait qu'il y a un utilisateur
     }
 
+    /**
+     * Populates the model with specific attributes required for the navigation bar
+     * and UI. It determines the user's role and specific identity
+     * (Interpreter, Coordinator, or Beneficiary) based on their login prefix
+     * @param connectedUser The user retrieved from the session (passed by reference)
+     * @param model The UI model to be populated with attributes
+     */
     @ModelAttribute
     public void addNavbarAttributes(@ModelAttribute("connectedUser") User connectedUser, // ici on passe le modelattribute par reference(il me semble
                                     // et il va etre modifier en fonction)

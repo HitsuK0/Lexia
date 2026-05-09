@@ -30,6 +30,14 @@ public class AbsenceService {
         daoAbsence.update(absenceToUpdate);
     }
 
+    /**
+     * Searches for all non-repetitive Absences belonging to the interpreter
+     * as a parameter over a period defined by start and end
+     * @param interpreter The interpreter linked to the Absence
+     * @param startDate the date retrieved via the URL
+     * @param endDate the date retrieved via the URL
+     * @return The Absence list meets the constraints; an empty list is returned if no object is found.
+     */
     public List<Absence> getPunctualAbsencesInterpreter(Interpreter interpreter, String startDate, String endDate) throws SQLException, BadStatusException {
         DAOAbsence daoAbsence = new DAOAbsence();
 
@@ -40,6 +48,11 @@ public class AbsenceService {
         return daoAbsence.findPunctualAbsencesInterpreter(interpreter, startDate, endDate);
     }
 
+    /**
+     * Searches for all repetitive Absences belonging to the interpreter as a parameter
+     * @param interpreter The interpreter linked to the Absence
+     * @return The Absence list meets the constraints; an empty list is returned if no object is found.
+     */
     public List<Absence> getBaseAbsencesInterpreter(Interpreter interpreter) throws SQLException, BadStatusException {
         DAOAbsence daoAbsence = new DAOAbsence();
         // Fonction pas encore utilise mais peut-etre le sera une fois la page pour encoder l'horaire de base ?

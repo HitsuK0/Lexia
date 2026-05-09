@@ -85,6 +85,16 @@ public class InterpreterController {
         return "interprete/profil";
     }
 
+    /**
+     * Displays the list of punctual absences for the connected interpreter within a specific date range
+     * The method extracts the date from the start and end parameters and retrieves
+     * matching absences from the database
+     * @param start The start date
+     * @param end The end date
+     * @param interpreter The currently logged-in interpreter (from ModelAttribute, reference)
+     * @param model the UI model to hold the list of absences and the active tab status
+     * @return The view name "interprete/indisponibilites", or a redirect to login if session is invalid
+     */
     @GetMapping("/indisponibilites")
     public String indisponibilites(@RequestParam String start,
                                    @RequestParam String end,
@@ -115,7 +125,12 @@ public class InterpreterController {
         return "interprete/indisponibilites";
     }
 
-    // Petit bouton poubelle
+    /**
+     * Deletes a specific absence record based on its unique ID
+     * @param id the unique identifier of the absence to be deleted
+     * @param interpreter The currently logged-in interpreter
+     * @return A redirect to the absences list view after deletion
+     */
     @PostMapping("/indisponibilites/delete")
     public String deleteAbsence(@RequestParam int id,
                                 @ModelAttribute("InterpreterConnected") Interpreter interpreter) {
@@ -134,7 +149,13 @@ public class InterpreterController {
         return "redirect:/interprete/indisponibilites";
     }
 
-    // petit bouton pour modifier
+    /**
+     * Updates the details of an existing absence
+     * The updated information is received as a model attribute and passed to the service
+     * @param updatedAbsence The absence object containing the modified data
+     * @param interpreter the currently logged-in interpreter
+     * @return A redirect to the absences list view after the update is processed
+     */
     @PostMapping("/indisponibilites/update")
     public String updateAbsence(@ModelAttribute Absence updatedAbsence,
                                 @ModelAttribute("InterpreterConnected") Interpreter interpreter) {
