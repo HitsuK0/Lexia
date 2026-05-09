@@ -1,13 +1,16 @@
 package be.hers.info.ProjetIntegree.Controller;
 
+import be.hers.info.ProjetIntegree.POJO.Coordinator;
 import be.hers.info.ProjetIntegree.POJO.User;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
+@ControllerAdvice
 public class NavbarController {
 
     /**
@@ -22,40 +25,43 @@ public class NavbarController {
         return "redirect:/login";
     }
 
-    /**
-     * Displays the Absences page of the connected user
-     * This method requires that a User in the session
-     * @param session The session containing the connected user
-     * @param model The Thymeleaf view container
-     * @return HTML path interprete/indisponibilites if any user connected, redirect:/login if no user
-     * connected (or in case of any other issue)
-     */
-    @GetMapping("interprete/indisponibilites")
-    public String displayAbsencesPage(HttpSession session, Model model) {
-        User connectedUser = (User) session.getAttribute("user");
+    @ModelAttribute("connectedUser")
+    public User getConnectedUser(HttpSession session) {
+        return (User) session.getAttribute("userConnected");
+        // Donc il y aurait un cle userConnected pour dire "ouais l'utilisateur est connecte"
+        // On sait pas qui il est mais on sait qu'il y a un utilisateur
+    }
 
-        if(connectedUser == null) {
-            return "redirect:/login";
-        }
+    @ModelAttribute
+    public void addNavbarAttributes(@ModelAttribute("connectedUser") User connectedUser, // ici on passe le modelattribute par reference(il me semble
+                                    // et il va etre modifier en fonction)
+                                    Model model) {
 
         String userRole = null;
-        char roleLetter = connectedUser.getLogin().charAt(0);
+        boolean isAdmin = false;
 
-        if(roleLetter == 'I') {
-            userRole = "INTERPRETER";
-        } else if(roleLetter == 'C') {
-            userRole = "COORDINATOR";
-        } else if(roleLetter == 'B') {
-            userRole = "BENEFICIARY";
-        } else {
-            return "redirect:/login";
+        if(connectedUser != null) {
+            model.addAttribute("userName", connectedUser.getFirstName()+" "+connectedUser.getLastName());
+            if(connectedUser.getLogin().charAt(0) == 'I') {
+                userRole = "INTERPRETER";
+                model.addAttribute("InterpreterConnected", connectedUser); // j'adapte la cle utilise en thymleaf comme ca
+                                                                                        // quand par exemple InterpreterController va utiliser le
+                                                                                        // ModelAttribute("InterpreterConnected") ca va s'adapter, pareil pour les autres
+            } else if(connectedUser.getLogin().charAt(0) == 'C') {
+                userRole = "COORDINATOR";
+                if(connectedUser instanceof Coordinator) {
+                    isAdmin = ((Coordinator) connectedUser).isAdmin();
+                }
+                model.addAttribute("CoordinatorConnected", connectedUser);
+            } else if(connectedUser.getLogin().charAt(0) == 'B') {
+                userRole = "BENEFICIARY";
+                model.addAttribute("BeneficiaryConnected", connectedUser);
+            }
+            model.addAttribute("userRole", userRole);
+            model.addAttribute("isAdmin", isAdmin);
         }
 
-        model.addAttribute("userRole", userRole);
-        model.addAttribute("userName", connectedUser.getFirstName()+" "+connectedUser.getLastName());
-        model.addAttribute("activeTab", "indisponibilites");
-        model.addAttribute("isAdmin",null);
-
-        return "interprete/indisponibilites";
+        // Ici je ne sais pas quoi rajouter comme else si la connectedUser est null,
+        // je pourrais faire un simple return; mais jsp c'est moche et il y apeut etre moyen de faire autrement
     }
 }

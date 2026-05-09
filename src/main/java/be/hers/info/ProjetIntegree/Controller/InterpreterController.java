@@ -1,17 +1,15 @@
 package be.hers.info.ProjetIntegree.Controller;
 
-import be.hers.info.ProjetIntegree.POJO.Appointment;
-import be.hers.info.ProjetIntegree.POJO.Beneficiary;
-import be.hers.info.ProjetIntegree.POJO.Interpreter;
+import be.hers.info.ProjetIntegree.POJO.*;
+import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
+import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -25,20 +23,25 @@ public class InterpreterController {
      * @param start the date retrieved via the URL
      * @param end the date retrieved via the URL
      * @param interpreter The interpreter linked to the appointment on the list
-     * @param request the request that triggered this function call
      * @return Redirect to the "interprete/planning" page
      */
     @GetMapping("/planning/events")
     public String planning(@RequestParam String start,
-                           @RequestParam String end, @SessionAttribute("InterpreterConnected") Interpreter interpreter, HttpServletRequest request, Model model) {
+                           @RequestParam String end, @ModelAttribute("InterpreterConnected") Interpreter interpreter, Model model) {
+
+        if(interpreter == null) {
+            return "redirect:/login";
+        }
+
         String dateStart = start.substring(0,10);
         String dateEnd = end.substring(0,10);
         PlanningService planningService = new PlanningService();
-        HttpSession session = request.getSession();
         interpreter.setAppointmentsList(planningService.getListAppointmentWithDateAndInterpreter(interpreter,dateStart,dateEnd));
         interpreter.setAbsences(planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd));
-        session.setAttribute("InterpreterConnected",interpreter );
-        model.addAttribute("isAdmin",null);
+
+        // Ici j'ai retirer la session, puisque je travaille direcement avec l'instence interpreter, je ne dois plus m'occuper de la session
+
+        model.addAttribute("activeTab", "planning");
 
         return "interprete/planning";
     }
@@ -53,8 +56,13 @@ public class InterpreterController {
      */
     @GetMapping("/planning/beneficiaires")
     public String planningBeneficiaires(@RequestParam String start, @RequestParam String end,
-                                        @SessionAttribute("BeneficiaryConnected") Beneficiary beneficiary,
-                                        HttpServletRequest request) {
+                                        @ModelAttribute("BeneficiaryConnected") Beneficiary beneficiary,
+                                        HttpServletRequest request, Model model) {
+
+        if(beneficiary == null) {
+            return "redirect:/login";
+        }
+
         String dateStart = start.substring(0, 10);
         String dateEnd = end.substring(0, 10);
 
@@ -64,8 +72,11 @@ public class InterpreterController {
 
         HttpSession session = request.getSession();
         session.setAttribute("appointmentList", appointmentList);
+        // Ici c'est pas vraiment pareil que l'autre, je travail pas vraiment avec l'objet Beneficiary dans la session (je pense)
 
-        return "interprete/planning-beneficiaires";
+        model.addAttribute("activeTab", "planning");
+
+        return "interprete/planning/beneficiaires";
     }
 
     @GetMapping("/profil")
@@ -75,10 +86,70 @@ public class InterpreterController {
     }
 
     @GetMapping("/indisponibilites")
-    public String indisponibilites(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("isAdmin", null);
+    public String indisponibilites(@RequestParam String start,
+                                   @RequestParam String end,
+                                   @ModelAttribute("InterpreterConnected") Interpreter interpreter,
+                                   Model model) {
+
+        if(interpreter == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AbsenceService absenceService = new AbsenceService();
+            String startDate = null;
+            String endDate = null;
+
+            startDate = start.substring(0, 10);
+            endDate = end.substring(0, 10);
+
+            List<Absence> punctualAbsencesList = absenceService.getPunctualAbsencesInterpreter(interpreter, startDate, endDate);
+            model.addAttribute("punctualAbsencesList", punctualAbsencesList);
+        } catch (BadStatusException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        model.addAttribute("activeTab", "indisponibilites");
         return "interprete/indisponibilites";
     }
 
+    // Petit bouton poubelle
+    @PostMapping("/indisponibilites/delete")
+    public String deleteAbsence(@RequestParam int id,
+                                @ModelAttribute("InterpreterConnected") Interpreter interpreter) {
+
+        if(interpreter == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AbsenceService absenceService = new AbsenceService();
+            absenceService.deleteAbsence(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/interprete/indisponibilites";
+    }
+
+    // petit bouton pour modifier
+    @PostMapping("/indisponibilites/update")
+    public String updateAbsence(@ModelAttribute Absence updatedAbsence,
+                                @ModelAttribute("InterpreterConnected") Interpreter interpreter) {
+
+        if(interpreter == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AbsenceService absenceService = new AbsenceService();
+            absenceService.updateAbsence(updatedAbsence);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/interprete/indisponibilites";
+    }
 }
