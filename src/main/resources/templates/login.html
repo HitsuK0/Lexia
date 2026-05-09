@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Connexion – Lexia</title>
+        <link rel="icon" type="image/png" th:href="@{/images/logo_lexia.png}"/>
+        <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+        <link rel="stylesheet" th:href="@{/css/bootstrap-icons.min.css}"/>
+        <link rel="stylesheet" th:href="@{/css/lexia.css}"/>
+        <script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
+
+        <style>
+            body {
+                min-height: 100vh;
+                background-color: #f4f1fc;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .login-card {
+                background: #ffffff;
+                border-radius: 20px;
+                box-shadow: 0 4px 24px rgba(99, 84, 196, 0.10);
+                padding: 40px 48px;
+                width: 100%;
+                max-width: 420px;
+            }
+
+            .login-logo {
+                width: 90px;
+                height: 90px;
+                object-fit: contain;
+            }
+
+            .login-title {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #593196;
+            }
+
+            .login-subtitle {
+                color: #7c6dbf;
+                font-style: italic;
+                font-size: 0.95rem;
+            }
+
+            .form-control {
+                border-radius: 10px;
+                border: 1.5px solid #e0daf5;
+                padding: 10px 14px;
+                font-size: 0.9rem;
+                transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            }
+
+            .form-control:focus {
+                border-color: #6c5ce7;
+                box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.12);
+            }
+
+            .btn-login {
+                background-color: #593196;
+                border: none;
+                border-radius: 10px;
+                padding: 11px;
+                font-size: 1rem;
+                font-weight: 600;
+                letter-spacing: 0.02em;
+                transition: background-color 0.15s ease, transform 0.1s ease;
+            }
+
+            .btn-login:hover {
+                background-color: #4a2580;
+                transform: translateY(-1px);
+            }
+
+            .btn-login:active {
+                transform: translateY(0);
+            }
+
+            .login-footer {
+                font-size: 0.8rem;
+                color: #aaa;
+            }
+
+            .alert-login {
+                border-radius: 10px;
+                font-size: 0.875rem;
+            }
+        </style>
+    </head>
+
+    <body>
+
+    <div class="login-card">
+
+        <div class="text-center mb-4">
+            <img th:src="@{/images/logo_lexia.png}" alt="Lexia" class="login-logo mb-3"/>
+            <div class="login-title">Lexia</div>
+            <div class="login-subtitle">Connectez-vous pour accéder à votre horaire</div>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger alert-login mb-3" role="alert">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            Identifiants incorrects. Veuillez réessayer.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label small fw-semibold">Nom d'utilisateur</label>
+                <input type="text" class="form-control" id="username" name="username"
+                       placeholder="Entrez votre nom d'utilisateur" autofocus/>
+            </div>
+            <div class="mb-4">
+                <label for="password" class="form-label small fw-semibold">Mot de passe</label>
+                <input type="password" class="form-control" id="password" name="password"
+                       placeholder="Entrez votre mot de passe"/>
+            </div>
+            <button type="submit" class="btn btn-login btn-primary w-100 text-white">
+                Se connecter
+            </button>
+        </form>
+
+    </div>
+
+    <div class="login-footer mt-4 text-center">
+        &copy; 2026 Lexia &mdash; Connexion sécurisée
+    </div>
+
+    </body>
+</html>

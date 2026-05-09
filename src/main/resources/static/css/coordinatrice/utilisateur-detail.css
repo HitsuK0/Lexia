@@ -1,0 +1,139 @@
+/* Allows you to put all the modals with rounded corners */
+#modalResetPassword .modal-content,
+#modalDesactiver .modal-content {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+
+/* Allows you to set the max width of the detail wrapper */
+.detail-wrapper {
+    max-width: 960px;
+}
+
+/* Allows you to style each section card */
+.detail-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1.5px solid #e8e0f5;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    padding: 24px 28px;
+}
+
+/* Allows you to style section titles inside cards */
+.section-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #4a3f8f;
+    margin-bottom: 4px;
+}
+
+.section-divider {
+    border-color: #e8e0f5;
+    margin-top: 6px;
+    margin-bottom: 18px;
+}
+
+/* Allows you to style the role badges */
+.badge-role {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.badge-role.coordinatrice { background-color: #6c5ce7; }
+.badge-role.resa          { background-color: #cc5de8; }
+.badge-role.beneficiaire  { background-color: #4dabf7; }
+.badge-role.interprete    { background-color: #51cf66; }
+
+/* Allows you to style the account status badge */
+.badge-statut {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-statut.actif {
+    background-color: #d3f9d8;
+    color: #2f9e44;
+}
+
+.badge-statut.inactif {
+    background-color: #ffe3e3;
+    color: #c92a2a;
+}
+
+/* Allows you to style the inline edit input groups */
+.input-edit-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.input-edit-group .form-control {
+    flex: 1;
+}
+
+/* Allows you to style the edit pencil button */
+.btn-edit {
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    padding: 2px 4px;
+    transition: color 0.15s ease;
+    flex-shrink: 0;
+}
+
+.btn-edit:hover {
+    color: #6c5ce7;
+}
+
+/* Allows you to style the skill badges */
+.badge-skill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #ede9f8;
+    color: #4a3f8f;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.btn-badge-remove {
+    background: none;
+    border: none;
+    color: #7c6dbf;
+    cursor: pointer;
+    padding: 0 0 0 4px;
+    font-size: 0.85rem;
+    line-height: 1;
+    transition: color 0.15s ease;
+}
+.btn-badge-remove:hover {
+    color: #c92a2a;
+}
+
+/* Allows you to display the save button as a floating action button */
+.btn-floating {
+    position: fixed;
+    bottom: 80px;
+    right: 32px;
+    z-index: 1050;
+    box-shadow: 0 4px 16px rgba(99, 84, 196, 0.35);
+    padding: 10px 24px;
+    border-radius: 50px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btn-floating:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 84, 196, 0.45);
+}

@@ -68,26 +68,30 @@ public class NavbarController {
      */
     @GetMapping("/planning")
     public String displayHomePage(HttpSession session) {
-        String redirection = "";
+
         User connectedUser = (User) session.getAttribute("user");
-        char userRole = connectedUser.getLogin().charAt(0);
+        String redirection = "";
 
         if(connectedUser == null) {
             redirection = "redirect:/login";
-        }
+        }else{
 
-        if(userRole == 'C'){
-            if(((Coordinator) connectedUser).isAdmin()){
-                redirection = "redirect:/coordinatrice/accueil";
-            }else{
-                redirection = "redirect:/resa/accueil";
+            char userRole = connectedUser.getLogin().charAt(0);
+
+            if(userRole == 'C'){
+                if(((Coordinator) connectedUser).isAdmin()){
+                    redirection = "redirect:/coordinatrice/accueil";
+                }else{
+                    redirection = "redirect:/resa/accueil";
+                }
+            }else if(userRole == 'I'){
+                redirection = "redirect:/interprete/planning";
+            }else if(userRole == 'B'){
+                redirection = "redirect:/beneficiaire/planning";
             }
-
-        }else if(userRole == 'I'){
-            redirection = "redirect:/interprete/planning";
-        }else if(userRole == 'B'){
-            redirection = "redirect:/interprete/planning/beneficiaires";
         }
+
+
 
         return redirection;
     }
