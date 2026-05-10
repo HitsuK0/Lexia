@@ -21,7 +21,6 @@ import java.time.LocalTime;
 /**
  * Service link to the Absence.
  */
-@Service
 public class AbsenceService {
 
     /**

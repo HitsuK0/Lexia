@@ -18,8 +18,6 @@ import java.util.List;
 @RequestMapping("/interprete")
 public class InterpreterController {
 
-    @Autowired
-    private AbsenceService absenceService;
 
 
     /**
@@ -97,6 +95,7 @@ public class InterpreterController {
     public String createIndisponibilite(@ModelAttribute("DTOAbsence") DTOAbsence dtoAbsence, Model model, HttpServletRequest request) {
         HttpSession session = request.getSession();
         Interpreter interpreter = (Interpreter) session.getAttribute("InterpreterConnected");
+        AbsenceService absenceService = new  AbsenceService();
         try{
             absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter());
         }
