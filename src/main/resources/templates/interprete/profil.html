@@ -1,10 +1,15 @@
+<!--
+@author Chloe Wellinger
+@rewiewer Jean-François Nicolas, Louis Halet
+-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
     <head th:replace="~{common/head :: head('Mon Profil', '/css/interprete/profil.css')}"></head>
 
     <body>
-        <nav th:replace="~{common/navbar :: navbar(activeTab='profil', userRole='INTERPRETER', userName='Jean Dupont', breadcrumb=null, isAdmin=null)}"></nav>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='profil', userRole=${userRole}, userName=${userName}, breadcrumb=null, isAdmin=${isAdmin})}"></nav>
 
         <div class="container-fluid py-4">
 
