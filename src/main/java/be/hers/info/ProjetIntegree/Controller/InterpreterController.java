@@ -1,4 +1,8 @@
 package be.hers.info.ProjetIntegree.Controller;
+/**
+ * @authors Halet Louis, Wellinger Chloe, Vatafu Jean, Rosman Loïs, Vanderheyden Quentin
+ * @reviewer Nicolas Jean-François
+ */
 
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
 import be.hers.info.ProjetIntegree.POJO.*;
