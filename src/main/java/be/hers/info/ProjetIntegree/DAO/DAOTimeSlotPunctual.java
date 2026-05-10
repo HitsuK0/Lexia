@@ -8,14 +8,11 @@ import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
 
-
-/// @author Vanderheyden Quentin
-///@reviewer Nicolas Jean-François, Halet Louis
-
+/**
+ * @author Vanderheyden Quentin
+ * @reviewer Nicolas Jean-François, Halet Louis
+ */
 public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
-
-
-
 
     /**
      * Search for a TimeSlotPunctual with the same id as objectToSearchInDB
@@ -52,7 +49,6 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         }
         return timeSlotPunctual;
     }
-
 
     /**
      * Search for all the TimeSlotPunctual
@@ -131,7 +127,6 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         return isInserted;
     }
 
-
     /**
      * Update all the field where numTimeSlot = objectToUpdateInDB.get
      * @param objectToUpdateInDB is the object
@@ -160,11 +155,8 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         finally{
             closeStatement(prStat);
         }
-
-
         return isUpdated;
     }
-
 
     /**
      * Delete the lines where numTimeSlot == objectToDeleteForm.getNumTimeSlot()
