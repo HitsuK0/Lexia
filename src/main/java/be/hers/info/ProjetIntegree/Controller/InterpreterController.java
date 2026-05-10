@@ -1,12 +1,15 @@
 package be.hers.info.ProjetIntegree.Controller;
 
+/**
+ * @authors Halet Louis, Wellinger Chloe, Vatafu Jean, Rosman Loïs
+ * @reviewer Nicolas Jean-François
+ */
+
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
-import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -50,7 +53,7 @@ public class InterpreterController {
      * @param end the date retrieved via the URL
      * @param beneficiary The beneficiary linked to the appointment on the list
      * @param request the request that triggered this function call
-     * @return Redirect to the "interprete/planning-beneficiaires" page
+     * @return Redirect to the "interprete/planning/beneficiaires" page
      */
     @GetMapping("/planning/beneficiaires")
     public String planningBeneficiaires(@RequestParam String start, @RequestParam String end,
@@ -103,11 +106,8 @@ public class InterpreterController {
 
         try {
             AbsenceService absenceService = new AbsenceService();
-            String startDate = null;
-            String endDate = null;
-
-            startDate = start.substring(0, 10);
-            endDate = end.substring(0, 10);
+            String startDate = start.substring(0, 10);
+            String endDate = end.substring(0, 10);
 
             List<Absence> punctualAbsencesList = absenceService.getPunctualAbsencesInterpreter(interpreter, startDate, endDate);
             model.addAttribute("punctualAbsencesList", punctualAbsencesList);
