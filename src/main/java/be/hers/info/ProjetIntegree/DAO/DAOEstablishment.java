@@ -1,8 +1,8 @@
 package be.hers.info.ProjetIntegree.DAO;
 
-/*
-@author Rosman Loïs
-@reviewer Nicolas Jean-Francois, Halet Louis
+/**
+ * @author Rosman Loïs
+ * @reviewer Nicolas Jean-Francois, Halet Louis
  */
 
 import be.hers.info.ProjetIntegree.POJO.Address;
@@ -54,7 +54,6 @@ public class DAOEstablishment extends DAO<Establishment>{
         finally{
             closeStatementAndResultSet(prStat, rs);
         }
-
         return establishmentFind;
     }
 
@@ -120,7 +119,6 @@ public class DAOEstablishment extends DAO<Establishment>{
         finally{
             closeStatementAndResultSet(prStat, rs);
         }
-
         return listEstablishmentFind;
     }
 
@@ -165,7 +163,7 @@ public class DAOEstablishment extends DAO<Establishment>{
 
                 rs = prStat.getReturnResultSet();
                 if (rs.next()) {
-                    int id = rs.getInt(5);
+                    int id = rs.getInt(1);
                     objectToInsertInDB.setNumEstablishment(id);
 
                     if (!objectToInsertInDB.getReferrers().isEmpty()) {
@@ -183,7 +181,6 @@ public class DAOEstablishment extends DAO<Establishment>{
         finally {
             closeStatementAndResultSet(prStat, rs);
         }
-
         return isInserted;
     }
 
@@ -208,7 +205,6 @@ public class DAOEstablishment extends DAO<Establishment>{
 
         return isInserted;
     }
-
 
     /**
      * Precondition: the establishment passed as a parameter cannot be null.
@@ -267,7 +263,6 @@ public class DAOEstablishment extends DAO<Establishment>{
         finally{
             closeStatement(prStat);
         }
-
         return isDeleted;
     }
 }

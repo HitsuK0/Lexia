@@ -1,8 +1,8 @@
 package be.hers.info.ProjetIntegree.POJO;
 
-/*
-@author Rosman Loïs
-@reviewer Halet Louis
+/**
+ * @author Rosman Loïs
+ * @reviewer Nicolas Jean-Francois, Halet Louis
  */
 
 import java.util.ArrayList;
