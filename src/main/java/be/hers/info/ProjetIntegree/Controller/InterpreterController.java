@@ -1,20 +1,11 @@
 package be.hers.info.ProjetIntegree.Controller;
 
-<<<<<<< HEAD
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
-=======
-/**
- * @authors Halet Louis, Wellinger Chloe, Vatafu Jean, Rosman Loïs
- * @reviewer Nicolas Jean-François
- */
-
->>>>>>> origin/main
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -129,7 +120,6 @@ public class InterpreterController {
         return "interprete/indisponibilites";
     }
 
-<<<<<<< HEAD
 
     /**
      * Function called when the form is filled.
@@ -156,7 +146,6 @@ public class InterpreterController {
         return "interprete/indisponibilites";
     }
 
-=======
     /**
      * Deletes a specific absence record based on its unique ID
      * @param id the unique identifier of the absence to be deleted
@@ -205,5 +194,4 @@ public class InterpreterController {
 
         return "redirect:/interprete/indisponibilites";
     }
->>>>>>> origin/main
 }
