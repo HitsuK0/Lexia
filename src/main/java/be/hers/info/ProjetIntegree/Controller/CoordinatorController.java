@@ -14,6 +14,7 @@ public class CoordinatorController {
     @GetMapping("/accueil")
     public String accueil(Model model) {
         model.addAttribute("userName", "Dubois Louis");
+        model.addAttribute("isAdmin", true);
         return "coordinatrice/accueil";
     }
 
@@ -21,6 +22,7 @@ public class CoordinatorController {
     @GetMapping("/profil")
     public String profil(Model model) {
         model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("isAdmin", true);
         return "coordinatrice/profil";
     }
 
@@ -28,6 +30,7 @@ public class CoordinatorController {
     @GetMapping("/plannings")
     public String plannings(Model model) {
         model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("isAdmin", true);
         return "coordinatrice/plannings";
     }
 
@@ -35,6 +38,7 @@ public class CoordinatorController {
     @GetMapping("/validations")
     public String validations(Model model) {
         model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("isAdmin", true);
         return "coordinatrice/validations";
     }
 
@@ -42,6 +46,7 @@ public class CoordinatorController {
     @GetMapping("/etablissements")
     public String etablissements(Model model) {
         model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("isAdmin", true);
         return "coordinatrice/etablissements";
     }
 
@@ -49,6 +54,7 @@ public class CoordinatorController {
     @GetMapping("/utilisateurs")
     public String utilisateurs(Model model) {
         model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("isAdmin", true);
         return "coordinatrice/utilisateurs";
     }
 
