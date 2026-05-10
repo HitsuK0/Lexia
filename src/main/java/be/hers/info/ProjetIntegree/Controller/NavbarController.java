@@ -6,8 +6,14 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
+/**
+ * @author Jean-François Nicolas, Jean Vatafu, Ainhoa Leroy Rodriguez
+ * @reviewer Jean-François Nicolas , Louis Halet
+ */
 
 @Controller
 @ControllerAdvice
@@ -100,9 +106,6 @@ public class NavbarController {
                 redirection = "redirect:/beneficiaire/planning";
             }
         }
-
-
-
         return redirection;
     }
 }
