@@ -14,7 +14,7 @@ import java.util.List;
  * @reviewer Nicolas Jean-François, Louis Halet
  */
 
-public class DAOAbsence {
+public class DAOAbsence extends DAO<Absence>{
 
     /**
      * Searches for an Absence by its numAbsence.
@@ -22,10 +22,8 @@ public class DAOAbsence {
      * @param objectToSearchInDB the numAbsence to search for
      * @return The Absence if found, null otherwise
      * @throws SQLException In case of any SQL problems encountered with this method
-     * @throws BadStatusException In case the status of the absence found does not match 'en attente',
-     * 'acceptee' or 'refusee'
      */
-    public Absence find(int objectToSearchInDB) throws SQLException, BadStatusException {
+    public Absence find(int objectToSearchInDB) throws SQLException {
         Connection connect = ConnectionOracle.getInstance();
         Absence absence = null;
         PreparedStatement preparedStatement = null;
@@ -55,6 +53,8 @@ public class DAOAbsence {
                 absence = new Absence(objectToSearchInDB, resultSet.getString("status"), timeSlot,
                         resultSet.getString("reasons"), resultSet.getBoolean("privateReason"));
             }
+        } catch (BadStatusException e) {
+            e.printStackTrace();
         } finally {
             closeStatementAndResultSet(preparedStatement, resultSet);
         }
@@ -66,10 +66,8 @@ public class DAOAbsence {
      * For each Absence, the TimeSlotPunctual is loaded via DAOTimeSlotPunctual
      * @return A list containing all the Absence, or an empty list if the table is empty
      * @throws SQLException In case of any SQL problems encountered with this method
-     * @throws BadStatusException In case the status of the absence found does not match 'en attente',
-     *      * 'acceptee' or 'refusee'
      */
-    public List<Absence> findAll() throws SQLException, BadStatusException {
+    public List<Absence> findAll() throws SQLException {
         Connection connect = ConnectionOracle.getInstance();
         List<Absence> absenceList = new ArrayList<Absence>();
         PreparedStatement preparedStatement = null;
@@ -98,6 +96,8 @@ public class DAOAbsence {
 
                 absenceList.add(absence);
             }
+        } catch (BadStatusException e) {
+            e.printStackTrace();
         } finally {
             closeStatementAndResultSet(preparedStatement, resultSet);
         }
@@ -119,7 +119,7 @@ public class DAOAbsence {
         OraclePreparedStatement preparedStatement = null;
         ResultSet generateID = null;
 
-        String query = "INSERT INTO Absence(status, reason, privateReason, FKTimeSlotBase, FKTimeSlotPunctual, FKnumInterpreter) " +
+        String query = "INSERT INTO Absence(status, reasons, privateReason, FKTimeSlotBase, FKTimeSlotPunctual, FKnumInterpreter) " +
                 "VALUES (?, ?, ?, ?, ?, ?) " +
                 "RETURNING numAbsence  INTO ?";
 
@@ -284,6 +284,107 @@ public class DAOAbsence {
             closeStatement(preparedStatement);
         }
         return isDeleted;
+    }
+
+    /**
+     * Retrieves a list of punctual absences for a specific interpreter within a given date range
+     * Each Absence is populated with its corresponding TimeSlotPunctual details
+     * @param interpreter The interpreter whose absences are being searched
+     * @param startDate The start date of the period to check
+     * @param endDate The end date of the period to check
+     * @return A list of Absence objects matching the criteria, or an empty list if no absences are found
+     * @throws SQLException If a database access error occurs or the SQL query fails
+     * @throws BadStatusException If the absence status in the database does not match
+     * the expected values ('en attente', 'refuse', or 'accepte')
+     */
+    public List<Absence> findPunctualAbsencesInterpreter(Interpreter interpreter, String startDate, String endDate) throws SQLException, BadStatusException {
+        Connection connect = ConnectionOracle.getInstance();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<Absence> punctualAbsenceList = new ArrayList<Absence>();
+
+        String query = "SELECT ab.numAbsence, ab.status, ab.reasons, ab.privateReason, ab.FKTimeSlotPunctual " +
+                "FROM Absence ab " +
+                "JOIN TimeSlotPunctual tsp ON ab.FKTimeSlotPunctual = tsp.numTimeSlotPunctual " +
+                "WHERE ab.FKnumInterpreter = ? " +
+                "  AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') " +
+                "  AND NVL(tsp.endDate, tsp.startDate) >= TO_DATE(?, 'YYYY-MM-DD')";
+        try {
+            preparedStatement = connect.prepareStatement(query);
+
+            preparedStatement.setInt(1, interpreter.getNumInterpreter());
+            preparedStatement.setString(2, endDate);
+            preparedStatement.setString(3, startDate);
+
+            resultSet = preparedStatement.executeQuery();
+
+            DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+            while(resultSet.next()) {
+                TimeSlot timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
+
+                try {
+                    Absence absence = new Absence(resultSet.getInt("numAbsence"),
+                            resultSet.getString("status"), timeSlot, resultSet.getString("reasons"),
+                            resultSet.getBoolean("privateReason"));
+
+                    punctualAbsenceList.add(absence);
+                } catch (BadStatusException e) {
+                    throw new BadStatusException("[DAOAbsence] Le statut ne peut etre que 'en attente', 'refuse' ou 'accepte'");
+                }
+            }
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return punctualAbsenceList;
+    }
+
+    /**
+     * Retrieves all recurring base absences for a specific interpreter
+     * This method joins the Absence table with TimeSlotBase and populates each
+     * Absence object with its corresponding base time slot details
+     * @param interpreter The interpreter whose base absences are being retrieved
+     * @return A list containing all base Absence objects found, or an empty list if none exist
+     * @throws SQLException If a database access error occurs during the process.
+     * @throws BadStatusException If the absence status in the database does not match
+     * the expected values ('en attente', 'refuse', or 'accepte')
+     */
+    public List<Absence> findBaseAbsencesInterpreter(Interpreter interpreter) throws SQLException, BadStatusException {
+        Connection connect = ConnectionOracle.getInstance();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<Absence> baseAbsenceList = new ArrayList<Absence>();
+
+        String query = "SELECT ab.numAbsence, ab.status, ab.reasons, ab.privateReason, ab.FKTimeSlotBase " +
+                "FROM Absence ab " +
+                "JOIN TimeSlotBase tsb ON ab.FKTimeSlotBase = tsb.numTimeSlotBase " +
+                "WHERE ab.FKnumInterpreter = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+
+            preparedStatement.setInt(1, interpreter.getNumInterpreter());
+
+            resultSet = preparedStatement.executeQuery();
+
+            DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
+            while(resultSet.next()) {
+                TimeSlot timeSlot = daoTimeSlotBase.find(resultSet.getInt("FKTimeSlotBase"));
+
+                try {
+                    Absence absence = new Absence(resultSet.getInt("numAbsence"), resultSet.getString("status"),
+                            timeSlot, resultSet.getString("reasons"), resultSet.getBoolean("privateReason"));
+
+                    baseAbsenceList.add(absence);
+                } catch (BadStatusException e) {
+                    throw new BadStatusException("[DAOAbsence] Le statut ne peut etre que 'en attente', 'refuse' ou 'accepte'");
+                }
+
+            }
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+
+        return baseAbsenceList;
     }
 
     /**

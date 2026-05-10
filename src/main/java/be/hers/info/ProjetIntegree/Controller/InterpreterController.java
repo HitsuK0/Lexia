@@ -1,6 +1,14 @@
 package be.hers.info.ProjetIntegree.Controller;
 
+<<<<<<< HEAD
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
+=======
+/**
+ * @authors Halet Louis, Wellinger Chloe, Vatafu Jean, Rosman Loïs
+ * @reviewer Nicolas Jean-François
+ */
+
+>>>>>>> origin/main
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
@@ -25,20 +33,23 @@ public class InterpreterController {
      * @param start the date retrieved via the URL
      * @param end the date retrieved via the URL
      * @param interpreter The interpreter linked to the appointment on the list
-     * @param request the request that triggered this function call
      * @return Redirect to the "interprete/planning" page
      */
     @GetMapping("/planning/events")
     public String planning(@RequestParam String start,
-                           @RequestParam String end, @SessionAttribute("InterpreterConnected") Interpreter interpreter, HttpServletRequest request, Model model) {
+                           @RequestParam String end, @ModelAttribute("InterpreterConnected") Interpreter interpreter, Model model) {
+
+        if(interpreter == null) {
+            return "redirect:/login";
+        }
+
         String dateStart = start.substring(0,10);
         String dateEnd = end.substring(0,10);
         PlanningService planningService = new PlanningService();
-        HttpSession session = request.getSession();
         interpreter.setAppointmentsList(planningService.getListAppointmentWithDateAndInterpreter(interpreter,dateStart,dateEnd));
         interpreter.setAbsences(planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd));
-        session.setAttribute("InterpreterConnected",interpreter );
-        model.addAttribute("isAdmin",null);
+
+        model.addAttribute("activeTab", "planning");
 
         model.addAttribute("DTOAbsence", new DTOAbsence());
         return "interprete/planning";
@@ -50,12 +61,17 @@ public class InterpreterController {
      * @param end the date retrieved via the URL
      * @param beneficiary The beneficiary linked to the appointment on the list
      * @param request the request that triggered this function call
-     * @return Redirect to the "interprete/planning-beneficiaires" page
+     * @return Redirect to the "interprete/planning/beneficiaires" page
      */
     @GetMapping("/planning/beneficiaires")
     public String planningBeneficiaires(@RequestParam String start, @RequestParam String end,
-                                        @SessionAttribute("BeneficiaryConnected") Beneficiary beneficiary,
-                                        HttpServletRequest request) {
+                                        @ModelAttribute("BeneficiaryConnected") Beneficiary beneficiary,
+                                        HttpServletRequest request, Model model) {
+
+        if(beneficiary == null) {
+            return "redirect:/login";
+        }
+
         String dateStart = start.substring(0, 10);
         String dateEnd = end.substring(0, 10);
 
@@ -65,8 +81,9 @@ public class InterpreterController {
 
         HttpSession session = request.getSession();
         session.setAttribute("appointmentList", appointmentList);
+        model.addAttribute("activeTab", "planning");
 
-        return "interprete/planning-beneficiaires";
+        return "interprete/planning/beneficiaires";
     }
 
     @GetMapping("/profil")
@@ -75,13 +92,44 @@ public class InterpreterController {
         return "interprete/profil";
     }
 
+    /**
+     * Displays the list of punctual absences for the connected interpreter within a specific date range
+     * The method extracts the date from the start and end parameters and retrieves
+     * matching absences from the database
+     * @param start The start date
+     * @param end The end date
+     * @param interpreter The currently logged-in interpreter (from ModelAttribute, reference)
+     * @param model the UI model to hold the list of absences and the active tab status
+     * @return The view name "interprete/indisponibilites", or a redirect to login if session is invalid
+     */
     @GetMapping("/indisponibilites")
-    public String indisponibilites(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("isAdmin", null);
+    public String indisponibilites(@RequestParam String start,
+                                   @RequestParam String end,
+                                   @ModelAttribute("InterpreterConnected") Interpreter interpreter,
+                                   Model model) {
+
+        if(interpreter == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AbsenceService absenceService = new AbsenceService();
+            String startDate = start.substring(0, 10);
+            String endDate = end.substring(0, 10);
+
+            List<Absence> punctualAbsencesList = absenceService.getPunctualAbsencesInterpreter(interpreter, startDate, endDate);
+            model.addAttribute("punctualAbsencesList", punctualAbsencesList);
+        } catch (BadStatusException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        model.addAttribute("activeTab", "indisponibilites");
         return "interprete/indisponibilites";
     }
 
+<<<<<<< HEAD
 
     /**
      * Function called when the form is filled.
@@ -108,4 +156,54 @@ public class InterpreterController {
         return "interprete/indisponibilites";
     }
 
+=======
+    /**
+     * Deletes a specific absence record based on its unique ID
+     * @param id the unique identifier of the absence to be deleted
+     * @param interpreter The currently logged-in interpreter
+     * @return A redirect to the absences list view after deletion
+     */
+    @PostMapping("/indisponibilites/delete")
+    public String deleteAbsence(@RequestParam int id,
+                                @ModelAttribute("InterpreterConnected") Interpreter interpreter) {
+
+        if(interpreter == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AbsenceService absenceService = new AbsenceService();
+            absenceService.deleteAbsence(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/interprete/indisponibilites";
+    }
+
+    /**
+     * Updates the details of an existing absence
+     * The updated information is received as a model attribute and passed to the service
+     * @param updatedAbsence The absence object containing the modified data
+     * @param interpreter the currently logged-in interpreter
+     * @return A redirect to the absences list view after the update is processed
+     */
+    @PostMapping("/indisponibilites/update")
+    public String updateAbsence(@ModelAttribute Absence updatedAbsence,
+                                @ModelAttribute("InterpreterConnected") Interpreter interpreter) {
+
+        if(interpreter == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AbsenceService absenceService = new AbsenceService();
+            absenceService.updateAbsence(updatedAbsence);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/interprete/indisponibilites";
+    }
+>>>>>>> origin/main
 }
