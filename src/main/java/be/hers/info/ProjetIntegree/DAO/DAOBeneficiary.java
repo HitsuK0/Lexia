@@ -146,7 +146,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                 "RETURNING numBeneficiary INTO ?";
 
         String queryAppointment = "INSERT INTO Appointment (status, local, " +
-                "FKnumEtablishment, FKnumBeneficiary, FKTimeSlotBase, FKTimeSlotPunctual) " +
+                "FKnumEstablishment, FKnumBeneficiary, FKTimeSlotBase, FKTimeSlotPunctual) " +
                 "VALUES (?, ?, ?, ?, ?, ?) " +
                 "RETURNING numAppointment INTO ?";
 
