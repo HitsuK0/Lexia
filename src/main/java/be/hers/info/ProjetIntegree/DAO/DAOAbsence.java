@@ -309,9 +309,6 @@ public class DAOAbsence extends DAO<Absence>{
                 "WHERE ab.FKnumInterpreter = ? " +
                 "  AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') " +
                 "  AND NVL(tsp.endDate, tsp.startDate) >= TO_DATE(?, 'YYYY-MM-DD')";
-
-        // si jamais NVL nullvalue remplace, si endDate dans la BD est null, par startDate, donc endDate sera = a Startdate
-        // je me suis inpire du code de Louis il me semple dans DAOAppointment pour faire ca
         try {
             preparedStatement = connect.prepareStatement(query);
 

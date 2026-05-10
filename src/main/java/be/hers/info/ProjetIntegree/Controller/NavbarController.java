@@ -34,8 +34,6 @@ public class NavbarController {
     @ModelAttribute("connectedUser")
     public User getConnectedUser(HttpSession session) {
         return (User) session.getAttribute("userConnected");
-        // Donc il y aurait un cle userConnected pour dire "ouais l'utilisateur est connecte"
-        // On sait pas qui il est mais on sait qu'il y a un utilisateur
     }
 
     /**
@@ -46,8 +44,7 @@ public class NavbarController {
      * @param model The UI model to be populated with attributes
      */
     @ModelAttribute
-    public void addNavbarAttributes(@ModelAttribute("connectedUser") User connectedUser, // ici on passe le modelattribute par reference(il me semble
-                                    // et il va etre modifier en fonction)
+    public void addNavbarAttributes(@ModelAttribute("connectedUser") User connectedUser,
                                     Model model) {
 
         String userRole = null;
@@ -57,9 +54,7 @@ public class NavbarController {
             model.addAttribute("userName", connectedUser.getFirstName()+" "+connectedUser.getLastName());
             if(connectedUser.getLogin().charAt(0) == 'I') {
                 userRole = "INTERPRETER";
-                model.addAttribute("InterpreterConnected", connectedUser); // j'adapte la cle utilise en thymleaf comme ca
-                                                                                        // quand par exemple InterpreterController va utiliser le
-                                                                                        // ModelAttribute("InterpreterConnected") ca va s'adapter, pareil pour les autres
+                model.addAttribute("InterpreterConnected", connectedUser);
             } else if(connectedUser.getLogin().charAt(0) == 'C') {
                 userRole = "COORDINATOR";
                 if(connectedUser instanceof Coordinator) {
@@ -73,8 +68,5 @@ public class NavbarController {
             model.addAttribute("userRole", userRole);
             model.addAttribute("isAdmin", isAdmin);
         }
-
-        // Ici je ne sais pas quoi rajouter comme else si la connectedUser est null,
-        // je pourrais faire un simple return; mais jsp c'est moche et il y apeut etre moyen de faire autrement
     }
 }

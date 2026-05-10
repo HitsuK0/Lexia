@@ -39,8 +39,6 @@ public class InterpreterController {
         interpreter.setAppointmentsList(planningService.getListAppointmentWithDateAndInterpreter(interpreter,dateStart,dateEnd));
         interpreter.setAbsences(planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd));
 
-        // Ici j'ai retirer la session, puisque je travaille direcement avec l'instence interpreter, je ne dois plus m'occuper de la session
-
         model.addAttribute("activeTab", "planning");
 
         return "interprete/planning";
@@ -72,8 +70,6 @@ public class InterpreterController {
 
         HttpSession session = request.getSession();
         session.setAttribute("appointmentList", appointmentList);
-        // Ici c'est pas vraiment pareil que l'autre, je travail pas vraiment avec l'objet Beneficiary dans la session (je pense)
-
         model.addAttribute("activeTab", "planning");
 
         return "interprete/planning/beneficiaires";

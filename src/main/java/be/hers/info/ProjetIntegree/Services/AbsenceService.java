@@ -24,7 +24,7 @@ public class AbsenceService {
         DAOAbsence daoAbsence = new DAOAbsence();
 
         if(absenceToUpdate.getNumAbsence() == -1) {
-            return; // verificvation de merde mais sais pas quoi mettre, un boolean?
+            return;
         }
 
         daoAbsence.update(absenceToUpdate);
@@ -55,7 +55,6 @@ public class AbsenceService {
      */
     public List<Absence> getBaseAbsencesInterpreter(Interpreter interpreter) throws SQLException, BadStatusException {
         DAOAbsence daoAbsence = new DAOAbsence();
-        // Fonction pas encore utilise mais peut-etre le sera une fois la page pour encoder l'horaire de base ?
         if(interpreter.getNumInterpreter() == -1) {
             return new ArrayList<>();
         }
