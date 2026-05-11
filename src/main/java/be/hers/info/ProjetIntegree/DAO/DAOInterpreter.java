@@ -1,16 +1,14 @@
 package be.hers.info.ProjetIntegree.DAO;
 
-import be.hers.info.ProjetIntegree.POJO.AcademicSkill;
-import be.hers.info.ProjetIntegree.POJO.Address;
-import be.hers.info.ProjetIntegree.POJO.Interpreter;
+import be.hers.info.ProjetIntegree.POJO.*;
 
-import be.hers.info.ProjetIntegree.POJO.ProfessionalSkill;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleTypes;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -260,5 +258,46 @@ public class DAOInterpreter extends DAO<Interpreter> {
             closeStatement(prStat);
         }
         return isDeleted;
+    }
+
+    /**
+     * Authenticates an interpreter using their login and password
+     * If the matching interpreter is also referenced as a coordinator, the corresponding Coordinator
+     * is returned instead of the Interpreter
+     * @param login the interpreter's login
+     * @param password the password, hashed in SQL before comparison
+     * @return the authenticated User (Interpreter or Coordinator), or null if no match is found
+     * @throws SQLException if a database access error occurs
+     */
+    public User getInterpreterAuthentification(String login, String password) throws SQLException {
+        User user = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        String query = "SELECT * FROM Interpreter " +
+                "WHERE login = ? AND password = STANDARD_HASH(?, 'SHA256')";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setString(1, login);
+            preparedStatement.setString(2, password);
+
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()) {
+                DAOCoordinator daoCoordinator = new DAOCoordinator();
+                Coordinator coordinator = daoCoordinator.findByFKnumInterpreter(resultSet.getInt("numInterpreter"));;
+
+                if(coordinator == null) {
+                    DAOInterpreter daoInterpreter = new DAOInterpreter();
+                    user = daoInterpreter.find(resultSet.getInt("numInterpreter"));
+                } else {
+                    user = coordinator;
+                }
+            }
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return user;
     }
 }

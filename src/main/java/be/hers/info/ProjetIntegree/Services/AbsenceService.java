@@ -11,6 +11,11 @@ import java.util.List;
 
 public class AbsenceService {
 
+    /**
+     * Deletes the absence identified by the given number
+     * @param numAbsence the id of the absence to delete
+     * @throws SQLException if a database access error occurs
+     */
     public void deleteAbsence(int numAbsence) throws SQLException {
         DAOAbsence daoAbsence = new DAOAbsence();
         Absence absenceToDelete = new Absence();
@@ -20,6 +25,11 @@ public class AbsenceService {
         daoAbsence.delete(absenceToDelete);
     }
 
+    /**
+     * Updates an existing absence
+     * @param absenceToUpdate the absence carrying the new values
+     * @throws SQLException if a database access error occurs
+     */
     public void updateAbsence(Absence absenceToUpdate) throws SQLException {
         DAOAbsence daoAbsence = new DAOAbsence();
 

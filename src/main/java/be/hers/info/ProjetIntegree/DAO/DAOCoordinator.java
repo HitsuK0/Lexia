@@ -62,6 +62,50 @@ public class DAOCoordinator extends DAO<Coordinator> {
         }
         return coordinator;
     }
+
+    /**
+     * Finds the Coordinator linked to the given FKnumInterpreter
+     * @param idToSearchInDB the interpreter id used as foreign key in the Coordinator table
+     * @return the matching Coordinator, or null if no row references this interpreter
+     * @throws SQLException if a database access error occurs
+     */
+    public Coordinator findByFKnumInterpreter(int idToSearchInDB) throws SQLException {
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        Coordinator coordinator = null;
+
+        DAOInterpreter daoInterpreter = new DAOInterpreter();
+        String query = "SELECT numCoordinator,isAdmin,FKnumInterpreter " +
+                "FROM Coordinator " +
+                "WHERE FKnumInterpreter = ?";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, idToSearchInDB);
+            resultSet = prStat.executeQuery();
+
+            if (resultSet.next()) {
+                Interpreter interpreter= daoInterpreter.find(resultSet.getInt("FKnumInterpreter"));
+                coordinator = new Coordinator(
+                        interpreter.getNumInterpreter(),
+                        interpreter.getLogin(),
+                        interpreter.getPassword(),
+                        interpreter.getLastName(),
+                        interpreter.getFirstName(),
+                        interpreter.getEmailAddress(),
+                        interpreter.getPhoneNumber(),
+                        interpreter.getWeeklyWorkHours(),
+                        interpreter.getAddress());
+                coordinator.setNumCoordinator(resultSet.getInt("numCoordinator"));
+                int bool = resultSet.getInt("isAdmin");
+                coordinator.setAdmin(bool!=0);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return coordinator;
+    }
+
     /**
      * Creates a list containing all the Coordinator in the table.
      * Precondition :
