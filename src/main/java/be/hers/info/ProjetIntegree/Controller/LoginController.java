@@ -1,5 +1,10 @@
 package be.hers.info.ProjetIntegree.Controller;
 
+/**
+ * @authors Halet Louis, Vatafu Jean
+ * @reviewer
+ */
+
 import be.hers.info.ProjetIntegree.DTO.LoginDTO;
 import be.hers.info.ProjetIntegree.POJO.Beneficiary;
 import be.hers.info.ProjetIntegree.POJO.Coordinator;
@@ -17,14 +22,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class LoginController {
 
+    /**
+     * Displays the login page and prepares an empty LoginDTO that will be
+     * completed in the Thymeleaf form fields submitted by the user
+     * @param model the Spring UI model
+     * @return the view name "login"
+     */
     @GetMapping("login")
     public String loginPage(Model model) {
-
         model.addAttribute("LoginDTO", new LoginDTO());
 
         return "login";
     }
 
+    /**
+     * Handles the submission of the login form
+     * Authenticates the user and stores it in the HTTP session
+     * Redirects to the home page matching their role
+     * @param loginDTO the DTO bound to the login form
+     * @param request the current HTTP request, used to access the session
+     * @return a redirect view name to the role-specific home page, or to
+     *         "/login" if authentication fails
+     */
     @PostMapping("/login")
     public String login(@ModelAttribute("LoginDTO") LoginDTO loginDTO,
                         HttpServletRequest request) {

@@ -260,6 +260,15 @@ public class DAOInterpreter extends DAO<Interpreter> {
         return isDeleted;
     }
 
+    /**
+     * Authenticates an interpreter using their login and password
+     * If the matching interpreter is also referenced as a coordinator, the corresponding Coordinator
+     * is returned instead of the Interpreter
+     * @param login the interpreter's login
+     * @param password the password, hashed in SQL before comparison
+     * @return the authenticated User (Interpreter or Coordinator), or null if no match is found
+     * @throws SQLException if a database access error occurs
+     */
     public User getInterpreterAuthentification(String login, String password) throws SQLException {
         User user = null;
         PreparedStatement preparedStatement = null;

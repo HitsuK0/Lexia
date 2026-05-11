@@ -63,6 +63,12 @@ public class DAOCoordinator extends DAO<Coordinator> {
         return coordinator;
     }
 
+    /**
+     * Finds the Coordinator linked to the given FKnumInterpreter
+     * @param idToSearchInDB the interpreter id used as foreign key in the Coordinator table
+     * @return the matching Coordinator, or null if no row references this interpreter
+     * @throws SQLException if a database access error occurs
+     */
     public Coordinator findByFKnumInterpreter(int idToSearchInDB) throws SQLException {
         PreparedStatement prStat = null;
         ResultSet resultSet = null;

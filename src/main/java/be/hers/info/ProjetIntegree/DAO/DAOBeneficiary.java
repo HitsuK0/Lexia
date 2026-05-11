@@ -368,6 +368,14 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         return passwordUpdated;
     }
 
+    /**
+     * Authenticates a beneficiary using their login and password
+     * Builds and returns the full Beneficiary object
+     * @param login the beneficiary's login
+     * @param password the password, hashed in SQL before comparison
+     * @return the authenticated Beneficiary, or null if no match is found
+     * @throws SQLException if a database access error occurs
+     */
     public Beneficiary getBeneficiaryAuthentification(String login, String password) throws SQLException {
         Beneficiary beneficiary = null;
         PreparedStatement preparedStatement = null;
