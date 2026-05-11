@@ -129,17 +129,17 @@
             Identifiants incorrects. Veuillez réessayer.
         </div>
 
-        <form th:action="@{/login}" method="post">
+        <form th:action="@{/login}" method="POST" th:object="${LoginDTO}">
             <div class="mb-3">
                 <label for="username" class="form-label small fw-semibold">Nom d'utilisateur</label>
                 <input type="text" class="form-control" id="username" name="username"
-                       placeholder="Entrez votre nom d'utilisateur" autofocus/>
+                       placeholder="Entrez votre nom d'utilisateur" autofocus th:field="*{login}"/>
             </div>
             <div class="mb-4">
                 <label for="password" class="form-label small fw-semibold">Mot de passe</label>
                 <div class="input-group">
                     <input type="password" class="form-control" id="password" name="password"
-                           placeholder="Entrez votre mot de passe"/>
+                           placeholder="Entrez votre mot de passe" th:field="*{password}"/>
                     <button class="btn btn-outline-secondary" type="button" id="togglePassword"
                             onclick="togglePasswordVisibility()">
                         <i class="bi bi-eye" id="eyeIcon"></i>
