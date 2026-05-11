@@ -277,8 +277,7 @@ public class DAOInterpreter extends DAO<Interpreter> {
 
             if(resultSet.next()) {
                 DAOCoordinator daoCoordinator = new DAOCoordinator();
-                Coordinator coordinator = null;
-                coordinator = daoCoordinator.findByFKnumInterpreter(resultSet.getInt("numInterpreter"));
+                Coordinator coordinator = daoCoordinator.findByFKnumInterpreter(resultSet.getInt("numInterpreter"));;
 
                 if(coordinator == null) {
                     DAOInterpreter daoInterpreter = new DAOInterpreter();

@@ -17,20 +17,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class LoginController {
 
-    @GetMapping("/login")
+    @GetMapping("login")
     public String loginPage(Model model) {
 
         model.addAttribute("LoginDTO", new LoginDTO());
 
-        return "/login";
+        return "login";
     }
 
     @PostMapping("/login")
     public String login(@ModelAttribute("LoginDTO") LoginDTO loginDTO,
-                        HttpServletRequest request,
-                        Model model) {
-        System.out.println("Login reçu : " + loginDTO.getLogin());
-        System.out.println("Password reçu : " + loginDTO.getPassword());
+                        HttpServletRequest request) {
 
         User user = null;
         LoginService loginService = new LoginService();
