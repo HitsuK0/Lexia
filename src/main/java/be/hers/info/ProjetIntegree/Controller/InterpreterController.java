@@ -17,6 +17,8 @@ import org.springframework.ui.Model;
 import java.sql.SQLException;
 import java.util.List;
 
+// TODO: Delete default values from RequestParam once true params can be passed
+
 @Controller
 @RequestMapping("/interprete")
 public class InterpreterController {
@@ -28,9 +30,9 @@ public class InterpreterController {
      * @param interpreter The interpreter linked to the appointment on the list
      * @return Redirect to the "interprete/planning" page
      */
-    @GetMapping("/planning/events")
-    public String planning(@RequestParam String start,
-                           @RequestParam String end, @ModelAttribute("InterpreterConnected") Interpreter interpreter, Model model) {
+    @GetMapping("/planning")
+    public String planning(@RequestParam(defaultValue = "2026-05-15") String start,
+                           @RequestParam(defaultValue = "2026-05-22") String end, @ModelAttribute("InterpreterConnected") Interpreter interpreter, Model model) {
 
         if(interpreter == null) {
             return "redirect:/login";
@@ -56,7 +58,8 @@ public class InterpreterController {
      * @return Redirect to the "interprete/planning/beneficiaires" page
      */
     @GetMapping("/planning/beneficiaires")
-    public String planningBeneficiaires(@RequestParam String start, @RequestParam String end,
+    public String planningBeneficiaires(@RequestParam(defaultValue = "2026-05-15") String start,
+                                        @RequestParam(defaultValue = "2026-05-22") String end,
                                         @ModelAttribute("BeneficiaryConnected") Beneficiary beneficiary,
                                         HttpServletRequest request, Model model) {
 
@@ -75,12 +78,11 @@ public class InterpreterController {
         session.setAttribute("appointmentList", appointmentList);
         model.addAttribute("activeTab", "planning");
 
-        return "interprete/planning/beneficiaires";
+        return "interprete/planning-beneficiaires";
     }
 
     @GetMapping("/profil")
     public String profil(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
         return "interprete/profil";
     }
 
