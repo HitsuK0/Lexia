@@ -3,8 +3,6 @@ package be.hers.info.ProjetIntegree.Controller;
 import be.hers.info.ProjetIntegree.POJO.Coordinator;
 import be.hers.info.ProjetIntegree.POJO.User;
 import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.Session;
-import org.springframework.boot.autoconfigure.jms.JmsProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
