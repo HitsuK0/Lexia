@@ -12,27 +12,18 @@ public class BeneficiaryController {
     // Temporaire
     @GetMapping("/planning")
     public String planning(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("userRole", "BENEFICIARY");
-        model.addAttribute("isAdmin", null);
         return "beneficiaire/planning";
     }
 
     // Temporaire
     @GetMapping("/demandes")
     public String demandes(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("userRole", "BENEFICIARY");
-        model.addAttribute("isAdmin", null);
         return "beneficiaire/demandes";
     }
 
     // Temporaire
     @GetMapping("/profil")
     public String profil(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("userRole", "BENEFICIARY");
-        model.addAttribute("isAdmin", null);
         return "beneficiaire/profil";
     }
 }

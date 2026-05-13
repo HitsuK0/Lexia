@@ -13,56 +13,42 @@ public class CoordinatorController {
     // Temporaire
     @GetMapping("/accueil")
     public String accueil(Model model) {
-        model.addAttribute("userName", "Dubois Louis");
-        model.addAttribute("isAdmin", true);
         return "coordinatrice/accueil";
     }
 
     // Temporaire
     @GetMapping("/profil")
     public String profil(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("isAdmin", true);
         return "coordinatrice/profil";
     }
 
     // Temporaire
     @GetMapping("/plannings")
     public String plannings(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("isAdmin", true);
         return "coordinatrice/plannings";
     }
 
     // Temporaire
     @GetMapping("/validations")
     public String validations(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("isAdmin", true);
         return "coordinatrice/validations";
     }
 
     // Temporaire
     @GetMapping("/etablissements")
     public String etablissements(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("isAdmin", true);
         return "coordinatrice/etablissements";
     }
 
     // Temporaire
     @GetMapping("/utilisateurs")
     public String utilisateurs(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("isAdmin", true);
         return "coordinatrice/utilisateurs";
     }
 
     // Temporaire
     @GetMapping("/utilisateurs/{id}")
     public String utilisateurDetail(@PathVariable String id, Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("isAdmin", true);
 
         switch (id) {
             case "1" -> model.addAttribute("userRole", "RESA");
