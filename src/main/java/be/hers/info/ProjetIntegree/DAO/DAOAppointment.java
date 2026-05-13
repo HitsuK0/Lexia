@@ -110,7 +110,7 @@ public class DAOAppointment extends DAO<Appointment> {
                         LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = a.FKTimeSlotBase
                         LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = a.FKTimeSlotPunctual
                         WHERE a.FKNumBeneficiary = ?
-                        AND ((tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') 
+                        AND ((tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) 
                         OR tsb.numTimeSlot IS NOT NULL)
                        """;
 
@@ -520,7 +520,7 @@ public class DAOAppointment extends DAO<Appointment> {
                 "JOIN Beneficiary b ON b.numBeneficiary = ap.FKnumBeneficiary " +
                 "WHERE rdv.numInterpreter = ? " +
                 "  AND ( " +
-                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') " +
+                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
                 "      OR " +
                 "      tsb.numTimeSlot IS NOT NULL" +
                 ")";
@@ -689,10 +689,9 @@ public class DAOAppointment extends DAO<Appointment> {
                 "LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = ab.FKTimeSlotPunctual " +
                 "WHERE ab.FKnumInterpreter = ? " +
                 "  AND ( " +
-                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') " +
+                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
                 "      OR " +
-                "      tsb.numTimeSlot IS NOT NULL" +
-                ")";
+                "      tsb.numTimeSlot IS NOT NULL)";
 
         try {
             prStat = connect.prepareStatement(query);

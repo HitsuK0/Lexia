@@ -63,7 +63,7 @@ public class LoginController {
             if(((Coordinator) user).isAdmin()) {
                 return "redirect:/coordinatrice/accueil";
             }
-            return "redirect:/Resa/accueil";
+            return "redirect:/resa/accueil";
         } else if (user instanceof Interpreter) {
             return "redirect:/interprete/planning";
         } else if(user instanceof Beneficiary) {

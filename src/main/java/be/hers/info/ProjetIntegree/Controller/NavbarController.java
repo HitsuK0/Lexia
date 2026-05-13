@@ -19,6 +19,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 @ControllerAdvice
 public class NavbarController {
 
+    private final HttpSession httpSession;
+
+    public NavbarController(HttpSession httpSession) {
+        this.httpSession = httpSession;
+    }
+
     /**
      * Logs out the current user and destroys all data stored in the session
      *
@@ -32,26 +38,15 @@ public class NavbarController {
     }
 
     /**
-     * Retrieves the currently authenticated user from the session
-     * This object is added to the model under the name "connectedUser"
-     * @param session The current session
-     * @return The User object stored in the session, or null if no user is connected
-     */
-    @ModelAttribute("connectedUser")
-    public User getConnectedUser(HttpSession session) {
-        return (User) session.getAttribute("userConnected");
-    }
-
-    /**
      * Populates the model with specific attributes required for the navigation bar
      * and UI. It determines the user's role and specific identity
      * (Interpreter, Coordinator, or Beneficiary) based on their login prefix
-     * @param connectedUser The user retrieved from the session (passed by reference)
      * @param model The UI model to be populated with attributes
      */
     @ModelAttribute
-    public void addNavbarAttributes(@ModelAttribute("connectedUser") User connectedUser,
+    public void addNavbarAttributes(HttpSession session,
                                     Model model) {
+        User connectedUser = (User) session.getAttribute("currentUser");
 
         String userRole = null;
         boolean isAdmin = false;
@@ -71,6 +66,9 @@ public class NavbarController {
                 userRole = "BENEFICIARY";
                 model.addAttribute("BeneficiaryConnected", connectedUser);
             }
+
+            model.addAttribute("currentUser", connectedUser);
+            model.addAttribute("userName", connectedUser.getFirstName()+" "+connectedUser.getLastName());
             model.addAttribute("userRole", userRole);
             model.addAttribute("isAdmin", isAdmin);
         }
@@ -85,7 +83,7 @@ public class NavbarController {
     @GetMapping("/planning")
     public String displayHomePage(HttpSession session) {
 
-        User connectedUser = (User) session.getAttribute("user");
+        User connectedUser = (User) session.getAttribute("currentUser");
         String redirection = "";
 
         if(connectedUser == null) {
