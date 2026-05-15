@@ -9,7 +9,7 @@
     <head th:replace="~{common/head :: head('Etablissements', '/css/coordinatrice/etablissement.css')}"></head>
 
     <body>
-        <nav th:replace="~{common/navbar :: navbar(activeTab='etablissements', userRole='COORDINATOR', userName=${userName}, breadcrumb='Etablissements')}"></nav>
+    <nav th:replace="~{common/navbar :: navbar(activeTab='etablissements', userRole=${userRole}, userName=${userName}, breadcrumb='Etablissements', isAdmin=${isAdmin})}"></nav>
 
         <div class="container-fluid px-5 py-4">
 
