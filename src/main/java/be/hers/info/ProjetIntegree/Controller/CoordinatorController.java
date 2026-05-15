@@ -80,4 +80,22 @@ public class CoordinatorController {
 
         return "coordinatrice/utilisateur-detail";
     }
+
+    // Temporaire
+    @GetMapping("/horaire/base")
+    public String horaireBase(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", true);
+        return "coordinatrice/horaire-base";
+    }
+
+    // Temporaire
+    @GetMapping("/gestion/competences")
+    public String gestionCompetences(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", true);
+        return "coordinatrice/gestion-competences";
+    }
 }
