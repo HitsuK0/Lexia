@@ -1,3 +1,8 @@
+<!--
+@author Chloe Wellinger
+@rewiewer Jean-François Nicolas, Louis Halet
+-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
@@ -89,6 +94,42 @@
                                 </p>
                                 <p class="card-text text-muted">
                                     Modifiez l'interprète de référence d'un bénéficiaire.
+                                </p>
+                                <span class="text-primary fw-semibold">
+                                        Vers l'action <i class="bi bi-arrow-right-circle-fill"></i>
+                                    </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-5">
+                    <a th:href="@{/coordinatrice/horaireBase}" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 accueil-card">
+                            <div class="card-body text-center px-4 py-4">
+                                <h4 class="card-title fw-bold text-dark mb-3">
+                                    <i class="bi bi-calendar3 text-primary me-2"></i>Horaire de Base
+                                </h4>
+                                <p class="card-text text-muted">
+                                    Créez les horaires de base pour les interprètes et bénéficiaires
+                                </p>
+                                <span class="text-primary fw-semibold">
+                                        Vers l'action <i class="bi bi-arrow-right-circle-fill"></i>
+                                    </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-5">
+                    <a th:href="@{/coordinatrice/gestion}" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 accueil-card">
+                            <div class="card-body text-center px-4 py-4">
+                                <h4 class="card-title fw-bold text-dark mb-3">
+                                    <i class="bi bi-calendar3 text-primary me-2"></i>Gestion des compétences
+                                </h4>
+                                <p class="card-text text-muted">
+                                    Consultez, créez et modifiez les compétences académiques et professionnels des interprètes
                                 </p>
                                 <span class="text-primary fw-semibold">
                                         Vers l'action <i class="bi bi-arrow-right-circle-fill"></i>

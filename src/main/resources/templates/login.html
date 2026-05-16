@@ -1,3 +1,8 @@
+<!--
+@author Chloe Wellinger
+@rewiewer Jean-François Nicolas, Louis Halet
+-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
@@ -90,6 +95,22 @@
                 border-radius: 10px;
                 font-size: 0.875rem;
             }
+
+            .input-group .btn-outline-secondary {
+                border-color: #e0daf5;
+                border-left: none;
+                border-radius: 0 10px 10px 0 !important;
+                color: #aaa;
+            }
+
+            .input-group .btn-outline-secondary:hover {
+                background-color: #f4f1fc;
+                color: #593196;
+            }
+
+            .input-group .form-control {
+                border-radius: 10px 0 0 10px !important;
+            }
         </style>
     </head>
 
@@ -108,16 +129,22 @@
             Identifiants incorrects. Veuillez réessayer.
         </div>
 
-        <form th:action="@{/login}" method="post">
+        <form th:action="@{/login}" method="POST" th:object="${LoginDTO}">
             <div class="mb-3">
                 <label for="username" class="form-label small fw-semibold">Nom d'utilisateur</label>
-                <input type="text" class="form-control" id="username" name="username"
+                <input type="text" th:field="*{login}" class="form-control" id="username" name="username"
                        placeholder="Entrez votre nom d'utilisateur" autofocus/>
             </div>
             <div class="mb-4">
                 <label for="password" class="form-label small fw-semibold">Mot de passe</label>
-                <input type="password" class="form-control" id="password" name="password"
-                       placeholder="Entrez votre mot de passe"/>
+                <div class="input-group">
+                    <input type="password" th:field="*{password}" class="form-control" id="password" name="password"
+                           placeholder="Entrez votre mot de passe"/>
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword"
+                            onclick="togglePasswordVisibility()">
+                        <i class="bi bi-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
             </div>
             <button type="submit" class="btn btn-login btn-primary w-100 text-white">
                 Se connecter
@@ -126,9 +153,23 @@
 
     </div>
 
-    <div class="login-footer mt-4 text-center">
-        &copy; 2026 Lexia &mdash; Connexion sécurisée
-    </div>
+    <script>
+        /**
+         * Toggles the password field visibility between text and password,
+         * and switches the eye icon accordingly.
+         */
+        function togglePasswordVisibility() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+            }
+        }
+    </script>
 
     </body>
 </html>

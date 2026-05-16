@@ -1,10 +1,15 @@
+<!--
+@author Chloe Wellinger
+@rewiewer Jean-François Nicolas, Louis Halet
+-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
     <head th:replace="~{common/head :: head('Etablissements', '/css/coordinatrice/etablissement.css')}"></head>
 
     <body>
-        <nav th:replace="~{common/navbar :: navbar(activeTab='etablissements', userRole='COORDINATOR', userName=${userName}, breadcrumb='Etablissements')}"></nav>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='etablissements', userRole=${userRole}, userName=${userName}, breadcrumb='Etablissements', isAdmin=${isAdmin})}"></nav>
 
         <div class="container-fluid px-5 py-4">
 
@@ -37,10 +42,15 @@
                             <td>Rue de la Cité, 64<br/>6800 Libramont</td>
                             <td>DENY Laurence</td>
                             <td>
-                                <button class="btn btn-link p-0 text-dark"
+                                <button class="btn btn-link p-0 text-dark me-2"
                                         data-bs-toggle="modal" data-bs-target="#modalEdition"
                                         title="Modifier">
                                     <i class="bi bi-pencil-square fs-5"></i>
+                                </button>
+                                <button class="btn btn-link p-0 text-danger"
+                                        data-bs-toggle="modal" data-bs-target="#modalSuppression"
+                                        title="Supprimer">
+                                    <i class="bi bi-trash3 fs-5"></i>
                                 </button>
                             </td>
                         </tr>
@@ -50,10 +60,15 @@
                             <td>Adresse</td>
                             <td>NOM Prenom</td>
                             <td>
-                                <button class="btn btn-link p-0 text-dark"
+                                <button class="btn btn-link p-0 text-dark me-2"
                                         data-bs-toggle="modal" data-bs-target="#modalEdition"
                                         title="Modifier">
                                     <i class="bi bi-pencil-square fs-5"></i>
+                                </button>
+                                <button class="btn btn-link p-0 text-danger"
+                                        data-bs-toggle="modal" data-bs-target="#modalSuppression"
+                                        title="Supprimer">
+                                    <i class="bi bi-trash3 fs-5"></i>
                                 </button>
                             </td>
                         </tr>
@@ -154,12 +169,29 @@
                         </div>
                     </div>
                     <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-danger btn-sm me-auto">
-                            <i class="bi bi-trash3 me-1"></i> Supprimer
-                        </button>
                         <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
                         <button type="button" class="btn btn-primary btn-sm">
                             <i class="bi bi-floppy me-1"></i> Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modalSuppression" tabindex="-1" aria-labelledby="modalSuppressionLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalSuppressionLabel">Supprimer l'établissement</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3 text-center">
+                        <p>Êtes-vous sûr de vouloir supprimer cet établissement ?</p>
+                        <p class="text-danger fw-semibold">Cette action est irréversible.</p>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash3 me-1"></i> Supprimer
                         </button>
                     </div>
                 </div>

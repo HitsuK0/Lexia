@@ -38,7 +38,7 @@ public class DAOAppointment extends DAO<Appointment> {
         ResultSet resultSet = null;
         Appointment appointment = null;
 
-        String query = "SELECT description,status,local,FKnumBeneficiary,FKTimeSlotBase,FKTimeSlotPunctual,FKnumEtablishment " +
+        String query = "SELECT description,status,local,FKnumBeneficiary,FKTimeSlotBase,FKTimeSlotPunctual,FKnumEstablishment " +
                 "FROM Appointment " +
                 "WHERE numAppointment = ?";
 
@@ -74,7 +74,7 @@ public class DAOAppointment extends DAO<Appointment> {
                         listLocal,
                         daoBeneficiary.find(resultSet.getInt("FKnumBeneficiary")),
                         timeSlot,
-                        daoEstablishment.find(resultSet.getInt("FKnumEtablishment"))
+                        daoEstablishment.find(resultSet.getInt("FKnumEstablishment"))
                         );
             }
         } finally {
@@ -110,7 +110,7 @@ public class DAOAppointment extends DAO<Appointment> {
                         LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = a.FKTimeSlotBase
                         LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = a.FKTimeSlotPunctual
                         WHERE a.FKNumBeneficiary = ?
-                        AND ((tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') 
+                        AND ((tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) 
                         OR tsb.numTimeSlot IS NOT NULL)
                        """;
 
@@ -181,7 +181,7 @@ public class DAOAppointment extends DAO<Appointment> {
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
         List<Appointment> appointmentList = new ArrayList<>();
-        String query = "SELECT numAppointment,description,status,local,FKnumBeneficiary,FKTimeSlotBase " +
+        String query = "SELECT *" +
                 "FROM Appointment";
 
         try {
@@ -218,7 +218,7 @@ public class DAOAppointment extends DAO<Appointment> {
                         listLocal,
                         daoBeneficiary.find(resultSet.getInt("FKnumBeneficiary")),
                         timeSlot,
-                        daoEstablishment.find(resultSet.getInt("FKnumEtablishment"))));
+                        daoEstablishment.find(resultSet.getInt("FKnumEstablishment"))));
             }
         } finally {
             closeStatementAndResultSet(prStat, resultSet);
@@ -248,10 +248,10 @@ public class DAOAppointment extends DAO<Appointment> {
             local = String.join(",", objectToInsertInDB.getAppointmentLocals());
         }
 
-        String query = "INSERT INTO Appointment (description,status, local, FKnumEtablishment, FKnumBeneficiary, FKTimeSlotPunctual) " +
+        String query = "INSERT INTO Appointment (description,status, local, FKnumEstablishment, FKnumBeneficiary, FKTimeSlotPunctual) " +
                 "VALUES (?, ?, ?, ?, ?, ?) RETURNING numAppointment INTO ?";
         if(objectToInsertInDB.getTimeSlot() instanceof TimeSlotBase){
-            query = "INSERT INTO Appointment (description,status, local, FKnumEtablishment, FKnumBeneficiary, FKTimeSlotBase) " +
+            query = "INSERT INTO Appointment (description,status, local, FKnumEstablishment, FKnumBeneficiary, FKTimeSlotBase) " +
                     "VALUES (?, ?, ?, ?, ?, ?) RETURNING numAppointment INTO ?";
         }
 
@@ -268,7 +268,7 @@ public class DAOAppointment extends DAO<Appointment> {
             int nbLinesInsert = prStat.executeUpdate();
             rs = prStat.getReturnResultSet();
             if(rs.next()){
-                int id = rs.getInt(7);
+                int id = rs.getInt(1);
                 objectToInsertInDB.setNumAppointment(id);
 
                 if(nbLinesInsert > 0) {
@@ -456,7 +456,7 @@ public class DAOAppointment extends DAO<Appointment> {
         }
 
         String query = "UPDATE Appointment " +
-                "SET description = ? ,status = ?, local = ?, FKnumEtablishment = ?, FKnumBeneficiary = ?, FKTimeSlotBase = ?, FKTimeSlotPunctual = ?" +
+                "SET description = ? ,status = ?, local = ?, FKnumEstablishment = ?, FKnumBeneficiary = ?, FKTimeSlotBase = ?, FKTimeSlotPunctual = ?" +
                 " WHERE numAppointment = ?";
 
         Integer timeSlotBase = null;
@@ -511,16 +511,16 @@ public class DAOAppointment extends DAO<Appointment> {
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
         List<Appointment> appointmentList = new ArrayList<>();
-        String query = "SELECT ap.numAppointment, ap.description, ap.status, ap.local,ap.FKnumEtablishment,ap.FKTimeSlotBase,ap.FKTimeSlotPunctual,ap.FKnumBeneficiary " +
+        String query = "SELECT ap.numAppointment, ap.description, ap.status, ap.local,ap.FKnumEstablishment,ap.FKTimeSlotBase,ap.FKTimeSlotPunctual,ap.FKnumBeneficiary " +
                 "FROM Appointment ap " +
                 "JOIN RDVInterpreter rdv ON rdv.numAppointment = ap.numAppointment " +
                 "LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = ap.FKTimeSlotBase " +
                 "LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = ap.FKTimeSlotPunctual " +
-                "JOIN Establishment e ON e.numEstablishment = ap.FKnumEtablishment " +
+                "JOIN Establishment e ON e.numEstablishment = ap.FKnumEstablishment " +
                 "JOIN Beneficiary b ON b.numBeneficiary = ap.FKnumBeneficiary " +
                 "WHERE rdv.numInterpreter = ? " +
                 "  AND ( " +
-                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') " +
+                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
                 "      OR " +
                 "      tsb.numTimeSlot IS NOT NULL" +
                 ")";
@@ -554,9 +554,9 @@ public class DAOAppointment extends DAO<Appointment> {
                     DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
                     timeSlot = daoTimeSlotBase.find(resultSet.getInt("FKTimeSlotBase"));
                 }
-                Establishment e = daoEstablishment.find(resultSet.getInt("FKnumEtablishment"));
-                e.setEducationLevel(daoEstablishment.findListEducationLevel(resultSet.getInt("FKnumEtablishment")));
-                e.setReferrers(daoReferrer.findAllByEstablishment(resultSet.getInt("FKnumEtablishment")));
+                Establishment e = daoEstablishment.find(resultSet.getInt("FKnumEstablishment"));
+                e.setEducationLevel(daoEstablishment.findListEducationLevel(resultSet.getInt("FKnumEstablishment")));
+                e.setReferrers(daoReferrer.findAllByEstablishment(resultSet.getInt("FKnumEstablishment")));
                 e.setAddresses(daoAddress.findAllByEstablishment(e.getNameBuilding()));
 
                 a = new Appointment(
@@ -663,7 +663,7 @@ public class DAOAppointment extends DAO<Appointment> {
             DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
 
             while(resultSet.next()){
-                ProfessionalSkillList.add(daoProfessionalSkill.find(resultSet.getInt("numAcademicSkill")));
+                ProfessionalSkillList.add(daoProfessionalSkill.find(resultSet.getInt("numProfessionalSkill")));
             }
         }finally {
             closeStatementAndResultSet(prStat, resultSet);
@@ -689,10 +689,9 @@ public class DAOAppointment extends DAO<Appointment> {
                 "LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = ab.FKTimeSlotPunctual " +
                 "WHERE ab.FKnumInterpreter = ? " +
                 "  AND ( " +
-                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') " +
+                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
                 "      OR " +
-                "      tsb.numTimeSlot IS NOT NULL" +
-                ")";
+                "      tsb.numTimeSlot IS NOT NULL)";
 
         try {
             prStat = connect.prepareStatement(query);

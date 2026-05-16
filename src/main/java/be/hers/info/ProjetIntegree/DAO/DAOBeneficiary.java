@@ -4,6 +4,7 @@ import be.hers.info.ProjetIntegree.POJO.*;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleType;
 import oracle.jdbc.OracleTypes;
+import oracle.jdbc.proxy.annotation.Pre;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -146,7 +147,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                 "RETURNING numBeneficiary INTO ?";
 
         String queryAppointment = "INSERT INTO Appointment (status, local, " +
-                "FKnumEtablishment, FKnumBeneficiary, FKTimeSlotBase, FKTimeSlotPunctual) " +
+                "FKnumEstablishment, FKnumBeneficiary, FKTimeSlotBase, FKTimeSlotPunctual) " +
                 "VALUES (?, ?, ?, ?, ?, ?) " +
                 "RETURNING numAppointment INTO ?";
 
@@ -365,5 +366,52 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             closeStatement(preparedStatement);
         }
         return passwordUpdated;
+    }
+
+    /**
+     * Authenticates a beneficiary using their login and password
+     * Builds and returns the full Beneficiary object
+     * @param login the beneficiary's login
+     * @param password the password, hashed in SQL before comparison
+     * @return the authenticated Beneficiary, or null if no match is found
+     * @throws SQLException if a database access error occurs
+     */
+    public Beneficiary getBeneficiaryAuthentification(String login, String password) throws SQLException {
+        Beneficiary beneficiary = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        String query = "SELECT * FROM Beneficiary " +
+                "WHERE login = ? AND password = STANDARD_HASH(?, 'SHA256')";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setString(1, login);
+            preparedStatement.setString(2, password);
+
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()) {
+                DAOAddress daoAddress = new DAOAddress();
+                DAOInterpreter daoInterpreter = new DAOInterpreter();
+
+                String langStr = resultSet.getString("communicationLanguage");
+                List<String> languages = new ArrayList<>();
+                if(langStr != null && !langStr.isEmpty()) {
+                    languages = Arrays.stream(langStr.split(",")).toList();
+                }
+
+                beneficiary = new Beneficiary(resultSet.getInt("numBeneficiary"),
+                        resultSet.getString("login"), resultSet.getString("password"),
+                        resultSet.getString("lastName"), resultSet.getString("firstName"),
+                        resultSet.getString("phoneNumber"), resultSet.getString("emailAddress"),
+                        daoAddress.find(resultSet.getInt("FKAddress")), resultSet.getInt("hourQuota"),
+                        resultSet.getInt("educationLevel"), daoInterpreter.find(resultSet.getInt("FKnumInterpreter")),
+                        languages);
+            }
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return beneficiary;
     }
 }

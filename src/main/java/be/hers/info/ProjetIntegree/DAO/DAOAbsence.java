@@ -305,7 +305,7 @@ public class DAOAbsence extends DAO<Absence>{
 
         String query = "SELECT ab.numAbsence, ab.status, ab.reasons, ab.privateReason, ab.FKTimeSlotPunctual " +
                 "FROM Absence ab " +
-                "JOIN TimeSlotPunctual tsp ON ab.FKTimeSlotPunctual = tsp.numTimeSlotPunctual " +
+                "JOIN TimeSlotPunctual tsp ON ab.FKTimeSlotPunctual = tsp.numTimeSlot " +
                 "WHERE ab.FKnumInterpreter = ? " +
                 "  AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') " +
                 "  AND NVL(tsp.endDate, tsp.startDate) >= TO_DATE(?, 'YYYY-MM-DD')";
@@ -356,7 +356,7 @@ public class DAOAbsence extends DAO<Absence>{
 
         String query = "SELECT ab.numAbsence, ab.status, ab.reasons, ab.privateReason, ab.FKTimeSlotBase " +
                 "FROM Absence ab " +
-                "JOIN TimeSlotBase tsb ON ab.FKTimeSlotBase = tsb.numTimeSlotBase " +
+                "JOIN TimeSlotBase tsb ON ab.FKTimeSlotBase = tsb.numTimeSlot " +
                 "WHERE ab.FKnumInterpreter = ?";
 
         try {

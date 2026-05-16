@@ -1,0 +1,87 @@
+/* Allows you to put all the modals with rounded corners */
+#modalRDV .modal-content,
+#modalSuppression .modal-content {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+
+/* Allows you to style the table wrapper */
+.table-wrapper {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    border: 1.5px solid #e8e0f5;
+}
+
+/* Allows you to style the demandes table */
+.table-demandes {
+    margin-bottom: 0;
+}
+
+.table-demandes thead tr {
+    border-bottom: 2px solid #e8e0f5;
+}
+
+.table-demandes thead th {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #212529;
+    padding: 14px 16px;
+    border: none;
+    text-align: center;
+    background-color: #e9e5f4;
+}
+
+.table-demandes tbody td {
+    font-size: 0.875rem;
+    padding: 14px 16px;
+    vertical-align: middle;
+    text-align: center;
+    border-bottom: 1px solid #f0ecf8;
+    color: #333;
+}
+
+.table-demandes tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-demandes tbody tr:hover {
+    background-color: #faf8ff;
+}
+
+/* Allows you to style the status badges */
+.badge-statut {
+    display: inline-block;
+    padding: 5px 16px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.badge-statut.valide  { background-color: #51cf66; }
+.badge-statut.refuse  { background-color: #f03e3e; }
+.badge-statut.attente { background-color: #fd7e14; }
+
+/* Allows you to style the trash button on hover */
+.btn-link.text-danger:hover {
+    transform: scale(1.15);
+    transition: transform 0.15s ease;
+}
+
+.btn-link.text-muted:hover {
+    color: var(--bs-primary) !important;
+    transform: scale(1.15);
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+/* Allows you to style the active pagination item */
+.pagination .page-item.active .page-link {
+    font-weight: 600;
+}
+
+/* Allows you to style the disabled pagination items */
+.pagination .page-item.disabled .page-link {
+    opacity: 0.5;
+}

@@ -14,12 +14,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * @author Quentin Vanderheyden
- * @reviewer Nicolas Jean-François, Halet Louis
- */
-
 /**
  * Service link to the Absence.
  */
@@ -28,7 +22,6 @@ public class AbsenceService {
     /**
      * It create an Absence in the database using the data in the absenceDTO given in param.
      * @param absenceDTO is the DTOAbsence used by spring to copy the data in the form.
-
      */
     public void createAbsence(DTOAbsence absenceDTO, int numInterpreter) throws BadStatusException, SQLException {
         Absence absence = new Absence();
@@ -55,6 +48,11 @@ public class AbsenceService {
         daoAbsence.create(absence, numInterpreter);
     }
 
+    /**
+     * Deletes the absence identified by the given number
+     * @param numAbsence the id of the absence to delete
+     * @throws SQLException if a database access error occurs
+     */
     public void deleteAbsence(int numAbsence) throws SQLException {
         DAOAbsence daoAbsence = new DAOAbsence();
         Absence absenceToDelete = new Absence();
@@ -64,6 +62,12 @@ public class AbsenceService {
         daoAbsence.delete(absenceToDelete);
     }
 
+
+    /**
+     * Updates an existing absence
+     * @param absenceToUpdate the absence carrying the new values
+     * @throws SQLException if a database access error occurs
+     */
     public void updateAbsence(Absence absenceToUpdate) throws SQLException {
         DAOAbsence daoAbsence = new DAOAbsence();
 
@@ -105,5 +109,4 @@ public class AbsenceService {
 
         return daoAbsence.findBaseAbsencesInterpreter(interpreter);
     }
-
 }
