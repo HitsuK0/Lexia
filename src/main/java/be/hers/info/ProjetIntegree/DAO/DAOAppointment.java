@@ -691,8 +691,7 @@ public class DAOAppointment extends DAO<Appointment> {
                 "  AND ( " +
                 "      (tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
                 "      OR " +
-                "      tsb.numTimeSlot IS NOT NULL" +
-                ")";
+                "      tsb.numTimeSlot IS NOT NULL)";
 
         try {
             prStat = connect.prepareStatement(query);
