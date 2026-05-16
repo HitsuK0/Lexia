@@ -1,10 +1,10 @@
 package be.hers.info.ProjetIntegree.Controller;
-
 /**
- * @authors Halet Louis, Wellinger Chloe, Vatafu Jean, Rosman Loïs
+ * @authors Halet Louis, Wellinger Chloe, Vatafu Jean, Rosman Loïs, Vanderheyden Quentin
  * @reviewer Nicolas Jean-François
  */
 
+import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
@@ -22,6 +22,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/interprete")
 public class InterpreterController {
+
+
 
     /**
      * Searches for all Appointments and Absences belonging to the interpreter as a parameter over a period defined by start and end.
@@ -46,6 +48,7 @@ public class InterpreterController {
 
         model.addAttribute("activeTab", "planning");
 
+        model.addAttribute("DTOAbsence", new DTOAbsence());
         return "interprete/planning";
     }
 
@@ -120,6 +123,32 @@ public class InterpreterController {
         }
 
         model.addAttribute("activeTab", "indisponibilites");
+        return "interprete/indisponibilites";
+    }
+
+
+    /**
+     * Function called when the form is filled.
+     * Also redirect to the indsponibilites page.
+     * It create an Absence in the Database.
+     * @param dtoAbsence the dto to convert into a pojo
+     * @param model
+     * @return the page to redirect to.
+     */
+    @PostMapping("/indisponibilites")
+    public String createIndisponibilite(@ModelAttribute("DTOAbsence") DTOAbsence dtoAbsence, Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Interpreter interpreter = (Interpreter) session.getAttribute("InterpreterConnected");
+        AbsenceService absenceService = new  AbsenceService();
+        try{
+            absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter());
+        }
+        catch(SQLException sql){
+            // afficher la page d'erreur
+        }
+        catch(BadStatusException bse){
+            // afficher la page d'erreur
+        }
         return "interprete/indisponibilites";
     }
 
