@@ -110,7 +110,7 @@ public class DAOAppointment extends DAO<Appointment> {
                         LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = a.FKTimeSlotBase
                         LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = a.FKTimeSlotPunctual
                         WHERE a.FKNumBeneficiary = ?
-                        AND ((tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') 
+                        AND ((tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) 
                         OR tsb.numTimeSlot IS NOT NULL)
                        """;
 
@@ -181,7 +181,7 @@ public class DAOAppointment extends DAO<Appointment> {
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
         List<Appointment> appointmentList = new ArrayList<>();
-        String query = "SELECT numAppointment,description,status,local,FKnumBeneficiary,FKTimeSlotBase,FKnumEstablishment " +
+        String query = "SELECT *" +
                 "FROM Appointment";
 
         try {
@@ -268,7 +268,7 @@ public class DAOAppointment extends DAO<Appointment> {
             int nbLinesInsert = prStat.executeUpdate();
             rs = prStat.getReturnResultSet();
             if(rs.next()){
-                int id = rs.getInt(7);
+                int id = rs.getInt(1);
                 objectToInsertInDB.setNumAppointment(id);
 
                 if(nbLinesInsert > 0) {
@@ -520,7 +520,7 @@ public class DAOAppointment extends DAO<Appointment> {
                 "JOIN Beneficiary b ON b.numBeneficiary = ap.FKnumBeneficiary " +
                 "WHERE rdv.numInterpreter = ? " +
                 "  AND ( " +
-                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') " +
+                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
                 "      OR " +
                 "      tsb.numTimeSlot IS NOT NULL" +
                 ")";
@@ -663,7 +663,7 @@ public class DAOAppointment extends DAO<Appointment> {
             DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
 
             while(resultSet.next()){
-                ProfessionalSkillList.add(daoProfessionalSkill.find(resultSet.getInt("numAcademicSkill")));
+                ProfessionalSkillList.add(daoProfessionalSkill.find(resultSet.getInt("numProfessionalSkill")));
             }
         }finally {
             closeStatementAndResultSet(prStat, resultSet);
@@ -689,7 +689,7 @@ public class DAOAppointment extends DAO<Appointment> {
                 "LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = ab.FKTimeSlotPunctual " +
                 "WHERE ab.FKnumInterpreter = ? " +
                 "  AND ( " +
-                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= DATE '?' AND tsp.endDate >= DATE '?') " +
+                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
                 "      OR " +
                 "      tsb.numTimeSlot IS NOT NULL" +
                 ")";
