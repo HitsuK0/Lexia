@@ -13,42 +13,62 @@ public class CoordinatorController {
     // Temporaire
     @GetMapping("/accueil")
     public String accueil(Model model) {
+        model.addAttribute("userName", "Dubois Louis");
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", true);
         return "coordinatrice/accueil";
     }
 
     // Temporaire
     @GetMapping("/profil")
     public String profil(Model model) {
-        return "coordinatrice/profil";
+        model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", true);
+        return "interprete/profil";
     }
 
     // Temporaire
     @GetMapping("/plannings")
     public String plannings(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", true);
         return "coordinatrice/plannings";
     }
 
     // Temporaire
     @GetMapping("/validations")
     public String validations(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", true);
         return "coordinatrice/validations";
     }
 
     // Temporaire
     @GetMapping("/etablissements")
     public String etablissements(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", true);
         return "coordinatrice/etablissements";
     }
 
     // Temporaire
     @GetMapping("/utilisateurs")
     public String utilisateurs(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", true);
         return "coordinatrice/utilisateurs";
     }
 
     // Temporaire
     @GetMapping("/utilisateurs/{id}")
     public String utilisateurDetail(@PathVariable String id, Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("isAdmin", true);
 
         switch (id) {
             case "1" -> model.addAttribute("userRole", "RESA");
@@ -59,5 +79,23 @@ public class CoordinatorController {
         }
 
         return "coordinatrice/utilisateur-detail";
+    }
+
+    // Temporaire
+    @GetMapping("/horaire/base")
+    public String horaireBase(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", true);
+        return "coordinatrice/horaire-base";
+    }
+
+    // Temporaire
+    @GetMapping("/gestion/competences")
+    public String gestionCompetences(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", true);
+        return "coordinatrice/gestion-competences";
     }
 }
