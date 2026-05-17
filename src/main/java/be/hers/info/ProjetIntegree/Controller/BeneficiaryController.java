@@ -41,9 +41,7 @@ public class BeneficiaryController {
         return null;
     }
 
-    // Mon Planning
-
-    /**
+    /** Controller for the pages named "Mon planning"
      * Displays the weekly calendar page for the connected beneficiary.
      * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
      * Redirects to login if no beneficiary is found in session.
@@ -62,9 +60,7 @@ public class BeneficiaryController {
         return "beneficiaire/planning";
     }
 
-    // Mes Demandes
-
-    /**
+    /** Controller for the pages named "Mes demandes"
      * Displays the list of appointment requests for the connected beneficiary.
      * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
      * Redirects to login if no beneficiary is found in session.
@@ -83,9 +79,7 @@ public class BeneficiaryController {
         return "beneficiaire/demandes";
     }
 
-    // Mon Profil
-
-    /**
+    /** Controller for the pages named "Mon profil"
      * Displays the profile page for the connected beneficiary.
      * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
      * Builds a {@link DTOBeneficiaryProfile} from the connected beneficiary and adds it to the model so the Thymeleaf form can bind its fields.
@@ -113,7 +107,7 @@ public class BeneficiaryController {
         return "beneficiaire/profil";
     }
 
-    /**
+    /** Controller for the pages named "Mon profil"
      * Handles the submission of the profile edit form.
      * Saves the modified personal data (lastName, firstName, phoneNumber, emailAddress, address) of the connected beneficiary.
      * The login and password are NOT modified here.
@@ -143,7 +137,7 @@ public class BeneficiaryController {
         return "redirect:/beneficiaire/profil";
     }
 
-    /**
+    /** Controller for the pages named "Mon profil"
      * Handles the submission of the password change modal.
      * Verifies that newPassword and confirmPassword match, then updates the password in the database.
      * The DB trigger will hash the new password automatically on UPDATE.
