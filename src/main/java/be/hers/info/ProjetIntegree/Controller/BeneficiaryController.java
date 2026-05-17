@@ -23,18 +23,38 @@ import java.sql.SQLException;
 @RequestMapping("/beneficiaire")
 public class BeneficiaryController {
 
+    /**
+     * Retrieves the connected beneficiary from the session.
+     * Returns null if no user is connected or if the connected user is not a Beneficiary.
+     * This helper avoids relying on @ModelAttribute which may inject an empty POJO
+     * instead of null when no session attribute exists.
+     *
+     * @param session the current HTTP session
+     * @return the connected Beneficiary, or null if not found
+     */
+    private Beneficiary getBeneficiaryFromSession(HttpSession session) {
+        if (session == null) return null;
+        Object user = session.getAttribute("currentUser");
+        if (user instanceof Beneficiary) {
+            return (Beneficiary) user;
+        }
+        return null;
+    }
+
     // Mon Planning
 
     /**
      * Displays the weekly calendar page for the connected beneficiary.
+     * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
      * Redirects to login if no beneficiary is found in session.
      *
-     * @param beneficiary the connected beneficiary injected from the model (set by NavbarController)
-     * @param model       the Spring UI model
+     * @param session the current HTTP session
+     * @param model   the Spring UI model
      * @return the view "beneficiaire/planning", or a redirect to "/login"
      */
     @GetMapping("/planning")
-    public String planning(@ModelAttribute("BeneficiaryConnected") Beneficiary beneficiary, Model model) {
+    public String planning(HttpSession session, Model model) {
+        Beneficiary beneficiary = getBeneficiaryFromSession(session);
         if (beneficiary == null) {
             return "redirect:/login";
         }
@@ -46,14 +66,16 @@ public class BeneficiaryController {
 
     /**
      * Displays the list of appointment requests for the connected beneficiary.
+     * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
      * Redirects to login if no beneficiary is found in session.
      *
-     * @param beneficiary the connected beneficiary injected from the model (set by NavbarController)
-     * @param model       the Spring UI model
+     * @param session the current HTTP session
+     * @param model   the Spring UI model
      * @return the view "beneficiaire/demandes", or a redirect to "/login"
      */
     @GetMapping("/demandes")
-    public String demandes(@ModelAttribute("BeneficiaryConnected") Beneficiary beneficiary, Model model) {
+    public String demandes(HttpSession session, Model model) {
+        Beneficiary beneficiary = getBeneficiaryFromSession(session);
         if (beneficiary == null) {
             return "redirect:/login";
         }
@@ -65,16 +87,18 @@ public class BeneficiaryController {
 
     /**
      * Displays the profile page for the connected beneficiary.
+     * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
      * Builds a {@link DTOBeneficiaryProfile} from the connected beneficiary and adds it to the model so the Thymeleaf form can bind its fields.
-     * Also adds an empty {@link DTOPasswordChange} for the password modal.
+     * Also adds an empty {@link DTOPasswordChange} for the password change modal.
      * Redirects to login if no beneficiary is found in session.
      *
-     * @param beneficiary the connected beneficiary injected from the model (set by NavbarController)
-     * @param model       the Spring UI model
+     * @param session the current HTTP session
+     * @param model   the Spring UI model
      * @return the view "beneficiaire/profil", or a redirect to "/login"
      */
     @GetMapping("/profil")
-    public String profil(@ModelAttribute("BeneficiaryConnected") Beneficiary beneficiary, Model model) {
+    public String profil(HttpSession session, Model model) {
+        Beneficiary beneficiary = getBeneficiaryFromSession(session);
         if (beneficiary == null) {
             return "redirect:/login";
         }
@@ -93,20 +117,17 @@ public class BeneficiaryController {
      * Handles the submission of the profile edit form.
      * Saves the modified personal data (lastName, firstName, phoneNumber, emailAddress, address) of the connected beneficiary.
      * The login and password are NOT modified here.
+     * Reads the beneficiary directly from the session.
      * Redirects to login if no beneficiary is found in session.
      *
-     * @param profileDTO  the profile form data submitted by the user
-     * @param request     the current HTTP request used to access the session
+     * @param profileDTO the profile form data submitted by the user
+     * @param request    the current HTTP request used to access the session
      * @return a redirect to "/beneficiaire/profil" after saving, or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil")
     public String saveProfile(@ModelAttribute("profileDTO") DTOBeneficiaryProfile profileDTO, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            return "redirect:/login";
-        }
-
-        Beneficiary beneficiary = (Beneficiary) session.getAttribute("currentUser");
+        Beneficiary beneficiary = getBeneficiaryFromSession(session);
         if (beneficiary == null) {
             return "redirect:/login";
         }
@@ -119,29 +140,27 @@ public class BeneficiaryController {
             e.printStackTrace();
         }
 
-        return "redirect:/beneficiaire/planning";
+        return "redirect:/beneficiaire/profil";
     }
 
     /**
      * Handles the submission of the password change modal.
      * Verifies that newPassword and confirmPassword match, then updates the password in the database.
      * The DB trigger will hash the new password automatically on UPDATE.
+     * Reads the beneficiary directly from the session.
      * Redirects to login if no beneficiary is found in session.
      * Redirects back to the profile page with an error parameter if the passwords do not match.
      *
      * @param passwordDTO the password change form data submitted by the user
      * @param request     the current HTTP request used to access the session
-     * @return a redirect to "/beneficiaire/profil" after the operation, with "?passwordError=true" appended if passwords do not match,
+     * @return a redirect to "/beneficiaire/profil" after the operation,
+     *         with "?passwordError=true" appended if passwords do not match,
      *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/password")
     public String changePassword(@ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            return "redirect:/login";
-        }
-
-        Beneficiary beneficiary = (Beneficiary) session.getAttribute("currentUser");
+        Beneficiary beneficiary = getBeneficiaryFromSession(session);
         if (beneficiary == null) {
             return "redirect:/login";
         }
@@ -149,7 +168,6 @@ public class BeneficiaryController {
         try {
             BeneficiaryProfileService profileService = new BeneficiaryProfileService();
             boolean success = profileService.changePassword(beneficiary, passwordDTO);
-
             if (!success) {
                 return "redirect:/beneficiaire/profil?passwordError=true";
             }

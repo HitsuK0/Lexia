@@ -21,6 +21,7 @@ public class BeneficiaryProfileService {
     /**
      * Builds a {@link DTOBeneficiaryProfile} from the connected beneficiary.
      * Flattens the nested Address object into individual fields so the Thymeleaf form can bind them directly.
+     * If the beneficiary has no address yet (first login), the address fields in the DTO will be left empty so the form displays blank fields to fill in.
      *
      * @param beneficiary the currently connected beneficiary, must not be null
      * @return a DTOBeneficiaryProfile populated with the beneficiary's current data
@@ -48,11 +49,13 @@ public class BeneficiaryProfileService {
     /**
      * Saves the profile changes submitted by the beneficiary.
      * Updates the editable fields of the Beneficiary and its Address in the database.
+     * If the beneficiary has no address yet (first login after account creation by a coordinator), a new Address is created in the database and linked to the beneficiary.
+     * If the beneficiary already has an address, it is updated in place.
      * The login, numBeneficiary and password are NOT updated here.
      *
      * @param beneficiary the currently connected beneficiary used as base object
      * @param dto         the form data submitted by the user
-     * @throws SQLException if a database error occurs during the update
+     * @throws SQLException if a database error occurs during the update or creation
      */
     public void saveProfile(Beneficiary beneficiary, DTOBeneficiaryProfile dto) throws SQLException {
         beneficiary.setLastName(dto.getLastName());
@@ -60,14 +63,24 @@ public class BeneficiaryProfileService {
         beneficiary.setPhoneNumber(dto.getPhoneNumber());
         beneficiary.setEmailAddress(dto.getEmailAddress());
 
+        DAOAddress daoAddress = new DAOAddress();
         Address address = beneficiary.getAddress();
-        if (address != null) {
+
+        if (address == null) {
+            address = new Address(
+                    dto.getPostcode(),
+                    dto.getPostOfficeBox(),
+                    dto.getLocality(),
+                    dto.getHamlet(),
+                    null
+            );
+            daoAddress.create(address);
+            beneficiary.setAddress(address);
+        } else {
             address.setPostOfficeBox(dto.getPostOfficeBox());
             address.setPostcode(dto.getPostcode());
             address.setLocality(dto.getLocality());
             address.setHamlet(dto.getHamlet());
-
-            DAOAddress daoAddress = new DAOAddress();
             daoAddress.update(address);
         }
 
