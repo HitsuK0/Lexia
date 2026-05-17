@@ -1,5 +1,6 @@
 package be.hers.info.ProjetIntegree.Controller;
 
+import be.hers.info.ProjetIntegree.DTO.DTOEstablishment;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
 import be.hers.info.ProjetIntegree.Services.EstablishementService;
 import org.springframework.stereotype.Controller;
@@ -57,9 +58,8 @@ public class CoordinatorController {
         model.addAttribute("userRole", "COORDINATOR");
         model.addAttribute("isAdmin", true);
         EstablishementService establishmentService = new EstablishementService();
-        List<Establishment> listEstablishment = establishmentService.getEtablissements();
+        List<DTOEstablishment> listEstablishment = establishmentService.getEtablissements();
         model.addAttribute("listEstablishment", listEstablishment);
-
         return "coordinatrice/etablissements";
     }
 

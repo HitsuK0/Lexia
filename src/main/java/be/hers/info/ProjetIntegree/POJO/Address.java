@@ -176,4 +176,22 @@ public class Address {
                 "\nLieu dit : " + this.hamlet +
                 "\nEtablissement lié : " + (this.establishment == null ? "Aucun" : this.establishment.toString());
     }
+
+
+    /**
+     * @return a String containing the locality, the postcode, the hamlet
+     * this function make a string for the front.
+     */
+    public String toStringFront() {
+        StringBuilder front = new StringBuilder();
+        front.append(this.postOfficeBox);
+        front.append(",<br>");
+        if(this.hamlet != null){
+            front.append(this.hamlet);
+        }
+        front.append(this.postcode);
+        front.append(" ");
+        front.append(this.locality);
+        return front.toString();
+    }
 }

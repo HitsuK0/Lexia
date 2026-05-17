@@ -15,6 +15,7 @@ public class DTOEstablishment {
     private String phoneNumber;
     private String educationLevel;
     private String referrers;
+    private String locality;
     private String address;
 
 
@@ -27,6 +28,10 @@ public class DTOEstablishment {
 
     /**
      * Create a DTOEstablishment using an Establishment in param.
+     * The educationLevel is initialiaze with the following data
+     * (autre, maternelle, primaire, secondaire, supérieur) multiple data is possible
+     * The name of the referrers are in uppercase (not the surname)
+     *
      * @param etablissement is the Establishment using to initialize the this.
      */
     public DTOEstablishment(Establishment etablissement){
@@ -45,13 +50,18 @@ public class DTOEstablishment {
                 case 4 -> levelSchool.append("supérieur");
             }
         }
-        this.educationLevel = levelSchool.toString();
+        this.educationLevel = levelSchool.substring(0, 1).toUpperCase() + levelSchool.substring(1);
+        // Premiere lettre du niveau d'éducation en majuscule.
         this.address = etablissement.getAddresses().getFirst().toStringFront();
+        this.locality = etablissement.getAddresses().getFirst().getLocality();
         StringBuilder referrersSchool = new StringBuilder();
         List<Referrer> referrersLst = etablissement.getReferrers();
         Iterator<Referrer> iterator = referrersLst.iterator();
         while(iterator.hasNext()){
-            referrersSchool.append(iterator.next().toString());
+            Referrer referrer = iterator.next();
+            referrersSchool.append(referrer.getName().toUpperCase());
+            referrersSchool.append(" ");
+            referrersSchool.append(referrer.getSurname());
             if(iterator.hasNext()){
                 referrersSchool.append(", ");
             }
@@ -100,6 +110,14 @@ public class DTOEstablishment {
     }
 
     /**
+     *
+     * @return the locality of the Establishment.
+     */
+    public String getLocality() {
+        return locality;
+    }
+
+    /**
      * Set the new name of the building given in param.
      * @param nameBuilding the new name of the building
      */
@@ -138,5 +156,13 @@ public class DTOEstablishment {
      */
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    /**
+     * Set the new locality of the Establishment with the given param.
+     * @param locality is the new locality of this.
+     */
+    public void setLocality(String locality) {
+        this.locality = locality;
     }
 }

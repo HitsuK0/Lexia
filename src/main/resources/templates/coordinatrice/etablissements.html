@@ -32,6 +32,8 @@
                             <th>Ville</th>
                             <th>Adresse Complète</th>
                             <th>Personne Référent</th>
+                            <th>Numero de téléphone</th>
+                            <th>Niveau d'éducation</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -41,6 +43,26 @@
                             <td>Libramont</td>
                             <td>Rue de la Cité, 64<br/>6800 Libramont</td>
                             <td>DENY Laurence</td>
+                            <td>
+                                <button class="btn btn-link p-0 text-dark me-2"
+                                        data-bs-toggle="modal" data-bs-target="#modalEdition"
+                                        title="Modifier">
+                                    <i class="bi bi-pencil-square fs-5"></i>
+                                </button>
+                                <button class="btn btn-link p-0 text-danger"
+                                        data-bs-toggle="modal" data-bs-target="#modalSuppression"
+                                        title="Supprimer">
+                                    <i class="bi bi-trash3 fs-5"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr th:each="etablissement : ${listEstablishment}">
+                            <td th:text="${etablissement.nameBuilding}"></td>
+                            <td th:text="${etablissement.locality}"></td>
+                            <td th:utext="${etablissement.address}"></td>
+                            <td th:text="${etablissement.referrers}"></td>
+                            <td th:text="${etablissement.phoneNumber}"></td>
+                            <td th:text="${etablissement.educationLevel}"></td>
                             <td>
                                 <button class="btn btn-link p-0 text-dark me-2"
                                         data-bs-toggle="modal" data-bs-target="#modalEdition"
