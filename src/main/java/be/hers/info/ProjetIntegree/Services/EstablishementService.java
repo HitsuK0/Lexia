@@ -88,7 +88,7 @@ public class EstablishementService {
         daoReferrer.create(referrer);
     }
 
-    /** TODO : Faire un update de l'adresse.
+    /**
      * This function makes an update of the Establishment
      * with the same id as dtoEstablishment.getNumEstablishment().
      * @param dtoEstablishment
