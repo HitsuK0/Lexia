@@ -2,6 +2,7 @@ package be.hers.info.ProjetIntegree.Services;
 
 import be.hers.info.ProjetIntegree.DAO.DAOBeneficiary;
 import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
+import be.hers.info.ProjetIntegree.DAO.DAOTimeSlotPunctual;
 import be.hers.info.ProjetIntegree.DTO.DTOAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
 
@@ -32,7 +33,19 @@ public class AppointmentFormService {
         for(int num : appointmentDTO.getNumInterpreters())
             listInterpreters.add(daoInterpreter.find(num));
 
-        TimeSlotPunctual newTimeSlotPunctual = new TimeSlotPunctual();
+        TimeSlotPunctual newTimeSlotPunctual = new TimeSlotPunctual(
+                appointmentDTO.getStartTime(),
+                appointmentDTO.getEndTime(),
+                appointmentDTO.getStartDate(),
+                appointmentDTO.getEndDate()
+        );
+
+        DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+        TimeSlotPunctual tempTimeSlot = daoTimeSlotPunctual.findSameTimeSlot(newTimeSlotPunctual);
+        if(tempTimeSlot == null)
+            daoTimeSlotPunctual.create(newTimeSlotPunctual);
+        else
+            newTimeSlotPunctual = tempTimeSlot;
 
 
         newAppointment.setBeneficiary(beneficiary);

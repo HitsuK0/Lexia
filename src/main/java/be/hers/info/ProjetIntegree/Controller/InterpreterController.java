@@ -102,11 +102,13 @@ public class InterpreterController {
         try{
             AppointmentFormService appointmentFormService = new AppointmentFormService();
             appointmentFormService.createAppointment(appointment);
+
+            return "";
         }
         catch (BadStatusException e) {
-            e.printStackTrace();  //Ou afficher un message
+            return "";
         } catch (SQLException e) {
-            e.printStackTrace();  //Ou afficher un message
+            return "";
         }
     }
 
