@@ -87,13 +87,13 @@ public class InterpreterController {
     }
 
     /**
-     *
-     * @param appointment
-     * @param interpreter
-     * @return
+     * Add the appointment create by the interpreter to the DB
+     * @param appointment the appointment to add to the DB
+     * @param interpreter the user connected
+     * @return A message indicating whether the addition to the database was successful or failed.
      */
     @PostMapping("/planning/beneficiaires")
-    public String askAppointment(@ModelAttribute("newAppointment") DTOAppointment appointment,
+    public String addAppointment(@ModelAttribute("newAppointment") DTOAppointment appointment,
                                  @ModelAttribute("interpreterConnected") Interpreter interpreter){
         if(interpreter == null) {
             return "redirect:/login";
@@ -101,14 +101,10 @@ public class InterpreterController {
 
         try{
             AppointmentFormService appointmentFormService = new AppointmentFormService();
-            appointmentFormService.createAppointment(appointment);
-
-            return "";
+            return appointmentFormService.createAppointment(appointment);
         }
-        catch (BadStatusException e) {
-            return "";
-        } catch (SQLException e) {
-            return "";
+        catch (BadStatusException | SQLException e) {
+            return "Une erreur est survenue";
         }
     }
 
