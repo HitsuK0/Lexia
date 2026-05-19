@@ -85,11 +85,18 @@ public class InterpreterController {
         return "interprete/planning-beneficiaires";
     }
 
-    //newAppointment = new Appointment (appointmentLocals, timesSlot, establishment, bénéficiaire, academicSkill (matière), profesionalsSkills
+    /**
+     *
+     * @param appointment
+     * @param interpreter
+     * @return
+     */
     @PostMapping("/planning/beneficiaires")
     public String askAppointment(@ModelAttribute("newAppointment") DTOAppointment appointment,
                                  @ModelAttribute("interpreterConnected") Interpreter interpreter){
-
+        if(interpreter == null) {
+            return "redirect:/login";
+        }
     }
 
     @GetMapping("/profil")
