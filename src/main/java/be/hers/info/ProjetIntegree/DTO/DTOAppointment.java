@@ -1,5 +1,7 @@
 package be.hers.info.ProjetIntegree.DTO;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -16,10 +18,15 @@ public class DTOAppointment {
     // Each field allows the identification of its own object. This is the form binding.
     private int numBeneficiary;
     private List<Integer> numInterpreters;
-    private int numTimeSlot;
     private int numEstablishment;
     private List<Integer> numAcademicSkillsNeeded;
     private List<Integer> numProfessionalSkillsNeeded;
+
+    // Each field allows the identification of the TimeSlot. This is the form binding.
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
     /**
      * Creates an empty DTOAppointment
@@ -33,22 +40,29 @@ public class DTOAppointment {
      * @param appointmentLocals the list of appointment locals
      * @param numBeneficiary the id of the beneficiary related to the appointment
      * @param numInterpreters the list of interpreters identifiers related to the appointment
-     * @param numTimeSlot the id of the time slot related to the appointment
      * @param numEstablishment the id of the establishment related to the appointment
      * @param numAcademicSkillsNeeded the list of academic skills identifiers related to the appointment
      * @param numProfessionalSkillsNeeded the list of professional skills identifiers related to the appointment
+     * @param startDate the date start of the time slot
+     * @param endDate the date end of the time slot
+     * @param startTime the start time of the time slot
+     * @param endTime the end time of the time slot
      */
     public DTOAppointment(String status, List<String> appointmentLocals, int numBeneficiary,
-                          List<Integer> numInterpreters, int numTimeSlot, int numEstablishment,
-                          List<Integer> numAcademicSkillsNeeded, List<Integer> numProfessionalSkillsNeeded) {
+                          List<Integer> numInterpreters, int numEstablishment,
+                          List<Integer> numAcademicSkillsNeeded, List<Integer> numProfessionalSkillsNeeded,
+                          LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         this.status = status;
         this.appointmentLocals = appointmentLocals;
         this.numBeneficiary = numBeneficiary;
         this.numInterpreters = numInterpreters;
-        this.numTimeSlot = numTimeSlot;
         this.numEstablishment = numEstablishment;
         this.numAcademicSkillsNeeded = numAcademicSkillsNeeded;
         this.numProfessionalSkillsNeeded = numProfessionalSkillsNeeded;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     /**
@@ -112,21 +126,6 @@ public class DTOAppointment {
     }
 
     /**
-     * @return the id of the time slot
-     */
-    public int getNumTimeSlot() {
-        return numTimeSlot;
-    }
-
-    /**
-     * Initialize the id of the time slot
-     * @param numTimeSlot the id of the time slot related to the appointment
-     */
-    public void setNumTimeSlot(int numTimeSlot) {
-        this.numTimeSlot = numTimeSlot;
-    }
-
-    /**
      * @return the id of the establishment
      */
     public int getNumEstablishment() {
@@ -169,5 +168,65 @@ public class DTOAppointment {
      */
     public void setNumProfessionalSkillsNeeded(List<Integer> numProfessionalSkillsNeeded) {
         this.numProfessionalSkillsNeeded = numProfessionalSkillsNeeded;
+    }
+
+    /**
+     * @return the date start of the time slot
+     */
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * Initialize the date start of the time slot
+     * @param startDate the date start of the time slot
+     */
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * @return the date end of the time slot
+     */
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Initialize the date end of the time slot
+     * @param endDate the date end of the time slot
+     */
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    /**
+     * @return the time start of the time slot
+     */
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    /**
+     * Initialize the start time of the time slot
+     * @param startTime the start time of the time slot
+     */
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    /**
+     * @return the time end of the time slot
+     */
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    /**
+     * Initialize the end time of the time slot
+     * @param endTime the end time of the time slot
+     */
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 }

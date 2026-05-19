@@ -8,6 +8,7 @@ import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
 import be.hers.info.ProjetIntegree.DTO.DTOAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
+import be.hers.info.ProjetIntegree.Services.AppointmentFormService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -97,6 +98,16 @@ public class InterpreterController {
         if(interpreter == null) {
             return "redirect:/login";
         }
+
+        try{
+            AppointmentFormService appointmentFormService = new AppointmentFormService();
+            appointmentFormService.createAppointment(appointment);
+        }
+        catch (BadStatusException e) {
+            e.printStackTrace();  //Ou afficher un message
+        } catch (SQLException e) {
+            e.printStackTrace();  //Ou afficher un message
+        }
     }
 
     @GetMapping("/profil")
@@ -145,7 +156,7 @@ public class InterpreterController {
     /**
      * Function called when the form is filled.
      * Also redirect to the indsponibilites page.
-     * It create an Absence in the Database.
+     * It creates an Absence in the Database.
      * @param dtoAbsence the dto to convert into a pojo
      * @param model
      * @return the page to redirect to.
