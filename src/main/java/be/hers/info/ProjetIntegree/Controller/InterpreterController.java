@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -87,25 +88,30 @@ public class InterpreterController {
     }
 
     /**
-     * Add the appointment create by the interpreter to the DB
-     * @param appointment the appointment to add to the DB
+     * Add the appointment created by the interpreter to the DB
+     * @param dtoAppointment the appointment to add to the DB
      * @param interpreter the user connected
-     * @return A message indicating whether the addition to the database was successful or failed.
+     * @return @return a redirect to the planning page after the creation
      */
     @PostMapping("/planning/beneficiaires")
-    public String addAppointment(@ModelAttribute("newAppointment") DTOAppointment appointment,
-                                 @ModelAttribute("interpreterConnected") Interpreter interpreter){
-        if(interpreter == null) {
+    public String addAppointment(@ModelAttribute("newAppointment") DTOAppointment dtoAppointment,
+                                 @ModelAttribute("InterpreterConnected") Interpreter interpreter,
+                                 RedirectAttributes redirectAttributes){
+        if(interpreter == null)
             return "redirect:/login";
+
+        try {
+            AppointmentFormService appointmentFormService = new AppointmentFormService();
+            if(appointmentFormService.createAppointment(dtoAppointment))
+                redirectAttributes.addFlashAttribute("successMessage", "Rendez-vous créé avec succès");
+            else
+                redirectAttributes.addFlashAttribute("errorMessage", "La création du rendez-vous a échoué");
+        }
+        catch(BadStatusException | SQLException | IllegalArgumentException e){
+            redirectAttributes.addFlashAttribute("errorMessage", "Une erreur est survenue : " + e.getMessage());
         }
 
-        try{
-            AppointmentFormService appointmentFormService = new AppointmentFormService();
-            return appointmentFormService.createAppointment(appointment);
-        }
-        catch (BadStatusException | SQLException e) {
-            return "Une erreur est survenue";
-        }
+        return "redirect:/interprete/planning/beneficiaires";
     }
 
     @GetMapping("/profil")

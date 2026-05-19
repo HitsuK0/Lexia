@@ -12,7 +12,6 @@ import java.util.List;
  */
 
 public class DTOAppointment {
-    private String status;
     private List<String> appointmentLocals;
 
     // Each field allows the identification of its own object. This is the form binding.
@@ -36,7 +35,6 @@ public class DTOAppointment {
 
     /**
      * Creates a fully initialised DTOAppointment
-     * @param status the status of the appointment
      * @param appointmentLocals the list of appointment locals
      * @param numBeneficiary the id of the beneficiary related to the appointment
      * @param numInterpreters the list of interpreters identifiers related to the appointment
@@ -48,11 +46,10 @@ public class DTOAppointment {
      * @param startTime the start time of the time slot
      * @param endTime the end time of the time slot
      */
-    public DTOAppointment(String status, List<String> appointmentLocals, int numBeneficiary,
+    public DTOAppointment(List<String> appointmentLocals, int numBeneficiary,
                           List<Integer> numInterpreters, int numEstablishment,
                           List<Integer> numAcademicSkillsNeeded, List<Integer> numProfessionalSkillsNeeded,
                           LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
-        this.status = status;
         this.appointmentLocals = appointmentLocals;
         this.numBeneficiary = numBeneficiary;
         this.numInterpreters = numInterpreters;
@@ -63,21 +60,6 @@ public class DTOAppointment {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
-    }
-
-    /**
-     * @return the status of the appointment
-     */
-    public String getStatus() {
-        return status;
-    }
-
-    /**
-     * Initialize the status
-     * @param status the status of the appointment
-     */
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     /**
