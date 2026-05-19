@@ -5,6 +5,7 @@ package be.hers.info.ProjetIntegree.Controller;
  */
 
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
+import be.hers.info.ProjetIntegree.DTO.DTOAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
@@ -82,6 +83,13 @@ public class InterpreterController {
         model.addAttribute("activeTab", "planning");
 
         return "interprete/planning-beneficiaires";
+    }
+
+    //newAppointment = new Appointment (appointmentLocals, timesSlot, establishment, bénéficiaire, academicSkill (matière), profesionalsSkills
+    @PostMapping("/planning/beneficiaires")
+    public String askAppointment(@ModelAttribute("newAppointment") DTOAppointment appointment,
+                                 @ModelAttribute("interpreterConnected") Interpreter interpreter){
+
     }
 
     @GetMapping("/profil")
