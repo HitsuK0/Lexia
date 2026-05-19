@@ -96,11 +96,10 @@ public class EstablishementService {
      */
     public void updateEstablishment(DTOEstablishment dtoEstablishment) throws SQLException {
         DAOEstablishment daoEstablishment = new DAOEstablishment();
-//        daoEstablishment.update(
-//                new Establishment(dtoEstablishment.getNumEstablishment(),
-//                dtoEstablishment.getNameBuilding(),
-//                dtoEstablishment.getPhoneNumber())
-//        );
-        System.out.println("Update Successful");
+        daoEstablishment.update(
+                new Establishment(dtoEstablishment.getNumEstablishment(),
+                dtoEstablishment.getNameBuilding(),
+                dtoEstablishment.getPhoneNumber())
+        );
     }
 }
