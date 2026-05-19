@@ -5,8 +5,13 @@ package be.hers.info.ProjetIntegree.Controller;
  */
 
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
+import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryProfile;
+import be.hers.info.ProjetIntegree.DTO.DTOInterpreterProfile;
+import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
+import be.hers.info.ProjetIntegree.Services.BeneficiaryProfileService;
+import be.hers.info.ProjetIntegree.Services.InterpreterProfileService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -23,7 +28,14 @@ import java.util.List;
 @RequestMapping("/interprete")
 public class InterpreterController {
 
-
+    private Interpreter getInterpreterFromSession(HttpSession session) {
+        if (session == null) return null;
+        Object user = session.getAttribute("currentUser");
+        if (user instanceof Interpreter) {
+            return (Interpreter) user;
+        }
+        return null;
+    }
 
     /**
      * Searches for all Appointments and Absences belonging to the interpreter as a parameter over a period defined by start and end.
@@ -84,10 +96,6 @@ public class InterpreterController {
         return "interprete/planning-beneficiaires";
     }
 
-    @GetMapping("/profil")
-    public String profil(Model model) {
-        return "interprete/profil";
-    }
 
     /**
      * Displays the list of punctual absences for the connected interpreter within a specific date range
@@ -200,4 +208,61 @@ public class InterpreterController {
 
         return "redirect:/interprete/indisponibilites";
     }
+    @GetMapping("/profil")
+    public String profil(HttpSession session, Model model){
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return "redirect:/login";
+        }
+        InterpreterProfileService profileService = new InterpreterProfileService();
+
+        DTOInterpreterProfile profileDTO = profileService.buildProfileDTO(interpreter);
+
+        model.addAttribute("profileDTO", profileDTO);
+        model.addAttribute("passwordDTO", new DTOPasswordChange());
+        model.addAttribute("activeTab", "profil");
+
+        return "interprete/profil";
+    }
+
+    @PostMapping("/profil")
+    public String saveProfile(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            InterpreterProfileService profileService = new InterpreterProfileService();
+            profileService.saveProfile(interpreter, profileDTO);
+            session.setAttribute("currentUser", interpreter);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/interprete/profil";
+    }
+
+    @PostMapping("/profil/password")
+    public String changePassword(@ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            InterpreterProfileService profileService = new InterpreterProfileService();
+            boolean success = profileService.changePassword(interpreter, passwordDTO);
+            if (!success) {
+                return "redirect:/interprete/profil?passwordError=true";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/interprete/profil";
+    }
+
 }

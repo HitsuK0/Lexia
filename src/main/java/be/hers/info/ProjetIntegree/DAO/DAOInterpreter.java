@@ -300,4 +300,71 @@ public class DAOInterpreter extends DAO<Interpreter> {
         }
         return user;
     }
+
+    public List<ProfessionalSkill> getProfessionalSkill(int numInterpreter) throws SQLException {
+        List<ProfessionalSkill> professionalSkillList = new ArrayList<>();
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        String query = "SELECT numProfessionalSkill " +
+                "FROM ProfessionalSkillInterpreter " +
+                "WHERE numInterpreter = ?";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numInterpreter);
+            rs = prStat.executeQuery();
+
+            while(rs.next()) {
+                DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
+                ProfessionalSkill professionalSkill = daoProfessionalSkill.find(rs.getInt("numProfessionalSkill"));
+                professionalSkillList.add(professionalSkill);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, rs);
+        }
+        return professionalSkillList;
+    }
+    public List<AcademicSkill> getAcademicSkill(int numInterpreter) throws SQLException {
+        List<AcademicSkill> academicSkillList = new ArrayList<>();
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        String query = "SELECT numAcademicSkill " +
+                "FROM AcademicSkillInterpreter " +
+                "WHERE numInterpreter = ?";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numInterpreter);
+            rs = prStat.executeQuery();
+
+            while(rs.next()) {
+                DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
+                AcademicSkill academicSkill = daoAcademicSkill.find(rs.getInt("numAcademicSkill"));
+                academicSkillList.add(academicSkill);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, rs);
+        }
+        return academicSkillList;
+    }
+    public boolean updatePassword(Interpreter objectToUpdatePassword) throws SQLException {
+        boolean passwordUpdated = false;
+        PreparedStatement preparedStatement = null;
+        String query = "UPDATE Interpreter SET password = ? WHERE numInterpreter = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setString(1, objectToUpdatePassword.getPassword());
+            preparedStatement.setInt(2, objectToUpdatePassword.getNumInterpreter());
+
+            if(preparedStatement.executeUpdate() > 0) {
+                passwordUpdated = true;
+            }
+        } finally {
+            closeStatement(preparedStatement);
+        }
+        return passwordUpdated;
+    }
 }
