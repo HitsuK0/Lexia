@@ -1,8 +1,13 @@
 package be.hers.info.ProjetIntegree.Services;
 
+import be.hers.info.ProjetIntegree.DAO.DAOAddress;
 import be.hers.info.ProjetIntegree.DAO.DAOEstablishment;
+import be.hers.info.ProjetIntegree.DAO.DAOReferrer;
 import be.hers.info.ProjetIntegree.DTO.DTOEstablishment;
+import be.hers.info.ProjetIntegree.DTO.DTOReferrer;
+import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
+import be.hers.info.ProjetIntegree.POJO.Referrer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -35,9 +40,67 @@ public class EstablishementService {
     }
 
 
-    public void createEstablishment(Establishment establishment){
+    /**
+     * This function create an establishment and an address in the database with the data in the param.
+     * @param dtoEstablishment is the new establishment to register.
+     * @throws SQLException if the database encountered an errors.
+     */
+    public void createEstablishment(DTOEstablishment dtoEstablishment) throws SQLException {
+        Establishment establishment = new Establishment();
+        establishment.setNameBuilding(dtoEstablishment.getNameBuilding());
+        establishment.setPhoneNumber( dtoEstablishment.getPhoneNumber());
+        establishment.setEducationLevel(dtoEstablishment.getEducationLevelInt());
+        Address addresse = new Address(
+                dtoEstablishment.getPostcode(),
+                dtoEstablishment.getPostOfficeBox(),
+                dtoEstablishment.getLocality(),
+                dtoEstablishment.getHamlet(),
+                null);
+        DAOAddress daoAddress = new DAOAddress();
+        daoAddress.create(addresse);
+        establishment.setAddresses(
+            List.of(
+                    addresse
+            )
+        );
 
+
+        DAOEstablishment daoEstablishment = new DAOEstablishment();
+
+        daoEstablishment.create(establishment);
     }
 
+    /**
+     * This function create a referrer with all the data needed
+     * @param dtoReferrer
+     * @throws SQLException
+     */
+    public void createReferrer(DTOReferrer dtoReferrer) throws SQLException {
+        Referrer referrer = new Referrer();
+        referrer.setName(dtoReferrer.getNameNewReferrer());
+        referrer.setSurname(dtoReferrer.getSurnameNewReferrer());
+        referrer.setAddressMail(dtoReferrer.getMailReferrer());
+        referrer.setPhoneNumber(dtoReferrer.getPhoneNumberReferrer());
+        DAOEstablishment daoEstablishment = new DAOEstablishment();
+        referrer.setRefEstablishment(daoEstablishment.find(dtoReferrer.getNumEstablishement()));
+        DAOReferrer daoReferrer = new DAOReferrer();
+        System.out.println(referrer);
+        daoReferrer.create(referrer);
+    }
 
+    /** TODO : Faire un update de l'adresse.
+     * This function makes an update of the Establishment
+     * with the same id as dtoEstablishment.getNumEstablishment().
+     * @param dtoEstablishment
+     * @throws SQLException
+     */
+    public void updateEstablishment(DTOEstablishment dtoEstablishment) throws SQLException {
+        DAOEstablishment daoEstablishment = new DAOEstablishment();
+//        daoEstablishment.update(
+//                new Establishment(dtoEstablishment.getNumEstablishment(),
+//                dtoEstablishment.getNameBuilding(),
+//                dtoEstablishment.getPhoneNumber())
+//        );
+        System.out.println("Update Successful");
+    }
 }

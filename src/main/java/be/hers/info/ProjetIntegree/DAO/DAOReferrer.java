@@ -53,6 +53,7 @@ public class DAOReferrer extends DAO<Referrer> {
         return referrer;
     }
 
+
     /**
      * Creates a list containing all the Referrers in the Referrer table.
      * The Establishment is not loaded for any Referrer (lazy loading).
