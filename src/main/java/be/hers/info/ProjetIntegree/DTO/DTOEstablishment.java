@@ -14,7 +14,7 @@ import java.util.List;
 public class DTOEstablishment {
 
     private int numEstablishment; // pour ajouter referant.
-
+    private int numAddress;
     // Establishment
     private String nameBuilding;
     private String phoneNumberEstablishment;
@@ -70,6 +70,7 @@ public class DTOEstablishment {
         this.postOfficeBox = etablissement.getAddresses().getFirst().getPostOfficeBox();
         this.hamlet = etablissement.getAddresses().getFirst().getHamlet();
         this.address = toStringFront();
+        this.numAddress = etablissement.getAddresses().getFirst().getNumAddress();
 
         // initialiser referant pour display
         dtoReferrers = new ArrayList<>();
@@ -170,6 +171,14 @@ public class DTOEstablishment {
         return educationLevelInt;
     }
 
+
+    /**
+     * Get the num address of the establishmnent.
+     * @return the numAddress.
+     */
+    public int getNumAddress() {
+        return numAddress;
+    }
 
     /**
      *

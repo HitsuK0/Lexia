@@ -101,5 +101,8 @@ public class EstablishementService {
                 dtoEstablishment.getNameBuilding(),
                 dtoEstablishment.getPhoneNumber())
         );
+        DAOAddress daoAddress = new DAOAddress();
+        Address address = daoAddress.find(dtoEstablishment.getNumAddress());
+        daoAddress.update(address);
     }
 }
