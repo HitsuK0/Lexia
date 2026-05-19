@@ -1,17 +1,17 @@
 package be.hers.info.ProjetIntegree.Controller;
 
+import be.hers.info.ProjetIntegree.DTO.DTOAppointmentRequest;
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
+import be.hers.info.ProjetIntegree.POJO.BadStatusException;
 import be.hers.info.ProjetIntegree.POJO.Beneficiary;
+import be.hers.info.ProjetIntegree.Services.AppointmentService;
 import be.hers.info.ProjetIntegree.Services.BeneficiaryProfileService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 
@@ -170,5 +170,37 @@ public class BeneficiaryController {
         }
 
         return "redirect:/beneficiaire/profil";
+    }
+
+    /** Controller for the "Demander un RDV" button.
+     * Reads the beneficiary directly from the session.
+     * Redirects back to the page from which the form was submitted (Referer).
+     *
+     * @param dtoAppointmentRequest the appointment request form data submitted by the user
+     * @param session the current HTTP session
+     * @param header the URL of the page from which the form was submitted
+     * @return a redirect to the originating page, or to "/login" if no beneficiary in session and by default
+     */
+    @PostMapping("/submit/demandes")
+    public String submitAppointmentRequest(@ModelAttribute DTOAppointmentRequest dtoAppointmentRequest, HttpSession session,
+                                           @RequestHeader(value = "Referer", required = false) String header) {
+        Beneficiary currentBeneficiary = getBeneficiaryFromSession(session);
+
+        if(currentBeneficiary == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AppointmentService appointmentService = new AppointmentService();
+            appointmentService.createAppointmentRequest(dtoAppointmentRequest, currentBeneficiary);
+        } catch (SQLException | BadStatusException e) {
+            e.printStackTrace();
+        }
+
+        if(header != null) {
+            return "redirect:" + header;
+        }
+
+        return "redirect:/login";
     }
 }

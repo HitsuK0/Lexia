@@ -1,13 +1,13 @@
 package be.hers.info.ProjetIntegree.DTO;
 
-public class LoginDTO {
+public class DTOLogin {
     private String login;
     private String password;
 
     /**
      * Creates an empty LoginDTO object
      */
-    public LoginDTO() {
+    public DTOLogin() {
         this.login = "";
         this.password = "";
     }
@@ -17,7 +17,7 @@ public class LoginDTO {
      * @param login the user's login
      * @param password the user's password
      */
-    public LoginDTO(String login, String password) {
+    public DTOLogin(String login, String password) {
         this.login = login;
         this.password = password;
     }
