@@ -74,7 +74,6 @@ public class NavbarController {
         }
     }
 
-
     /**
      * Redirects the user to their schedule
      * @param session The session containing the connected user
@@ -106,7 +105,4 @@ public class NavbarController {
         }
         return redirection;
     }
-
-
-
 }
