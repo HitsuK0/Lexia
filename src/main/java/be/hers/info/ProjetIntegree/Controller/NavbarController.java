@@ -106,4 +106,7 @@ public class NavbarController {
         }
         return redirection;
     }
+
+
+
 }
