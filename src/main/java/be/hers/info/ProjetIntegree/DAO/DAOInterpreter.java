@@ -367,4 +367,82 @@ public class DAOInterpreter extends DAO<Interpreter> {
         }
         return passwordUpdated;
     }
+
+    public boolean addProfessionalSkillToInterpreter(int numInterpreter, int numProfessionalSkill) throws SQLException{
+        boolean isInserted = false;
+        PreparedStatement prStat = null;
+        String query = "INSERT INTO ProfessionalSkillInterpreter (numProfessionalSkill, numInterpreter) " +
+                "VALUES (?, ?)";
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numProfessionalSkill);
+            prStat.setInt(2, numInterpreter);
+            prStat.executeUpdate();
+            isInserted = true;
+
+        }finally {
+            closeStatement(prStat);
+        }
+        return isInserted;
+
+    }
+    public boolean deleteProfessionalSkillToInterpreter(int numInterpreter, int numProfessionalSkill) throws SQLException{
+        boolean isDeleted = false;
+        PreparedStatement prStat = null;
+        String query = "DELETE FROM ProfessionalSkillInterpreter " +
+                "WHERE numInterpreter = ? AND numProfessionalSkill = ?";
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numProfessionalSkill);
+            prStat.setInt(2, numInterpreter);
+            int nbLinesDelete=prStat.executeUpdate();
+            if(nbLinesDelete > 0) {
+                isDeleted = true;
+            }
+
+
+        }finally {
+            closeStatement(prStat);
+        }
+        return isDeleted;
+
+    }
+
+    public boolean addAcademicSkillToInterpreter(int numInterpreter, int numAcademicSkill) throws SQLException{
+        boolean isInserted = false;
+        PreparedStatement prStat = null;
+        String query = "INSERT INTO AcademicSkillInterpreter (numAcademicSkill, numInterpreter) " +
+                "VALUES (?, ?)";
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numAcademicSkill);
+            prStat.setInt(2, numInterpreter);
+            prStat.executeUpdate();
+            isInserted = true;
+
+        }finally {
+            closeStatement(prStat);
+        }
+        return isInserted;
+
+    }
+    public boolean deleteAcademicSkillToInterpreter(int numInterpreter, int numAcademicSkill) throws SQLException{
+        boolean isDeleted = false;
+        PreparedStatement prStat = null;
+        String query = "DELETE FROM AcademicSkillInterpreter " +
+                "WHERE numInterpreter = ? AND numProfessionalSkill = ?";
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numAcademicSkill);
+            prStat.setInt(2, numInterpreter);
+            int nbLinesDelete=prStat.executeUpdate();
+            if(nbLinesDelete > 0) {
+                isDeleted = true;
+            }
+        }finally {
+            closeStatement(prStat);
+        }
+        return isDeleted;
+
+    }
 }

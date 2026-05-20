@@ -208,6 +208,18 @@ public class InterpreterController {
 
         return "redirect:/interprete/indisponibilites";
     }
+
+    /** Controller for the pages named "Mon profil"
+     * Displays the profile page for the connected interpreter.
+     * Reads the interpreter directly from the session to avoid Spring injecting an empty POJO when no user is connected.
+     * Builds a {@link DTOInterpreterProfile} from the connected interpreter and adds it to the model so the Thymeleaf form can bind its fields.
+     * Also adds an empty {@link DTOPasswordChange} for the password change modal.
+     * Redirects to login if no interpreter is found in session.
+     *
+     * @param session the current HTTP session
+     * @param model   the Spring UI model
+     * @return the view "interprete/profil", or a redirect to "/login"
+     */
     @GetMapping("/profil")
     public String profil(HttpSession session, Model model){
         Interpreter interpreter = getInterpreterFromSession(session);
@@ -224,7 +236,17 @@ public class InterpreterController {
 
         return "interprete/profil";
     }
-
+    /** Controller for the pages named "Mon profil"
+     * Handles the submission of the profile edit form.
+     * Saves the modified personal data (lastName, firstName, phoneNumber, emailAddress, address, weeklyWorkHours) of the connected interpreter.
+     * The login and password are NOT modified here.
+     * Reads the interpreter directly from the session.
+     * Redirects to login if no interpreter is found in session.
+     *
+     * @param profileDTO the profile form data submitted by the user
+     * @param request    the current HTTP request used to access the session
+     * @return a redirect to "/interpreter/profil" after saving, or a redirect to "/login" if the session is invalid
+     */
     @PostMapping("/profil")
     public String saveProfile(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -243,7 +265,20 @@ public class InterpreterController {
 
         return "redirect:/interprete/profil";
     }
-
+    /** Controller for the pages named "Mon profil"
+     * Handles the submission of the password change modal.
+     * Verifies that newPassword and confirmPassword match, then updates the password in the database.
+     * The DB trigger will hash the new password automatically on UPDATE.
+     * Reads the interpreter directly from the session.
+     * Redirects to login if no interpreter is found in session.
+     * Redirects back to the profile page with an error parameter if the passwords do not match.
+     *
+     * @param passwordDTO the password change form data submitted by the user
+     * @param request     the current HTTP request used to access the session
+     * @return a redirect to "/interprete/profil" after the operation,
+     *         with "?passwordError=true" appended if passwords do not match,
+     *         or a redirect to "/login" if the session is invalid
+     */
     @PostMapping("/profil/password")
     public String changePassword(@ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -264,5 +299,165 @@ public class InterpreterController {
 
         return "redirect:/interprete/profil";
     }
+
+    /**
+     * Controller for the pages named "Mon profil" part Professional Skill
+     * Avant d'ajouter l'objet, cherche le Professional Skill dans la liste des Professional Skills disponible via l'id (NumProfessionalSkillSelected)
+     * Ajoute dans les listes de professionalSkill de l'interprete en session et dans le profileDTO
+     * Fait également l'action en BD
+     * Reads the interpreter directly from the session.
+     * Redirects to login if no interpreter is found in session.
+     *
+     * @param profileDTO the profile form data submitted by the user
+     * @param request     the current HTTP request used to access the session
+     * @return a redirect to "/interpreter/profil" after adding, or a redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/profil/addProfessionalSkill")
+    public String addProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return "redirect:/login";
+        }
+        ProfessionalSkill p = null;
+        try {
+            InterpreterProfileService profileService = new InterpreterProfileService();
+            boolean res = profileService.addProfessionalSkill(interpreter.getNumInterpreter(), profileDTO.getNumProfessionalSkillSelected());
+            if(res){
+                p = profileDTO.findProfessionalSkillById(profileDTO.getNumProfessionalSkillSelected());
+                if(p != null){
+                    if(!interpreter.getProfessionalSkillsList().contains(p)){
+                        interpreter.getProfessionalSkillsList().add(p);
+                    }
+                    if(profileDTO.getProfessionalSkillListInterpreter().contains((p))){
+                        profileDTO.getProfessionalSkillListInterpreter().add(p);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        session.setAttribute("currentUser", interpreter);
+
+        return "redirect:/interprete/profil";
+    }
+    /**
+     * Controller for the pages named "Mon profil" part Professional Skill
+     * Avant de supprimer l'objet, cherche le Professional Skill dans la liste des Professional Skills disponible via l'id (NumProfessionalSkillSelected)
+     * Supprime dans les listes de professionalSkill de l'interprete en session et dans le profileDTO
+     * Fait également l'action en BD
+     * Reads the interpreter directly from the session.
+     * Redirects to login if no interpreter is found in session.
+     *
+     * @param profileDTO the profile form data submitted by the user
+     * @param request     the current HTTP request used to access the session
+     * @return a redirect to "/interpreter/profil" after deleting, or a redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/profil/deleteProfessionalSkill")
+    public String deleteProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return "redirect:/login";
+        }
+        ProfessionalSkill p = null;
+        try {
+            InterpreterProfileService profileService = new InterpreterProfileService();
+            boolean res = profileService.deleteProfessionalSkill(interpreter.getNumInterpreter(), profileDTO.getNumProfessionalSkillSelected());
+            if(res){
+                p = profileDTO.findProfessionalSkillById(profileDTO.getNumProfessionalSkillSelected());
+                if(p != null){
+                    interpreter.getProfessionalSkillsList().remove(p);
+                    profileDTO.getProfessionalSkillListInterpreter().remove(p);
+                }
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        session.setAttribute("currentUser", interpreter);
+
+        return "redirect:/interprete/profil";
+    }
+
+    /**
+     * Controller for the pages named "Mon profil" part Academic Skill
+     * Avant d'ajouter l'objet, cherche le Academic Skill dans la liste des Academic Skills disponible via l'id (NumAcademicSkillSelected)
+     * Ajoute dans les listes de AcademicSkill de l'interprete en session et dans le profileDTO
+     * Fait également l'action en BD
+     * Reads the interpreter directly from the session.
+     * Redirects to login if no interpreter is found in session.
+     *
+     * @param profileDTO the profile form data submitted by the user
+     * @param request     the current HTTP request used to access the session
+     * @return a redirect to "/interpreter/profil" after adding, or a redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/profil/addAcademicSkill")
+    public String addAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return "redirect:/login";
+        }
+        AcademicSkill a = null;
+        try {
+            InterpreterProfileService profileService = new InterpreterProfileService();
+            boolean res = profileService.addAcademicSkill(interpreter.getNumInterpreter(), profileDTO.getNumAcademicSkillSelected());
+            if(res){
+                a = profileDTO.findAcademicSkillById(profileDTO.getNumAcademicSkillSelected());
+                if(a != null){
+                    if(!interpreter.getAcademicSkillsList().contains(a)){
+                        interpreter.getAcademicSkillsList().add(a);
+                    }
+                    if(profileDTO.getAcademicSkillListInterpreter().contains((a))){
+                        profileDTO.getAcademicSkillListInterpreter().add(a);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        session.setAttribute("currentUser", interpreter);
+
+        return "redirect:/interprete/profil";
+    }
+    /**
+     * Controller for the pages named "Mon profil" part Academic Skill
+     * Avant de supprimer l'objet, cherche le Academic Skill dans la liste des Academic Skill disponible via l'id (NumAcademicSkillSelected)
+     * Supprime dans les listes de AcademicSkill de l'interprete en session et dans le profileDTO
+     * Fait également l'action en BD
+     * Reads the interpreter directly from the session.
+     * Redirects to login if no interpreter is found in session.
+     *
+     * @param profileDTO the profile form data submitted by the user
+     * @param request     the current HTTP request used to access the session
+     * @return a redirect to "/interpreter/profil" after deleting, or a redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/profil/deleteAcademicSkill")
+    public String deleteAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return "redirect:/login";
+        }
+        AcademicSkill a = null;
+        try {
+            InterpreterProfileService profileService = new InterpreterProfileService();
+            boolean res = profileService.deleteAcademicSkill(interpreter.getNumInterpreter(), profileDTO.getNumAcademicSkillSelected());
+            if(res){
+                a = profileDTO.findAcademicSkillById(profileDTO.getNumAcademicSkillSelected());
+                if(a != null){
+                    interpreter.getAcademicSkillsList().remove(a);
+                    profileDTO.getAcademicSkillListInterpreter().remove(a);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        session.setAttribute("currentUser", interpreter);
+
+        return "redirect:/interprete/profil";
+    }
+
 
 }
