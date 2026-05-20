@@ -5,6 +5,9 @@ package be.hers.info.ProjetIntegree.POJO;
  * @reviewer Nicolas Jean-François, Halet Louis
  */
 
+import com.sun.jdi.request.DuplicateRequestException;
+
+import java.time.Duration;
 import java.time.LocalTime;
 
 public abstract class TimeSlot {
@@ -86,6 +89,14 @@ public abstract class TimeSlot {
     public int getTravelTimeMinutes() {
 
         return TRAVEL_TIME_MINUTES;
+    }
+
+    /**
+     * @return the end time of the time slot
+     */
+    public LocalTime getEndTime() {
+        Duration duration = Duration.between(this.startTime, this.duration);
+        return this.startTime.plus(duration);
     }
 
     /**

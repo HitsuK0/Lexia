@@ -3,6 +3,7 @@ package be.hers.info.ProjetIntegree.Controller;
 import be.hers.info.ProjetIntegree.DTO.DTOAppointmentRequest;
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
+import be.hers.info.ProjetIntegree.POJO.Appointment;
 import be.hers.info.ProjetIntegree.POJO.BadStatusException;
 import be.hers.info.ProjetIntegree.POJO.Beneficiary;
 import be.hers.info.ProjetIntegree.Services.AppointmentService;
@@ -14,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Nicolas Jean-François
@@ -60,21 +63,36 @@ public class BeneficiaryController {
         return "beneficiaire/planning";
     }
 
-    /** Controller for the pages named "Mes demandes"
-     * Displays the list of appointment requests for the connected beneficiary.
+    /** Controller for the page "Mes demandes".
+     * Displays the list of appointment requests for the connected beneficiary,
+     * optionally filtered by status passed as a parameter.
      * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
      * Redirects to login if no beneficiary is found in session.
      *
+     * @param status  the status to filter the requests on ("accepte", "refuse", "en attente"),
+     *                or null/empty to return all requests
      * @param session the current HTTP session
-     * @param model   the Spring UI model
-     * @return the view "beneficiaire/demandes", or a redirect to "/login"
+     * @param model the Spring UI model
+     * @return the view "beneficiaire/demandes", or a redirect to "/login" if the session is invalid
      */
     @GetMapping("/demandes")
-    public String demandes(HttpSession session, Model model) {
+    public String demandes(@RequestParam(required = false) String status,
+                           HttpSession session, Model model) {
         Beneficiary beneficiary = getBeneficiaryFromSession(session);
         if (beneficiary == null) {
             return "redirect:/login";
         }
+
+        List<Appointment> appointmentList = new ArrayList<Appointment>();
+        try {
+            AppointmentService appointmentService = new AppointmentService();
+            appointmentList = appointmentService.findRequestsForBeneficiary(beneficiary, status);
+        } catch (SQLException | BadStatusException e) {
+            e.printStackTrace();
+        }
+
+        model.addAttribute("requests", appointmentList);
+        model.addAttribute("status", status);
         model.addAttribute("activeTab", "demandes");
         return "beneficiaire/demandes";
     }
