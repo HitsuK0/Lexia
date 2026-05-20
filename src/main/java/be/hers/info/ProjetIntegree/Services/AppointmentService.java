@@ -83,4 +83,21 @@ public class AppointmentService {
         DAOAppointment daoAppointment = new DAOAppointment();
         return daoAppointment.findAllRequestsByBeneficiaryAndOptionalStatus(beneficiary.getNumBeneficiary(), status);
     }
+
+    /**
+     * Deletes the appointment request identified by numAppointment.
+     * The request is only deleted if it exists and its status is "en attente".
+     *
+     * @param numAppointment the id of the request to delete
+     * @throws SQLException if a database access error occurs
+     * @throws BadStatusException if a status read from the database is invalid
+     */
+    public void deleteAppointmentRequest(int numAppointment) throws SQLException, BadStatusException {
+        DAOAppointment daoAppointment = new DAOAppointment();
+        Appointment appointment = daoAppointment.find(numAppointment);
+
+        if(appointment != null && appointment.getStatus().equals("en attente")) {
+            daoAppointment.delete(appointment);
+        }
+    }
 }

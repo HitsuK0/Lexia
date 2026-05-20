@@ -10,6 +10,7 @@ import be.hers.info.ProjetIntegree.Services.AppointmentService;
 import be.hers.info.ProjetIntegree.Services.BeneficiaryProfileService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import oracle.jdbc.proxy.annotation.Post;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -199,7 +200,7 @@ public class BeneficiaryController {
      * @param header the URL of the page from which the form was submitted
      * @return a redirect to the originating page, or to "/login" if no beneficiary in session and by default
      */
-    @PostMapping("/submit/demandes")
+    @PostMapping("/demandes/submit")
     public String submitAppointmentRequest(@ModelAttribute DTOAppointmentRequest dtoAppointmentRequest, HttpSession session,
                                            @RequestHeader(value = "Referer", required = false) String header) {
         Beneficiary currentBeneficiary = getBeneficiaryFromSession(session);
@@ -220,5 +221,31 @@ public class BeneficiaryController {
         }
 
         return "redirect:/login";
+    }
+
+    /** Controller for the trash icon button on the "Mes demandes" page.
+     * Deletes the appointment request identified by numAppointment.
+     * Reads the beneficiary directly from the session.
+     * Redirects to login if no beneficiary is found in session.
+     *
+     * @param numAppointment the id of the appointment request to delete
+     * @param session the current HTTP session
+     * @return a redirect to "/beneficiaire/demandes" after the deletion attempt,
+     *         a redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/demandes/delete")
+    public String deleteRequest(@RequestParam int numAppointment, HttpSession session) {
+        Beneficiary beneficiary = getBeneficiaryFromSession(session);
+        if(beneficiary == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AppointmentService appointmentService = new AppointmentService();
+            appointmentService.deleteAppointmentRequest(numAppointment);
+        } catch (SQLException | BadStatusException e) {
+            e.printStackTrace();
+        }
+        return "redirect:/beneficiaire/demandes";
     }
 }
