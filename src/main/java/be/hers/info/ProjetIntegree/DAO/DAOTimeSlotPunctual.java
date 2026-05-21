@@ -6,6 +6,8 @@ import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleTypes;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -14,7 +16,6 @@ import java.util.ArrayList;
  * @reviewer Nicolas Jean-François, Halet Louis
  */
 public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
-
     /**
      * Search for a TimeSlotPunctual with the same id as objectToSearchInDB
      * @param objectToSearchInDB is the id of the TimeSlotPunctual to search

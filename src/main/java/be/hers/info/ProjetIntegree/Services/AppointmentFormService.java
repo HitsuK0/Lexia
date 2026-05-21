@@ -47,11 +47,7 @@ public class AppointmentFormService {
         );
 
         DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
-        TimeSlotPunctual tempTimeSlot = daoTimeSlotPunctual.findSameTimeSlot(newTimeSlotPunctual);
-        if(tempTimeSlot == null)
-            daoTimeSlotPunctual.create(newTimeSlotPunctual);
-        else
-            newTimeSlotPunctual = tempTimeSlot;
+        daoTimeSlotPunctual.create(newTimeSlotPunctual);
         newAppointment.setTimeSlot(newTimeSlotPunctual);
 
         DAOEstablishment daoEstablishment = new DAOEstablishment();
