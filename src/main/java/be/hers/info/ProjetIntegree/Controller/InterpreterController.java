@@ -4,10 +4,7 @@ package be.hers.info.ProjetIntegree.Controller;
  * @reviewer Nicolas Jean-François
  */
 
-import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
-import be.hers.info.ProjetIntegree.DTO.DTOAppointmentForm;
-import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
-import be.hers.info.ProjetIntegree.DTO.DTOEstablishmentFormAppointment;
+import be.hers.info.ProjetIntegree.DTO.*;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.AppointmentFormService;
@@ -105,7 +102,7 @@ public class InterpreterController {
      * Add the appointment created by the interpreter to the DB
      * @param dtoAppointment the appointment to add to the DB
      * @param interpreter the user connected
-     * @return @return a redirect to the planning page after the creation
+     * @return a redirect to the planning page after the creation
      */
     @PostMapping("/planning/beneficiaires")
     public String addAppointment(@ModelAttribute("newAppointment") DTOAppointmentForm dtoAppointment,
@@ -120,6 +117,42 @@ public class InterpreterController {
                 redirectAttributes.addFlashAttribute("successMessage", "Rendez-vous créé avec succès");
             else
                 redirectAttributes.addFlashAttribute("errorMessage", "La création du rendez-vous a échoué");
+        }
+        catch(BadStatusException | SQLException | IllegalArgumentException e){
+            redirectAttributes.addFlashAttribute("errorMessage", "Une erreur est survenue : " + e.getMessage());
+        }
+
+        return "redirect:/interprete/planning/beneficiaires";
+    }
+
+    /**
+     * Add the appointments created by the beneficiary and send by the interpreter connected to the DB
+     * @param dtoAppointments the list of appointments to add to the DB
+     * @param interpreter the user connected
+     * @return a redirect to the planning page after the creation
+     */
+    @PostMapping("/planning/beneficiaires/confirmer")
+    public String addAppointments(@ModelAttribute DTOAppointmentWrapper dtoAppointments,
+                                  @ModelAttribute("InterpreterConnected") Interpreter interpreter,
+                                  RedirectAttributes redirectAttributes) {
+        if (interpreter == null)
+            return "redirect:/login";
+
+        try {
+            String resultMessage = "Rendez-vous créé avec succès";
+            boolean estReussi = true;
+            AppointmentFormService appointmentFormService = new AppointmentFormService();
+            for(DTOAppointmentForm dtoAppointment : dtoAppointments.getAppointments()){
+                if(!appointmentFormService.createAppointment(dtoAppointment)){
+                    resultMessage = "La création d'au moins un rendez-vous a échoué";
+                    estReussi = false;
+                }
+            }
+
+            if(estReussi)
+                redirectAttributes.addFlashAttribute("successMessage", resultMessage);
+            else
+                redirectAttributes.addFlashAttribute("errorMessage", resultMessage);
         }
         catch(BadStatusException | SQLException | IllegalArgumentException e){
             redirectAttributes.addFlashAttribute("errorMessage", "Une erreur est survenue : " + e.getMessage());
