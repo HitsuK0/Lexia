@@ -21,9 +21,9 @@ import java.util.List;
 public class AbsenceService {
 
     /**
-            * It create an Absence in the database using the data in the absenceDTO given in param.
-            * @param absenceDTO is the DTOAbsence used by spring to copy the data in the form.
-            */
+     * It create an Absence in the database using the data in the absenceDTO given in param.
+     * @param absenceDTO is the DTOAbsence used by spring to copy the data in the form.
+     */
     public void createAbsence(DTOAbsence absenceDTO, int numInterpreter) throws BadStatusException, SQLException {
         Absence absence = new Absence();
         absence.setReason(absenceDTO.getReason());
@@ -43,11 +43,7 @@ public class AbsenceService {
             duration = LocalTime.MIDNIGHT.plus(d);
         }
         timeSlotPunctual.setDuration(duration);
-        DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
-        timeSlotPunctual = daoTimeSlotPunctual.findSameTimeSlot(timeSlotPunctual);
-        if(timeSlotPunctual == null){
-            daoTimeSlotPunctual.create(timeSlotPunctual);
-        }
+
         absence.setTimeSlot(timeSlotPunctual);
         DAOAbsence daoAbsence = new DAOAbsence();
         daoAbsence.create(absence, numInterpreter);
