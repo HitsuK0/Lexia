@@ -169,6 +169,10 @@
                         document.getElementById('dateStart').value = info.dateStr.split('T')[0];
                         document.getElementById('dateEnd').value = info.dateStr.split('T')[0];
 
+                        document.getElementById('dateStart').addEventListener('change', function () {
+                            document.getElementById('dateEnd').min = this.value;
+                        });
+
                         if (info.dateStr.includes('T')) {
                             const heureStr = info.dateStr.split('T')[1].substring(0, 5);
                             const [h, m] = heureStr.split(':').map(Number);
@@ -208,6 +212,10 @@
                 });
 
                 calendar.render();
+
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('dateStart').min = today;
+                document.getElementById('dateEnd').min   = today;
 
                 function generateHours(selectId, start, end) {
                     const select = document.getElementById(selectId);
