@@ -331,6 +331,32 @@
                     }
                 });
 
+                /* allows you to reset the form to zero after closing it */
+                document.getElementById('modalIndispo').addEventListener('hidden.bs.modal', function () {
+                    document.getElementById('startDate').value      = '';
+                    document.getElementById('endDate').value        = '';
+                    document.getElementById('allDay').checked       = false;
+                    document.getElementById('startHour').disabled   = false;
+                    document.getElementById('endHour').disabled     = false;
+                    document.getElementById('reason').value         = '';
+                    document.getElementById('reasonPrivate').checked = false;
+                    generateHours('startHour', 8 * 60, 18 * 60 + 55);
+                    generateHours('endHour',   8 * 60 + 5, 19 * 60);
+                });
+
+                /* allows you to reset the form to zero after closing it */
+                document.getElementById('modalEditIndispo').addEventListener('hidden.bs.modal', function () {
+                    document.getElementById('editStartDate').value       = '';
+                    document.getElementById('editEndDate').value         = '';
+                    document.getElementById('editAllDay').checked        = false;
+                    document.getElementById('editStartHour').disabled    = false;
+                    document.getElementById('editEndHour').disabled      = false;
+                    document.getElementById('editReason').value          = '';
+                    document.getElementById('editReasonPrivate').checked = false;
+                    generateHours('editStartHour', 8 * 60, 18 * 60 + 55);
+                    generateHours('editEndHour',   8 * 60 + 5, 19 * 60);
+                });
+
                 document.getElementById('editAllDay').addEventListener('change', function () {
                     document.getElementById('editStartHour').disabled = this.checked;
                     document.getElementById('editEndHour').disabled = this.checked;
