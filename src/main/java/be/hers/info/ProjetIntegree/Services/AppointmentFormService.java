@@ -1,8 +1,14 @@
 package be.hers.info.ProjetIntegree.Services;
 
+/**
+ * @authors Rosman Loïs
+ * @reviewer Nicolas Jean-François, Halet Louis, Wellinger Chloé
+ */
+
 import be.hers.info.ProjetIntegree.DAO.*;
 import be.hers.info.ProjetIntegree.DTO.DTOAppointment;
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
+import be.hers.info.ProjetIntegree.DTO.DTOEstablishmentFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
 
 import java.sql.SQLException;
@@ -50,20 +56,20 @@ public class AppointmentFormService {
         DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
         List<AcademicSkill> listAcademicSkills = new ArrayList<>();
         for(int num : appointmentDTO.getNumAcademicSkillsNeeded()){
-            AcademicSkill academicSkillFinded = daoAcademicSkill.find(num);
-            if(academicSkillFinded == null)
+            AcademicSkill academicSkillFound = daoAcademicSkill.find(num);
+            if(academicSkillFound == null)
                 throw new IllegalArgumentException("Compétence académique introuvable");
-            listAcademicSkills.add(academicSkillFinded);
+            listAcademicSkills.add(academicSkillFound);
         }
         newAppointment.setAcademicSkillsNeeded(listAcademicSkills);
 
         DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
         List<ProfessionalSkill> listProfessionalSkills = new ArrayList<>();
         for(int num : appointmentDTO.getNumProfessionalSkillsNeeded()){
-            ProfessionalSkill professionalSkillFinded = daoProfessionalSkill.find(num);
-            if(professionalSkillFinded == null)
+            ProfessionalSkill professionalSkillFound = daoProfessionalSkill.find(num);
+            if(professionalSkillFound == null)
                 throw new IllegalArgumentException("Compétence professionnelle introuvable");
-            listProfessionalSkills.add(professionalSkillFinded);
+            listProfessionalSkills.add(professionalSkillFound);
         }
         newAppointment.setProfessionalSkillsNeeded(listProfessionalSkills);
 
@@ -85,6 +91,16 @@ public class AppointmentFormService {
         try{
             DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
             return daoBeneficiary.findWithInterpreter(numInterpreter);
+        }
+        catch(SQLException sqle){
+            return null;
+        }
+    }
+
+    public List<DTOEstablishmentFormAppointment> findAllEstablishments(){
+        try{
+            DAOEstablishment daoEstablishment = new DAOEstablishment();
+            return daoEstablishment.findAllDTOFormAppointment();
         }
         catch(SQLException sqle){
             return null;

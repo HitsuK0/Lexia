@@ -1,5 +1,10 @@
 package be.hers.info.ProjetIntegree.DTO;
 
+/**
+ * @authors Rosman Loïs
+ * @reviewer Nicolas Jean-François, Halet Louis, Wellinger Chloé
+ */
+
 public class DTOBeneficiaryFormAppointment {
     private int numBeneficiary;
     private String lastName;

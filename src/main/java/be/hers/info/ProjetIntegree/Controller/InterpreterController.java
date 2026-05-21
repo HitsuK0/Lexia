@@ -7,6 +7,7 @@ package be.hers.info.ProjetIntegree.Controller;
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
 import be.hers.info.ProjetIntegree.DTO.DTOAppointment;
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
+import be.hers.info.ProjetIntegree.DTO.DTOEstablishmentFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.AppointmentFormService;
@@ -88,6 +89,9 @@ public class InterpreterController {
         AppointmentFormService appointmentFormService = new AppointmentFormService();
         List<DTOBeneficiaryFormAppointment> hisBeneficiaries = appointmentFormService.findHisBeneficiaries(interpreter.getNumInterpreter());
         model.addAttribute("beneficiariesList", hisBeneficiaries);
+
+        List<DTOEstablishmentFormAppointment> establishments = appointmentFormService.findAllEstablishments();
+        model.addAttribute("establishmentList", establishments);
 
         return "interprete/planning-beneficiaires";
     }
