@@ -5,12 +5,10 @@ package be.hers.info.ProjetIntegree.Controller;
  */
 
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
-import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOInterpreterProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
-import be.hers.info.ProjetIntegree.Services.BeneficiaryProfileService;
 import be.hers.info.ProjetIntegree.Services.InterpreterProfileService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -302,9 +300,8 @@ public class InterpreterController {
 
     /**
      * Controller for the pages named "Mon profil" part Professional Skill
-     * Avant d'ajouter l'objet, cherche le Professional Skill dans la liste des Professional Skills disponible via l'id (NumProfessionalSkillSelected)
-     * Ajoute dans les listes de professionalSkill de l'interprete en session et dans le profileDTO
-     * Fait également l'action en BD
+     * Before adding the object, search for the Professional Skill in the list of available Professional Skills using the id (NumProfessionalSkillSelected)     * Ajoute dans les listes de professionalSkill de l'interprete en session et dans le profileDTO
+     * Also features the action in DB
      * Reads the interpreter directly from the session.
      * Redirects to login if no interpreter is found in session.
      *
@@ -343,9 +340,9 @@ public class InterpreterController {
     }
     /**
      * Controller for the pages named "Mon profil" part Professional Skill
-     * Avant de supprimer l'objet, cherche le Professional Skill dans la liste des Professional Skills disponible via l'id (NumProfessionalSkillSelected)
-     * Supprime dans les listes de professionalSkill de l'interprete en session et dans le profileDTO
-     * Fait également l'action en BD
+     * Before deleting the object, search for the Professional Skill in the list of available Professional Skills using the ID (NumProfessionalSkillSelected)
+     * Deletes the Professional Skill from the interpreter's session list and from the profileDTO
+     * Also performs the action in the database
      * Reads the interpreter directly from the session.
      * Redirects to login if no interpreter is found in session.
      *
@@ -382,9 +379,9 @@ public class InterpreterController {
 
     /**
      * Controller for the pages named "Mon profil" part Academic Skill
-     * Avant d'ajouter l'objet, cherche le Academic Skill dans la liste des Academic Skills disponible via l'id (NumAcademicSkillSelected)
-     * Ajoute dans les listes de AcademicSkill de l'interprete en session et dans le profileDTO
-     * Fait également l'action en BD
+     * Before adding the object, search for the Academic Skill in the list of available Academic Skills using the ID (NumAcademicSkillSelected)
+     * Adds it to the interpreter's Academic Skill lists in the session and to the profileDTO
+     * Also performs the action in the database
      * Reads the interpreter directly from the session.
      * Redirects to login if no interpreter is found in session.
      *
@@ -423,9 +420,9 @@ public class InterpreterController {
     }
     /**
      * Controller for the pages named "Mon profil" part Academic Skill
-     * Avant de supprimer l'objet, cherche le Academic Skill dans la liste des Academic Skill disponible via l'id (NumAcademicSkillSelected)
-     * Supprime dans les listes de AcademicSkill de l'interprete en session et dans le profileDTO
-     * Fait également l'action en BD
+     * Before deleting the object, search for the Academic Skill in the list of available Academic Skills using the ID (NumAcademicSkillSelected)
+     * Deletes it from the interpreter's Academic Skill lists in the session and from the profileDTO
+     * Also performs the action in the database
      * Reads the interpreter directly from the session.
      * Redirects to login if no interpreter is found in session.
      *

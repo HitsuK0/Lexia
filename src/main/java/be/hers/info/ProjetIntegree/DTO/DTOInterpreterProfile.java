@@ -4,7 +4,10 @@ import be.hers.info.ProjetIntegree.POJO.AcademicSkill;
 import be.hers.info.ProjetIntegree.POJO.ProfessionalSkill;
 
 import java.util.List;
-
+/**
+ * @author Halet Louis
+ * @reviewer Nicolas Jean-Francois, Wellinger Chloé
+ */
 public class DTOInterpreterProfile {
     private int numInterpreter;
     private String login;
@@ -316,9 +319,10 @@ public class DTOInterpreterProfile {
     }
 
     /**
-     * Cherche le professional Skill où l'id en paramètre correspond à un numProfessionalSkill dans la liste professionalSkillList
+     *
+     * Search for the professional skill where the ID parameter matches a numProfessionalSkill in the professionalSkillList
      * @param id the id of ProfessionalSkill
-     * @return le professionalSkill trouvé dans la liste, null si non trouvé
+     * @return The professional skill found in the list, null if not found
      */
     public ProfessionalSkill findProfessionalSkillById(int id) {
         ProfessionalSkill psFind = null;
@@ -332,9 +336,9 @@ public class DTOInterpreterProfile {
         return psFind;
     }
     /**
-     * Cherche l' AcademicSkill où l'id en paramètre correspond à un numAcademicSkill dans la liste academicSkillList
+     * Search for the AcademicSkill where the ID parameter matches a numAcademicSkill in the academicSkillList
      * @param id the id of AcademicSkill
-     * @return l'AcademicSkill trouvé dans la liste, null si non trouvé
+     * @return The AcademicSkill found in the list, null if not found
      */
     public AcademicSkill findAcademicSkillById(int id) {
         AcademicSkill asFind = null;
