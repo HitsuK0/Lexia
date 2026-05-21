@@ -218,6 +218,13 @@ public class DAOEstablishment extends DAO<Establishment>{
         return isInserted;
     }
 
+    /**
+     * Insert in DB an instance that linked an establishment ant a referrer
+     * @param numEstablishment the id of an establishment
+     * @param numReferrer the id of a referrer
+     * @return true is the creation is a succes. Otherwise, return false
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
     public boolean addReferrerAtEstablishment(int numEstablishment, int numReferrer) throws SQLException {
         boolean isInserted = false;
         PreparedStatement prStat = null;

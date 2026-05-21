@@ -92,6 +92,9 @@ public class InterpreterController {
         List<DTOEstablishmentFormAppointment> establishments = appointmentFormService.findAllEstablishments();
         model.addAttribute("establishmentList", establishments);
 
+        List<AcademicSkill> academicSkills = appointmentFormService.findAllAcademicSkills();
+        model.addAttribute("academicSkillList", academicSkills);
+
         return "interprete/planning-beneficiaires";
     }
 

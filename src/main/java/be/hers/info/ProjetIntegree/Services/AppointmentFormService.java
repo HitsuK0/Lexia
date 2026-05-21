@@ -97,10 +97,33 @@ public class AppointmentFormService {
         }
     }
 
+    /**
+     * Search for all the establishments in the DB and stores them in
+     * a list containing DTOEstablishmentFormAppointment objects
+     * @return a list containing all the establishments
+     *         an empty list if no establishment found
+     *         null if an SQLException is thrown
+     */
     public List<DTOEstablishmentFormAppointment> findAllEstablishments(){
         try{
             DAOEstablishment daoEstablishment = new DAOEstablishment();
             return daoEstablishment.findAllDTOFormAppointment();
+        }
+        catch(SQLException sqle){
+            return null;
+        }
+    }
+
+    /**
+     * Search all academic skills in the DB
+     * @return a list containing all academic skills in the DB
+     *         an empty list if no academic skill found
+     *         null if an SQLException is thrown
+     */
+    public List<AcademicSkill> findAllAcademicSkills(){
+        try{
+            DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
+            return daoAcademicSkill.findAll();
         }
         catch(SQLException sqle){
             return null;
