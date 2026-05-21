@@ -129,4 +129,20 @@ public class AppointmentFormService {
             return null;
         }
     }
+
+    /**
+     * Search all professional skills in the DB
+     * @return a list containing all professional skills in the DB
+     *         an empty list if no professional skill found
+     *         null if an SQLException is thrown
+     */
+    public List<ProfessionalSkill> findAllProfessionalSkills(){
+        try{
+            DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
+            return daoProfessionalSkill.findAll();
+        }
+        catch(SQLException sqle){
+            return null;
+        }
+    }
 }

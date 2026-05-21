@@ -95,6 +95,9 @@ public class InterpreterController {
         List<AcademicSkill> academicSkills = appointmentFormService.findAllAcademicSkills();
         model.addAttribute("academicSkillList", academicSkills);
 
+        List<ProfessionalSkill> professionalSkills = appointmentFormService.findAllProfessionalSkills();
+        model.addAttribute("professionalSkillList", professionalSkills);
+
         return "interprete/planning-beneficiaires";
     }
 
