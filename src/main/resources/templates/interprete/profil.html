@@ -151,7 +151,12 @@
                             </div>
                             <p class="small text-muted mb-3">Compétences possédées</p>
                             <div class="d-flex flex-wrap gap-2" id="badgesMetiers">
-                                <span class="badge-skill"><i class="bi bi-check-lg"></i> Transcription</span>
+                                <span class="badge-skill">
+                                    <i class="bi bi-check-lg"></i> Transcription
+                                    <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesMetiers')" title="Retirer">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </span>
                             </div>
                         </div>
 
@@ -166,9 +171,24 @@
                             </div>
                             <p class="small text-muted mb-3">Matières possédées</p>
                             <div class="d-flex flex-wrap gap-2" id="badge-academics">
-                                <span class="badge-skill"><i class="bi bi-check-lg"></i> Histoire</span>
-                                <span class="badge-skill"><i class="bi bi-check-lg"></i> Mathématiques</span>
-                                <span class="badge-skill"><i class="bi bi-check-lg"></i> Economie</span>
+                                <span class="badge-skill">
+                                    <i class="bi bi-check-lg"></i> Histoire
+                                    <button class="btn-badge-remove" onclick="removeSkill(this, 'badge-academics')" title="Retirer">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </span>
+                                <span class="badge-skill">
+                                    <i class="bi bi-check-lg"></i> Mathématiques
+                                    <button class="btn-badge-remove" onclick="removeSkill(this, 'badge-academics')" title="Retirer">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </span>
+                                <span class="badge-skill">
+                                    <i class="bi bi-check-lg"></i> Economie
+                                    <button class="btn-badge-remove" onclick="removeSkill(this, 'badge-academics')" title="Retirer">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </span>
                             </div>
                         </div>
 
@@ -374,6 +394,11 @@
                 }
 
                 bootstrap.Modal.getInstance(document.getElementById('modalPassword')).hide();
+            }
+
+            function removeSkill(btn, containerId) {
+                btn.closest('.badge-skill').remove();
+                onFieldChanged();
             }
 
             function onFieldChanged() {

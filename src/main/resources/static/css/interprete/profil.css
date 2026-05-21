@@ -124,3 +124,17 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(99, 84, 196, 0.45);
 }
+
+.btn-badge-remove {
+    background: none;
+    border: none;
+    padding: 0 0 0 4px;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    line-height: 1;
+}
+
+.btn-badge-remove:hover {
+    opacity: 1;
+}
