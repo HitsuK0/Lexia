@@ -309,7 +309,19 @@
             function toggleEdit(id, btn) {
                 const input = document.getElementById(id);
                 const isReadonly = input.hasAttribute('readonly');
+
                 if (isReadonly) {
+                    document.querySelectorAll('.btn-edit').forEach(otherBtn => {
+                        const otherId = otherBtn.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                        if (otherId && otherId !== id) {
+                            const otherInput = document.getElementById(otherId);
+                            if (otherInput && !otherInput.hasAttribute('readonly')) {
+                                otherInput.setAttribute('readonly', true);
+                                otherBtn.style.color = '';
+                            }
+                        }
+                    });
+
                     input.removeAttribute('readonly');
                     input.focus();
                     btn.style.color = '#593196';
@@ -409,6 +421,15 @@
                 document.querySelectorAll('input:not([type="radio"]), textarea, select').forEach(el => {
                     el.addEventListener('input', onFieldChanged);
                     el.addEventListener('change', onFieldChanged);
+                });
+
+                document.querySelectorAll('.input-edit-group input, .input-edit-group textarea').forEach(input => {
+                    input.addEventListener('blur', function () {
+                        if (!this.hasAttribute('readonly')) {
+                            const btn = this.closest('.input-edit-group').querySelector('.btn-edit');
+                            if (btn) toggleEdit(this.id, btn);
+                        }
+                    });
                 });
             });
         </script>
