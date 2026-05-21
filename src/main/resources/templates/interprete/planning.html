@@ -271,14 +271,14 @@
                     }
 
                     if (!dateStart.value) displayError(dateStart, 'La date de début est obligatoire.');
-                    if (!dateEnd.value) displayError(dateEnd, 'La date de end est obligatoire.');
+                    if (!dateEnd.value) displayError(dateEnd, 'La date de fin est obligatoire.');
                     if (dateStart.value && dateEnd.value && dateEnd.value < dateStart.value) {
-                        displayError(dateEnd, 'La date de end doit être après la date de début.');
+                        displayError(dateEnd, 'La date de fin doit être après la date de début.');
                     }
 
                     if (!fullDay) {
                         if (!startHour.value) displayError(startHour, 'L\'heure de début est obligatoire.');
-                        if (!endHour.value) displayError(endHour, 'L\'heure de end est obligatoire.');
+                        if (!endHour.value) displayError(endHour, 'L\'heure de fin est obligatoire.');
                     }
 
                     if (!valid) return;
