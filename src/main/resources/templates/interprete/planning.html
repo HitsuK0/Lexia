@@ -277,6 +277,24 @@
 
                     bootstrap.Modal.getInstance(document.getElementById('modalIndispo')).hide();
                 });
+
+                document.getElementById('modalIndispo').addEventListener('hidden.bs.modal', function () {
+                    document.getElementById('dateStart').value  = '';
+                    document.getElementById('dateEnd').value    = '';
+                    document.getElementById('fullDay').checked  = false;
+                    document.getElementById('startHour').disabled = false;
+                    document.getElementById('endHour').disabled   = false;
+                    document.getElementById('motif').value      = '';
+                    document.getElementById('motifPrive').checked = false;
+                    generateHours('startHour', 8 * 60, 18 * 60 + 55);
+                    generateHours('endHour',   8 * 60 + 5, 19 * 60);
+                    ['dateStart','dateEnd','startHour','endHour'].forEach(id => {
+                        const el = document.getElementById(id);
+                        el.classList.remove('is-invalid');
+                        const fb = el.nextElementSibling;
+                        if (fb && fb.classList.contains('invalid-feedback')) fb.remove();
+                    });
+                });
             });
         </script>
 
