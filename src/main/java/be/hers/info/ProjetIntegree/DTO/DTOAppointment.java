@@ -16,7 +16,6 @@ public class DTOAppointment {
 
     // Each field allows the identification of its own object. This is the form binding.
     private int numBeneficiary;
-    private List<Integer> numInterpreters;
     private int numEstablishment;
     private List<Integer> numAcademicSkillsNeeded;
     private List<Integer> numProfessionalSkillsNeeded;
@@ -37,7 +36,6 @@ public class DTOAppointment {
      * Creates a fully initialised DTOAppointment
      * @param appointmentLocals the list of appointment locals
      * @param numBeneficiary the id of the beneficiary related to the appointment
-     * @param numInterpreters the list of interpreters identifiers related to the appointment
      * @param numEstablishment the id of the establishment related to the appointment
      * @param numAcademicSkillsNeeded the list of academic skills identifiers related to the appointment
      * @param numProfessionalSkillsNeeded the list of professional skills identifiers related to the appointment
@@ -47,12 +45,11 @@ public class DTOAppointment {
      * @param endTime the end time of the time slot
      */
     public DTOAppointment(List<String> appointmentLocals, int numBeneficiary,
-                          List<Integer> numInterpreters, int numEstablishment,
-                          List<Integer> numAcademicSkillsNeeded, List<Integer> numProfessionalSkillsNeeded,
+                          int numEstablishment, List<Integer> numAcademicSkillsNeeded,
+                          List<Integer> numProfessionalSkillsNeeded,
                           LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         this.appointmentLocals = appointmentLocals;
         this.numBeneficiary = numBeneficiary;
-        this.numInterpreters = numInterpreters;
         this.numEstablishment = numEstablishment;
         this.numAcademicSkillsNeeded = numAcademicSkillsNeeded;
         this.numProfessionalSkillsNeeded = numProfessionalSkillsNeeded;
@@ -90,21 +87,6 @@ public class DTOAppointment {
      */
     public void setNumBeneficiary(int numBeneficiary) {
         this.numBeneficiary = numBeneficiary;
-    }
-
-    /**
-     * @return the interpreters identifiers
-     */
-    public List<Integer> getNumInterpreters() {
-        return numInterpreters;
-    }
-
-    /**
-     * Initialize the list of interpreters identifiers
-     * @param numInterpreters the list of interpreters identifiers related to the appointment
-     */
-    public void setNumInterpreters(List<Integer> numInterpreters) {
-        this.numInterpreters = numInterpreters;
     }
 
     /**

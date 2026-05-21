@@ -30,16 +30,6 @@ public class AppointmentFormService {
             throw new IllegalArgumentException("Bénéficiaire introuvable");
         newAppointment.setBeneficiary(beneficiary);
 
-        DAOInterpreter daoInterpreter = new DAOInterpreter();
-        List<Interpreter> listInterpreters = new ArrayList<>();
-        for(int num : appointmentDTO.getNumInterpreters()){
-            Interpreter interpreterFound = daoInterpreter.find(num);
-            if(interpreterFound == null)
-                throw new IllegalArgumentException("Interprète introuvable");
-            listInterpreters.add(interpreterFound);
-        }
-        newAppointment.setInterpreters(listInterpreters);
-
         TimeSlotPunctual newTimeSlotPunctual = new TimeSlotPunctual(
                 appointmentDTO.getStartTime(),
                 appointmentDTO.getEndTime(),
