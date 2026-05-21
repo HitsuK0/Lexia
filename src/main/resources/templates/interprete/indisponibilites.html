@@ -357,6 +357,21 @@
                     generateHours('editEndHour',   8 * 60 + 5, 19 * 60);
                 });
 
+                /* allows you to prevent putting a date past today’s one */
+                const today = new Date().toISOString().split('T')[0];
+
+                document.getElementById('startDate').min = today;
+                document.getElementById('endDate').min   = today;
+                document.getElementById('startDate').addEventListener('change', function () {
+                    document.getElementById('endDate').min = this.value;
+                });
+
+                document.getElementById('editStartDate').min = today;
+                document.getElementById('editEndDate').min   = today;
+                document.getElementById('editStartDate').addEventListener('change', function () {
+                    document.getElementById('editEndDate').min = this.value;
+                });
+
                 document.getElementById('editAllDay').addEventListener('change', function () {
                     document.getElementById('editStartHour').disabled = this.checked;
                     document.getElementById('editEndHour').disabled = this.checked;
