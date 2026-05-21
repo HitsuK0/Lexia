@@ -286,6 +286,7 @@
                     bootstrap.Modal.getInstance(document.getElementById('modalIndispo')).hide();
                 });
 
+                /* Allows you to reset the form to zero after closing it */
                 document.getElementById('modalIndispo').addEventListener('hidden.bs.modal', function () {
                     document.getElementById('dateStart').value  = '';
                     document.getElementById('dateEnd').value    = '';
