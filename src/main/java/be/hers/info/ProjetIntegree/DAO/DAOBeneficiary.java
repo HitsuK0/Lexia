@@ -70,11 +70,18 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         return beneficiary;
     }
 
+    /**
+     * Research all beneficiaries whose the referent is the interpreter whose the id is indicated
+     * @param numInterpreter the interpreter's id which is the referent
+     * @return a list containing at least one beneficiary if the DB containing at least one
+     *         an empty list if no beneficiary found
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
     public List<DTOBeneficiaryFormAppointment> findWithInterpreter(int numInterpreter) throws SQLException{
         List<DTOBeneficiaryFormAppointment> listBeneficiary = new ArrayList<>();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String query = "SELECT numBeneficiary, login, firstname, lastname" +
+        String query = "SELECT numBeneficiary, lastname, firstname" +
                        "FROM Beneficiary" +
                        "WHERE FKNumInterpreter = ?";
 
@@ -86,7 +93,6 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             while(resultSet.next()) {
                 DTOBeneficiaryFormAppointment beneficiary = new DTOBeneficiaryFormAppointment(
                                                           resultSet.getInt("numBeneficiary"),
-                                                          resultSet.getString("lastName"),
                                                           resultSet.getString("lastName"),
                                                           resultSet.getString("firstName"));
 
