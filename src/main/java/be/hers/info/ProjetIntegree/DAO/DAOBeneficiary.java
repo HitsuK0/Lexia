@@ -1,5 +1,6 @@
 package be.hers.info.ProjetIntegree.DAO;
 
+import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleType;
@@ -67,6 +68,34 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             closeStatementAndResultSet(preparedStatement, resultSet);
         }
         return beneficiary;
+    }
+
+    public List<DTOBeneficiaryFormAppointment> findWithInterpreter(int numInterpreter) throws SQLException{
+        List<DTOBeneficiaryFormAppointment> listBeneficiary = new ArrayList<>();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT numBeneficiary, login, firstname, lastname" +
+                       "FROM Beneficiary" +
+                       "WHERE FKNumInterpreter = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setInt(1, numInterpreter);
+            resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()) {
+                DTOBeneficiaryFormAppointment beneficiary = new DTOBeneficiaryFormAppointment(
+                                                          resultSet.getInt("numBeneficiary"),
+                                                          resultSet.getString("lastName"),
+                                                          resultSet.getString("lastName"),
+                                                          resultSet.getString("firstName"));
+
+                listBeneficiary.add(beneficiary);
+            }
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return listBeneficiary;
     }
 
     /**

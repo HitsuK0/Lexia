@@ -2,6 +2,7 @@ package be.hers.info.ProjetIntegree.Services;
 
 import be.hers.info.ProjetIntegree.DAO.*;
 import be.hers.info.ProjetIntegree.DTO.DTOAppointment;
+import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
 
 import java.sql.SQLException;
@@ -81,5 +82,22 @@ public class AppointmentFormService {
             estCree = true;
 
         return estCree;
+    }
+
+    /**
+     * Search for all beneficiaries whose the referent is the interpreter whose the id is indicated
+     * @param numInterpreter the interpreter's id which is the referent
+     * @return a list containing at least one beneficiary if the DB containing at least one
+     *         an empty list if no beneficiary found
+     *         null if SQLException is thrown
+     */
+    public List<DTOBeneficiaryFormAppointment> findHisBeneficiaries(int numInterpreter){
+        try{
+            DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+            return daoBeneficiary.findWithInterpreter(numInterpreter);
+        }
+        catch(SQLException sqle){
+            return null;
+        }
     }
 }

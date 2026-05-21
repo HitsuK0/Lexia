@@ -6,6 +6,7 @@ package be.hers.info.ProjetIntegree.Controller;
 
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
 import be.hers.info.ProjetIntegree.DTO.DTOAppointment;
+import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.AppointmentFormService;
@@ -18,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 // TODO: Delete default values from RequestParam once true params can be passed
@@ -66,12 +68,11 @@ public class InterpreterController {
     @GetMapping("/planning/beneficiaires")
     public String planningBeneficiaires(@RequestParam(defaultValue = "2026-05-15") String start,
                                         @RequestParam(defaultValue = "2026-05-22") String end,
-                                        @ModelAttribute("BeneficiaryConnected") Beneficiary beneficiary,
+                                        @ModelAttribute("BeneficiarySelected") Beneficiary beneficiary,
+                                        @ModelAttribute("InterpreterConnected") Interpreter interpreter,
                                         HttpServletRequest request, Model model) {
-
-        if(beneficiary == null) {
+        if(interpreter == null)
             return "redirect:/login";
-        }
 
         String dateStart = start.substring(0, 10);
         String dateEnd = end.substring(0, 10);
@@ -83,6 +84,10 @@ public class InterpreterController {
         HttpSession session = request.getSession();
         session.setAttribute("appointmentList", appointmentList);
         model.addAttribute("activeTab", "planning");
+
+        AppointmentFormService appointmentFormService = new AppointmentFormService();
+        List<DTOBeneficiaryFormAppointment> hisBeneficiaries = appointmentFormService.findHisBeneficiaries(interpreter.getNumInterpreter());
+        model.addAttribute("beneficiariesList", hisBeneficiaries);
 
         return "interprete/planning-beneficiaires";
     }
