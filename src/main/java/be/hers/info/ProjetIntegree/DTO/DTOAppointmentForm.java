@@ -11,7 +11,7 @@ import java.util.List;
  * @reviewer Halet Louis, Wellinger Chloé, Nicolas Jean-François
  */
 
-public class DTOAppointment {
+public class DTOAppointmentForm {
     private List<String> appointmentLocals;
 
     // Each field allows the identification of its own object. This is the form binding.
@@ -29,7 +29,7 @@ public class DTOAppointment {
     /**
      * Creates an empty DTOAppointment
      */
-    public DTOAppointment() {
+    public DTOAppointmentForm() {
     }
 
     /**
@@ -44,10 +44,10 @@ public class DTOAppointment {
      * @param startTime the start time of the time slot
      * @param endTime the end time of the time slot
      */
-    public DTOAppointment(List<String> appointmentLocals, int numBeneficiary,
-                          int numEstablishment, List<Integer> numAcademicSkillsNeeded,
-                          List<Integer> numProfessionalSkillsNeeded,
-                          LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public DTOAppointmentForm(List<String> appointmentLocals, int numBeneficiary,
+                              int numEstablishment, List<Integer> numAcademicSkillsNeeded,
+                              List<Integer> numProfessionalSkillsNeeded,
+                              LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         this.appointmentLocals = appointmentLocals;
         this.numBeneficiary = numBeneficiary;
         this.numEstablishment = numEstablishment;

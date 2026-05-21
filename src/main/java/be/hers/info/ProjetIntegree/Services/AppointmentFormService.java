@@ -6,7 +6,7 @@ package be.hers.info.ProjetIntegree.Services;
  */
 
 import be.hers.info.ProjetIntegree.DAO.*;
-import be.hers.info.ProjetIntegree.DTO.DTOAppointment;
+import be.hers.info.ProjetIntegree.DTO.DTOAppointmentForm;
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
 import be.hers.info.ProjetIntegree.DTO.DTOEstablishmentFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
@@ -24,7 +24,7 @@ public class AppointmentFormService {
      * @param appointmentDTO the appointmentDTO used to retrieve the data in the form.
      * @return true if the appointment is created successfully. Otherwise, return false
      */
-    public boolean createAppointment(DTOAppointment appointmentDTO) throws BadStatusException, SQLException {
+    public boolean createAppointment(DTOAppointmentForm appointmentDTO) throws BadStatusException, SQLException {
         boolean estCree = false;
         Appointment newAppointment = new Appointment();
 

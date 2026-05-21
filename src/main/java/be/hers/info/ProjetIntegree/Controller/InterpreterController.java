@@ -5,7 +5,7 @@ package be.hers.info.ProjetIntegree.Controller;
  */
 
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
-import be.hers.info.ProjetIntegree.DTO.DTOAppointment;
+import be.hers.info.ProjetIntegree.DTO.DTOAppointmentForm;
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
 import be.hers.info.ProjetIntegree.DTO.DTOEstablishmentFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
@@ -20,7 +20,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 // TODO: Delete default values from RequestParam once true params can be passed
@@ -103,7 +102,7 @@ public class InterpreterController {
      * @return @return a redirect to the planning page after the creation
      */
     @PostMapping("/planning/beneficiaires")
-    public String addAppointment(@ModelAttribute("newAppointment") DTOAppointment dtoAppointment,
+    public String addAppointment(@ModelAttribute("newAppointment") DTOAppointmentForm dtoAppointment,
                                  @ModelAttribute("InterpreterConnected") Interpreter interpreter,
                                  RedirectAttributes redirectAttributes){
         if(interpreter == null)
