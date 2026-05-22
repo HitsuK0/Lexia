@@ -109,17 +109,17 @@ public class InterpreterController {
      * matching absences from the database
      * @param start The start date
      * @param end The end date
-     * @param interpreter The currently logged-in interpreter (from ModelAttribute, reference)
      * @param model the UI model to hold the list of absences and the active tab status
      * @return The view name "interprete/indisponibilites", or a redirect to login if session is invalid
      */
     @GetMapping("/indisponibilites")
-    public String indisponibilites(@RequestParam String start,
-                                   @RequestParam String end,
-                                   @ModelAttribute("InterpreterConnected") Interpreter interpreter,
+    public String indisponibilites(@RequestParam(defaultValue = "2026-05-15") String start,
+                                   @RequestParam(defaultValue = "2026-05-15") String end,
+                                   HttpServletRequest request,
                                    Model model) {
-
-        if(interpreter == null) {
+        HttpSession session = request.getSession();
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
             return "redirect:/login";
         }
 
