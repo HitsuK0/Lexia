@@ -12,6 +12,10 @@
     font-size: 1rem !important;
 }
 
+#calendar {
+    font-size: 0.95rem;
+}
+
 /* Allows you to put all the modals with rounded corners */
 #modalIndispo .modal-content,
 #modalRDV .modal-content,
