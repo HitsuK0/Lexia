@@ -18,13 +18,16 @@
                 <p class="text-muted fst-italic small">Suivez vos demandes de rendez-vous</p>
             </div>
 
-            <div class="d-flex justify-content-end align-items-center gap-2 mb-2 px-5">
+            <div class="d-flex justify-content-between align-items-center gap-2 mb-2 px-5">
                 <select id="statusFilter" class="form-select" style="max-width: 180px;">
                     <option value="">Tous les statuts</option>
                     <option value="approved">Validé</option>
                     <option value="refused">Refusé</option>
                     <option value="pending">En Attente</option>
                 </select>
+
+                <ul class="pagination mb-0" id="paginationTop"></ul>
+
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalRDV">
                     <i class="bi bi-plus-lg me-1"></i> Demander un RDV
                 </button>
@@ -361,47 +364,53 @@
                 renderPagination(totalPages);
             }
 
-            /* Builds the pagination buttons dynamically. */
+            /**
+             * Builds the pagination buttons dynamically for both top and bottom.
+             */
             function renderPagination(totalPages) {
-                const pagination = document.getElementById('pagination');
-                pagination.innerHTML = '';
+                ['pagination', 'paginationTop'].forEach(id => {
+                    const pagination = document.getElementById(id);
+                    pagination.innerHTML = '';
 
-                const prevLi = document.createElement('li');
-                prevLi.className = 'page-item';
-                prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-arrow-left"></i> Précédent</a>`;
-                if (currentPage === 1) {
-                    prevLi.style.display = 'none';
-                } else {
-                    prevLi.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        renderPage(currentPage - 1);
-                    });
-                }
-                pagination.appendChild(prevLi);
+                    /* Previous button */
+                    const prevLi = document.createElement('li');
+                    prevLi.className = 'page-item';
+                    prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-arrow-left"></i> Précédent</a>`;
+                    if (currentPage === 1) {
+                        prevLi.style.display = 'none';
+                    } else {
+                        prevLi.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            renderPage(currentPage - 1);
+                        });
+                    }
+                    pagination.appendChild(prevLi);
 
-                for (let i = 1; i <= totalPages; i++) {
-                    const li = document.createElement('li');
-                    li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-                    li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-                    li.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        renderPage(i);
-                    });
-                    pagination.appendChild(li);
-                }
+                    for (let i = 1; i <= totalPages; i++) {
+                        const li = document.createElement('li');
+                        li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                        li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                        li.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            renderPage(i);
+                        });
+                        pagination.appendChild(li);
+                    }
 
-                const nextLi = document.createElement('li');
-                nextLi.className = 'page-item';
-                nextLi.innerHTML = `<a class="page-link" href="#">Suivant <i class="bi bi-arrow-right"></i></a>`;
-                if (currentPage === totalPages || totalPages <= 1) {
-                    nextLi.style.display = 'none';
-                } else {
-                    nextLi.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        renderPage(currentPage + 1);
-                    });
-                }
-                pagination.appendChild(nextLi);
+                    /* Next button */
+                    const nextLi = document.createElement('li');
+                    nextLi.className = 'page-item';
+                    nextLi.innerHTML = `<a class="page-link" href="#">Suivant <i class="bi bi-arrow-right"></i></a>`;
+                    if (currentPage === totalPages || totalPages <= 1) {
+                        nextLi.style.display = 'none';
+                    } else {
+                        nextLi.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            renderPage(currentPage + 1);
+                        });
+                    }
+                    pagination.appendChild(nextLi);
+                });
             }
 
             /* Filters the table rows by status and resets to page 1. */
