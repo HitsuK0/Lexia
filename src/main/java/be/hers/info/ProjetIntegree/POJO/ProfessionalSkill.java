@@ -87,4 +87,10 @@ public class ProfessionalSkill {
                 "\nNumero ID: " + numProfessionalSkill +
                 "\nDésignation : " + designation;
     }
+
+    public boolean equals(ProfessionalSkill obj) {
+        if(obj == null) return false;
+        else if (this == obj) return true;
+        else return this.numProfessionalSkill == obj.numProfessionalSkill;
+    }
 }

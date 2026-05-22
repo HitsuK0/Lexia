@@ -330,6 +330,7 @@ public class DTOInterpreterProfile {
             for (ProfessionalSkill ps : professionalSkillList) {
                 if (ps != null && id == ps.getNumProfessionalSkill()) {
                     psFind = ps;
+                    break;
                 }
             }
         }
@@ -346,6 +347,7 @@ public class DTOInterpreterProfile {
             for (AcademicSkill as : academicSkillList) {
                 if (as != null && id == as.getNumAcademicSkill()) {
                     asFind = as;
+                    break;
                 }
             }
         }

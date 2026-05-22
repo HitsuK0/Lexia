@@ -426,8 +426,8 @@ public class DAOInterpreter extends DAO<Interpreter> {
                 "WHERE numInterpreter = ? AND numProfessionalSkill = ?";
         try{
             prStat = connect.prepareStatement(query);
-            prStat.setInt(1, numProfessionalSkill);
-            prStat.setInt(2, numInterpreter);
+            prStat.setInt(1, numInterpreter);
+            prStat.setInt(2, numProfessionalSkill);
             int nbLinesDelete=prStat.executeUpdate();
             if(nbLinesDelete > 0) {
                 isDeleted = true;
@@ -476,11 +476,11 @@ public class DAOInterpreter extends DAO<Interpreter> {
         boolean isDeleted = false;
         PreparedStatement prStat = null;
         String query = "DELETE FROM AcademicSkillInterpreter " +
-                "WHERE numInterpreter = ? AND numProfessionalSkill = ?";
+                "WHERE numInterpreter = ? AND numAcademicSkill = ?";
         try{
             prStat = connect.prepareStatement(query);
-            prStat.setInt(1, numAcademicSkill);
-            prStat.setInt(2, numInterpreter);
+            prStat.setInt(1, numInterpreter);
+            prStat.setInt(2, numAcademicSkill);
             int nbLinesDelete=prStat.executeUpdate();
             if(nbLinesDelete > 0) {
                 isDeleted = true;

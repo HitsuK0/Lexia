@@ -131,8 +131,7 @@ public class InterpreterProfileService {
      */
     public boolean addProfessionalSkill(int numInterpreter, int numProfessionalSkill) throws SQLException {
         DAOInterpreter daoInterpreter = new DAOInterpreter();
-        boolean res = daoInterpreter.addProfessionalSkillToInterpreter(numInterpreter,numProfessionalSkill);
-        return res;
+        return  daoInterpreter.addProfessionalSkillToInterpreter(numInterpreter,numProfessionalSkill);
     }
     /**
      * Delete the professional skill designated by its number to the interpreter in question
@@ -143,8 +142,7 @@ public class InterpreterProfileService {
      */
     public boolean deleteProfessionalSkill(int numInterpreter, int numProfessionalSkill) throws SQLException {
         DAOInterpreter daoInterpreter = new DAOInterpreter();
-        boolean res = daoInterpreter.deleteProfessionalSkillToInterpreter(numInterpreter,numProfessionalSkill);
-        return res;
+        return daoInterpreter.deleteProfessionalSkillToInterpreter(numInterpreter,numProfessionalSkill);
     }
     /**
      * Add the academic skill designated by its number to the relevant interpreter
@@ -155,8 +153,7 @@ public class InterpreterProfileService {
      */
     public boolean addAcademicSkill(int numInterpreter, int numAcademicSkill) throws SQLException {
         DAOInterpreter daoInterpreter = new DAOInterpreter();
-        boolean res = daoInterpreter.addAcademicSkillToInterpreter(numInterpreter,numAcademicSkill);
-        return res;
+        return daoInterpreter.addAcademicSkillToInterpreter(numInterpreter,numAcademicSkill);
     }
     /**
      * Removes the academic skill designated by its number from the interpreter in question.
@@ -167,7 +164,6 @@ public class InterpreterProfileService {
      */
     public boolean deleteAcademicSkill(int numInterpreter, int numAcademicSkill) throws SQLException {
         DAOInterpreter daoInterpreter = new DAOInterpreter();
-        boolean res = daoInterpreter.deleteAcademicSkillToInterpreter(numInterpreter,numAcademicSkill);
-        return res;
+        return daoInterpreter.deleteAcademicSkillToInterpreter(numInterpreter,numAcademicSkill);
     }
 }

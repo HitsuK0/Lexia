@@ -25,7 +25,15 @@ import java.util.List;
 @Controller
 @RequestMapping("/interprete")
 public class InterpreterController {
-
+    /**
+     * Retrieves the connected interpreter from the session.
+     * Returns null if no user is connected or if the connected user is not a interpreter.
+     * This helper avoids relying on @ModelAttribute which may inject an empty POJO
+     * instead of null when no session attribute exists.
+     *
+     * @param session the current HTTP session
+     * @return the connected interpreter, or null if not found
+     */
     private Interpreter getInterpreterFromSession(HttpSession session) {
         if (session == null) return null;
         Object user = session.getAttribute("currentUser");
@@ -39,16 +47,16 @@ public class InterpreterController {
      * Searches for all Appointments and Absences belonging to the interpreter as a parameter over a period defined by start and end.
      * @param start the date retrieved via the URL
      * @param end the date retrieved via the URL
-     * @param interpreter The interpreter linked to the appointment on the list
      * @return Redirect to the "interprete/planning" page
      */
     @GetMapping("/planning")
     public String planning(@RequestParam(defaultValue = "2026-05-15") String start,
-                           @RequestParam(defaultValue = "2026-05-22") String end, @ModelAttribute("InterpreterConnected") Interpreter interpreter, Model model) {
-
-        if(interpreter == null) {
+                           @RequestParam(defaultValue = "2026-05-22") String end, HttpSession session, Model model) {
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
             return "redirect:/login";
         }
+
 
         String dateStart = start.substring(0,10);
         String dateEnd = end.substring(0,10);
@@ -144,7 +152,10 @@ public class InterpreterController {
     @PostMapping("/indisponibilites")
     public String createIndisponibilite(@ModelAttribute("DTOAbsence") DTOAbsence dtoAbsence, Model model, HttpServletRequest request) {
         HttpSession session = request.getSession();
-        Interpreter interpreter = (Interpreter) session.getAttribute("InterpreterConnected");
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return "redirect:/login";
+        }
         AbsenceService absenceService = new  AbsenceService();
         try{
             absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter());
@@ -326,7 +337,7 @@ public class InterpreterController {
                     if(!interpreter.getProfessionalSkillsList().contains(p)){
                         interpreter.getProfessionalSkillsList().add(p);
                     }
-                    if(profileDTO.getProfessionalSkillListInterpreter().contains((p))){
+                    if(!profileDTO.getProfessionalSkillListInterpreter().contains((p))){
                         profileDTO.getProfessionalSkillListInterpreter().add(p);
                     }
                 }
@@ -406,7 +417,7 @@ public class InterpreterController {
                     if(!interpreter.getAcademicSkillsList().contains(a)){
                         interpreter.getAcademicSkillsList().add(a);
                     }
-                    if(profileDTO.getAcademicSkillListInterpreter().contains((a))){
+                    if(!profileDTO.getAcademicSkillListInterpreter().contains((a))){
                         profileDTO.getAcademicSkillListInterpreter().add(a);
                     }
                 }
