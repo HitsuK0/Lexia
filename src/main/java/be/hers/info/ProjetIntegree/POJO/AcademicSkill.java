@@ -73,4 +73,14 @@ public class AcademicSkill
         return "Compétence académique"+
                "\nDesignation : "+ designation + "\n";
     }
+    /**
+     * Compare the object obj with this
+     * @param obj the object to be compared
+     * @return true if the object is equal to this, false otherwise
+     */
+    public boolean equals(AcademicSkill obj) {
+        if(obj == null) return false;
+        else if (this == obj) return true;
+        else return this.numAcademicSkill == obj.numAcademicSkill;
+    }
 }
