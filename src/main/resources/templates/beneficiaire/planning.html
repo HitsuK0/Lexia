@@ -149,7 +149,6 @@
                 const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
                     locale: 'fr',
                     initialView: 'timeGridWeek',
-                    initialDate: '2026-03-02',
                     headerToolbar: {
                         left: 'prev',
                         center: 'title',
@@ -161,8 +160,15 @@
 
                     /* Function that allows you to click on a blank range and this opens the associated modal */
                     dateClick: function (info) {
-                        document.getElementById('dateStart').value = info.dateStr.split('T')[0];
-                        document.getElementById('dateEnd').value = info.dateStr.split('T')[0];
+                        const today = new Date().toISOString().split('T')[0];
+                        const clickedDate = info.dateStr.split('T')[0];
+
+                        if (clickedDate < today) return;
+
+                        document.getElementById('dateStart').value = clickedDate;
+                        document.getElementById('dateEnd').value = clickedDate;
+                        document.getElementById('dateStart').min = today;
+                        document.getElementById('dateEnd').min = clickedDate;
 
                         if (info.dateStr.includes('T')) {
                             const heureStr = info.dateStr.split('T')[1].substring(0, 5);
@@ -209,6 +215,10 @@
 
                 calendar.render();
 
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('dateStart').min = today;
+                document.getElementById('dateEnd').min = today;
+
                 function generateHours(selectId, start, end) {
                     const select = document.getElementById(selectId);
                     select.innerHTML = '<option value="" disabled selected>-- Heure --</option>';
@@ -228,6 +238,14 @@
                 document.getElementById('startHour').addEventListener('change', function () {
                     const [h, m] = this.value.split(':').map(Number);
                     generateHours('endHour', h * 60 + m + 5, 19 * 60);
+                });
+
+                document.getElementById('dateStart').addEventListener('change', function () {
+                    document.getElementById('dateEnd').min = this.value;
+                    /* Reset dateEnd if it's now before dateStart */
+                    if (document.getElementById('dateEnd').value < this.value) {
+                        document.getElementById('dateEnd').value = this.value;
+                    }
                 });
 
                 document.getElementById('fullDay').addEventListener('change', function () {
