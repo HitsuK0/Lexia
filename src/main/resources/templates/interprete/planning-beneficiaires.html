@@ -241,9 +241,14 @@
 
                     /* Opens the RDV modal when clicking on an empty time slot */
                     dateClick: function (info) {
-                        document.getElementById('rdvDate').value = info.dateStr.split('T')[0];
+                        const today = new Date().toISOString().split('T')[0];
+                        const clickedDate = info.dateStr.split('T')[0];
 
-                        /* Pre-fill start hour and regenerate end hours based on clicked time */
+                        if (clickedDate < today) return;
+
+                        document.getElementById('rdvDate').value = clickedDate;
+                        document.getElementById('rdvDate').min = today;
+
                         if (info.dateStr.includes('T')) {
                             const hourStr = info.dateStr.split('T')[1].substring(0, 5);
                             const [h, m] = hourStr.split(':').map(Number);
@@ -286,6 +291,8 @@
                     Array.from(select.options).forEach(option => {
                         if (option.text === nameBenef) option.selected = true;
                     });
+
+                    document.getElementById('rdvDate').min = new Date().toISOString().split('T')[0];
                 });
 
                 /* Generates time options (every 5 min) between start and end (in minutes) */
@@ -379,6 +386,7 @@
                 document.getElementById('modalRDV').addEventListener('hidden.bs.modal', function () {
                     document.getElementById('rdvBeneficiary').value = '';
                     document.getElementById('rdvDate').value = '';
+                    document.getElementById('rdvDate').min = new Date().toISOString().split('T')[0];
                     document.getElementById('rdvEstablishment').selectedIndex = 0;
                     document.getElementById('rdvLocal').value = '';
                     document.getElementById('rdvDescription').value = '';
