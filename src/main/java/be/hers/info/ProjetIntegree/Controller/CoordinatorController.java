@@ -1,5 +1,7 @@
 package be.hers.info.ProjetIntegree.Controller;
 
+import be.hers.info.ProjetIntegree.POJO.Coordinator;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,13 +12,19 @@ import org.springframework.ui.Model;
 @RequestMapping("/coordinatrice")
 public class CoordinatorController {
 
-    // Temporaire
-    @GetMapping("/accueil")
-    public String accueil(Model model) {
-        model.addAttribute("userName", "Dubois Louis");
-        model.addAttribute("userRole", "COORDINATOR");
-        model.addAttribute("isAdmin", true);
-        return "coordinatrice/accueil";
+    /**
+     * Retrieves the connected coordinator from the session.
+     * Returns null if no user is connected or if the connected user is not a Coordinator.
+     * @param session the current HTTP session
+     * @return the connected Coordinator, or null if not found
+     */
+    private Coordinator getCoordinatorFromSession(HttpSession session) {
+        if (session == null) return null;
+        Object user = session.getAttribute("currentUser");
+        if (user instanceof Coordinator) {
+            return (Coordinator) user;
+        }
+        return null;
     }
 
     // Temporaire
@@ -75,7 +83,7 @@ public class CoordinatorController {
             case "2" -> model.addAttribute("userRole", "INTERPRETER");
             case "3" -> model.addAttribute("userRole", "BENEFICIARY");
             case "4" -> model.addAttribute("userRole", "COORDINATOR");
-            default  -> model.addAttribute("userRole", "INTERPRETER");
+            default -> model.addAttribute("userRole", "INTERPRETER");
         }
 
         return "coordinatrice/utilisateur-detail";
@@ -98,4 +106,22 @@ public class CoordinatorController {
         model.addAttribute("isAdmin", true);
         return "coordinatrice/gestion-competences";
     }
+
+    /**
+     * If the coordinator exists, the user will be redirected to the home page.
+     * Otherwise, if it is null, the user will be redirected to the login page.
+     *  @param session session the current HTTP session
+     *  @return The HTML path to the home page if a coordinator is logged in, else redirects to /login.
+     */
+    @GetMapping("/accueil")
+    public String accueil(HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if(coordinator == null) {
+            return "redirect:/login";
+        }
+        return "coordinatrice/accueil";
+    }
+
+
+
 }
