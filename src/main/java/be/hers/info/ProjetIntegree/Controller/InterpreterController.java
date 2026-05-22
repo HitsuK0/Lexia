@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 
 import java.sql.SQLException;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 
 // TODO: Delete default values from RequestParam once true params can be passed
 
@@ -57,12 +59,70 @@ public class InterpreterController {
             return "redirect:/login";
         }
 
-
+/*
         String dateStart = start.substring(0,10);
         String dateEnd = end.substring(0,10);
         PlanningService planningService = new PlanningService();
         interpreter.setAppointmentsList(planningService.getListAppointmentWithDateAndInterpreter(interpreter,dateStart,dateEnd));
         interpreter.setAbsences(planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd));
+*/
+        model.addAttribute("activeTab", "planning");
+
+        model.addAttribute("DTOAbsence", new DTOAbsence());
+        return "interprete/planning";
+    }
+
+    @GetMapping(value = "/planning/events", produces="application/json")
+    public List<Map<String,Object>> getEventsPlaningInterpreter(@RequestParam String start,
+                                                                @RequestParam String end, HttpSession session, Model model) {
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return Collections.emptyList();
+        }
+
+        String dateStart = start.substring(0,10);
+        String dateEnd = end.substring(0,10);
+        PlanningService planningService = new PlanningService();
+        List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndInterpreter(interpreter,dateStart,dateEnd);
+        List<Absence> absenceList = planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd);
+        interpreter.setAppointmentsList(appointmentList);
+        interpreter.setAbsences(absenceList);
+
+        List<Map<String,Object>> events = new ArrayList<>();
+        Map<String, Object> extendedProps = new HashMap<>();
+        for( Appointment a : appointmentList){
+            Map<String, Object> event = new HashMap<>();
+            event.put("title",a.getAcademicSkillsNeeded());
+            if(a.getTimeSlot() instanceof TimeSlotPunctual){
+                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
+                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusNanos(tsp.getDuration().toSecondOfDay()));
+            }else{
+                //faire avec TimeSlotBase
+            }
+            switch (a.getStatus()){
+                case "en attente":
+                    event.put("color","#f0ad4e");
+                    break;
+                case "accepte":
+                    event.put("color","#81c784");
+                    break;
+                case "refuse":
+                    event.put("color","#f28b82");
+                    break;
+            }
+            extendedProps.put("type","appointment");
+            extendedProps.put("status",a.getStatus());
+            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,0) + ". " + a.getBeneficiary().getFirstName());
+            extendedProps.put("locals", a.getAppointmentLocals());
+            extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
+            extendedProps.put("description", a.getDescription());
+            event.put("extendedProps",extendedProps);
+            events.add(event);
+
+        }
+        //faire avec absence
 
         model.addAttribute("activeTab", "planning");
 
