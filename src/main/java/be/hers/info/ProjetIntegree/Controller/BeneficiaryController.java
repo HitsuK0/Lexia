@@ -6,11 +6,12 @@ import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
 import be.hers.info.ProjetIntegree.POJO.Appointment;
 import be.hers.info.ProjetIntegree.POJO.BadStatusException;
 import be.hers.info.ProjetIntegree.POJO.Beneficiary;
+import be.hers.info.ProjetIntegree.Services.AcademicSkillService;
 import be.hers.info.ProjetIntegree.Services.AppointmentService;
 import be.hers.info.ProjetIntegree.Services.BeneficiaryProfileService;
+import be.hers.info.ProjetIntegree.Services.ProfessionalSkillService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import oracle.jdbc.proxy.annotation.Post;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +61,15 @@ public class BeneficiaryController {
         if (beneficiary == null) {
             return "redirect:/login";
         }
+
+        try {
+            model.addAttribute("academicSkills", new AcademicSkillService().getAllAcademicSkills());
+            model.addAttribute("professionalSkills", new ProfessionalSkillService().getAllProfessionalSkills());
+            model.addAttribute("dtoAppointmentRequest", new DTOAppointmentRequest());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         model.addAttribute("activeTab", "planning");
         return "beneficiaire/planning";
     }
@@ -86,8 +96,13 @@ public class BeneficiaryController {
 
         List<Appointment> appointmentList = new ArrayList<Appointment>();
         try {
+
             AppointmentService appointmentService = new AppointmentService();
             appointmentList = appointmentService.findRequestsForBeneficiary(beneficiary, status);
+
+            model.addAttribute("academicSkills", new AcademicSkillService().getAllAcademicSkills());
+            model.addAttribute("professionalSkills", new ProfessionalSkillService().getAllProfessionalSkills());
+            model.addAttribute("dtoAppointmentRequest", new DTOAppointmentRequest());
         } catch (SQLException | BadStatusException e) {
             e.printStackTrace();
         }
