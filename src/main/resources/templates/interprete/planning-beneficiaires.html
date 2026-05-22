@@ -48,11 +48,6 @@
                             data-bs-toggle="modal" data-bs-target="#modalRDV">
                         <i class="bi bi-plus-circle"></i> Demander un RDV
                     </button>
-
-                    <button type="button" class="btn btn-outline-primary btn-sm"
-                            data-bs-toggle="modal" data-bs-target="#modalSend">
-                        <i class="bi bi-send"></i> Envoyer demandes
-                    </button>
                 </div>
 
             </div>
@@ -175,31 +170,6 @@
             </div>
         </div>
 
-        <div class="modal fade" id="modalSend" tabindex="-1" aria-labelledby="modalSendLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalSendLabel">Envoyer les demandes</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body px-4 py-3 text-center">
-                        <p class="mb-1">Vous êtes sur le point d'envoyer</p>
-                        <p class="fw-bold fs-4 text-primary mb-1" id="numberRequests">0</p>
-                        <p class="mb-1">demande(s) à la coordinatrice.</p>
-                        <p class="text-muted small">Cette action est irréversible.</p>
-                    </div>
-
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm">Confirmer l'envoi</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
         <script th:src="@{/js/fullcalendar.min.js}"></script>
 
         <script>
@@ -260,7 +230,6 @@
                 const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
                     locale: 'fr',
                     initialView: 'timeGridWeek',
-                    initialDate: '2026-03-02',
                     headerToolbar: {
                         left: 'prev',
                         center: 'title',
@@ -350,12 +319,6 @@
                     const [h, m] = this.value.split(':').map(Number);
                     const totalMinutes = h * 60 + m;
                     generateHoursRdv('rdvHourEnd', totalMinutes + 5, 19 * 60);
-                });
-
-                /* Displays the number of pending requests before confirming the send */
-                document.getElementById('modalSend').addEventListener('show.bs.modal', function () {
-                    const countRdv = events.filter(e => e.extendedProps.enAttente).length;
-                    document.getElementById('numberRequests').textContent = countRdv;
                 });
 
                 /* Validates the RDV form before submission */
