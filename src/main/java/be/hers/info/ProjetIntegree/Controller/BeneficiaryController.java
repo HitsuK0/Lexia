@@ -6,10 +6,7 @@ import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
 import be.hers.info.ProjetIntegree.POJO.Appointment;
 import be.hers.info.ProjetIntegree.POJO.BadStatusException;
 import be.hers.info.ProjetIntegree.POJO.Beneficiary;
-import be.hers.info.ProjetIntegree.Services.AcademicSkillService;
-import be.hers.info.ProjetIntegree.Services.AppointmentService;
-import be.hers.info.ProjetIntegree.Services.BeneficiaryProfileService;
-import be.hers.info.ProjetIntegree.Services.ProfessionalSkillService;
+import be.hers.info.ProjetIntegree.Services.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -63,6 +60,9 @@ public class BeneficiaryController {
         }
 
         try {
+            PlanningService planningService = new PlanningService();
+
+            model.addAttribute("appointments", planningService.findPlanningForBeneficiary(beneficiary));
             model.addAttribute("academicSkills", new AcademicSkillService().getAllAcademicSkills());
             model.addAttribute("professionalSkills", new ProfessionalSkillService().getAllProfessionalSkills());
             model.addAttribute("dtoAppointmentRequest", new DTOAppointmentRequest());

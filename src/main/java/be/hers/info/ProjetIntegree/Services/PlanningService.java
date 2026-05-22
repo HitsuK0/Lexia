@@ -3,6 +3,7 @@ package be.hers.info.ProjetIntegree.Services;
 import be.hers.info.ProjetIntegree.DAO.DAOAppointment;
 import be.hers.info.ProjetIntegree.POJO.Absence;
 import be.hers.info.ProjetIntegree.POJO.Appointment;
+import be.hers.info.ProjetIntegree.POJO.Beneficiary;
 import be.hers.info.ProjetIntegree.POJO.Interpreter;
 
 import java.sql.SQLException;
@@ -62,5 +63,10 @@ public class PlanningService {
             e.printStackTrace();
         }
         return list;
+    }
+
+
+    public List<Appointment> findPlanningForBeneficiary(Beneficiary beneficiary) throws SQLException {
+        return new DAOAppointment().findAllAppointmentsForBeneficiaryPlanning(beneficiary.getNumBeneficiary());
     }
 }

@@ -124,9 +124,9 @@ public class Appointment {
             throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes, la tranche horaire et les compétences professionnelles ne peuvent pas être null.");
         }
 
-        if(interpreters.isEmpty()|| professionalSkillsNeeded.isEmpty()) {
-            throw new IllegalArgumentException("[POJOAppointment] Les listes d'interprètes et de compétences professionnelles ne peuvent pas être vides.");
-        }
+       // if(interpreters.isEmpty()|| professionalSkillsNeeded.isEmpty()) {
+           // throw new IllegalArgumentException("[POJOAppointment] Les listes d'interprètes et de compétences professionnelles ne peuvent pas être vides.");
+       // }
 
         this.description = description;
         this.numAppointment = numAppointment;

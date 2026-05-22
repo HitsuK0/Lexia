@@ -776,4 +776,55 @@ public class DAOAppointment extends DAO<Appointment> {
         }
         return appointmentList;
     }
+
+    public List<Appointment> findAllAppointmentsForBeneficiaryPlanning(int numBeneficiary) throws SQLException {
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<Appointment> appointmentList = new ArrayList<Appointment>();
+
+        String query = "SELECT numAppointment, description, local, status, FKTimeSlotBase, FKTimeSlotPunctual " +
+                "FROM Appointment " +
+                "WHERE FKnumBeneficiary = ?";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numBeneficiary);
+            resultSet = prStat.executeQuery();
+
+            DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+            DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
+
+            while(resultSet.next()) {
+                int numAppointment = resultSet.getInt("numAppointment");
+                String local = resultSet.getString("local");
+                String status = resultSet.getString("status");
+                List<String> locals = new ArrayList<String>();
+
+                if(local != null && !local.isEmpty()) {
+                    locals = new ArrayList<>(Arrays.asList(local.split(",")));
+                }
+
+                TimeSlot timeSlot = null;
+                if(resultSet.getObject("FKTimeSlotBase") != null) {
+                    timeSlot = daoTimeSlotBase.find(resultSet.getInt("FKTimeSlotBase"));
+                } else {
+                    timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
+                }
+
+                String description = resultSet.getString("description");
+
+                Appointment appointment = new Appointment(numAppointment, status, findListAcademicSkillRequire(numAppointment),
+                        findListProfessionalSkillRequire(numAppointment), timeSlot);
+
+                appointment.setDescription(description);
+                appointment.getAppointmentLocals().addAll(locals);
+                appointment.getInterpreters().addAll(findListInterpreter(numAppointment));
+
+                appointmentList.add(appointment);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return appointmentList;
+    }
 }
