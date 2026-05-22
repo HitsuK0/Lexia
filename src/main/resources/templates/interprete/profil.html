@@ -33,134 +33,112 @@
 
                     <div class="col profil-content">
 
-                        <div id="section-infos" class="profil-section active">
+                        <form id="formProfil" method="post" th:action="@{/interprete/profil}" th:object="${profileDTO}">
+                            <input type="hidden" th:field="*{numInterpreter}"/>
+                            <div id="section-infos" class="profil-section active">
 
-                            <div class="row mb-4">
-                                <div class="col-md-3">
-                                    <label class="form-label small fw-semibold">Nom</label>
-                                    <div class="input-edit-group">
-                                        <input type="text" class="form-control form-control-sm" value="Dupont" readonly
-                                               id="inputNom"/>
-                                        <button class="btn-edit" onclick="toggleEdit('inputNom', this)" title="Modifier">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
+                                <div class="row mb-4">
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Nom</label>
+                                        <div class="input-edit-group">
+                                            <input type="text" class="form-control form-control-sm" th:field="*{lastName}" readonly
+                                                   id="inputNom"/>
+                                            <button class="btn-edit" onclick="toggleEdit('inputNom', this)" title="Modifier">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label small fw-semibold">Prénom</label>
-                                    <div class="input-edit-group">
-                                        <input type="text" class="form-control form-control-sm" value="Jean" readonly
-                                               id="inputPrenom"/>
-                                        <button class="btn-edit" onclick="toggleEdit('inputPrenom', this)" title="Modifier">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Prénom</label>
+                                        <div class="input-edit-group">
+                                            <input type="text" class="form-control form-control-sm" th:field="*{firstName}" readonly
+                                                   id="inputPrenom"/>
+                                            <button class="btn-edit" onclick="toggleEdit('inputPrenom', this)" title="Modifier">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-semibold">Date de Naissance</label>
-                                    <div class="input-edit-group">
-                                        <input type="date" class="form-control form-control-sm" value="2003-12-10" readonly id="inputDateNaissance"/>
-                                        <button class="btn-edit" onclick="toggleEdit('inputDateNaissance', this)" title="Modifier"><i class="bi bi-pencil"></i></button>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="mb-4">
-                                <label class="form-label small fw-semibold">Genre</label>
-                                <div class="d-flex gap-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="genre" id="genreHomme" value="homme" checked/>
-                                        <label class="form-check-label small" for="genreHomme">Homme</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="genre" id="genreFemme" value="femme"/>
-                                        <label class="form-check-label small" for="genreFemme">Femme</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="genre" id="genreNR" value="nr"/>
-                                        <label class="form-check-label small" for="genreNR">Non renseigné</label>
+                                    <div class="col-mb-4">
+                                        <label class="form-label small fw-semibold">Heures prestées par semaine</label>
+                                        <div class="input-edit-group">
+                                            <input type="number" class="form-control form-control-sm" th:field="*{weeklyWorkHours}"
+                                                   readonly id="inputHeures" style="max-width: 120px;"/>
+                                            <button class="btn-edit" onclick="toggleEdit('inputHeures', this)" title="Modifier">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="mb-4">
-                                <label class="form-label small fw-semibold">Diplômes</label>
-                                <div class="input-edit-group align-items-start">
-                                        <textarea class="form-control form-control-sm" rows="3" readonly id="inputDiplomes">Diplôme lié au métier</textarea>
-                                    <button class="btn-edit mt-1" onclick="toggleEdit('inputDiplomes', this)" title="Modifier">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </div>
-                            </div>
+                                <h6 class="fw-bold mb-3 mt-2">Coordonnées</h6>
 
-                            <h6 class="fw-bold mb-3 mt-2">Coordonnées</h6>
-
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-semibold">Numéro Téléphone</label>
-                                    <div class="input-edit-group">
-                                        <input type="text" class="form-control form-control-sm" value="0476 80 31 15"
-                                               readonly id="inputTel"/>
-                                        <button class="btn-edit" onclick="toggleEdit('inputTel', this)" title="Modifier">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold">Numéro Téléphone</label>
+                                        <div class="input-edit-group">
+                                            <input type="text" class="form-control form-control-sm" th:field="*{phoneNumber}"
+                                                   readonly id="inputTel"/>
+                                            <button class="btn-edit" onclick="toggleEdit('inputTel', this)" title="Modifier">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </div>
+                                        <div id="phoneError" style="display:none; color:#dc3545; font-size:0.875em;">
+                                            Numéro de téléphone invalide. (ex: 0476791845)
+                                        </div>
                                     </div>
-                                    <div id="phoneError" style="display:none; color:#dc3545; font-size:0.875em;">
-                                        Numéro de téléphone invalide. (ex: 0476791845)
-                                    </div>
-                                </div>
-                                <div class="col-md-5">
-                                    <label class="form-label small fw-semibold">Adresse e-mail</label>
-                                    <div class="input-edit-group">
-                                        <input type="email" class="form-control form-control-sm"
-                                               value="dupontjean03@gmail.com" readonly id="inputEmail"/>
-                                        <button class="btn-edit" onclick="toggleEdit('inputEmail', this)" title="Modifier">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    </div>
-                                    <div id="emailError" style="display:none; color:#dc3545; font-size:0.875em;">
-                                        Adresse e-mail invalide. (ex: jean.dupont@gmail.com)
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label small fw-semibold">Adresse</label>
-                                <div class="row g-2">
                                     <div class="col-md-5">
-                                        <label class="form-label" style="font-size:0.75rem; color:#888;">Rue et numéro</label>
+                                        <label class="form-label small fw-semibold">Adresse e-mail</label>
                                         <div class="input-edit-group">
-                                            <input type="text" class="form-control form-control-sm"
-                                                   value="Rue de la victoire, 3" readonly id="inputRue"/>
-                                            <button class="btn-edit" onclick="toggleEdit('inputRue', this)" title="Modifier">
+                                            <input type="email" class="form-control form-control-sm"
+                                                   th:field="*{emailAddress}" readonly id="inputEmail"/>
+                                            <button class="btn-edit" onclick="toggleEdit('inputEmail', this)" title="Modifier">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" style="font-size:0.75rem; color:#888;">Code Postal</label>
-                                        <div class="input-edit-group">
-                                            <input type="text" class="form-control form-control-sm" value="1000" readonly
-                                                   id="inputCP"/>
-                                            <button class="btn-edit" onclick="toggleEdit('inputCP', this)" title="Modifier">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
+                                        <div id="emailError" style="display:none; color:#dc3545; font-size:0.875em;">
+                                            Adresse e-mail invalide. (ex: jean.dupont@gmail.com)
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" style="font-size:0.75rem; color:#888;">Ville</label>
-                                        <div class="input-edit-group">
-                                            <input type="text" class="form-control form-control-sm" value="Bruxelles" readonly
-                                                   id="inputVille"/>
-                                            <button class="btn-edit" onclick="toggleEdit('inputVille', this)" title="Modifier">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label small fw-semibold">Adresse</label>
+                                    <div class="row g-2">
+                                        <div class="col-md-5">
+                                            <label class="form-label" style="font-size:0.75rem; color:#888;">Rue et numéro</label>
+                                            <div class="input-edit-group">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       th:field="*{postOfficeBox}" readonly id="inputRue"/>
+                                                <button class="btn-edit" onclick="toggleEdit('inputRue', this)" title="Modifier">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label" style="font-size:0.75rem; color:#888;">Code Postal</label>
+                                            <div class="input-edit-group">
+                                                <input type="number" class="form-control form-control-sm" th:field="*{postcode}" readonly
+                                                       id="inputCP"/>
+                                                <button class="btn-edit" onclick="toggleEdit('inputCP', this)" title="Modifier">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label" style="font-size:0.75rem; color:#888;">Ville</label>
+                                            <div class="input-edit-group">
+                                                <input type="text" class="form-control form-control-sm" th:field="*{locality}" readonly
+                                                       id="inputVille"/>
+                                                <button class="btn-edit" onclick="toggleEdit('inputVille', this)" title="Modifier">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                        </div>
+                        </form>
 
                         <div id="section-metiers" class="profil-section">
                             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -173,7 +151,12 @@
                             </div>
                             <p class="small text-muted mb-3">Compétences possédées</p>
                             <div class="d-flex flex-wrap gap-2" id="badgesMetiers">
-                                <span class="badge-skill"><i class="bi bi-check-lg"></i> Transcription</span>
+                                <span class="badge-skill">
+                                    <i class="bi bi-check-lg"></i> Transcription
+                                    <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesMetiers')" title="Retirer">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </span>
                             </div>
                         </div>
 
@@ -188,9 +171,24 @@
                             </div>
                             <p class="small text-muted mb-3">Matières possédées</p>
                             <div class="d-flex flex-wrap gap-2" id="badge-academics">
-                                <span class="badge-skill"><i class="bi bi-check-lg"></i> Histoire</span>
-                                <span class="badge-skill"><i class="bi bi-check-lg"></i> Mathématiques</span>
-                                <span class="badge-skill"><i class="bi bi-check-lg"></i> Economie</span>
+                                <span class="badge-skill">
+                                    <i class="bi bi-check-lg"></i> Histoire
+                                    <button class="btn-badge-remove" onclick="removeSkill(this, 'badge-academics')" title="Retirer">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </span>
+                                <span class="badge-skill">
+                                    <i class="bi bi-check-lg"></i> Mathématiques
+                                    <button class="btn-badge-remove" onclick="removeSkill(this, 'badge-academics')" title="Retirer">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </span>
+                                <span class="badge-skill">
+                                    <i class="bi bi-check-lg"></i> Economie
+                                    <button class="btn-badge-remove" onclick="removeSkill(this, 'badge-academics')" title="Retirer">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </span>
                             </div>
                         </div>
 
@@ -211,13 +209,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="d-flex justify-content-end mt-4 pt-2 border-top">
-                            <button class="btn btn-primary btn-sm px-4">
-                                Sauvegarder <i class="bi bi-floppy"></i>
-                            </button>
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -281,6 +272,11 @@
             </div>
         </div>
 
+        <button id="btnSauvegarder" class="btn btn-primary btn-floating" style="display:none;"
+                type="submit" form="formProfil">
+            <i class="bi bi-floppy me-1"></i> Sauvegarder
+        </button>
+
         <div th:replace="~{common/footer :: footer}"></div>
 
         <script>
@@ -313,7 +309,19 @@
             function toggleEdit(id, btn) {
                 const input = document.getElementById(id);
                 const isReadonly = input.hasAttribute('readonly');
+
                 if (isReadonly) {
+                    document.querySelectorAll('.btn-edit').forEach(otherBtn => {
+                        const otherId = otherBtn.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                        if (otherId && otherId !== id) {
+                            const otherInput = document.getElementById(otherId);
+                            if (otherInput && !otherInput.hasAttribute('readonly')) {
+                                otherInput.setAttribute('readonly', true);
+                                otherBtn.style.color = '';
+                            }
+                        }
+                    });
+
                     input.removeAttribute('readonly');
                     input.focus();
                     btn.style.color = '#593196';
@@ -399,6 +407,31 @@
 
                 bootstrap.Modal.getInstance(document.getElementById('modalPassword')).hide();
             }
+
+            function removeSkill(btn, containerId) {
+                btn.closest('.badge-skill').remove();
+                onFieldChanged();
+            }
+
+            function onFieldChanged() {
+                document.getElementById('btnSauvegarder').style.display = 'block';
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('input:not([type="radio"]), textarea, select').forEach(el => {
+                    el.addEventListener('input', onFieldChanged);
+                    el.addEventListener('change', onFieldChanged);
+                });
+
+                document.querySelectorAll('.input-edit-group input, .input-edit-group textarea').forEach(input => {
+                    input.addEventListener('blur', function () {
+                        if (!this.hasAttribute('readonly')) {
+                            const btn = this.closest('.input-edit-group').querySelector('.btn-edit');
+                            if (btn) toggleEdit(this.id, btn);
+                        }
+                    });
+                });
+            });
         </script>
     </body>
 </html>

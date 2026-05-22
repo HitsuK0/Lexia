@@ -87,4 +87,15 @@ public class ProfessionalSkill {
                 "\nNumero ID: " + numProfessionalSkill +
                 "\nDésignation : " + designation;
     }
+
+    /**
+     * Compare the object obj with this
+     * @param obj the object to be compared
+     * @return true if the object is equal to this, false otherwise
+     */
+    public boolean equals(ProfessionalSkill obj) {
+        if(obj == null) return false;
+        else if (this == obj) return true;
+        else return this.numProfessionalSkill == obj.numProfessionalSkill;
+    }
 }
