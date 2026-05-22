@@ -1,6 +1,7 @@
 package be.hers.info.ProjetIntegree.Services;
 
 import be.hers.info.ProjetIntegree.DAO.DAOAbsence;
+import be.hers.info.ProjetIntegree.DAO.DAOTimeSlotPunctual;
 import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
 import be.hers.info.ProjetIntegree.POJO.Absence;
 import be.hers.info.ProjetIntegree.POJO.BadStatusException;
@@ -42,7 +43,8 @@ public class AbsenceService {
             duration = LocalTime.MIDNIGHT.plus(d);
         }
         timeSlotPunctual.setDuration(duration);
-
+        DAOTimeSlotPunctual  daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+        daoTimeSlotPunctual.create(timeSlotPunctual);
         absence.setTimeSlot(timeSlotPunctual);
         DAOAbsence daoAbsence = new DAOAbsence();
         daoAbsence.create(absence, numInterpreter);

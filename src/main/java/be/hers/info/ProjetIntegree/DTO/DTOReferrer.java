@@ -2,6 +2,10 @@ package be.hers.info.ProjetIntegree.DTO;
 
 import be.hers.info.ProjetIntegree.POJO.Referrer;
 
+/**
+ * @author Quentin Vanderheyden
+ * @reviewer Nicolas Jean-Francois, Halet Louis
+ */
 public class DTOReferrer {
 
     private int numEstablishement;

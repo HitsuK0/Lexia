@@ -8,6 +8,11 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
+ * @author Quentin Vanderheyden
+ * @reviewer Nicolas Jean-Francois, Halet Louis
+ */
+
+/**
  * DTO used for the page etablissements.html
  * A minimalist object of Establishment.
  */
