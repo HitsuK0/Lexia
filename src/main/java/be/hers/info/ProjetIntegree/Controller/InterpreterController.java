@@ -125,42 +125,6 @@ public class InterpreterController {
         return "redirect:/interprete/planning/beneficiaires";
     }
 
-    /**
-     * Add the appointments created by the beneficiary and send by the interpreter connected to the DB
-     * @param dtoAppointments the list of appointments to add to the DB
-     * @param interpreter the user connected
-     * @return a redirect to the planning page after the creation
-     */
-    @PostMapping("/planning/beneficiaires/confirmer")
-    public String addAppointments(@ModelAttribute DTOAppointmentWrapper dtoAppointments,
-                                  @ModelAttribute("InterpreterConnected") Interpreter interpreter,
-                                  RedirectAttributes redirectAttributes) {
-        if (interpreter == null)
-            return "redirect:/login";
-
-        try {
-            String resultMessage = "Rendez-vous créé avec succès";
-            boolean estReussi = true;
-            AppointmentFormService appointmentFormService = new AppointmentFormService();
-            for(DTOAppointmentForm dtoAppointment : dtoAppointments.getAppointments()){
-                if(!appointmentFormService.createAppointment(dtoAppointment)){
-                    resultMessage = "La création d'au moins un rendez-vous a échoué";
-                    estReussi = false;
-                }
-            }
-
-            if(estReussi)
-                redirectAttributes.addFlashAttribute("successMessage", resultMessage);
-            else
-                redirectAttributes.addFlashAttribute("errorMessage", resultMessage);
-        }
-        catch(BadStatusException | SQLException | IllegalArgumentException e){
-            redirectAttributes.addFlashAttribute("errorMessage", "Une erreur est survenue : " + e.getMessage());
-        }
-
-        return "redirect:/interprete/planning/beneficiaires";
-    }
-
     @GetMapping("/profil")
     public String profil(Model model) {
         return "interprete/profil";
