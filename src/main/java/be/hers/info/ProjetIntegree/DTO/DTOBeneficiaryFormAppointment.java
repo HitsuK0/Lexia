@@ -4,7 +4,7 @@ package be.hers.info.ProjetIntegree.DTO;
  * DTO used to pass beneficiaries from the DB to the frontend
  *
  * @authors Rosman Loïs
- * @reviewer Nicolas Jean-François, Halet Louis, Wellinger Chloé
+ * @reviewer Nicolas Jean-François
  */
 
 public class DTOBeneficiaryFormAppointment {

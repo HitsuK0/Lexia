@@ -8,7 +8,7 @@ import java.util.List;
  * DTO used to carry the appointment's editable profile fields between the HTML form and the controller.
  *
  * @author Rosman Loïs
- * @reviewer Halet Louis, Wellinger Chloé, Nicolas Jean-François
+ * @reviewer Nicolas Jean-François
  */
 
 public class DTOAppointmentForm {

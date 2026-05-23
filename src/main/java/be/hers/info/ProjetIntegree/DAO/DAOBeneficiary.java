@@ -81,8 +81,8 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         List<DTOBeneficiaryFormAppointment> listBeneficiary = new ArrayList<>();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String query = "SELECT numBeneficiary, lastname, firstname" +
-                       "FROM Beneficiary" +
+        String query = "SELECT numBeneficiary, lastname, firstname " +
+                       "FROM Beneficiary " +
                        "WHERE FKNumInterpreter = ?";
 
         try {

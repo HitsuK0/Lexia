@@ -2,7 +2,7 @@ package be.hers.info.ProjetIntegree.DAO;
 
 /**
  * @author Rosman Loïs
- * @reviewer Halet Louis
+ * @reviewer Halet Louis, Nicolas Jean-François
  */
 
 import be.hers.info.ProjetIntegree.DTO.DTOEstablishmentFormAppointment;

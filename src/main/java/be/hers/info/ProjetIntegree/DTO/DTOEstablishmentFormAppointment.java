@@ -4,7 +4,7 @@ package be.hers.info.ProjetIntegree.DTO;
  * DTO used to pass establishments from the DB to the frontend
  *
  * @authors Rosman Loïs
- * @reviewer Nicolas Jean-François, Halet Louis, Wellinger Chloé
+ * @reviewer Nicolas Jean-François
  */
 
 public class DTOEstablishmentFormAppointment {

@@ -2,7 +2,7 @@ package be.hers.info.ProjetIntegree.Services;
 
 /**
  * @authors Rosman Loïs
- * @reviewer Nicolas Jean-François, Halet Louis, Wellinger Chloé
+ * @reviewer Nicolas Jean-François
  */
 
 import be.hers.info.ProjetIntegree.DAO.*;

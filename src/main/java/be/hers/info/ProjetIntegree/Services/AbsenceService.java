@@ -44,6 +44,9 @@ public class AbsenceService {
         }
         timeSlotPunctual.setDuration(duration);
 
+        DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+        daoTimeSlotPunctual.create(timeSlotPunctual);
+
         absence.setTimeSlot(timeSlotPunctual);
         DAOAbsence daoAbsence = new DAOAbsence();
         daoAbsence.create(absence, numInterpreter);

@@ -4,9 +4,7 @@ package be.hers.info.ProjetIntegree.Controller;
  * @reviewer Nicolas Jean-François
  */
 
-import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
-import be.hers.info.ProjetIntegree.DTO.DTOInterpreterProfile;
-import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
+import be.hers.info.ProjetIntegree.DTO.*;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.AppointmentFormService;

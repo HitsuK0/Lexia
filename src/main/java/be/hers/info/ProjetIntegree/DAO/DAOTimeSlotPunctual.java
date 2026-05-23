@@ -71,7 +71,7 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
             prStat.setTimestamp(1, Timestamp.valueOf(comparableTimeSlot.getStartDate().atTime(comparableTimeSlot.getStartTime())));
             prStat.setTimestamp(2, Timestamp.valueOf(comparableTimeSlot.getEndDate().atTime(comparableTimeSlot.getDuration())));
             prStat.setTimestamp(3, Timestamp.valueOf(comparableTimeSlot.getStartTime().atDate(comparableTimeSlot.getStartDate())));
-            prStat.setTimestamp(4, Timestamp.valueOf(comparableTimeSlot.getDuration().atDate(comparableTimeSlot.getStartDate())));
+            prStat.setTimestamp(4, Timestamp.valueOf(comparableTimeSlot.getDuration().atDate(comparableTimeSlot.getEndDate())));
 
             rs = prStat.executeQuery();
             if(rs.next()){
