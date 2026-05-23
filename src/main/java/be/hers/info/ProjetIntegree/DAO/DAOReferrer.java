@@ -188,7 +188,7 @@ public class DAOReferrer extends DAO<Referrer> {
         try {
             prStat = connect.prepareStatement(query);
             prStat.setInt(1, objectToUpdateInDB.getNumReferrer());
-            prStat.setInt(6, numEstablishment);
+            prStat.setInt(2, numEstablishment);
 
             int nbreLigne = prStat.executeUpdate();
             if (nbreLigne > 0) {
