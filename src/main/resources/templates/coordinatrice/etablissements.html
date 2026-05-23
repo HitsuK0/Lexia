@@ -6,357 +6,357 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
-    <head th:replace="~{common/head :: head('Etablissements', '/css/coordinatrice/etablissement.css')}"></head>
+<body>
+<nav th:replace="~{common/navbar :: navbar(activeTab='etablissements', userRole=${userRole}, userName=${userName}, breadcrumb='Etablissements', isAdmin=${isAdmin})}"></nav>
 
-    <body>
-        <nav th:replace="~{common/navbar :: navbar(activeTab='etablissements', userRole=${userRole}, userName=${userName}, breadcrumb='Etablissements', isAdmin=${isAdmin})}"></nav>
+<div class="container-fluid px-5 py-4">
 
-        <div class="container-fluid px-5 py-4">
+    <div class="position-relative text-center mb-2">
+        <h1 class="fw-bold text-primary mb-0">Liste des établissements</h1>
 
-            <div class="position-relative text-center mb-2">
-                <h1 class="fw-bold text-primary mb-0">Liste des établissements</h1>
+        <div class="d-flex justify-content-end mb-2 px-2 px-5">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAjout">
+                <i class="bi bi-plus-lg me-1"></i> Ajouter un établissement
+            </button>
+        </div>
+    </div>
 
-                <div class="d-flex justify-content-end mb-2 px-2 px-5">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAjout">
-                        <i class="bi bi-plus-lg me-1"></i> Ajouter un établissement
-                    </button>
-                </div>
-            </div>
-
-            <div class="px-5">
-                <div class="table-wrapper">
-                    <table class="table table-hover table-etablissements">
-                        <thead>
-                        <tr>
-                            <th style="width: 18%">Nom</th>
-                            <th>Ville</th>
-                            <th>Adresse Complète</th>
-                            <th>Personne Référent</th>
-                            <th>Numero de téléphone</th>
-                            <th>Niveau d'éducation</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="etablissement : ${listEstablishment}">
-                            <td th:text="${etablissement.nameBuilding}"></td>
-                            <td th:text="${etablissement.locality}"></td>
-                            <td th:utext="${etablissement.address}"></td>
-                            <td th:text="${etablissement.displayReferrer}"></td>
-                            <td th:text="${etablissement.phoneNumber}"></td>
-                            <td>
+    <div class="px-5">
+        <div class="table-wrapper">
+            <table class="table table-hover table-etablissements">
+                <thead>
+                <tr>
+                    <th style="width: 18%">Nom</th>
+                    <th>Ville</th>
+                    <th>Adresse Complète</th>
+                    <th>Personne Référent</th>
+                    <th>Numero de téléphone</th>
+                    <th>Niveau d'éducation</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="etablissement : ${listEstablishment}">
+                    <td th:text="${etablissement.nameBuilding}"></td>
+                    <td th:text="${etablissement.locality}"></td>
+                    <td th:utext="${etablissement.address}"></td>
+                    <td th:text="${etablissement.displayReferrer}"></td>
+                    <td th:text="${etablissement.phoneNumber}"></td>
+                    <td>
                                 <span th:each="level, i : ${etablissement.educationLevel}">
                                     <span th:text="${level}"></span>
                                     <span th:if="${!i.last}">, </span>
                                 </span>
-                            </td>
-                            <td>
-                                <button class="btn btn-link p-0 text-dark me-2 btn-edit-establishment"
-                                        data-bs-toggle="modal" data-bs-target="#modalEdition"
-                                        th:attr="data-id=${etablissement.numEstablishment},
+                    </td>
+                    <td>
+                        <button class="btn btn-link p-0 text-dark me-2 btn-edit-establishment"
+                                data-bs-toggle="modal" data-bs-target="#modalEdition"
+                                th:attr="data-id=${etablissement.numEstablishment},
                                                 data-name=${etablissement.nameBuilding},
                                                 data-post-office-box=${etablissement.postOfficeBox},
                                                 data-locality=${etablissement.locality},
                                                 data-postal-code=${etablissement.postcode},
                                                 data-phone-number=${etablissement.phoneNumber},
                                                 data-education-level=${etablissement.educationLevel}"
-                                        title="Modifier">
-                                    <i class="bi bi-pencil-square fs-5"></i>
-                                </button>
-                                <button class="btn btn-link p-0 text-dark me-2 btn-add-referrer"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modelAjoutReferrer"
-                                        th:attr="data-id=${etablissement.numEstablishment}"
-                                        title="Ajouter un référant">
-                                    <i class="bi bi-plus-circle fs-5"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                                title="Modifier">
+                            <i class="bi bi-pencil-square fs-5"></i>
+                        </button>
+                        <button class="btn btn-link p-0 text-dark me-2 btn-add-referrer"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalAddReferrer"
+                                th:attr="data-id-num-establishment=${etablissement.numEstablishment}
+                                                 ">
+                            <i class="bi bi-plus-circle fs-5"></i>
+                        </button>
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav class="mt-4 d-flex justify-content-center" aria-label="Pagination établissements">
+        <ul class="pagination">
+            <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="bi bi-arrow-left"></i> Previous</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+            <li class="page-item"><a class="page-link" href="#">9</a></li>
+            <li class="page-item"><a class="page-link" href="#">10</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Next <i class="bi bi-arrow-right"></i></a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+<div class="modal fade" id="modalAjout" tabindex="-1" aria-labelledby="modalAjoutLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold w-100 text-center" id="modalAjoutLabel">Ajouter un établissement</h5>
+                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body px-4 py-3">
+                <form method="post" th:object="${DTOEstablishmentAdd}" th:action="@{/coordinatrice/etablissements/createEstablishment}">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Nom de l'établissement</label>
+                        <input type="text" th:field="*{nameBuilding}" class="form-control form-control-sm" placeholder="Ex : Haute Ecole Robert Schuman"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Rue et numero</label>
+                        <input type="text" th:field="*{postOfficeBox}" class="form-control form-control-sm" placeholder="Ex : Rue de la Cité, 64"/>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label class="form-label small fw-semibold">Niveau d'éducation</label>
+                            <div class="form-check">
+                                <input class="form-check-input" th:field="*{educationLevel}" value="autre" type="checkbox" id="checkAutre">
+                                <label class="form-check-label" for="checkAutre">
+                                    Autre
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" th:field="*{educationLevel}" value="maternelle" type="checkbox" id="checkMaternelle">
+                                <label class="form-check-label" for="checkMaternelle">
+                                    Maternelle
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" th:field="*{educationLevel}" value="primaire" type="checkbox"  id="checkPrimaire">
+                                <label class="form-check-label" for="checkPrimaire">
+                                    Primaire
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" th:field="*{educationLevel}" value="secondaire" type="checkbox" id="checkSecondaire">
+                                <label class="form-check-label" for="checkSecondaire">
+                                    Secondaire
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" th:field="*{educationLevel}" value="supérieur" type="checkbox"  id="checkSup">
+                                <label class="form-check-label" for="checkSup">
+                                    Supérieur
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <label class="form-label small fw-semibold">Ville</label>
+                            <input type="text" th:field="*{locality}" class="form-control form-control-sm" placeholder="Ex : Libramont"/>
+                            <label class="form-label small fw-semibold">Code Postal</label>
+                            <input type="number" th:field="*{postcode}" class="form-control form-control-sm"/>
+                            <label class="form-label small fw-semibold">Numéro de téléphone</label>
+                            <input type="text" th:field="*{phoneNumber}" class="form-control form-control-sm" placeholder="Ex : 001235679"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus-lg me-1"></i> Ajouter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEdition" tabindex="-1" aria-labelledby="modalEditionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold w-100 text-center" id="modalEditionLabel">Modifier l'établissement</h5>
+                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body px-4 py-3">
+                <form method="post" th:object="${DTOEstablishmentEdit}" th:action="@{/coordinatrice/etablissements/createEstablishment}">
+                    <input type="hidden" name="id" th:value="*{numEstablishment}" id="numEstablishmentEdit"/>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Nom de l'établissement</label>
+                        <input type="text" id="nameBuildingEdit" th:field="*{nameBuilding}" class="form-control form-control-sm" placeholder="Ex : Haute Ecole Robert Schuman"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Rue et numero</label>
+                        <input type="text" id="postOfficeBoxEdit" th:field="*{postOfficeBox}" class="form-control form-control-sm" placeholder="Ex : Rue de la Cité, 64"/>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label class="form-label small fw-semibold">Niveau d'éducation</label>
+                            <div class="form-check">
+                                <input class="form-check-input" th:field="*{educationLevel}" value="autre" type="checkbox" id="checkAutreEdit">
+                                <label class="form-check-label" for="checkAutreEdit">
+                                    Autre
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" th:field="*{educationLevel}" value="maternelle" type="checkbox" id="checkMaternelleEdit">
+                                <label class="form-check-label" for="checkMaternelleEdit">
+                                    Maternelle
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" th:field="*{educationLevel}" value="primaire" type="checkbox"  id="checkPrimaireEdit">
+                                <label class="form-check-label" for="checkPrimaireEdit">
+                                    Primaire
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" th:field="*{educationLevel}" value="secondaire" type="checkbox" id="checkSecondaireEdit">
+                                <label class="form-check-label" for="checkSecondaireEdit">
+                                    Secondaire
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" th:field="*{educationLevel}" value="supérieur" type="checkbox"  id="checkSupEdit">
+                                <label class="form-check-label" for="checkSupEdit">
+                                    Supérieur
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <label class="form-label small fw-semibold">Ville</label>
+                            <input type="text" th:field="*{locality}" id="localityEdit" class="form-control form-control-sm" placeholder="Ex : Libramont"/>
+                            <label class="form-label small fw-semibold">Code Postal</label>
+                            <input type="number" th:field="*{postcode}" id="codePostalEdit" class="form-control form-control-sm" placeholder="Ex : Libramont"/>
+                            <label class="form-label small fw-semibold">Numéro de téléphone</label>
+                            <input type="text" th:field="*{phoneNumber}" id="numPhoneEdit" class="form-control form-control-sm" placeholder="Ex : 123678098"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus-lg me-1"></i> Ajouter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //This part of the code is used to put the data who is already in the database in the form
+    document.addEventListener("DOMContentLoaded", () => {
+        const buttons = document.querySelectorAll(".btn-edit-establishment");
+
+        buttons.forEach(btn => {
+            btn.addEventListener("click", () => {
+
+                // Récupération des données depuis les attributs data-*
+                const id = btn.getAttribute("data-id");
+                const name = btn.getAttribute("data-name");
+                const postOfficeBox = btn.getAttribute("data-post-office-box");
+                const postalCode = btn.getAttribute("data-postal-code");
+                const phoneNumber = btn.getAttribute("data-phone-number");
+                const educationLevel = btn.getAttribute("data-education-level");
+
+                const locality = btn.getAttribute("data-locality");
+
+                // Remplissage des champs du modal
+                document.getElementById("numEstablishmentEdit").value = id;
+
+                // Si tu veux afficher des infos dans le modal :
+                document.getElementById("nameBuildingEdit").value = name;
+                document.getElementById("postOfficeBoxEdit").value = postOfficeBox;
+                document.getElementById("localityEdit").value = locality;
+                document.getElementById("codePostalEdit").value = postalCode;
+                document.getElementById("numPhoneEdit").value = phoneNumber;
+
+                // Récupération des données
+                const educationLevelRaw = btn.getAttribute("data-education-level");
+
+                // Nettoyage de la chaîne : "[primaire, secondaire]" → ["primaire","secondaire"]
+                const levels = educationLevelRaw
+                    .replace("[", "")
+                    .replace("]", "")
+                    .split(",")
+                    .map(v => v.trim());
+
+                // Liste des cases à cocher
+                const checkboxes = {
+                    "autre": document.getElementById("checkAutreEdit"),
+                    "maternelle": document.getElementById("checkMaternelleEdit"),
+                    "primaire": document.getElementById("checkPrimaireEdit"),
+                    "secondaire": document.getElementById("checkSecondaireEdit"),
+                    "supérieur": document.getElementById("checkSupEdit")
+                };
+
+                // Réinitialiser toutes les cases
+                Object.values(checkboxes).forEach(cb => cb.checked = false);
+
+                // Cocher celles présentes dans la liste
+                levels.forEach(level => {
+                    if (checkboxes[level]) {
+                        checkboxes[level].checked = true;
+                    }
+                });
+
+            });
+        });
+    });
+</script>
+
+<div class="modal fade" id="modalAddReferrer" tabindex="-1" aria-labelledby="modalEditionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header border-bottom">
+                <div class="modal-header border-0 pb-0">
+                    <h4 class="modal-title fw-bold w-100 text-center">Ajouter un Référent</h4>
+                    <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                 </div>
             </div>
-
-            <nav class="mt-4 d-flex justify-content-center" aria-label="Pagination établissements">
-                <ul class="pagination">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#"><i class="bi bi-arrow-left"></i> Previous</a>
-                    </li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-                    <li class="page-item"><a class="page-link" href="#">9</a></li>
-                    <li class="page-item"><a class="page-link" href="#">10</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next <i class="bi bi-arrow-right"></i></a>
-                    </li>
-                </ul>
-            </nav>
-
-        </div>
-
-        <div class="modal fade" id="modalAjout" tabindex="-1" aria-labelledby="modalAjoutLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalAjoutLabel">Ajouter un établissement</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                    </div>
+                <form method="post" th:object="${DTOEstablishmentAdd}" th:action="@{/coordinatrice/etablissements/addReferrer}">
                     <div class="modal-body px-4 py-3">
-                        <form method="post" th:object="${DTOEstablishmentAdd}" th:action="@{/coordinatrice/etablissements/createEstablishment}">
-                            <div class="mb-3">
-                                <label class="form-label small fw-semibold">Nom de l'établissement</label>
-                                <input type="text" th:field="*{nameBuilding}" class="form-control form-control-sm" placeholder="Ex : Haute Ecole Robert Schuman"/>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label small fw-semibold">Rue et numero</label>
-                                <input type="text" th:field="*{postOfficeBox}" class="form-control form-control-sm" placeholder="Ex : Rue de la Cité, 64"/>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-4">
-                                    <label class="form-label small fw-semibold">Niveau d'éducation</label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" th:field="*{educationLevel}" value="autre" type="checkbox" id="checkAutre">
-                                        <label class="form-check-label" for="checkAutre">
-                                            Autre
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" th:field="*{educationLevel}" value="maternelle" type="checkbox" id="checkMaternelle">
-                                        <label class="form-check-label" for="checkMaternelle">
-                                            Maternelle
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" th:field="*{educationLevel}" value="primaire" type="checkbox"  id="checkPrimaire">
-                                        <label class="form-check-label" for="checkPrimaire">
-                                            Primaire
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" th:field="*{educationLevel}" value="secondaire" type="checkbox" id="checkSecondaire">
-                                        <label class="form-check-label" for="checkSecondaire">
-                                            Secondaire
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" th:field="*{educationLevel}" value="supérieur" type="checkbox"  id="checkSup">
-                                        <label class="form-check-label" for="checkSup">
-                                            Supérieur
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-8">
-                                    <label class="form-label small fw-semibold">Ville</label>
-                                    <input type="text" th:field="*{locality}" class="form-control form-control-sm" placeholder="Ex : Libramont"/>
-                                    <label class="form-label small fw-semibold">Code Postal</label>
-                                    <input type="number" th:field="*{postcode}" class="form-control form-control-sm"/>
-                                    <label class="form-label small fw-semibold">Numéro de téléphone</label>
-                                    <input type="text" th:field="*{phoneNumber}" class="form-control form-control-sm" placeholder="Ex : 001235679"/>
-                                </div>
-                            </div>
-                            <div class="modal-footer border-top justify-content-center gap-2">
-                                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="bi bi-plus-lg me-1"></i> Ajouter
-                                </button>
-                            </div>
-                        </form>
+                        <input type="hidden" th:field="*{numEstablishment}" id="establishmentIdReferrer"/>
+                        <label class="form-label small fw-semibold">Référents disponibles</label>
+                        <select th:field="*{listReferrerSelected}"
+                                class="form-select form-select-sm rounded-3"
+                                id="selectReferrer"
+                                multiple
+                                size="8">
+                            <option th:each="referrer : ${allListReferrer}"
+                                    th:value="${referrer.idReferrer}"
+                                    th:text="${referrer.displayName}">
+                            </option>
+                        </select>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="modalEdition" tabindex="-1" aria-labelledby="modalEditionLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalEditionLabel">Modifier l'établissement</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    <div class="modal-footer border-0 justify-content-center gap-3 pb-4">
+                        <button type="button" class="btn btn-outline-secondary btn-sm px-4" data-bs-dismiss="modal">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-sm px-4">
+                            Ajouter Référent
+                        </button>
                     </div>
-                        <div class="modal-body px-4 py-3">
-                            <form method="post" th:object="${DTOEstablishmentEdit}" th:action="@{/coordinatrice/etablissements/createEstablishment}">
-                                <input type="hidden" name="id" th:value="*{numEstablishment}" id="numEstablishmentEdit"/>
-                                <div class="mb-3">
-                                    <label class="form-label small fw-semibold">Nom de l'établissement</label>
-                                    <input type="text" id="nameBuildingEdit" th:field="*{nameBuilding}" class="form-control form-control-sm" placeholder="Ex : Haute Ecole Robert Schuman"/>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label small fw-semibold">Rue et numero</label>
-                                    <input type="text" id="postOfficeBoxEdit" th:field="*{postOfficeBox}" class="form-control form-control-sm" placeholder="Ex : Rue de la Cité, 64"/>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-4">
-                                        <label class="form-label small fw-semibold">Niveau d'éducation</label>
-                                        <div class="form-check">
-                                            <input class="form-check-input" th:field="*{educationLevel}" value="autre" type="checkbox" id="checkAutreEdit">
-                                            <label class="form-check-label" for="checkAutreEdit">
-                                                Autre
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" th:field="*{educationLevel}" value="maternelle" type="checkbox" id="checkMaternelleEdit">
-                                            <label class="form-check-label" for="checkMaternelleEdit">
-                                                Maternelle
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" th:field="*{educationLevel}" value="primaire" type="checkbox"  id="checkPrimaireEdit">
-                                            <label class="form-check-label" for="checkPrimaireEdit">
-                                                Primaire
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" th:field="*{educationLevel}" value="secondaire" type="checkbox" id="checkSecondaireEdit">
-                                            <label class="form-check-label" for="checkSecondaireEdit">
-                                                Secondaire
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" th:field="*{educationLevel}" value="supérieur" type="checkbox"  id="checkSupEdit">
-                                            <label class="form-check-label" for="checkSupEdit">
-                                                Supérieur
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-8">
-                                        <label class="form-label small fw-semibold">Ville</label>
-                                        <input type="text" th:field="*{locality}" id="localityEdit" class="form-control form-control-sm" placeholder="Ex : Libramont"/>
-                                        <label class="form-label small fw-semibold">Code Postal</label>
-                                        <input type="number" th:field="*{postcode}" id="codePostalEdit" class="form-control form-control-sm" placeholder="Ex : Libramont"/>
-                                        <label class="form-label small fw-semibold">Numéro de téléphone</label>
-                                        <input type="text" th:field="*{phoneNumber}" id="numPhoneEdit" class="form-control form-control-sm" placeholder="Ex : 123678098"/>
-                                    </div>
-                                </div>
-                                <div class="modal-footer border-top justify-content-center gap-2">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                                    <button type="submit" class="btn btn-primary btn-sm">
-                                        <i class="bi bi-plus-lg me-1"></i> Ajouter
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                </div>
-            </div>
+                </form>
         </div>
-        <script>
-            //This part of the code is used to put the data who is already in the database in the form</>
-            //
-            document.addEventListener("DOMContentLoaded", () => {
-                const buttons = document.querySelectorAll(".btn-edit-establishment");
+    </div>
+</div>
 
-                buttons.forEach(btn => {
-                    btn.addEventListener("click", () => {
 
-                        // Récupération des données depuis les attributs data-*
-                        const id = btn.getAttribute("data-id");
-                        const name = btn.getAttribute("data-name");
-                        const postOfficeBox = btn.getAttribute("data-post-office-box");
-                        const postalCode = btn.getAttribute("data-postal-code");
-                        const phoneNumber = btn.getAttribute("data-phone-number");
-                        const educationLevel = btn.getAttribute("data-education-level");
+<script>
+    //This part of the code is used to put the data who is already in the database in the form (mostly the id of the Establishment.
+    document.addEventListener("DOMContentLoaded", () => {
+        const buttons = document.querySelectorAll(".btn-add-referrer");
 
-                        const locality = btn.getAttribute("data-locality");
+        buttons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("establishmentIdReferrer").value = btn.getAttribute("data-id-num-establishment");
 
-                        // Remplissage des champs du modal
-                        document.getElementById("numEstablishmentEdit").value = id;
-
-                        // Si tu veux afficher des infos dans le modal :
-                        document.getElementById("nameBuildingEdit").value = name;
-                        document.getElementById("postOfficeBoxEdit").value = postOfficeBox;
-                        document.getElementById("localityEdit").value = locality;
-                        document.getElementById("codePostalEdit").value = postalCode;
-                        document.getElementById("numPhoneEdit").value = phoneNumber;
-
-                        // Récupération des données
-                        const educationLevelRaw = btn.getAttribute("data-education-level");
-
-                        // Nettoyage de la chaîne : "[primaire, secondaire]" → ["primaire","secondaire"]
-                        const levels = educationLevelRaw
-                            .replace("[", "")
-                            .replace("]", "")
-                            .split(",")
-                            .map(v => v.trim());
-
-                        // Liste des cases à cocher
-                        const checkboxes = {
-                            "autre": document.getElementById("checkAutreEdit"),
-                            "maternelle": document.getElementById("checkMaternelleEdit"),
-                            "primaire": document.getElementById("checkPrimaireEdit"),
-                            "secondaire": document.getElementById("checkSecondaireEdit"),
-                            "supérieur": document.getElementById("checkSupEdit")
-                        };
-
-                        // Réinitialiser toutes les cases
-                        Object.values(checkboxes).forEach(cb => cb.checked = false);
-
-                        // Cocher celles présentes dans la liste
-                        levels.forEach(level => {
-                            if (checkboxes[level]) {
-                                checkboxes[level].checked = true;
-                            }
-                        });
-
-                    });
-                });
             });
-        </script>
+        });
+    });
+</script>
 
+</script>
 
-        <div class="modal fade" id="modelAjoutReferrer" tabindex="-1" aria-labelledby="modalEditionReferrerLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalEditionReferrerLabel">Ajouter un référant</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                    </div>
-                    <form method="post" th:object="${DTOReferrerAdd}" th:action="@{/coordinatrice/etablissements/createReferrer}">
-                        <div class="modal-body px-4 py-3">
-                            <input type="hidden" id="numEstablishmentReferrer" th:field="*{numEstablishement}">
-                            <div class="mb-3">
-                                <label class="form-label small fw-semibold">Nom</label>
-                                <input type="text" th:field="*{nameNewReferrer}" class="form-control form-control-sm"/>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label small fw-semibold">Prénom</label>
-                                <input type="text" th:field="*{surnameNewReferrer}" class="form-control form-control-sm"/>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-4">
-                                    <label class="form-label small fw-semibold">Numero de telephone</label>
-                                    <input type="text" th:field="*{phoneNumberReferrer}" class="form-control form-control-sm"/>
-                                </div>
-                                <div class="col-8">
-                                    <label class="form-label small fw-semibold">email</label>
-                                    <input type="text" th:field="*{mailReferrer}" class="form-control form-control-sm"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer border-top justify-content-center gap-2">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                <i class="bi bi-floppy me-1"></i> Enregistrer
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+<div th:replace="~{common/footer :: footer}"></div>
+</body>
 
-        <script>
-            //This part of the code is used to put the data who is already in the database in the form</>
-            // We link the numEstablishment with the referrer
-            document.addEventListener("DOMContentLoaded", () => {
-                const buttons = document.querySelectorAll(".btn-add-referrer");
-                buttons.forEach(btn => {
-                    btn.addEventListener("click", () => {
-                        const id = btn.getAttribute("data-id");
-                        document.getElementById("numEstablishmentReferrer").value = id;
-                    });
-                });
-            });
-        </script>
-        <div th:replace="~{common/footer :: footer}"></div>
-    </body>
+    <head th:replace="~{common/head :: head('Etablissements', '/css/coordinatrice/etablissement.css')}"></head>
 </html>

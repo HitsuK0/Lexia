@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * @author Quentin Vanderheyden
+ * @reviewer Nicolas Jean-Francois, Halet Louis
+ */
 public class EstablishementService {
 
 
@@ -23,15 +27,11 @@ public class EstablishementService {
      * for the front.
      * @return all the Establishment found in BD converted into DTOEtablishment.
      */
-    public List<DTOEstablishment> getEtablissements(){
+    public List<DTOEstablishment> getEtablissements() throws SQLException {
         DAOEstablishment daoEstablishment = new DAOEstablishment();
         List<Establishment> establishments = null;
         List<DTOEstablishment> dtoEstablishments = new ArrayList<>();
-        try {
-            establishments = daoEstablishment.findAllFullEstablishment();
-        } catch (SQLException e) {
-            establishments = null;
-        }
+        establishments = daoEstablishment.findAllFullEstablishment();
         Iterator<Establishment> iterator = establishments.iterator();
         while(iterator.hasNext()){
             dtoEstablishments.add(new DTOEstablishment(iterator.next()));
@@ -70,27 +70,12 @@ public class EstablishementService {
         daoEstablishment.create(establishment);
     }
 
-    /**
-     * This function create a referrer with all the data needed
-     * @param dtoReferrer
-     * @throws SQLException
-     */
-    public void createReferrer(DTOReferrer dtoReferrer) throws SQLException {
-        Referrer referrer = new Referrer();
-        referrer.setName(dtoReferrer.getNameNewReferrer());
-        referrer.setSurname(dtoReferrer.getSurnameNewReferrer());
-        referrer.setAddressMail(dtoReferrer.getMailReferrer());
-        referrer.setPhoneNumber(dtoReferrer.getPhoneNumberReferrer());
-        DAOEstablishment daoEstablishment = new DAOEstablishment();
-        referrer.setRefEstablishment(daoEstablishment.find(dtoReferrer.getNumEstablishement()));
-        DAOReferrer daoReferrer = new DAOReferrer();
-        System.out.println(referrer);
-        daoReferrer.create(referrer);
-    }
+
 
     /**
      * This function makes an update of the Establishment
      * with the same id as dtoEstablishment.getNumEstablishment().
+     * It also make an update of the Address of the Establishment.
      * @param dtoEstablishment
      * @throws SQLException
      */

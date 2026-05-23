@@ -168,6 +168,40 @@ public class DAOReferrer extends DAO<Referrer> {
         return isUpdated;
     }
 
+
+    /**
+     * This method update the referrer link a new Establishment to objectToUpdateInDb.
+     *
+     * @param objectToUpdateInDB is the object to update.
+     * @param numEstablishment is the value of the Establishment to link to the Referrer.
+     * @return true if the update was made successfuly else false.
+     * @throws SQLException if the DB encountered a problem.
+     */
+    public boolean update(Referrer objectToUpdateInDB, int numEstablishment) throws SQLException {
+        boolean isUpdated = false;
+        String query = "UPDATE Referrer " +
+                "SET FKEstablishment = ? " +
+                "WHERE numReferer = ?";
+
+        PreparedStatement prStat = null;
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, objectToUpdateInDB.getNumReferrer());
+            prStat.setInt(6, numEstablishment);
+
+            int nbreLigne = prStat.executeUpdate();
+            if (nbreLigne > 0) {
+                isUpdated = true;
+            }
+        } finally {
+            closeStatement(prStat);
+        }
+        return isUpdated;
+    }
+
+
+
     /**
      * Deletes the Referrer whose numReferer matches the numReferer of the Referrer passed as a parameter.
      * Precondition: the Referrer passed as a parameter cannot be null.

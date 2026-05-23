@@ -25,6 +25,7 @@ public class DAOEstablishment extends DAO<Establishment>{
     /**
      * This function find all the data of all the Establishment.
      * This function make a List<Address> of size 1.
+     * This function find all the referrer who work at the Establishment found.
      * @return a list with all the Establishment with all the field fully initialized.
      * @throws SQLException if the bd request goes wrong
      */
@@ -35,14 +36,15 @@ public class DAOEstablishment extends DAO<Establishment>{
         PreparedStatement prStat = null;
         ResultSet rs = null;
 
-        String query = "SELECT numEstablishment, name, phoneNumber, FKAddress FROM Establishment";
+        String query = "SELECT numEstablishment, name, phoneNumber, FKAddress " +
+                        "FROM Establishment";
         try{
             prStat = connect.prepareStatement(query);
             rs = prStat.executeQuery();
+            DAOAddress daoAddress = new DAOAddress();
+            DAOReferrer daoReferrer = new DAOReferrer();
             while(rs.next()) {
-                DAOAddress daoAddress = new DAOAddress();
                 Address address = daoAddress.find(rs.getInt("FKAddress"));
-                DAOReferrer daoReferrer = new DAOReferrer();
                 List<Referrer> referrers = daoReferrer.findAllByEstablishment(rs.getInt("numEstablishment"));
                 List<Integer> educationLevel = findListEducationLevel(rs.getInt("numEstablishment"));
                 establishmentFind = new Establishment(

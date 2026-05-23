@@ -8,11 +8,13 @@ import be.hers.info.ProjetIntegree.POJO.Referrer;
  */
 public class DTOReferrer {
 
-    private int numEstablishement;
-    private String nameNewReferrer;
-    private String surnameNewReferrer;
-    private String phoneNumberReferrer;
-    private String mailReferrer;
+    private int numEstablishement; // the num Establishment where the Referrer work in.
+    private int idReferrer;
+    private String nameNewReferrer; // the name of the Referrer.
+    private String surnameNewReferrer; // the surname of the Referrer.
+    private String phoneNumberReferrer; // the phone number of the Referrer.
+    private String mailReferrer; // the mail of the Referrer.
+    private String displayName;
 
     /**
      * Initialize an empty DTOReferrer
@@ -22,17 +24,21 @@ public class DTOReferrer {
     }
 
     /**
-     * Initialize a DTOReferrer with all the field.
+     * Initialize a DTOReferrer with all the field for a Referrer.
+     * @param numEstablishement is the number of the Establishment where the Referrer work in.
      * @param name is the name of the referrer.
      * @param surname is the surname of the referrer.
      * @param phoneNumber is the phone number of the referrer.
      * @param mailReferrer is the mail address of the referrer.
      */
-    public DTOReferrer(String name, String surname, String phoneNumber, String mailReferrer) {
+    public DTOReferrer(int numEstablishement, int numReferrer, String name, String surname, String phoneNumber, String mailReferrer) {
+        this.numEstablishement = numEstablishement;
+        this.idReferrer = numReferrer;
         this.nameNewReferrer = name;
         this.surnameNewReferrer = surname;
         this.phoneNumberReferrer = phoneNumber;
         this.mailReferrer = mailReferrer;
+        this.displayName = name.toUpperCase() + " " +surname;
     }
 
     /**
@@ -40,7 +46,7 @@ public class DTOReferrer {
      * @param referrer is reference to create the this.
      */
     public DTOReferrer(Referrer referrer) {
-        this(referrer.getName(), referrer.getSurname(), referrer.getPhoneNumber(), referrer.getAddressMail());
+        this(referrer.getRefEstablishment().getNumEstablishment(), referrer.getNumReferrer(), referrer.getName(), referrer.getSurname(), referrer.getPhoneNumber(), referrer.getAddressMail());
     }
 
     /**
@@ -81,6 +87,12 @@ public class DTOReferrer {
      */
     public int getNumEstablishement() {return numEstablishement; }
 
+
+    /**
+     * Get the id of the referrer
+     * @return idReferrer.
+     */
+    public int getIdReferrer() {return idReferrer; }
     /**
      * Set the new numEstablishment with the given param.
      * @param numEstablishement is the new numEstablishment.
@@ -117,5 +129,19 @@ public class DTOReferrer {
      */
     public void setMailReferrer(String mailReferrer) {
         this.mailReferrer = mailReferrer;
+    }
+
+
+    /**
+     * Set the id of the Referrer
+     * @param idReferrer is new id for the referrer.
+     */
+    public void setIdReferrer(int idReferrer) {
+        this.idReferrer = idReferrer;
+    }
+
+
+    public String getDisplayName() {
+        return displayName;
     }
 }

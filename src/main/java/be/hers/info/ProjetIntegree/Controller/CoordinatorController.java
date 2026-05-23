@@ -8,12 +8,15 @@ import be.hers.info.ProjetIntegree.POJO.Coordinator;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
 import be.hers.info.ProjetIntegree.Services.EstablishementService;
 
+import be.hers.info.ProjetIntegree.Services.ReferrerService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.w3c.dom.html.HTMLDocument;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -23,6 +26,7 @@ public class CoordinatorController {
     /**
      * Retrieves the connected coordinator from the session.
      * Returns null if no user is connected or if the connected user is not a Coordinator.
+     *
      * @param session the current HTTP session
      * @return the connected Coordinator, or null if not found
      */
@@ -66,37 +70,59 @@ public class CoordinatorController {
     /**
      * This function load the page "etablissement".
      * It also add all the data needed for the display (all the establishment registered in DB)
+     * The page enable to add and modify an Establishment and to attribute a referrer for an Establishment.
+     *
      * @param model is param used by Spring to add all the data in the page.
      * @return the page displayed for the users.
      */
     @GetMapping("/etablissements")
-    public String etablissements(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
+    public String etablissements(Model model, HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if(coordinator == null)
+            return "redirect:login";
+        String userName = coordinator.getLastName().toUpperCase() + " " + coordinator.getFirstName();
+        model.addAttribute("userName", userName);
         model.addAttribute("userRole", "COORDINATOR");
         model.addAttribute("isAdmin", true);
         EstablishementService establishmentService = new EstablishementService();
-        List<DTOEstablishment> listEstablishment = establishmentService.getEtablissements();
+        List<DTOEstablishment> listEstablishment = null;
+        try {
+            listEstablishment = establishmentService.getEtablissements();
+        } catch (SQLException e) {
+            // renvoyé sur la page d'erreur.
+        }
         model.addAttribute("listEstablishment", listEstablishment);
+        // listEstablishment is used for the display in the table.
         model.addAttribute("DTOEstablishmentAdd", new DTOEstablishment());
+        // DTOEstablishmentAdd is used when the user try to add an Establishment
         model.addAttribute("DTOEstablishmentEdit", new DTOEstablishment());
-        model.addAttribute("DTOReferrerAdd", new DTOReferrer());
+        // DTOEstablishment is used when we try to modify an
+        ReferrerService referrerService = new ReferrerService();
+        List<DTOReferrer> allListReferrer = null;
+        try {
+            allListReferrer = referrerService.getAllReferrer();
+        } catch (SQLException e) {
+            //renvoyé sur la page d'erreur.
+        }
+        model.addAttribute("allListReferrer", allListReferrer);
+        model.addAttribute("listReferrerSelected", new ArrayList<Integer>());
         return "coordinatrice/etablissements";
     }
 
     /**
      * This function create an establishment in DB using the data put in the form.
+     *
      * @param dtoEstablishment is the DTOEstablishment the user is trying to add.
-     * @param model is param used by Spring to add all the data in the page.
+     * @param model            is param used by Spring to add all the data in the page.
      * @return the page "etablissements" where it comes from.
      */
     @PostMapping("/etablissements/createEstablishment")
     public String addEstablishment(@ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment,
-                                   Model model){
+                                   Model model) {
         EstablishementService establishementService = new EstablishementService();
         try {
             establishementService.createEstablishment(dtoEstablishment);
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             // renvoyé la page d'erreur.
         }
         return "redirect:/coordinatrice/etablissements";
@@ -105,18 +131,20 @@ public class CoordinatorController {
     /**
      * This function add a Referrer in the database
      * using the data the user put in the form.
-     * @param dtoReferrer is the DTOReferrer to add in the database
+     *
      * @param model is param used by Spring to add all the data in the page.
      * @return the page "etablissements" where it comes from.
      */
-    @PostMapping("/etablissements/createReferrer")
-    public String addReferrer(@ModelAttribute("DTOReferrer") DTOReferrer dtoReferrer,
-                              Model model){
-        EstablishementService establishementService = new EstablishementService();
+    @PostMapping("/etablissements/addReferrer")
+    public String attributeReferrer(
+                            @ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment,
+                            Model model) {
+
+        ReferrerService referrerService = new ReferrerService();
         try {
-            establishementService.createReferrer(dtoReferrer);
-        }
-        catch (SQLException e) {
+            referrerService.attributeReferrer(dtoEstablishment.getListReferrerSelected(), dtoEstablishment.getNumEstablishment());
+
+        } catch (SQLException e) {
             // renvoyé la page d'erreur.
         }
         return "redirect:/coordinatrice/etablissements";
@@ -125,18 +153,18 @@ public class CoordinatorController {
     /**
      * This functions update the Establishment with the
      * Establishment the user put in the form
+     *
      * @param dtoEstablishment is the DTOEstablishment to update.
-     * @param model is param used by Spring to add all the data in the page.
+     * @param model            is param used by Spring to add all the data in the page.
      * @return the page "etablissements" where it comes from.
      */
     @PostMapping("etablissements/updateEstablishment")
     public String updateEstablishment(@ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
-                                      Model model){
+                                      Model model) {
         EstablishementService establishementService = new EstablishementService();
         try {
             establishementService.updateEstablishment(dtoEstablishment);
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             // renvoyé la page d'erreur.
         }
         return "redirect:/coordinatrice/etablissements";
@@ -162,7 +190,7 @@ public class CoordinatorController {
             case "2" -> model.addAttribute("userRole", "INTERPRETER");
             case "3" -> model.addAttribute("userRole", "BENEFICIARY");
             case "4" -> model.addAttribute("userRole", "COORDINATOR");
-            default  -> model.addAttribute("userRole", "INTERPRETER");
+            default -> model.addAttribute("userRole", "INTERPRETER");
         }
 
         return "coordinatrice/utilisateur-detail";
@@ -189,13 +217,14 @@ public class CoordinatorController {
     /**
      * If the coordinator exists, the user will be redirected to the home page.
      * Otherwise, if it is null, the user will be redirected to the login page.
-     *  @param session session the current HTTP session
-     *  @return The HTML path to the home page if a coordinator is logged in, else redirects to /login.
+     *
+     * @param session session the current HTTP session
+     * @return The HTML path to the home page if a coordinator is logged in, else redirects to /login.
      */
     @GetMapping("/accueil")
     public String accueil(HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if(coordinator == null) {
+        if (coordinator == null) {
             return "redirect:/login";
         }
         return "coordinatrice/accueil";
