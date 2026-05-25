@@ -2,9 +2,10 @@ package be.hers.info.ProjetIntegree.DAO;
 
 /**
  * @author Rosman Loïs
- * @reviewer Nicolas Jean-Francois, Halet Louis
+ * @reviewer Halet Louis, Nicolas Jean-François
  */
 
+import be.hers.info.ProjetIntegree.DTO.DTOEstablishmentFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
 import be.hers.info.ProjetIntegree.POJO.Referrer;
@@ -123,6 +124,40 @@ public class DAOEstablishment extends DAO<Establishment>{
     }
 
     /**
+     * Create a list containing all the establishments in the table. It initializes each establishment with
+     * his numEstablishment and his name
+     * @return a list containing all the establishments in the table or an empty list if the table is empty
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public List<DTOEstablishmentFormAppointment> findAllDTOFormAppointment() throws SQLException {
+        List<DTOEstablishmentFormAppointment> listEstablishmentFind = new ArrayList<>();
+        DTOEstablishmentFormAppointment establishmentFind = null;
+
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        String query = "SELECT numEstablishment, name FROM Establishment";
+
+        try{
+            prStat = connect.prepareStatement(query);
+            rs = prStat.executeQuery();
+
+            while(rs.next()) {
+                establishmentFind = new DTOEstablishmentFormAppointment(
+                        rs.getInt("numEstablishment"),
+                        rs.getString("name")
+                );
+
+                listEstablishmentFind.add(establishmentFind);
+            }
+        }
+        finally{
+            closeStatementAndResultSet(prStat, rs);
+        }
+        return listEstablishmentFind;
+    }
+
+    /**
      * Precondition: the establishment passed as a parameter cannot be null.
      * Precondition: the educationLevel list in objectToInsertInDB contains only valid integers (between 0 and 4)
      * and doesn't contain duplicates.
@@ -151,11 +186,10 @@ public class DAOEstablishment extends DAO<Establishment>{
             String strEducationLevel = String.join(",", listStrEducationLevel);
 
             int nbLinesInsert = 0;
-            for(int indexAddresses = 0; indexAddresses < addresses.size(); indexAddresses++) {
+            for (Address address : addresses) {
                 prStat.setString(1, objectToInsertInDB.getNameBuilding());
                 prStat.setString(2, objectToInsertInDB.getPhoneNumber());
                 prStat.setString(3, strEducationLevel);
-                Address address = addresses.get(indexAddresses);
                 prStat.setInt(4, address.getNumAddress());
                 prStat.registerReturnParameter(5, OracleTypes.INTEGER);
 
@@ -184,6 +218,13 @@ public class DAOEstablishment extends DAO<Establishment>{
         return isInserted;
     }
 
+    /**
+     * Insert in DB an instance that linked an establishment ant a referrer
+     * @param numEstablishment the id of an establishment
+     * @param numReferrer the id of a referrer
+     * @return true is the creation is a succes. Otherwise, return false
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
     public boolean addReferrerAtEstablishment(int numEstablishment, int numReferrer) throws SQLException {
         boolean isInserted = false;
         PreparedStatement prStat = null;
@@ -220,7 +261,7 @@ public class DAOEstablishment extends DAO<Establishment>{
         PreparedStatement prStat = null;
 
         String query = """
-                       UPDATE Establishment 
+                       UPDATE Establishment
                        SET name = ?, phoneNumber = ?
                        WHERE numEstablishment = ?
                        """;

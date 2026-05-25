@@ -25,8 +25,8 @@
                 </div>
 
                 <div class="d-flex gap-3 small text-muted" style="position: absolute; left: 50%; transform: translateX(-50%);">
-                    <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-hourglass-split" style="font-size:0.7rem;"></i>&nbsp;</span> Demande en attente</span>
-                    <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
+                    <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;&nbsp;</span> Demande en attente</span>
+                    <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Rendez-vous confirmé</span>
                 </div>
 
                 <div class="d-flex align-items-center gap-2 ms-auto">
@@ -47,6 +47,11 @@
                     <button type="button" class="btn btn-outline-primary btn-sm"
                             data-bs-toggle="modal" data-bs-target="#modalRDV">
                         <i class="bi bi-plus-circle"></i> Demander un RDV
+                    </button>
+
+                    <button type="button" class="btn btn-outline-primary btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#modalSend">
+                        <i class="bi bi-send"></i> Envoyer demandes
                     </button>
                 </div>
 
@@ -91,72 +96,33 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Matières</label>
-                            <div id="rdvAcademicSkills" class="d-flex flex-wrap gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillMath" value="mathematiques"/>
-                                    <label class="form-check-label small" for="skillMath">Mathématiques</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillFr" value="francais"/>
-                                    <label class="form-check-label small" for="skillFr">Français</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillEn" value="anglais"/>
-                                    <label class="form-check-label small" for="skillEn">Anglais</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillSci" value="sciences"/>
-                                    <label class="form-check-label small" for="skillSci">Sciences</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillHist" value="histoire"/>
-                                    <label class="form-check-label small" for="skillHist">Histoire</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillCours" value="cours"/>
-                                    <label class="form-check-label small" for="skillCours">Cours</label>
-                                </div>
-                            </div>
-                            <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une matière.</div>
+                            <select id="rdvAcademicSkill" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une matière</option>
+                                <option value="mathematiques">Mathématiques</option>
+                                <option value="francais">Français</option>
+                                <option value="anglais">Anglais</option>
+                                <option value="sciences">Sciences</option>
+                                <option value="histoire">Histoire</option>
+                                <option value="cours">Cours</option>
+                            </select>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Compétences requises</label>
                             <div class="d-flex gap-3">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranscription"/>
+                                    <input class="form-check-input" type="checkbox" id="compTranscription" checked/>
                                     <label class="form-check-label small" for="compTranscription">Transcription</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranslitteration"/>
+                                    <input class="form-check-input" type="checkbox" id="compTranslitteration" checked/>
                                     <label class="form-check-label small" for="compTranslitteration">Translittération</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranslation"/>
+                                    <input class="form-check-input" type="checkbox" id="compTranslation" checked/>
                                     <label class="form-check-label small" for="compTranslation">Translation</label>
                                 </div>
                             </div>
-                            <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une compétence requise.</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Établissement</label>
-                            <select id="rdvEstablishment" class="form-select form-select-sm">
-                                <option value="" disabled selected>Choisissez un établissement</option>
-                                <option value="hers">HERS</option>
-                                <option value="hepl">HEPL</option>
-                                <option value="hepn">HEPN</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Local </label>
-                            <input type="text" id="rdvLocal" class="form-control form-control-sm" placeholder="Ex: Local M5, Labo 2..."/>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Description <span class="text-muted fw-normal">(facultatif)</span></label>
-                            <textarea id="rdvDescription" class="form-control form-control-sm" rows="2" placeholder="Texte..."></textarea>
                         </div>
 
                     </div>
@@ -164,6 +130,31 @@
                     <div class="modal-footer border-top justify-content-center gap-2">
                         <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
                         <button type="button" class="btn btn-primary btn-sm px-4" id="btnSendRDV">Envoyez la demande</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalSend" tabindex="-1" aria-labelledby="modalSendLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalSendLabel">Envoyer les demandes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body px-4 py-3 text-center">
+                        <p class="mb-1">Vous êtes sur le point d'envoyer</p>
+                        <p class="fw-bold fs-4 text-primary mb-1" id="numberRequests">0</p>
+                        <p class="mb-1">demande(s) à la coordinatrice.</p>
+                        <p class="text-muted small">Cette action est irréversible.</p>
+                    </div>
+
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">Confirmer l'envoi</button>
                     </div>
 
                 </div>
@@ -230,6 +221,7 @@
                 const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
                     locale: 'fr',
                     initialView: 'timeGridWeek',
+                    initialDate: '2026-03-02',
                     headerToolbar: {
                         left: 'prev',
                         center: 'title',
@@ -239,15 +231,9 @@
                     slotMaxTime: '19:00:00',
                     allDaySlot: false,
 
-                    /* Opens the RDV modal when clicking on an empty time slot */
+                    <!-- Function that allows you to click on a blank range and this opens the associated modal -->
                     dateClick: function (info) {
-                        const today = new Date().toISOString().split('T')[0];
-                        const clickedDate = info.dateStr.split('T')[0];
-
-                        if (clickedDate < today) return;
-
-                        document.getElementById('rdvDate').value = clickedDate;
-                        document.getElementById('rdvDate').min = today;
+                        document.getElementById('rdvDate').value = info.dateStr.split('T')[0];
 
                         if (info.dateStr.includes('T')) {
                             const hourStr = info.dateStr.split('T')[1].substring(0, 5);
@@ -266,6 +252,7 @@
                     height: 'calc(100vh - 170px)',
                     events: events,
 
+                    <!-- Allows you to set the icon according to the status of the appointment -->
                     eventContent: function (arg) {
                         const lines = arg.event.title.split('\n');
                         const enAttente = arg.event.extendedProps.enAttente;
@@ -284,18 +271,14 @@
 
                 calendar.render();
 
-                /* Pre-selects the currently displayed beneficiary in the modal dropdown */
                 document.getElementById('modalRDV').addEventListener('show.bs.modal', function () {
                     const nameBenef = document.getElementById('beneficiaireSelectionne').textContent;
                     const select = document.getElementById('rdvBeneficiary');
                     Array.from(select.options).forEach(option => {
                         if (option.text === nameBenef) option.selected = true;
                     });
-
-                    document.getElementById('rdvDate').min = new Date().toISOString().split('T')[0];
                 });
 
-                /* Generates time options (every 5 min) between start and end (in minutes) */
                 function generateHoursRdv(selectId, start, end) {
                     const select = document.getElementById(selectId);
                     select.innerHTML = '<option value="" disabled selected>-- Heure --</option>';
@@ -309,26 +292,20 @@
                     }
                 }
 
-                /* Hides the academic skills error message as soon as at least one is checked */
-                document.querySelectorAll('.skill-check').forEach(cb => {
-                    cb.addEventListener('change', function () {
-                        if (document.querySelectorAll('.skill-check:checked').length > 0) {
-                            document.getElementById('rdvAcademicSkillsError').style.display = 'none';
-                        }
-                    });
-                });
-
                 generateHoursRdv('rdvHourStart', 8 * 60, 18 * 60 + 55);
                 generateHoursRdv('rdvHourEnd', 8 * 60 + 5, 19 * 60);
 
-                /* Regenerates end hours to always be after the selected start hour */
                 document.getElementById('rdvHourStart').addEventListener('change', function () {
                     const [h, m] = this.value.split(':').map(Number);
                     const totalMinutes = h * 60 + m;
                     generateHoursRdv('rdvHourEnd', totalMinutes + 5, 19 * 60);
                 });
 
-                /* Validates the RDV form before submission */
+                document.getElementById('modalSend').addEventListener('show.bs.modal', function () {
+                    const countRdv = events.filter(e => e.extendedProps.enAttente).length;
+                    document.getElementById('numberRequests').textContent = countRdv;
+                });
+
                 document.getElementById('btnSendRDV').addEventListener('click', function () {
                     let valid = true;
 
@@ -336,23 +313,16 @@
                     const rdvDate = document.getElementById('rdvDate');
                     const rdvHourStart = document.getElementById('rdvHourStart');
                     const rdvHourEnd = document.getElementById('rdvHourEnd');
-                    const rdvEstablishment = document.getElementById('rdvEstablishment');
-                    const rdvLocal = document.getElementById('rdvLocal');
-                    const selectedSkills = document.querySelectorAll('.skill-check:checked');
-                    const skillsError = document.getElementById('rdvAcademicSkillsError');
-                    const atLeastOneComp = Array.from(document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')).some(cb => cb.checked);
-                    const compsError = document.getElementById('rdvCompsError');
+                    const rdvAcademicSkill = document.getElementById('rdvAcademicSkill');
 
-                    /* Clear previous errors */
-                    [rdvBeneficiary, rdvDate, rdvHourStart, rdvHourEnd, rdvEstablishment, rdvLocal].forEach(el => {
+                    [rdvBeneficiary, rdvDate, rdvHourStart, rdvHourEnd, rdvAcademicSkill].forEach(el => {
                         el.classList.remove('is-invalid');
                         const feedback = el.nextElementSibling;
-                        if (feedback && feedback.classList.contains('invalid-feedback')) feedback.remove();
+                        if (feedback && feedback.classList.contains('invalid-feedback')) {
+                            feedback.remove();
+                        }
                     });
-                    skillsError.style.display = 'none';
-                    compsError.style.display = 'none';
 
-                    /* Adds an inline error message below the given input */
                     function displayError(input, message) {
                         input.classList.add('is-invalid');
                         const div = document.createElement('div');
@@ -365,47 +335,12 @@
                     if (!rdvBeneficiary.value) displayError(rdvBeneficiary, 'Veuillez sélectionner un bénéficiaire.');
                     if (!rdvDate.value) displayError(rdvDate, 'La date est obligatoire.');
                     if (!rdvHourStart.value) displayError(rdvHourStart, 'L\'heure de début est obligatoire.');
-                    if (!rdvHourEnd.value) displayError(rdvHourEnd, 'L\'heure de fin est obligatoire.');
-                    if (selectedSkills.length === 0) {
-                        skillsError.style.display = 'block';
-                        valid = false;
-                    }
-                    if (!atLeastOneComp) {
-                        compsError.style.display = 'block';
-                        valid = false;
-                    }
-                    if (!rdvEstablishment.value.trim()) displayError(rdvEstablishment, 'L\'établissement est obligatoire.');
-                    if (!rdvLocal.value.trim()) displayError(rdvLocal, 'Le local est obligatoire.');
+                    if (!rdvHourEnd.value) displayError(rdvHourEnd, 'L\'heure de end est obligatoire.');
+                    if (!rdvAcademicSkill.value) displayError(rdvAcademicSkill, 'Veuillez sélectionner une matière.');
 
                     if (!valid) return;
 
                     bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
-                });
-
-                /* Resets all RDV modal fields when it is closed */
-                document.getElementById('modalRDV').addEventListener('hidden.bs.modal', function () {
-                    document.getElementById('rdvBeneficiary').value = '';
-                    document.getElementById('rdvDate').value = '';
-                    document.getElementById('rdvDate').min = new Date().toISOString().split('T')[0];
-                    document.getElementById('rdvEstablishment').selectedIndex = 0;
-                    document.getElementById('rdvLocal').value = '';
-                    document.getElementById('rdvDescription').value = '';
-                    document.getElementById('rdvAcademicSkillsError').style.display = 'none';
-                    document.getElementById('rdvCompsError').style.display = 'none';
-
-                    document.querySelectorAll('.skill-check').forEach(cb => cb.checked = false);
-                    document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')
-                        .forEach(cb => cb.checked = true);
-
-                    generateHoursRdv('rdvHourStart', 8 * 60, 18 * 60 + 55);
-                    generateHoursRdv('rdvHourEnd', 8 * 60 + 5, 19 * 60);
-
-                    ['rdvBeneficiary', 'rdvDate', 'rdvHourStart', 'rdvHourEnd'].forEach(id => {
-                        const el = document.getElementById(id);
-                        el.classList.remove('is-invalid');
-                        const fb = el.nextElementSibling;
-                        if (fb && fb.classList.contains('invalid-feedback')) fb.remove();
-                    });
                 });
             });
         </script>

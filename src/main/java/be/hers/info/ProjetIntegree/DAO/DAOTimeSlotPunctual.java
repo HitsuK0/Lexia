@@ -1,10 +1,13 @@
 package be.hers.info.ProjetIntegree.DAO;
 
+import be.hers.info.ProjetIntegree.POJO.TimeSlot;
 import be.hers.info.ProjetIntegree.POJO.TimeSlotPunctual;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleTypes;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -13,7 +16,6 @@ import java.util.ArrayList;
  * @reviewer Nicolas Jean-François, Halet Louis
  */
 public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
-
     /**
      * Search for a TimeSlotPunctual with the same id as objectToSearchInDB
      * @param objectToSearchInDB is the id of the TimeSlotPunctual to search
@@ -46,6 +48,44 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         finally{
             closeStatementAndResultSet(prStat, rs);
 
+        }
+        return timeSlotPunctual;
+    }
+
+    /**
+     * Search for a TimeSlotPunctual with the same parameters as comparableTimeSlot
+     * @param comparableTimeSlot the time slot punctual that will be compared to find if it's already in database
+     * @return null if nothing was find, else return a TimeSlotPuntual
+     * @throws SQLException if an errors occurs during the database request
+     */
+    public TimeSlotPunctual findSameTimeSlot(TimeSlotPunctual comparableTimeSlot) throws SQLException{
+        TimeSlotPunctual timeSlotPunctual = null;
+        String query = "SELECT * " +
+                "FROM TimeSlotPunctual " +
+                "WHERE startTime = ? and duration = ? and startDate = ? and endDate = ?";
+
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+        try{
+            prStat = connect.prepareStatement(query);
+            prStat.setTimestamp(1, Timestamp.valueOf(comparableTimeSlot.getStartDate().atTime(comparableTimeSlot.getStartTime())));
+            prStat.setTimestamp(2, Timestamp.valueOf(comparableTimeSlot.getEndDate().atTime(comparableTimeSlot.getDuration())));
+            prStat.setTimestamp(3, Timestamp.valueOf(comparableTimeSlot.getStartTime().atDate(comparableTimeSlot.getStartDate())));
+            prStat.setTimestamp(4, Timestamp.valueOf(comparableTimeSlot.getDuration().atDate(comparableTimeSlot.getEndDate())));
+
+            rs = prStat.executeQuery();
+            if(rs.next()){
+                timeSlotPunctual = new TimeSlotPunctual(
+                        rs.getInt("numTimeSlot"),
+                        rs.getTimestamp("startTime").toLocalDateTime().toLocalTime(),
+                        rs.getTimestamp("duration").toLocalDateTime().toLocalTime(),
+                        rs.getDate("startDate").toLocalDate(),
+                        rs.getDate("endDate").toLocalDate()
+                );
+            }
+        }
+        finally{
+            closeStatementAndResultSet(prStat, rs);
         }
         return timeSlotPunctual;
     }

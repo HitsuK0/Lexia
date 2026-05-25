@@ -24,6 +24,7 @@ public class DAOAbsence extends DAO<Absence>{
      * @throws SQLException In case of any SQL problems encountered with this method
      */
     public Absence find(int objectToSearchInDB) throws SQLException {
+        Connection connect = ConnectionOracle.getInstance();
         Absence absence = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -67,6 +68,7 @@ public class DAOAbsence extends DAO<Absence>{
      * @throws SQLException In case of any SQL problems encountered with this method
      */
     public List<Absence> findAll() throws SQLException {
+        Connection connect = ConnectionOracle.getInstance();
         List<Absence> absenceList = new ArrayList<Absence>();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -112,6 +114,7 @@ public class DAOAbsence extends DAO<Absence>{
      * @throws SQLException In case of any SQL problems encountered with this method
      */
     public boolean create(Absence objectToInsertInDB) throws SQLException {
+        Connection connect = ConnectionOracle.getInstance();
         boolean isCreated = false;
         OraclePreparedStatement preparedStatement = null;
         ResultSet generateID = null;
@@ -167,6 +170,7 @@ public class DAOAbsence extends DAO<Absence>{
      * @throws SQLException In case of any SQL problems encountered with this method
      */
     public boolean create(Absence objectToInsertInDB, int otherObjectID) throws SQLException, IllegalArgumentException {
+        Connection connect = ConnectionOracle.getInstance();
         boolean isCreated = false;
         OraclePreparedStatement preparedStatement = null;
         ResultSet generateID = null;
@@ -219,6 +223,7 @@ public class DAOAbsence extends DAO<Absence>{
      * @throws SQLException In case of any SQL problems encountered with this method
      */
     public boolean update(Absence objectToUpdateInDB) throws SQLException {
+        Connection connect = ConnectionOracle.getInstance();
         boolean updated = false;
         PreparedStatement preparedStatement = null;
 
@@ -260,6 +265,7 @@ public class DAOAbsence extends DAO<Absence>{
      * @throws SQLException In case of any SQL problems encountered with this method
      */
     public boolean delete(Absence objectToDeleteFormDB) throws SQLException {
+        Connection connect = ConnectionOracle.getInstance();
         boolean isDeleted = false;
         PreparedStatement preparedStatement = null;
 
@@ -284,12 +290,15 @@ public class DAOAbsence extends DAO<Absence>{
      * Retrieves a list of punctual absences for a specific interpreter within a given date range
      * Each Absence is populated with its corresponding TimeSlotPunctual details
      * @param interpreter The interpreter whose absences are being searched
+     * @param startDate The start date of the period to check
+     * @param endDate The end date of the period to check
      * @return A list of Absence objects matching the criteria, or an empty list if no absences are found
      * @throws SQLException If a database access error occurs or the SQL query fails
      * @throws BadStatusException If the absence status in the database does not match
      * the expected values ('en attente', 'refuse', or 'accepte')
      */
-    public List<Absence> findPunctualAbsencesInterpreter(Interpreter interpreter) throws SQLException, BadStatusException {
+    public List<Absence> findPunctualAbsencesInterpreter(Interpreter interpreter, String startDate, String endDate) throws SQLException, BadStatusException {
+        Connection connect = ConnectionOracle.getInstance();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         List<Absence> punctualAbsenceList = new ArrayList<Absence>();
@@ -297,11 +306,15 @@ public class DAOAbsence extends DAO<Absence>{
         String query = "SELECT ab.numAbsence, ab.status, ab.reasons, ab.privateReason, ab.FKTimeSlotPunctual " +
                 "FROM Absence ab " +
                 "JOIN TimeSlotPunctual tsp ON ab.FKTimeSlotPunctual = tsp.numTimeSlot " +
-                "WHERE ab.FKnumInterpreter = ?";
+                "WHERE ab.FKnumInterpreter = ? " +
+                "  AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') " +
+                "  AND NVL(tsp.endDate, tsp.startDate) >= TO_DATE(?, 'YYYY-MM-DD')";
         try {
             preparedStatement = connect.prepareStatement(query);
 
             preparedStatement.setInt(1, interpreter.getNumInterpreter());
+            preparedStatement.setString(2, endDate);
+            preparedStatement.setString(3, startDate);
 
             resultSet = preparedStatement.executeQuery();
 
@@ -336,6 +349,7 @@ public class DAOAbsence extends DAO<Absence>{
      * the expected values ('en attente', 'refuse', or 'accepte')
      */
     public List<Absence> findBaseAbsencesInterpreter(Interpreter interpreter) throws SQLException, BadStatusException {
+        Connection connect = ConnectionOracle.getInstance();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         List<Absence> baseAbsenceList = new ArrayList<Absence>();
