@@ -19,8 +19,10 @@ import org.springframework.ui.Model;
 
 import java.sql.SQLException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 // TODO: Delete default values from RequestParam once true params can be passed
 
@@ -87,9 +89,12 @@ public class InterpreterController {
         List<Absence> absenceList = planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd);
         interpreter.setAppointmentsList(appointmentList);
         interpreter.setAbsences(absenceList);
+        LocalDate ldStart = LocalDate.parse(dateStart);
+        LocalDate ldEnd = LocalDate.parse(dateEnd);
 
         List<Map<String,Object>> events = new ArrayList<>();
-
+        List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
+                .toList();
         for( Appointment a : appointmentList){
             Map<String, Object> event = new HashMap<>();
             Map<String, Object> extendedProps = new HashMap<>();
@@ -98,9 +103,20 @@ public class InterpreterController {
                 TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
                 LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
                 event.put("start",ldt);
-                event.put("end",ldt.plusNanos(tsp.getDuration().toSecondOfDay()));
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
             }else{
-                //faire avec TimeSlotBase
+                TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
+                int i = tsp.getDayNumber();
+                LocalDate ld = null;
+                for(LocalDate l : listDateBetweenStartEnd){
+                    if(l.getDayOfWeek().getValue() == i){
+                        ld = l;
+                        break;
+                    }
+                }
+                LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
             }
             switch (a.getStatus()){
                 case "en attente":
@@ -131,10 +147,21 @@ public class InterpreterController {
                 TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
                 LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
                 event.put("start",ldt);
-                event.put("end",ldt.plusNanos(tsp.getDuration().toSecondOfDay()));
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
 
             }else{
-                //faire avec TimeSlotBase
+                TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
+                int i = tsp.getDayNumber();
+                LocalDate ld = null;
+                for(LocalDate l : listDateBetweenStartEnd){
+                    if(l.getDayOfWeek().getValue() == i){
+                        ld = l;
+                        break;
+                    }
+                }
+                LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
             }
             event.put("color","#f0ad4e");
             extendedProps.put("type","appointment");
