@@ -89,9 +89,10 @@ public class InterpreterController {
         interpreter.setAbsences(absenceList);
 
         List<Map<String,Object>> events = new ArrayList<>();
-        Map<String, Object> extendedProps = new HashMap<>();
+
         for( Appointment a : appointmentList){
             Map<String, Object> event = new HashMap<>();
+            Map<String, Object> extendedProps = new HashMap<>();
             event.put("title",a.getAcademicSkillsNeeded());
             if(a.getTimeSlot() instanceof TimeSlotPunctual){
                 TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
@@ -122,12 +123,26 @@ public class InterpreterController {
             events.add(event);
 
         }
-        //faire avec absence
+        for(Absence a : absenceList){
+            Map<String, Object> event = new HashMap<>();
+            Map<String, Object> extendedProps = new HashMap<>();
+            event.put("title","Indisponibilité");
+            if(a.getTimeSlot() instanceof TimeSlotPunctual){
+                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
+                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusNanos(tsp.getDuration().toSecondOfDay()));
 
-        model.addAttribute("activeTab", "planning");
-
-        model.addAttribute("DTOAbsence", new DTOAbsence());
-        return "interprete/planning";
+            }else{
+                //faire avec TimeSlotBase
+            }
+            event.put("color","#f0ad4e");
+            extendedProps.put("type","appointment");
+            extendedProps.put("reason", a.getReason());
+            event.put("extendedProps",extendedProps);
+            events.add(event);
+        }
+        return events;
     }
 
     /**
