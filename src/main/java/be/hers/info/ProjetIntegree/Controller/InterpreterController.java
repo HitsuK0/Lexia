@@ -139,8 +139,8 @@ public class InterpreterController {
      * @return Redirect to the "interprete/planning/beneficiaires" page
      */
     @GetMapping("/planning/beneficiaires")
-    public String planningBeneficiaires(@RequestParam(defaultValue = "2026-05-15") String start,
-                                        @RequestParam(defaultValue = "2026-05-22") String end,
+    public String planningBeneficiaires(@RequestParam(defaultValue = "2026-05-22") String start,
+                                        @RequestParam(defaultValue = "2026-05-27") String end,
                                         @ModelAttribute("BeneficiaryConnected") Beneficiary beneficiary,
                                         HttpServletRequest request, Model model) {
 
@@ -167,15 +167,11 @@ public class InterpreterController {
      * Displays the list of punctual absences for the connected interpreter within a specific date range
      * The method extracts the date from the start and end parameters and retrieves
      * matching absences from the database
-     * @param start The start date
-     * @param end The end date
      * @param model the UI model to hold the list of absences and the active tab status
      * @return The view name "interprete/indisponibilites", or a redirect to login if session is invalid
      */
     @GetMapping("/indisponibilites")
-    public String indisponibilites(@RequestParam(defaultValue = "2026-05-15") String start,
-                                   @RequestParam(defaultValue = "2026-05-15") String end,
-                                   HttpServletRequest request,
+    public String indisponibilites(HttpServletRequest request,
                                    Model model) {
         HttpSession session = request.getSession();
         Interpreter interpreter = getInterpreterFromSession(session);
@@ -185,10 +181,8 @@ public class InterpreterController {
 
         try {
             AbsenceService absenceService = new AbsenceService();
-            String startDate = start.substring(0, 10);
-            String endDate = end.substring(0, 10);
 
-            List<Absence> punctualAbsencesList = absenceService.getPunctualAbsencesInterpreter(interpreter, startDate, endDate);
+            List<Absence> punctualAbsencesList = absenceService.getPunctualAbsencesInterpreter(interpreter);
             model.addAttribute("punctualAbsencesList", punctualAbsencesList);
         } catch (BadStatusException e) {
             e.printStackTrace();
