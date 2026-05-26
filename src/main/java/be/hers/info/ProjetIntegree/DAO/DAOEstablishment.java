@@ -5,6 +5,7 @@ package be.hers.info.ProjetIntegree.DAO;
  * @reviewer Nicolas Jean-Francois, Halet Louis
  */
 
+import be.hers.info.ProjetIntegree.DTO.DTOEstablishmentFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
 import be.hers.info.ProjetIntegree.POJO.Referrer;
@@ -94,7 +95,7 @@ public class DAOEstablishment extends DAO<Establishment>{
      */
     @Override
     public List<Establishment> findAll() throws SQLException {
-        List<Establishment> listEstablishmentFind = new ArrayList();
+        List<Establishment> listEstablishmentFind = new ArrayList<>();
         Establishment establishmentFind = null;
 
         PreparedStatement prStat = null;
@@ -111,6 +112,40 @@ public class DAOEstablishment extends DAO<Establishment>{
                         rs.getInt("numEstablishment"),
                         rs.getString("name"),
                         rs.getString("phoneNumber")
+                );
+
+                listEstablishmentFind.add(establishmentFind);
+            }
+        }
+        finally{
+            closeStatementAndResultSet(prStat, rs);
+        }
+        return listEstablishmentFind;
+    }
+
+    /**
+     * Create a list containing all the establishments in the table. It initializes each establishment with
+     * his numEstablishment and his name
+     * @return a list containing all the establishments in the table or an empty list if the table is empty
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public List<DTOEstablishmentFormAppointment> findAllDTOFormAppointment() throws SQLException {
+        List<DTOEstablishmentFormAppointment> listEstablishmentFind = new ArrayList<>();
+        DTOEstablishmentFormAppointment establishmentFind = null;
+
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        String query = "SELECT numEstablishment, name FROM Establishment";
+
+        try{
+            prStat = connect.prepareStatement(query);
+            rs = prStat.executeQuery();
+
+            while(rs.next()) {
+                establishmentFind = new DTOEstablishmentFormAppointment(
+                        rs.getInt("numEstablishment"),
+                        rs.getString("name")
                 );
 
                 listEstablishmentFind.add(establishmentFind);
@@ -220,7 +255,7 @@ public class DAOEstablishment extends DAO<Establishment>{
         PreparedStatement prStat = null;
 
         String query = """
-                       UPDATE Establishment 
+                       UPDATE Establishment
                        SET name = ?, phoneNumber = ?
                        WHERE numEstablishment = ?
                        """;
