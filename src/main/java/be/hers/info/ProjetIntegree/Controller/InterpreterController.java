@@ -27,7 +27,7 @@ import java.util.List;
 public class InterpreterController {
     /**
      * Retrieves the connected interpreter from the session.
-     * Returns null if no user is connected or if the connected user is not a interpreter.
+     * Returns null if no user is connected or if the connected user is not an interpreter.
      * This helper avoids relying on @ModelAttribute which may inject an empty POJO
      * instead of null when no session attribute exists.
      *
@@ -82,8 +82,8 @@ public class InterpreterController {
     public String planningBeneficiaires(@RequestParam(defaultValue = "2026-05-22") String start,
                                         @RequestParam(defaultValue = "2026-05-27") String end,
                                         @ModelAttribute("BeneficiarySelected") Beneficiary beneficiary,
-                                        @ModelAttribute("InterpreterConnected") Interpreter interpreter,
-                                        HttpServletRequest request, Model model) {
+                                        HttpSession session, HttpServletRequest request, Model model) {
+        Interpreter interpreter = getInterpreterFromSession(session);
 
         if(interpreter == null)
             return "redirect:/login";
@@ -118,13 +118,14 @@ public class InterpreterController {
     /**
      * Add the appointment created by the interpreter to the DB
      * @param dtoAppointment the appointment to add to the DB
-     * @param interpreter the user connected
      * @return a redirect to the planning page after the creation
      */
     @PostMapping("/planning/beneficiaires")
     public String addAppointment(@ModelAttribute("newAppointment") DTOAppointmentForm dtoAppointment,
-                                 @ModelAttribute("InterpreterConnected") Interpreter interpreter,
+                                 HttpSession session,
                                  RedirectAttributes redirectAttributes){
+        Interpreter interpreter = getInterpreterFromSession(session);
+
         if(interpreter == null)
             return "redirect:/login";
 
