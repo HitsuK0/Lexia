@@ -4,11 +4,10 @@ package be.hers.info.ProjetIntegree.Controller;
  * @reviewer Nicolas Jean-François
  */
 
-import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
-import be.hers.info.ProjetIntegree.DTO.DTOInterpreterProfile;
-import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
+import be.hers.info.ProjetIntegree.DTO.*;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
+import be.hers.info.ProjetIntegree.Services.AppointmentFormService;
 import be.hers.info.ProjetIntegree.Services.InterpreterProfileService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.List;
 public class InterpreterController {
     /**
      * Retrieves the connected interpreter from the session.
-     * Returns null if no user is connected or if the connected user is not a interpreter.
+     * Returns null if no user is connected or if the connected user is not an interpreter.
      * This helper avoids relying on @ModelAttribute which may inject an empty POJO
      * instead of null when no session attribute exists.
      *
@@ -81,12 +81,12 @@ public class InterpreterController {
     @GetMapping("/planning/beneficiaires")
     public String planningBeneficiaires(@RequestParam(defaultValue = "2026-05-22") String start,
                                         @RequestParam(defaultValue = "2026-05-27") String end,
-                                        @ModelAttribute("BeneficiaryConnected") Beneficiary beneficiary,
-                                        HttpServletRequest request, Model model) {
+                                        @ModelAttribute("BeneficiarySelected") Beneficiary beneficiary,
+                                        HttpSession session, HttpServletRequest request, Model model) {
+        Interpreter interpreter = getInterpreterFromSession(session);
 
-        if(beneficiary == null) {
+        if(interpreter == null)
             return "redirect:/login";
-        }
 
         String dateStart = start.substring(0, 10);
         String dateEnd = end.substring(0, 10);
@@ -95,11 +95,52 @@ public class InterpreterController {
         List<Appointment> appointmentList = planningService.getListAppointmentsToBeneficiaryAndDate(
                 beneficiary.getNumBeneficiary(), dateStart, dateEnd);
 
-        HttpSession session = request.getSession();
+        session = request.getSession();
         session.setAttribute("appointmentList", appointmentList);
         model.addAttribute("activeTab", "planning");
 
+        AppointmentFormService appointmentFormService = new AppointmentFormService();
+        List<DTOBeneficiaryFormAppointment> hisBeneficiaries = appointmentFormService.findHisBeneficiaries(interpreter.getNumInterpreter());
+        model.addAttribute("beneficiariesList", hisBeneficiaries);
+
+        List<DTOEstablishmentFormAppointment> establishments = appointmentFormService.findAllEstablishments();
+        model.addAttribute("establishmentList", establishments);
+
+        List<AcademicSkill> academicSkills = appointmentFormService.findAllAcademicSkills();
+        model.addAttribute("academicSkillList", academicSkills);
+
+        List<ProfessionalSkill> professionalSkills = appointmentFormService.findAllProfessionalSkills();
+        model.addAttribute("professionalSkillList", professionalSkills);
+
         return "interprete/planning-beneficiaires";
+    }
+
+    /**
+     * Add the appointment created by the interpreter to the DB
+     * @param dtoAppointment the appointment to add to the DB
+     * @return a redirect to the planning page after the creation
+     */
+    @PostMapping("/planning/beneficiaires")
+    public String addAppointment(@ModelAttribute("newAppointment") DTOAppointmentForm dtoAppointment,
+                                 HttpSession session,
+                                 RedirectAttributes redirectAttributes){
+        Interpreter interpreter = getInterpreterFromSession(session);
+
+        if(interpreter == null)
+            return "redirect:/login";
+
+        try {
+            AppointmentFormService appointmentFormService = new AppointmentFormService();
+            if(appointmentFormService.createAppointment(dtoAppointment))
+                redirectAttributes.addFlashAttribute("successMessage", "Rendez-vous créé avec succès");
+            else
+                redirectAttributes.addFlashAttribute("errorMessage", "La création du rendez-vous a échoué");
+        }
+        catch(BadStatusException | SQLException | IllegalArgumentException e){
+            redirectAttributes.addFlashAttribute("errorMessage", "Une erreur est survenue : " + e.getMessage());
+        }
+
+        return "redirect:/interprete/planning/beneficiaires";
     }
 
 
@@ -171,7 +212,8 @@ public class InterpreterController {
      */
     @PostMapping("/indisponibilites/delete")
     public String deleteAbsence(@RequestParam int id,
-                                @ModelAttribute("InterpreterConnected") Interpreter interpreter) {
+                                HttpSession session) {
+        Interpreter interpreter = getInterpreterFromSession(session);
 
         if(interpreter == null) {
             return "redirect:/login";
@@ -196,7 +238,8 @@ public class InterpreterController {
      */
     @PostMapping("/indisponibilites/update")
     public String updateAbsence(@ModelAttribute Absence updatedAbsence,
-                                @ModelAttribute("InterpreterConnected") Interpreter interpreter) {
+                                HttpSession session) {
+        Interpreter interpreter = getInterpreterFromSession(session);
 
         if(interpreter == null) {
             return "redirect:/login";
