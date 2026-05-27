@@ -95,7 +95,7 @@ public class InterpreterController {
         List<Appointment> appointmentList = planningService.getListAppointmentsToBeneficiaryAndDate(
                 beneficiary.getNumBeneficiary(), dateStart, dateEnd);
 
-        HttpSession session = request.getSession();
+        session = request.getSession();
         session.setAttribute("appointmentList", appointmentList);
         model.addAttribute("activeTab", "planning");
 
@@ -212,7 +212,8 @@ public class InterpreterController {
      */
     @PostMapping("/indisponibilites/delete")
     public String deleteAbsence(@RequestParam int id,
-                                @ModelAttribute("InterpreterConnected") Interpreter interpreter) {
+                                HttpSession session) {
+        Interpreter interpreter = getInterpreterFromSession(session);
 
         if(interpreter == null) {
             return "redirect:/login";
@@ -237,7 +238,8 @@ public class InterpreterController {
      */
     @PostMapping("/indisponibilites/update")
     public String updateAbsence(@ModelAttribute Absence updatedAbsence,
-                                @ModelAttribute("InterpreterConnected") Interpreter interpreter) {
+                                HttpSession session) {
+        Interpreter interpreter = getInterpreterFromSession(session);
 
         if(interpreter == null) {
             return "redirect:/login";
