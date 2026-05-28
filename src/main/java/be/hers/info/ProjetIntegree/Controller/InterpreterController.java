@@ -61,13 +61,6 @@ public class InterpreterController {
             return "redirect:/login";
         }
 
-/*
-        String dateStart = start.substring(0,10);
-        String dateEnd = end.substring(0,10);
-        PlanningService planningService = new PlanningService();
-        interpreter.setAppointmentsList(planningService.getListAppointmentWithDateAndInterpreter(interpreter,dateStart,dateEnd));
-        interpreter.setAbsences(planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd));
-*/
         model.addAttribute("activeTab", "planning");
 
         model.addAttribute("DTOAbsence", new DTOAbsence());
@@ -75,6 +68,7 @@ public class InterpreterController {
     }
 
     @GetMapping(value = "/planning/events", produces="application/json")
+    @ResponseBody // A GARDER
     public List<Map<String,Object>> getEventsPlaningInterpreter(@RequestParam String start,
                                                                 @RequestParam String end, HttpSession session, Model model) {
         Interpreter interpreter = getInterpreterFromSession(session);
@@ -87,6 +81,7 @@ public class InterpreterController {
         PlanningService planningService = new PlanningService();
         List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndInterpreter(interpreter,dateStart,dateEnd);
         List<Absence> absenceList = planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd);
+
         interpreter.setAppointmentsList(appointmentList);
         interpreter.setAbsences(absenceList);
         LocalDate ldStart = LocalDate.parse(dateStart);
@@ -98,12 +93,30 @@ public class InterpreterController {
         for( Appointment a : appointmentList){
             Map<String, Object> event = new HashMap<>();
             Map<String, Object> extendedProps = new HashMap<>();
-            event.put("title",a.getAcademicSkillsNeeded());
+
+            // AI MODIFIE UN PEU CE EVENT
+            String skills = a.getAcademicSkillsNeeded().stream()
+                    .map(s -> s.getDesignation())
+                    .collect(Collectors.joining(", "));
+            event.put("title", skills);
+
             if(a.getTimeSlot() instanceof TimeSlotPunctual){
                 TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
                 LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
                 event.put("start",ldt);
                 event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+
+                switch (a.getStatus()){
+                    case "en attente":
+                        event.put("color","#f0ad4e");
+                        break;
+                    case "accepte":
+                        event.put("color","#81c784");
+                        break;
+                    case "refuse":
+                        event.put("color","#f28b82");
+                        break;
+                }
             }else{
                 TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
                 int i = tsp.getDayNumber();
@@ -117,21 +130,17 @@ public class InterpreterController {
                 LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
                 event.put("start",ldt);
                 event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                event.put("color","#b39ddb");
             }
-            switch (a.getStatus()){
-                case "en attente":
-                    event.put("color","#f0ad4e");
-                    break;
-                case "accepte":
-                    event.put("color","#81c784");
-                    break;
-                case "refuse":
-                    event.put("color","#f28b82");
-                    break;
-            }
+
+            String professionalSkills = a.getProfessionalSkillsNeeded().stream()
+                    .map(s -> s.getDesignation())
+                    .collect(Collectors.joining(", "));
+
             extendedProps.put("type","appointment");
             extendedProps.put("status",a.getStatus());
-            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,0) + ". " + a.getBeneficiary().getFirstName());
+            extendedProps.put("professionalSkills", professionalSkills);
+            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,1) + ". " + a.getBeneficiary().getFirstName());
             extendedProps.put("locals", a.getAppointmentLocals());
             extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
             extendedProps.put("description", a.getDescription());
