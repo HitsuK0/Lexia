@@ -68,7 +68,7 @@ public class InterpreterController {
     }
 
     @GetMapping(value = "/planning/events", produces="application/json")
-    @ResponseBody // A GARDER
+    @ResponseBody
     public List<Map<String,Object>> getEventsPlaningInterpreter(@RequestParam String start,
                                                                 @RequestParam String end, HttpSession session, Model model) {
         Interpreter interpreter = getInterpreterFromSession(session);
@@ -190,29 +190,102 @@ public class InterpreterController {
      * @return Redirect to the "interprete/planning/beneficiaires" page
      */
     @GetMapping("/planning/beneficiaires")
-    public String planningBeneficiaires(@RequestParam(defaultValue = "2026-05-22") String start,
-                                        @RequestParam(defaultValue = "2026-05-27") String end,
-                                        @ModelAttribute("BeneficiaryConnected") Beneficiary beneficiary,
-                                        HttpServletRequest request, Model model) {
+    public String planningBeneficiaires(@RequestParam(defaultValue = "2026-05-15") String start,
+                                        @RequestParam(defaultValue = "2026-05-22") String end, HttpSession session, Model model) {
 
-        if(beneficiary == null) {
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
             return "redirect:/login";
+        }
+        PlanningService planningService = new PlanningService();
+        List<Beneficiary> beneficiaryList = planningService.getListBeneficiaryRefererInterpreter(interpreter.getNumInterpreter())
+        session.setAttribute("beneficiaryList", beneficiaryList);
+        model.addAttribute("activeTab", "planning");
+
+        return "interprete/planning-beneficiaires";
+    }
+
+    @GetMapping(value = "/planning/beneficiaires/events", produces="application/json")
+    @ResponseBody
+    public List<Map<String,Object>> getEventsPlaningBeneficiary(@RequestParam String start,
+                                                                @RequestParam String end, @RequestParam("num") int num, HttpSession session, Model model) {
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return Collections.emptyList();
         }
 
         String dateStart = start.substring(0, 10);
         String dateEnd = end.substring(0, 10);
 
         PlanningService planningService = new PlanningService();
-        List<Appointment> appointmentList = planningService.getListAppointmentsToBeneficiaryAndDate(
-                beneficiary.getNumBeneficiary(), dateStart, dateEnd);
+        List<Appointment> appointmentList = planningService.getListAppointmentsToBeneficiaryAndDate(num, dateStart, dateEnd);
 
-        HttpSession session = request.getSession();
-        session.setAttribute("appointmentList", appointmentList);
-        model.addAttribute("activeTab", "planning");
+        LocalDate ldStart = LocalDate.parse(dateStart);
+        LocalDate ldEnd = LocalDate.parse(dateEnd);
 
-        return "interprete/planning-beneficiaires";
+        List<Map<String,Object>> events = new ArrayList<>();
+        List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
+                .toList();
+        for( Appointment a : appointmentList){
+            Map<String, Object> event = new HashMap<>();
+            Map<String, Object> extendedProps = new HashMap<>();
+
+
+            String skills = a.getAcademicSkillsNeeded().stream()
+                    .map(s -> s.getDesignation())
+                    .collect(Collectors.joining(", "));
+            event.put("title", skills);
+
+            if(a.getTimeSlot() instanceof TimeSlotPunctual){
+                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
+                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+
+                switch (a.getStatus()){
+                    case "en attente":
+                        event.put("color","#f0ad4e");
+                        break;
+                    case "accepte":
+                        event.put("color","#81c784");
+                        break;
+                    case "refuse":
+                        event.put("color","#f28b82");
+                        break;
+                }
+            }else{
+                TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
+                int i = tsp.getDayNumber();
+                LocalDate ld = null;
+                for(LocalDate l : listDateBetweenStartEnd){
+                    if(l.getDayOfWeek().getValue() == i){
+                        ld = l;
+                        break;
+                    }
+                }
+                LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                event.put("color","#b39ddb");
+            }
+
+            String professionalSkills = a.getProfessionalSkillsNeeded().stream()
+                    .map(s -> s.getDesignation())
+                    .collect(Collectors.joining(", "));
+
+            extendedProps.put("type","appointment");
+            extendedProps.put("status",a.getStatus());
+            extendedProps.put("professionalSkills", professionalSkills);
+            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,1) + ". " + a.getBeneficiary().getFirstName());
+            extendedProps.put("locals", a.getAppointmentLocals());
+            extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
+            extendedProps.put("description", a.getDescription());
+            event.put("extendedProps",extendedProps);
+            events.add(event);
+
+        }
+        return events;
     }
-
 
     /**
      * Displays the list of punctual absences for the connected interpreter within a specific date range
