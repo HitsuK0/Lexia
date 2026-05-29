@@ -80,20 +80,17 @@ public class AbsenceService {
 
     /**
      * Searches for all non-repetitive Absences belonging to the interpreter
-     * as a parameter over a period defined by start and end
      * @param interpreter The interpreter linked to the Absence
-     * @param startDate the date retrieved via the URL
-     * @param endDate the date retrieved via the URL
      * @return The Absence list meets the constraints; an empty list is returned if no object is found.
      */
-    public List<Absence> getPunctualAbsencesInterpreter(Interpreter interpreter, String startDate, String endDate) throws SQLException, BadStatusException {
+    public List<Absence> getPunctualAbsencesInterpreter(Interpreter interpreter) throws SQLException, BadStatusException {
         DAOAbsence daoAbsence = new DAOAbsence();
 
         if(interpreter.getNumInterpreter() == -1) {
             return new ArrayList<>();
         }
 
-        return daoAbsence.findPunctualAbsencesInterpreter(interpreter, startDate, endDate);
+        return daoAbsence.findPunctualAbsencesInterpreter(interpreter);
     }
 
     /**

@@ -1,5 +1,6 @@
 package be.hers.info.ProjetIntegree.DAO;
 
+import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleType;
@@ -67,6 +68,40 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             closeStatementAndResultSet(preparedStatement, resultSet);
         }
         return beneficiary;
+    }
+
+    /**
+     * Research all beneficiaries whose the referent is the interpreter whose the id is indicated
+     * @param numInterpreter the interpreter's id which is the referent
+     * @return a list containing at least one beneficiary if the DB containing at least one
+     *         an empty list if no beneficiary found
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public List<DTOBeneficiaryFormAppointment> findWithInterpreter(int numInterpreter) throws SQLException{
+        List<DTOBeneficiaryFormAppointment> listBeneficiary = new ArrayList<>();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT numBeneficiary, lastname, firstname " +
+                "FROM Beneficiary " +
+                "WHERE FKNumInterpreter = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setInt(1, numInterpreter);
+            resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()) {
+                DTOBeneficiaryFormAppointment beneficiary = new DTOBeneficiaryFormAppointment(
+                        resultSet.getInt("numBeneficiary"),
+                        resultSet.getString("lastName"),
+                        resultSet.getString("firstName"));
+
+                listBeneficiary.add(beneficiary);
+            }
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return listBeneficiary;
     }
 
     /**

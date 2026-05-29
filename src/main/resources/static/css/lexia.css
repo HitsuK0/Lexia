@@ -46,3 +46,28 @@ main {
 #calendar {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.50);
 }
+
+@media (max-width: 992px) {
+    /* On mobile, stacks the username and logout button vertically,
+       separated from the nav links by a top border. */
+    .navbar .d-flex.align-items-center.gap-3 {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+        padding-top: 0.5rem;
+        border-top: 1px solid #dee2e6;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    /* Makes the logout button full width on mobile. */
+    #formLogout,
+    #formLogout .btn {
+        width: 100%;
+    }
+
+    /* Makes the username link full width on mobile. */
+    .navbar .fw-semibold {
+        width: 100%;
+    }
+}
