@@ -23,7 +23,7 @@ public class ReferrerService {
      */
     public List<DTOReferrer> getAllReferrer() throws SQLException {
         DAOReferrer daoReferrer = new DAOReferrer();
-        List<Referrer> list = daoReferrer.findAll();
+        List<Referrer> list = daoReferrer.findAllWithoutEstablishment();
         List<DTOReferrer> listDTOReferrer = new ArrayList<DTOReferrer>();
         for (Referrer referrer : list) {
             DTOReferrer dtoReferrer = new DTOReferrer(referrer);

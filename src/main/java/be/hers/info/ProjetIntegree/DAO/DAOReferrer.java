@@ -18,6 +18,7 @@ import java.util.List;
 
 public class DAOReferrer extends DAO<Referrer> {
 
+
     /**
      * Searches for a Referrer by its numReferer.
      * The Establishment is not loaded (lazy loading).
@@ -51,6 +52,39 @@ public class DAOReferrer extends DAO<Referrer> {
             closeStatementAndResultSet(prStat, rs);
         }
         return referrer;
+    }
+
+    /**
+     * Creates a list containing all the Referrers in the Referrer table
+     * without an Establishment.
+     * @return A list containing all the Referrers, or an empty list if the table is empty
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public List<Referrer> findAllWithoutEstablishment() throws SQLException {
+        String query = "SELECT numReferer, firstName, lastName, phoneNumber, emailAddress" +
+                "FROM Referrer" +
+                "WHERE FKEstablishment IS NULL";
+        List<Referrer> referrerList = new ArrayList<>();
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        try {
+            prStat = connect.prepareStatement(query);
+            rs = prStat.executeQuery();
+
+            while (rs.next()) {
+                Referrer referrer = new Referrer();
+                referrer.setNumReferrer(rs.getInt("numReferer"));
+                referrer.setName(rs.getString("firstName"));
+                referrer.setSurname(rs.getString("lastName"));
+                referrer.setPhoneNumber(rs.getString("phoneNumber"));
+                referrer.setAddressMail(rs.getString("emailAddress"));
+                referrerList.add(referrer);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, rs);
+        }
+        return referrerList;
     }
 
 
