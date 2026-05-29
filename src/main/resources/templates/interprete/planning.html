@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
-<head th:replace="~{common/head :: head('Mon Planning', '/css/interprete/planning.css')}"></head>
+    <head th:replace="~{common/head :: head('Mon Planning', '/css/interprete/planning.css')}"></head>
 
     <body>
         <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole=${userRole}, userName=${userName}, breadcrumb=null, isAdmin=${isAdmin})}"></nav>
@@ -100,12 +100,29 @@
             </div>
         </div>
 
+        <div class="modal fade" id="modalEvent" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="modalEventTitle"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="modalEventBody"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <script th:src="@{/js/fullcalendar.min.js}"></script>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
 
+                /* Initializes the FullCalendar instance with French locale, week view,
+                and custom toolbar with previous/next navigation only. */
                 const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
                     locale: 'fr',
                     initialView: 'timeGridWeek',
@@ -118,7 +135,8 @@
                     slotMaxTime: '19:00:00',
                     allDaySlot: false,
 
-                    <!-- Function that allows you to click on a blank range and this opens the associated modal -->
+                    /* Opens the absence declaration modal when clicking on an empty time slot,
+                    pre-filling the start and end date fields and rounding the clicked hour. */
                     dateClick: function (info) {
                         document.getElementById('dateStart').value = info.dateStr.split('T')[0];
                         document.getElementById('dateEnd').value = info.dateStr.split('T')[0];
@@ -146,6 +164,8 @@
 
                     height: 'calc(100vh - 170px)',
 
+                    /* Fetches the interpreter's planning events from the server
+                    for the currently displayed date range. */
                     events: function(info, successCallback, failureCallback) {
                         fetch(`/interprete/planning/events?start=${info.startStr}&end=${info.endStr}`)
                             .then(response => response.json())
@@ -153,11 +173,32 @@
                             .catch(() => failureCallback());
                     },
 
-                    <!-- Allows you to set the icon according to the status of the appointment -->
+                    /* Opens the event detail modal on click, displaying the appointment's
+                    schedule, beneficiary, establishment, local, description and professional skills. */
+                    eventClick: function (info) {
+                        const props = info.event.extendedProps;
+                        const start = info.event.start.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+                        const end   = info.event.end?.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}) ?? '';
+
+                        document.getElementById('modalEventTitle').textContent = info.event.title;
+
+                        let body = `<p><strong>Horaire :</strong> ${start} – ${end}</p>`;
+                        if (props.beneficiary)        body += `<p><strong>Bénéficiaire :</strong> ${props.beneficiary}</p>`;
+                        if (props.establishment)      body += `<p><strong>Établissement :</strong> ${props.establishment}</p>`;
+                        if (props.locals?.length > 0) body += `<p><strong>Local :</strong> ${props.locals.join(', ')}</p>`;
+                        if (props.description)        body += `<p><strong>Description :</strong> ${props.description}</p>`;
+                        if (props.professionalSkills) body += `<p><strong>Compétence métier :</strong> ${props.professionalSkills}</p>`;
+
+                        document.getElementById('modalEventBody').innerHTML = body;
+                        new bootstrap.Modal(document.getElementById('modalEvent')).show();
+                    },
+
+                    /* Sets the event display content with an icon based on the appointment status
+                    (cancelled or unavailability), and shows appointment details below the title. */
                     eventContent: function (arg) {
-                        const lines = arg.event.title.split('\n');
-                        const isAnnule = lines[0].startsWith('Annulé');
-                        const isIndispo = lines[0].startsWith('Indisponibilité');
+                        const props = arg.event.extendedProps;
+                        const isAnnule = arg.event.title.startsWith('Annulé');
+                        const isIndispo = arg.event.title.startsWith('Indisponibilité');
 
                         const icone = isAnnule
                             ? '<i class="bi bi-x-circle" style="float:right; font-size:0.85rem;"></i>'
@@ -165,11 +206,17 @@
                                 ? '<i class="bi bi-slash-circle" style="float:right; font-size:0.85rem;"></i>'
                                 : '';
 
-                        const html = lines.map((l, i) =>
-                            `<div class="${i === 0 ? 'fw-bold' : 'small'}">${l}</div>`
-                        ).join('');
+                        let html = `<div class="fw-bold">${arg.event.title}</div>`;
 
-                        return {html: `<div class="p-1">${icone}${html}</div>`};
+                        if (props.type === 'appointment') {
+                            if (props.professionalSkills) html += `<div class="small">${props.professionalSkills}</div>`;
+                            if (props.beneficiary)   html += `<div class="small">Bénéficiare : ${props.beneficiary}</div>`;
+                            if (props.establishment) html += `<div class="small">${props.establishment}</div>`;
+                            if (props.locals && props.locals.length > 0) html += `<div class="small">${props.locals.join(', ')}</div>`;
+                            if (props.description)   html += `<div class="small">📝 ${props.description}</div>`;
+                        }
+
+                        return { html: `<div class="p-1">${icone}${html}</div>` };
                     }
                 });
 
@@ -183,6 +230,8 @@
                     document.getElementById('dateEnd').min = this.value;
                 });
 
+                /* Generates time options in 5-minute increments between a start and end time (in minutes)
+                and populates the given select element. */
                 function generateHours(selectId, start, end) {
                     const select = document.getElementById(selectId);
                     select.innerHTML = '<option value="" disabled selected>-- Heure --</option>';
@@ -199,17 +248,21 @@
                 generateHours('startHour', 8 * 60, 18 * 60 + 55);
                 generateHours('endHour', 8 * 60 + 5, 19 * 60);
 
+                /* Regenerates the end hour options to always start after the selected start hour. */
                 document.getElementById('startHour').addEventListener('change', function () {
                     const [h, m] = this.value.split(':').map(Number);
                     const totalMinutes = h * 60 + m;
                     generateHours('endHour', totalMinutes + 5, 19 * 60);
                 });
 
+                /* Disables or re-enables the time range selects when the full day checkbox is toggled. */
                 document.getElementById('fullDay').addEventListener('change', function () {
                     document.getElementById('startHour').disabled = this.checked;
                     document.getElementById('endHour').disabled = this.checked;
                 });
 
+                /* Validates the absence declaration form before submission,
+                displaying inline error messages for missing or invalid fields. */
                 document.getElementById('btnSend').addEventListener('click', function () {
                     let valid = true;
 
@@ -252,7 +305,7 @@
                     bootstrap.Modal.getInstance(document.getElementById('modalIndispo')).hide();
                 });
 
-                /* Allows you to reset the form to zero after closing it */
+                /* Resets all absence modal fields to their default state after the modal is closed. */
                 document.getElementById('modalIndispo').addEventListener('hidden.bs.modal', function () {
                     document.getElementById('dateStart').value  = '';
                     document.getElementById('dateEnd').value    = '';
