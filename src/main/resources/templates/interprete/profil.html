@@ -325,20 +325,18 @@
 
         <div th:replace="~{common/footer :: footer}"></div>
 
-        <!-- Injection des listes de compétences en JSON pour le JS du modal -->
         <script th:inline="javascript">
-            /*<![CDATA[*/
-            const allProfessionalSkills = /*[[${profileDTO.professionalSkillList}]]*/ [];
-            const allAcademicSkills     = /*[[${profileDTO.academicSkillList}]]*/ [];
-            const ownedProfSkills       = /*[[${profileDTO.professionalSkillListInterpreter}]]*/ [];
-            const ownedAcadSkills       = /*[[${profileDTO.academicSkillListInterpreter}]]*/ [];
-            /*]]>*/
+            const allProfessionalSkills = [];
+            const allAcademicSkills     = [];
+            const ownedProfSkills       = [];
+            const ownedAcadSkills       = [];
         </script>
 
         <script>
             let currentSkillType = null;
 
-            /* Navigation sidebar */
+            /* Handles sidebar navigation: on click, removes 'active' from all links and sections,
+            then sets the clicked link and its corresponding section as active. */
             document.querySelectorAll('.sidebar-link').forEach(link => {
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -349,7 +347,8 @@
                 });
             });
 
-            /* Remplit le select du modal en filtrant les compétences déjà possédées */
+            /* Populates the skill select dropdown based on the modal type (metier or academic),
+            filtering out skills the interpreter already owns. */
             document.getElementById('modalAddSkill').addEventListener('show.bs.modal', function (e) {
                 currentSkillType = e.relatedTarget.dataset.type;
                 const select = document.getElementById('selectCompetence');
@@ -373,7 +372,8 @@
                     });
             });
 
-            /* Soumet le bon form caché avec le num sélectionné */
+            /* Submits the correct hidden form with the selected skill number
+            depending on the current skill type (metier or academic). */
             function submitAddSkill() {
                 const select = document.getElementById('selectCompetence');
                 if (!select.value) return;
@@ -386,14 +386,18 @@
                 }
             }
 
+            /* Allows you to check the email format before saving */
             function isValidEmail(email) {
                 return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
             }
 
+            /* Allows you to check the phone number format before saving */
             function isValidPhone(phone) {
                 return /^[0-9\s]{7,15}$/.test(phone);
             }
 
+            /* Toggles a form field between readonly and editable mode,
+            and updates the edit button color to indicate the current state. */
             function toggleEdit(id, btn) {
                 const input = document.getElementById(id);
                 const isReadonly = input.hasAttribute('readonly');
@@ -430,10 +434,14 @@
                 }
             }
 
+            /* Verifies that the password contains at least 8 characters, one uppercase,
+            one lowercase, one number, and a special character.*/
             function isValidPassword(password) {
                 return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/.test(password);
             }
 
+            /* Validates the new password and its confirmation before closing the modal,
+            otherwise displays the corresponding errors. */
             function savePassword() {
                 const newPassword     = document.getElementById('inputNewPassword').value;
                 const confirmPassword = document.getElementById('inputConfirmPassword').value;
@@ -457,6 +465,7 @@
                 document.getElementById('formPassword').submit();
             }
 
+            /* Shows the save button as soon as any field value changes. */
             function onFieldChanged() {
                 document.getElementById('btnSauvegarder').style.display = 'block';
             }
@@ -474,6 +483,55 @@
                             if (btn) toggleEdit(this.id, btn);
                         }
                     });
+                });
+
+                /* Validates the email address in real time as the user types,
+                showing or hiding the error message accordingly. */
+                document.getElementById('inputEmail').addEventListener('input', function () {
+                    if (!isValidEmail(this.value)) {
+                        this.classList.add('is-invalid');
+                        document.getElementById('emailError').style.display = 'block';
+                    } else {
+                        this.classList.remove('is-invalid');
+                        document.getElementById('emailError').style.display = 'none';
+                    }
+                });
+
+                /* Validates the phone number in real time as the user types,
+                   showing or hiding the error message accordingly. */
+                document.getElementById('inputTel').addEventListener('input', function () {
+                    if (!isValidPhone(this.value)) {
+                        this.classList.add('is-invalid');
+                        document.getElementById('phoneError').style.display = 'block';
+                    } else {
+                        this.classList.remove('is-invalid');
+                        document.getElementById('phoneError').style.display = 'none';
+                    }
+                });
+
+                /* Validates the new password in real time as the user types,
+                   showing or hiding the format error message accordingly. */
+                document.getElementById('inputNewPassword').addEventListener('input', function () {
+                    const passwordError = document.getElementById('passwordError');
+                    if (!isValidPassword(this.value)) {
+                        passwordError.innerHTML = 'Le mot de passe doit contenir au minimum :<br>' +
+                            '- 8 caractères<br>- 1 majuscule<br>- 1 chiffre<br>- 1 caractère spécial (!@#$%...)';
+                        passwordError.style.display = 'block';
+                    } else {
+                        passwordError.style.display = 'none';
+                    }
+                });
+
+                /* Checks in real time whether the confirmation password matches the new password,
+                   showing or hiding the mismatch error message accordingly. */
+                document.getElementById('inputConfirmPassword').addEventListener('input', function () {
+                    const confirmError = document.getElementById('confirmError');
+                    const newPassword = document.getElementById('inputNewPassword').value;
+                    if (this.value !== newPassword) {
+                        confirmError.style.display = 'block';
+                    } else {
+                        confirmError.style.display = 'none';
+                    }
                 });
             });
         </script>
