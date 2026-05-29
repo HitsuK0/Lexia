@@ -26,7 +26,25 @@
             <div class="profil-wrapper mx-auto">
                 <div class="row g-0">
 
-                    <div class="col-auto profil-sidebar">
+                    <!-- Visible only on mobile -->
+                    <div class="d-block d-md-none mb-3">
+                        <div class="dropdown w-100">
+                            <button class="btn btn-outline-primary btn-sm w-100 d-flex justify-content-between align-items-center"
+                                    type="button" id="mobileSectionBtn"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                <span id="mobileSectionLabel">Informations personnelles</span>
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="mobileSectionBtn">
+                                <li><a class="dropdown-item" href="#" data-section="infos">Informations personnelles</a></li>
+                                <li><a class="dropdown-item" href="#" data-section="metiers">Compétences métiers</a></li>
+                                <li><a class="dropdown-item" href="#" data-section="academics">Compétences académiques</a></li>
+                                <li><a class="dropdown-item" href="#" data-section="account">Compte</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-auto profil-sidebar d-none d-md-block">
                         <p class="sidebar-title">A propos</p>
                         <ul class="sidebar-nav">
                             <li><a href="#" class="sidebar-link active" data-section="infos">Informations personnelles</a></li>
@@ -37,11 +55,6 @@
                     </div>
 
                     <div class="col profil-content">
-
-                        <!-- =====================================================
-                             SECTION INFORMATIONS PERSONNELLES
-                             POST /interprete/profil
-                             ===================================================== -->
                         <form id="formProfil" method="post" th:action="@{/interprete/profil}" th:object="${profileDTO}">
                             <input type="hidden" th:field="*{numInterpreter}"/>
 
@@ -66,7 +79,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="col-mb-4">
+                                    <div class="col-md-4">
                                         <label class="form-label small fw-semibold">Heures prestées par semaine</label>
                                         <div class="input-edit-group">
                                             <input type="number" class="form-control form-control-sm" th:field="*{weeklyWorkHours}" readonly id="inputHeures" style="max-width: 120px;"/>
@@ -141,11 +154,6 @@
                             </div>
                         </form>
 
-                        <!-- =====================================================
-                             SECTION COMPÉTENCES MÉTIERS (PROFESSIONNELLES)
-                             POST /interprete/profil/addProfessionalSkill
-                             POST /interprete/profil/deleteProfessionalSkill
-                             ===================================================== -->
                         <div id="section-metiers" class="profil-section">
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h6 class="fw-bold mb-0">Gérez vos types d'interprétation</h6>
@@ -173,11 +181,6 @@
                             </div>
                         </div>
 
-                        <!-- =====================================================
-                             SECTION COMPÉTENCES ACADÉMIQUES
-                             POST /interprete/profil/addAcademicSkill
-                             POST /interprete/profil/deleteAcademicSkill
-                             ===================================================== -->
                         <div id="section-academics" class="profil-section">
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h6 class="fw-bold mb-0">Gérez vos différentes matières</h6>
@@ -205,9 +208,6 @@
                             </div>
                         </div>
 
-                        <!-- =====================================================
-                             SECTION COMPTE
-                             ===================================================== -->
                         <div id="section-account" class="profil-section">
                             <div class="mb-4">
                                 <label class="form-label small fw-semibold">Identifiant</label>
@@ -230,11 +230,6 @@
             </div>
         </div>
 
-        <!-- =====================================================
-             MODAL AJOUTER COMPÉTENCE
-             Le select est rempli dynamiquement en JS selon le type (metier / academic)
-             en filtrant les compétences déjà possédées
-             ===================================================== -->
         <div class="modal fade" id="modalAddSkill" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
@@ -254,13 +249,11 @@
                         <button type="button" class="btn btn-primary btn-sm px-4" onclick="submitAddSkill()">Ajouter Compétence</button>
                     </div>
 
-                    <!-- Form caché compétence professionnelle -->
                     <form id="formAddProfessionalSkill" method="post"
                           th:action="@{/interprete/profil/addProfessionalSkill}" style="display:none;">
                         <input type="hidden" id="hiddenNumProfSkill" name="numProfessionalSkillSelected"/>
                     </form>
 
-                    <!-- Form caché compétence académique -->
                     <form id="formAddAcademicSkill" method="post"
                           th:action="@{/interprete/profil/addAcademicSkill}" style="display:none;">
                         <input type="hidden" id="hiddenNumAcadSkill" name="numAcademicSkillSelected"/>
@@ -269,11 +262,6 @@
             </div>
         </div>
 
-        <!-- =====================================================
-             MODAL MOT DE PASSE
-             POST /interprete/profil/password
-             passwordDTO : oldPassword, newPassword, confirmPassword
-             ===================================================== -->
         <div class="modal fade" id="modalPassword" tabindex="-1" aria-labelledby="modalPasswordLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
@@ -532,6 +520,17 @@
                     } else {
                         confirmError.style.display = 'none';
                     }
+                });
+
+                /* On mobile, handles section navigation via the Bootstrap dropdown. */
+                document.querySelectorAll('.dropdown-menu [data-section]').forEach(item => {
+                    item.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        document.querySelectorAll('.profil-section').forEach(s => s.classList.remove('active'));
+                        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                        document.getElementById('section-' + this.dataset.section).classList.add('active');
+                        document.getElementById('mobileSectionLabel').textContent = this.textContent;
+                    });
                 });
             });
         </script>
