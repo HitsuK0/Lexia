@@ -21,6 +21,49 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DAOEstablishment extends DAO<Establishment>{
+
+
+    /**
+     * This function find all the data of all the Establishment.
+     * This function make a List<Address> of size 1.
+     * This function find all the referrer who work at the Establishment found.
+     * @return a list with all the Establishment with all the field fully initialized.
+     * @throws SQLException if the bd request goes wrong
+     */
+    public List<Establishment> findAllFullEstablishment() throws SQLException {
+        List<Establishment> listEstablishmentFind = new ArrayList();
+        Establishment establishmentFind = null;
+
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        String query = "SELECT numEstablishment, name, phoneNumber, FKAddress " +
+                        "FROM Establishment";
+        try{
+            prStat = connect.prepareStatement(query);
+            rs = prStat.executeQuery();
+            DAOAddress daoAddress = new DAOAddress();
+            DAOReferrer daoReferrer = new DAOReferrer();
+            while(rs.next()) {
+                Address address = daoAddress.find(rs.getInt("FKAddress"));
+                List<Referrer> referrers = daoReferrer.findAllByEstablishment(rs.getInt("numEstablishment"));
+                List<Integer> educationLevel = findListEducationLevel(rs.getInt("numEstablishment"));
+                establishmentFind = new Establishment(
+                        rs.getInt("numEstablishment"),
+                        rs.getString("name"),
+                        rs.getString("phoneNumber"),
+                        educationLevel,
+                        referrers,
+                        List.of(address)
+                );
+                listEstablishmentFind.add(establishmentFind);
+            }
+        }
+        finally{
+            closeStatementAndResultSet(prStat, rs);
+        }
+        return listEstablishmentFind;
+    }
     /**
      * Searches for the establishment whose identifier matches the int passed as a parameter and
      * create this establishment with his numEstablishment, his name and his phoneNumber.
