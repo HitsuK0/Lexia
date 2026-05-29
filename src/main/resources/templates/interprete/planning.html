@@ -11,28 +11,38 @@
     <body>
         <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole=${userRole}, userName=${userName}, breadcrumb=null, isAdmin=${isAdmin})}"></nav>
 
-        <div class="container-fluid py-2 px-5">
+        <div class="container-fluid py-2 px-2 px-md-5">
 
             <div class="text-center mb-2">
                 <h1 class="fw-bold text-primary">Votre horaire de la semaine</h1>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-2  px-5">
+            <div id="planning-toolbar" class="mb-2 px-2 px-md-5">
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <div class="btn-group" id="btnGroupPlanning">
+                        <a th:href="@{/interprete/planning}" class="btn btn-primary btn-sm">Mon Planning</a>
+                        <a th:href="@{/interprete/planning/beneficiaires}" class="btn btn-outline-primary btn-sm">Mes Bénéficiaires</a>
+                    </div>
 
-                <div class="btn-group">
-                    <a th:href="@{/interprete/planning}" class="btn btn-primary btn-sm">Mon Planning</a>
-                    <a th:href="@{/interprete/planning/beneficiaires}" class="btn btn-outline-primary btn-sm">Mes Bénéficiaires</a>
+                    <div class="d-none d-lg-flex gap-3 small text-muted">
+                        <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Indisponibilité</span>
+                        <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
+                        <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-sm d-none d-lg-block"
+                            data-bs-toggle="modal" data-bs-target="#modalIndispo">
+                        <i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité
+                    </button>
                 </div>
 
-                <div class="d-flex gap-3 small text-muted">
-                    <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Indisponibilité</span>
-                    <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
-                    <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
+                <div class="d-lg-none mt-2">
+                    <button type="button" class="btn btn-primary btn-sm w-100"
+                            data-bs-toggle="modal" data-bs-target="#modalIndispo">
+                        <i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité
+                    </button>
                 </div>
 
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalIndispo">
-                    <i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité
-                </button>
             </div>
 
             <div id="calendar"></div>
@@ -117,6 +127,12 @@
 
         <script th:src="@{/js/fullcalendar.min.js}"></script>
         <script th:src="@{/js/interprete/planning.js}"></script>
+
+        <div class="d-flex d-lg-none gap-2 small text-muted flex-wrap justify-content-center mt-3 mb-2 px-3">
+            <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Indisponibilité</span>
+            <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
+            <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
+        </div>
 
         <div th:replace="~{common/footer :: footer}"></div>
     </body>

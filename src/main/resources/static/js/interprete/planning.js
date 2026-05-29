@@ -4,7 +4,11 @@ document.addEventListener('DOMContentLoaded', function () {
     and custom toolbar with previous/next navigation only. */
     const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
         locale: 'fr',
-        initialView: 'timeGridWeek',
+        initialView: window.innerWidth < 768
+            ? 'timeGridDay'
+            : window.innerWidth < 992
+                ? 'timeGridThreeDays'
+                : 'timeGridWeek',
         headerToolbar: {
             left: 'prev',
             center: 'title',
@@ -13,6 +17,13 @@ document.addEventListener('DOMContentLoaded', function () {
         slotMinTime: '08:00:00',
         slotMaxTime: '19:00:00',
         allDaySlot: false,
+        expandRows: false,
+        views: {
+            timeGridThreeDays: {
+                type: 'timeGrid',
+                duration: { days: 3 }
+            }
+        },
 
         /* Opens the absence declaration modal when clicking on an empty time slot,
         pre-filling the start and end date fields and rounding the clicked hour. */
@@ -41,7 +52,8 @@ document.addEventListener('DOMContentLoaded', function () {
             modal.show();
         },
 
-        height: 'calc(100vh - 170px)',
+        /* Adjusts the calendar height depending on the screen size. */
+        height: 'auto',
 
         /* Fetches the interpreter's planning events from the server
         for the currently displayed date range. */
