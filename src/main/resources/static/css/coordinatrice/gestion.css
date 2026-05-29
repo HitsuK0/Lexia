@@ -1,0 +1,132 @@
+/* Rounds the corners of all modals on this page. */
+.modal-rounded {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+
+/* Styles the tab navigation links. */
+.nav-tabs .nav-link {
+    color: #593196;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+    color: #593196;
+    font-weight: 700;
+    border-bottom: 3px solid #593196;
+}
+
+/* Wraps the table in a scrollable container to handle overflow on small screens. */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+/* Styles the table header. */
+.table-gestion thead {
+    background-color: #f3effe;
+    color: #593196;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* Styles the table header cells with a light purple background. */
+.table-gestion thead th {
+    background-color: #f3effe !important;
+    color: #593196 !important;
+}
+
+/* Styles the table rows. */
+.table-gestion tbody tr {
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+/* Hides tab sections by default — only the active one is shown. */
+.tab-section {
+    display: none;
+}
+
+.tab-section.active {
+    display: block;
+}
+
+@media (max-width: 767px) {
+
+    /* Hides the scrollbar on the tab navigation while keeping scroll functionality. */
+    .nav-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-tabs .nav-link {
+        white-space: nowrap;
+        font-size: 0.85rem;
+        padding: 0.4rem 0.75rem;
+    }
+
+    /* Reduces padding on mobile for the main container. */
+    .container-fluid {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+
+    /* Reduces the add button size on mobile. */
+    .d-flex.justify-content-between .btn {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    /* Hides the table header on mobile. */
+    .table-gestion thead {
+        display: none;
+    }
+
+    /* Makes each row a card. */
+    .table-gestion tbody tr {
+        display: block;
+        border: 1px solid #e0ddf5;
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        background-color: #faf9ff;
+        font-size: 0.85rem;
+    }
+
+    /* Makes each cell a full-width row with label on the left. */
+    .table-gestion tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.3rem 0;
+        border: none;
+        border-bottom: 1px solid #f0edf9;
+    }
+
+    .table-gestion tbody td:last-child {
+        border-bottom: none;
+    }
+
+    /* Shows the data-label as a left-aligned label. */
+    .table-gestion tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #593196;
+        flex-shrink: 0;
+        margin-right: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    /* Removes the table-wrapper shadow on mobile since cards replace it. */
+    .table-wrapper {
+        box-shadow: none;
+        border-radius: 0;
+    }
+}

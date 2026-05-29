@@ -1,12 +1,18 @@
 package be.hers.info.ProjetIntegree.Controller;
 
+import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Coordinator;
+import be.hers.info.ProjetIntegree.POJO.Establishment;
+import be.hers.info.ProjetIntegree.POJO.Referrer;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.ui.Model;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/coordinatrice")
@@ -61,6 +67,28 @@ public class CoordinatorController {
         model.addAttribute("userRole", "COORDINATOR");
         model.addAttribute("isAdmin", true);
         return "coordinatrice/etablissements";
+    }
+
+    // Temporaire
+    @GetMapping("/gestion")
+    public String gestion(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", true);
+
+        // Données hardcodés pour tester
+        Establishment etab = new Establishment(1, "Haute École Provinciale de Hainaut - Condorcet", "061000000");
+        Address adresse = new Address(6800, "Rue du Faubourg de la Prévoté, 142", "Fontaine-l'Évêque", null, null);
+        etab.setAddresses(List.of(adresse));
+        Referrer referrer = new Referrer(etab, "vanderberghe@example.com", "0476123456", "VANDERBERGHE-DUPONSELLE", "Jean-François");
+        etab.setReferrers(List.of(referrer));
+
+        model.addAttribute("etablissementList", List.of(etab));
+        model.addAttribute("referentList", new ArrayList<>());
+        model.addAttribute("professionalSkillList", new ArrayList<>());
+        model.addAttribute("academicSkillList", new ArrayList<>());
+
+        return "coordinatrice/gestion";
     }
 
     // Temporaire
