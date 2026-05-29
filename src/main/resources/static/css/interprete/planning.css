@@ -23,3 +23,15 @@
     border-radius: 16px !important;
     overflow: hidden;
 }
+
+/* On mobile, makes the button group full width with equal buttons. */
+@media (max-width: 991px) {
+    #btnGroupPlanning {
+        width: 100%;
+    }
+
+    #btnGroupPlanning .btn {
+        flex: 1;
+        text-align: center;
+    }
+}
