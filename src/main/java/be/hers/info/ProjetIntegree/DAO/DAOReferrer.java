@@ -61,8 +61,8 @@ public class DAOReferrer extends DAO<Referrer> {
      * @throws SQLException In case of any SQL problems encountered with this method
      */
     public List<Referrer> findAllWithoutEstablishment() throws SQLException {
-        String query = "SELECT numReferer, firstName, lastName, phoneNumber, emailAddress" +
-                "FROM Referrer" +
+        String query = "SELECT NUMREFERER, FIRSTNAME, LASTNAME, PHONENUMBER, EMAILADDRESS " +
+                "FROM Referrer " +
                 "WHERE FKEstablishment IS NULL";
         List<Referrer> referrerList = new ArrayList<>();
         PreparedStatement prStat = null;
@@ -74,11 +74,11 @@ public class DAOReferrer extends DAO<Referrer> {
 
             while (rs.next()) {
                 Referrer referrer = new Referrer();
-                referrer.setNumReferrer(rs.getInt("numReferer"));
-                referrer.setName(rs.getString("firstName"));
-                referrer.setSurname(rs.getString("lastName"));
-                referrer.setPhoneNumber(rs.getString("phoneNumber"));
-                referrer.setAddressMail(rs.getString("emailAddress"));
+                referrer.setNumReferrer(rs.getInt("NUMREFERER"));
+                referrer.setName(rs.getString("FIRSTNAME"));
+                referrer.setSurname(rs.getString("LASTNAME"));
+                referrer.setPhoneNumber(rs.getString("PHONENUMBER"));
+                referrer.setAddressMail(rs.getString("EMAILADDRESS"));
                 referrerList.add(referrer);
             }
         } finally {
@@ -216,13 +216,11 @@ public class DAOReferrer extends DAO<Referrer> {
         String query = "UPDATE Referrer " +
                 "SET FKEstablishment = ? " +
                 "WHERE numReferer = ?";
-
         PreparedStatement prStat = null;
-
         try {
             prStat = connect.prepareStatement(query);
-            prStat.setInt(1, objectToUpdateInDB.getNumReferrer());
-            prStat.setInt(2, numEstablishment);
+            prStat.setInt(1, numEstablishment);
+            prStat.setInt(2, objectToUpdateInDB.getNumReferrer());
 
             int nbreLigne = prStat.executeUpdate();
             if (nbreLigne > 0) {
