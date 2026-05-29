@@ -176,4 +176,5 @@ public class Address {
                 "\nLieu dit : " + this.hamlet +
                 "\nEtablissement lié : " + (this.establishment == null ? "Aucun" : this.establishment.toString());
     }
+
 }
