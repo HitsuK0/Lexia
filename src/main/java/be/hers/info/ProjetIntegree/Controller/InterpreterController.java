@@ -183,26 +183,23 @@ public class InterpreterController {
 
     /**
      * Searches for all Appointments belonging to the beneficiary as a parameter over a period defined by start and end.
-     * @param start the date retrieved via the URL
-     * @param end the date retrieved via the URL
-     * @param beneficiary The beneficiary linked to the appointment on the list
-     * @param request the request that triggered this function call
+
      * @return Redirect to the "interprete/planning/beneficiaires" page
      */
     @GetMapping("/planning/beneficiaires")
-    public String planningBeneficiaires(@RequestParam(defaultValue = "2026-05-15") String start,
-                                        @RequestParam(defaultValue = "2026-05-22") String end, HttpSession session, Model model) {
+    public String planningBeneficiaires(HttpSession session, Model model) {
 
         Interpreter interpreter = getInterpreterFromSession(session);
         if (interpreter == null) {
             return "redirect:/login";
         }
         PlanningService planningService = new PlanningService();
-        List<Beneficiary> beneficiaryList = planningService.getListBeneficiaryRefererInterpreter(interpreter.getNumInterpreter())
+        List<Beneficiary> beneficiaryList = planningService.getListBeneficiaryRefererInterpreter(interpreter.getNumInterpreter());
         session.setAttribute("beneficiaryList", beneficiaryList);
         model.addAttribute("activeTab", "planning");
 
         return "interprete/planning-beneficiaires";
+
     }
 
     @GetMapping(value = "/planning/beneficiaires/events", produces="application/json")

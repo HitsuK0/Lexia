@@ -427,7 +427,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         String query = "SELECT numBeneficiary, login, password, firstName, lastName, phoneNumber,emailAddress " +
-                "FROM Beneficiary"+
+                "FROM Beneficiary "+
                 "WHERE FKnumInterpreter = ?";
 
         try {
