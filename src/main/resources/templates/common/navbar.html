@@ -41,7 +41,14 @@
                 Lexia
             </a>
 
-            <div class="collapse navbar-collapse">
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                    aria-controls="navbarContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav me-auto">
 
                     <th:block th:if="${userRole == 'INTERPRETER'}">
@@ -153,8 +160,8 @@
                                 : '/beneficiaire/profil'))"
                        class="fw-semibold text-dark text-decoration-none"
                        th:text="${userName != null ? userName : 'NOM Prenom'}">NOM Prenom</a>
-                    <form th:action="@{/logout}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-primary">
+                    <form th:action="@{/logout}" method="post" class="d-inline" id="formLogout">
+                    <button type="submit" class="btn btn-primary w-100">
                             <i class="bi bi-box-arrow-right"></i> Se Déconnecter
                         </button>
                     </form>
