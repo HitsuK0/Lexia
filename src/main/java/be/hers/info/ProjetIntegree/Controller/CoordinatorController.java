@@ -26,7 +26,6 @@ public class CoordinatorController {
     /**
      * Retrieves the connected coordinator from the session.
      * Returns null if no user is connected or if the connected user is not a Coordinator.
-     *
      * @param session the current HTTP session
      * @return the connected Coordinator, or null if not found
      */
@@ -38,7 +37,6 @@ public class CoordinatorController {
         }
         return null;
     }
-
 
     // Temporaire
     @GetMapping("/profil")
@@ -107,6 +105,28 @@ public class CoordinatorController {
         model.addAttribute("allListReferrer", allListReferrer);
         model.addAttribute("listReferrerSelected", new ArrayList<Integer>());
         return "coordinatrice/etablissements";
+    }
+
+    // Temporaire
+    @GetMapping("/gestion")
+    public String gestion(Model model) {
+        model.addAttribute("userName", "NOM Prenom");
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", true);
+
+        // Données hardcodés pour tester
+        Establishment etab = new Establishment(1, "Haute École Provinciale de Hainaut - Condorcet", "061000000");
+        Address adresse = new Address(6800, "Rue du Faubourg de la Prévoté, 142", "Fontaine-l'Évêque", null, null);
+        etab.setAddresses(List.of(adresse));
+        Referrer referrer = new Referrer(etab, "vanderberghe@example.com", "0476123456", "VANDERBERGHE-DUPONSELLE", "Jean-François");
+        etab.setReferrers(List.of(referrer));
+
+        model.addAttribute("etablissementList", List.of(etab));
+        model.addAttribute("referentList", new ArrayList<>());
+        model.addAttribute("professionalSkillList", new ArrayList<>());
+        model.addAttribute("academicSkillList", new ArrayList<>());
+
+        return "coordinatrice/gestion";
     }
 
     /**
@@ -217,17 +237,18 @@ public class CoordinatorController {
     /**
      * If the coordinator exists, the user will be redirected to the home page.
      * Otherwise, if it is null, the user will be redirected to the login page.
-     *
-     * @param session session the current HTTP session
-     * @return The HTML path to the home page if a coordinator is logged in, else redirects to /login.
+     *  @param session session the current HTTP session
+     *  @return The HTML path to the home page if a coordinator is logged in, else redirects to /login.
      */
     @GetMapping("/accueil")
     public String accueil(HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null) {
+        if(coordinator == null) {
             return "redirect:/login";
         }
         return "coordinatrice/accueil";
     }
+
+
 
 }

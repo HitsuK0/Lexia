@@ -1,0 +1,571 @@
+<!--
+@author Wellinger Chloé
+@reviewer Halet Louis, Nicolas Jean-François
+-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+
+    <head th:replace="~{common/head :: head('Gestion', '/css/coordinatrice/gestion.css')}"></head>
+
+    <body>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='gestion', userRole=${userRole}, userName=${userName}, breadcrumb='Gestion', isAdmin=${isAdmin})}"></nav>
+
+        <div class="container-fluid px-3 px-md-5 py-4">
+
+            <div class="text-center mb-4">
+                <h1 class="fw-bold text-primary mb-0">Gestion</h1>
+                <p class="text-muted fst-italic">Gérez les établissements, référents et compétences</p>
+            </div>
+
+            <ul class="nav nav-tabs mb-4" id="gestionTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-tab="etablissements">
+                        <i class="bi bi-building me-1"></i> Établissements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-tab="referents">
+                        <i class="bi bi-person-badge me-1"></i> Référents
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-tab="competences">
+                        <i class="bi bi-mortarboard me-1"></i> Compétences
+                    </a>
+                </li>
+            </ul>
+
+            <div id="tab-etablissements" class="tab-section active">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Liste des établissements</h5>
+                    <button type="button" class="btn btn-primary btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#modalAjoutEtab">
+                        <i class="bi bi-plus-lg me-1"></i> Ajouter un établissement
+                    </button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="table table-hover table-gestion">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Ville</th>
+                                <th>Adresse Complète</th>
+                                <th>Personne Référente</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="etab : ${etablissementList}">
+                                <td th:text="${etab.nameBuilding}" data-label="Nom">Nom</td>
+                                <td th:text="${!etab.addresses.isEmpty() ? etab.addresses[0].locality : '/'}" data-label="Ville">Ville</td>
+                                <td data-label="Adresse">
+                                    <span th:text="${!etab.addresses.isEmpty() ? etab.addresses[0].postOfficeBox : '/'}">Rue</span><br/>
+                                    <span th:text="${!etab.addresses.isEmpty() ? etab.addresses[0].postcode + ' ' + etab.addresses[0].locality : '/'}">Code Ville</span>
+                                </td>
+                                <td th:text="${!etab.referrers.isEmpty() ? etab.referrers[0].surname + ' ' + etab.referrers[0].name : '/'}" data-label="Référent"></td>
+                                <td data-label="Actions">
+                                    <button class="btn btn-link p-0 text-dark me-2"
+                                            data-bs-toggle="modal" data-bs-target="#modalEditEtab"
+                                            th:data-id="${etab.numEstablishment}"
+                                            th:data-name="${etab.nameBuilding}"
+                                            th:data-rue="${!etab.addresses.isEmpty() ? etab.addresses[0].postOfficeBox : ''}"
+                                            th:data-cp="${!etab.addresses.isEmpty() ? etab.addresses[0].postcode : ''}"
+                                            th:data-ville="${!etab.addresses.isEmpty() ? etab.addresses[0].locality : ''}"
+                                            th:data-referent="${!etab.referrers.isEmpty() ? etab.referrers[0].numReferrer : ''}"
+                                            title="Modifier">
+                                        <i class="bi bi-pencil-square fs-5"></i>
+                                    </button>
+                                    <button class="btn btn-link p-0 text-danger"
+                                            data-bs-toggle="modal" data-bs-target="#modalDeleteEtab"
+                                            th:data-id="${etab.numEstablishment}"
+                                            title="Supprimer">
+                                        <i class="bi bi-trash3 fs-5"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(etablissementList)}">
+                                <td colspan="5" class="text-center text-muted">Aucun établissement enregistré.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav class="mt-4 d-flex justify-content-center">
+                    <ul class="pagination" id="paginationEtab"></ul>
+                </nav>
+            </div>
+
+            <div id="tab-referents" class="tab-section">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Liste des référents</h5>
+                    <button type="button" class="btn btn-primary btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#modalAjoutRef">
+                        <i class="bi bi-plus-lg me-1"></i> Ajouter un référent
+                    </button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="table table-hover table-gestion">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Téléphone</th>
+                                <th>Email</th>
+                                <th>Établissement lié</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ref : ${referentList}">
+                                <td th:text="${ref.surname}" data-label="Nom">Nom</td>
+                                <td th:text="${ref.name}" data-label="Prénom">Prénom</td>
+                                <td th:text="${ref.phoneNumber}" data-label="Téléphone">Téléphone</td>
+                                <td th:text="${ref.addressMail}" data-label="Email">Email</td>
+                                <td th:text="${ref.refEstablishment != null ? ref.refEstablishment.nameBuilding : '/'}" data-label="Établissement">Établissement</td>
+                                <td data-label="Actions">
+                                    <button class="btn btn-link p-0 text-dark me-2"
+                                            data-bs-toggle="modal" data-bs-target="#modalEditRef"
+                                            th:data-id="${ref.numReferrer}"
+                                            th:data-nom="${ref.surname}"
+                                            th:data-prenom="${ref.name}"
+                                            th:data-tel="${ref.phoneNumber}"
+                                            th:data-email="${ref.addressMail}"
+                                            th:data-etab="${ref.refEstablishment != null ? ref.refEstablishment.numEstablishment : ''}"
+                                            title="Modifier">
+                                        <i class="bi bi-pencil-square fs-5"></i>
+                                    </button>
+                                    <button class="btn btn-link p-0 text-danger"
+                                            data-bs-toggle="modal" data-bs-target="#modalDeleteRef"
+                                            th:data-id="${ref.numReferrer}"
+                                            title="Supprimer">
+                                        <i class="bi bi-trash3 fs-5"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(referentList)}">
+                                <td colspan="6" class="text-center text-muted">Aucun référent enregistré.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav class="mt-4 d-flex justify-content-center">
+                    <ul class="pagination" id="paginationRef"></ul>
+                </nav>
+            </div>
+
+            <div id="tab-competences" class="tab-section">
+
+                <div class="row g-4">
+
+                    <div class="col-12 col-md-6">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">Compétences métiers</h5>
+                            <button type="button" class="btn btn-primary btn-sm"
+                                    data-bs-toggle="modal" data-bs-target="#modalAjoutCompMetier">
+                                <i class="bi bi-plus-lg me-1"></i> Ajouter
+                            </button>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="table table-hover table-gestion">
+                                <thead>
+                                    <tr>
+                                        <th>Désignation</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="ps : ${professionalSkillList}">
+                                        <td th:text="${ps.designation}" data-label="Désignation">Compétence</td>
+                                        <td data-label="Actions">
+                                            <button class="btn btn-link p-0 text-danger"
+                                                    data-bs-toggle="modal" data-bs-target="#modalDeleteCompMetier"
+                                                    th:data-id="${ps.numProfessionalSkill}"
+                                                    th:data-designation="${ps.designation}"
+                                                    title="Supprimer">
+                                                <i class="bi bi-trash3 fs-5"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(professionalSkillList)}">
+                                        <td colspan="2" class="text-center text-muted">Aucune compétence métier.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">Compétences académiques</h5>
+                            <button type="button" class="btn btn-primary btn-sm"
+                                    data-bs-toggle="modal" data-bs-target="#modalAjoutCompAcad">
+                                <i class="bi bi-plus-lg me-1"></i> Ajouter
+                            </button>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="table table-hover table-gestion">
+                                <thead>
+                                    <tr>
+                                        <th>Désignation</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="as : ${academicSkillList}">
+                                        <td th:text="${as.designation}" data-label="Désignation">Compétence</td>
+                                        <td data-label="Actions">
+                                            <button class="btn btn-link p-0 text-danger"
+                                                    data-bs-toggle="modal" data-bs-target="#modalDeleteCompAcad"
+                                                    th:data-id="${as.numAcademicSkill}"
+                                                    th:data-designation="${as.designation}"
+                                                    title="Supprimer">
+                                                <i class="bi bi-trash3 fs-5"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(academicSkillList)}">
+                                        <td colspan="2" class="text-center text-muted">Aucune compétence académique.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal fade" id="modalAjoutEtab" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center">Ajouter un établissement</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Nom de l'établissement</label>
+                            <input type="text" class="form-control form-control-sm" id="ajoutEtabNom" placeholder="Ex : Haute Ecole Robert Schuman"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Rue et numéro</label>
+                            <input type="text" class="form-control form-control-sm" id="ajoutEtabRue" placeholder="Ex : Rue de la Cité, 64"/>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label class="form-label small fw-semibold">Code postal</label>
+                                <input type="text" class="form-control form-control-sm" id="ajoutEtabCp" placeholder="Ex : 6800"/>
+                            </div>
+                            <div class="col-8">
+                                <label class="form-label small fw-semibold">Ville</label>
+                                <input type="text" class="form-control form-control-sm" id="ajoutEtabVille" placeholder="Ex : Libramont"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Personne référente <span class="text-muted fw-normal">(facultatif)</span></label>
+                            <select class="form-select form-select-sm" id="ajoutEtabRef">
+                                <option value="" selected>-- Aucun référent --</option>
+                                <option th:each="ref : ${referentList}"
+                                        th:value="${ref.numReferrer}"
+                                        th:text="${ref.surname + ' ' + ref.name}">Référent</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus-lg me-1"></i> Ajouter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalEditEtab" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center">Modifier l'établissement</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <input type="hidden" id="editEtabId"/>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Nom de l'établissement</label>
+                            <input type="text" class="form-control form-control-sm" id="editEtabNom"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Rue et numéro</label>
+                            <input type="text" class="form-control form-control-sm" id="editEtabRue"/>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label class="form-label small fw-semibold">Code postal</label>
+                                <input type="text" class="form-control form-control-sm" id="editEtabCp"/>
+                            </div>
+                            <div class="col-8">
+                                <label class="form-label small fw-semibold">Ville</label>
+                                <input type="text" class="form-control form-control-sm" id="editEtabVille"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Personne référente <span class="text-muted fw-normal">(facultatif)</span></label>
+                            <select class="form-select form-select-sm" id="editEtabRef">
+                                <option value="">-- Aucun référent --</option>
+                                <option th:each="ref : ${referentList}"
+                                        th:value="${ref.numReferrer}"
+                                        th:text="${ref.surname + ' ' + ref.name}">Référent</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <i class="bi bi-floppy me-1"></i> Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalDeleteEtab" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center">Supprimer l'établissement</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3 text-center">
+                        <p>Êtes-vous sûr de vouloir supprimer cet établissement ?</p>
+                        <p class="text-danger fw-semibold">Cette action est irréversible.</p>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <input type="hidden" id="deleteEtabId"/>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash3 me-1"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalAjoutRef" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center">Ajouter un référent</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Nom</label>
+                                <input type="text" class="form-control form-control-sm" id="ajoutRefNom" placeholder="Ex : DENY"/>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Prénom</label>
+                                <input type="text" class="form-control form-control-sm" id="ajoutRefPrenom" placeholder="Ex : Laurence"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Téléphone</label>
+                            <input type="text" class="form-control form-control-sm" id="ajoutRefTel" placeholder="Ex : 0476123456"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Email</label>
+                            <input type="email" class="form-control form-control-sm" id="ajoutRefEmail" placeholder="Ex : laurence.deny@example.com"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Établissement lié <span class="text-muted fw-normal">(facultatif)</span></label>
+                            <select class="form-select form-select-sm" id="ajoutRefEtab">
+                                <option value="" selected>-- Aucun établissement --</option>
+                                <option th:each="etab : ${etablissementList}"
+                                        th:value="${etab.numEstablishment}"
+                                        th:text="${etab.nameBuilding}">Établissement</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus-lg me-1"></i> Ajouter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalEditRef" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center">Modifier le référent</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <input type="hidden" id="editRefId"/>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Nom</label>
+                                <input type="text" class="form-control form-control-sm" id="editRefNom"/>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Prénom</label>
+                                <input type="text" class="form-control form-control-sm" id="editRefPrenom"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Téléphone</label>
+                            <input type="text" class="form-control form-control-sm" id="editRefTel"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Email</label>
+                            <input type="email" class="form-control form-control-sm" id="editRefEmail"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Établissement lié <span class="text-muted fw-normal">(facultatif)</span></label>
+                            <select class="form-select form-select-sm" id="editRefEtab">
+                                <option value="">-- Aucun établissement --</option>
+                                <option th:each="etab : ${etablissementList}"
+                                        th:value="${etab.numEstablishment}"
+                                        th:text="${etab.nameBuilding}">Établissement</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <i class="bi bi-floppy me-1"></i> Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalDeleteRef" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center">Supprimer le référent</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3 text-center">
+                        <p>Êtes-vous sûr de vouloir supprimer ce référent ?</p>
+                        <p class="text-danger fw-semibold">Cette action est irréversible.</p>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <input type="hidden" id="deleteRefId"/>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash3 me-1"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalAjoutCompMetier" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center">Ajouter une compétence métier</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Désignation</label>
+                            <input type="text" class="form-control form-control-sm" id="ajoutCompMetierDesig"
+                                   placeholder="Ex : Transcription"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus-lg me-1"></i> Ajouter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalDeleteCompMetier" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center">Supprimer la compétence métier</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3 text-center">
+                        <p>Êtes-vous sûr de vouloir supprimer la compétence <strong id="deleteCompMetierDesig"></strong> ?</p>
+                        <p class="text-danger fw-semibold">Cette action est irréversible.</p>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <input type="hidden" id="deleteCompMetierId"/>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash3 me-1"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalAjoutCompAcad" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center">Ajouter une compétence académique</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Désignation</label>
+                            <input type="text" class="form-control form-control-sm" id="ajoutCompAcadDesig"
+                                   placeholder="Ex : Mathématiques"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus-lg me-1"></i> Ajouter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalDeleteCompAcad" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-rounded">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center">Supprimer la compétence académique</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3 text-center">
+                        <p>Êtes-vous sûr de vouloir supprimer la compétence <strong id="deleteCompAcadDesig"></strong> ?</p>
+                        <p class="text-danger fw-semibold">Cette action est irréversible.</p>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <input type="hidden" id="deleteCompAcadId"/>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash3 me-1"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="~{common/footer :: footer}"></div>
+
+        <script th:src="@{/js/coordinatrice/gestion.js}"></script>
+    </body>
+</html>
