@@ -7,7 +7,6 @@ import be.hers.info.ProjetIntegree.POJO.Referrer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
