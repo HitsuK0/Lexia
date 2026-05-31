@@ -209,6 +209,15 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/gestion";
     }
 
+    /**
+     * Creates a new AcademicSkill in the database with the designation submitted from the form.
+     * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
+     * the user is redirected to the '/login' page
+     *
+     * @param session the current HTTP session
+     * @param designation the designation of the AcademicSkill to create
+     * @return a redirection to the "/coordinatrice/gestion" page
+     */
     @PostMapping("/etablissements/addAcademicSkill")
     public String academicSkillAdd(HttpSession session, @RequestParam("designation") String designation) {
         Coordinator coordinator = getCoordinatorFromSession(session);
@@ -225,6 +234,15 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/gestion";
     }
 
+    /**
+     * Deletes an AcademicSkill from the database using the id submitted from the form.
+     * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
+     * the user is redirected to the '/login' page
+     *
+     * @param session the current HTTP session
+     * @param idAcademicSkill the id of the AcademicSkill to delete
+     * @return a redirection to the "/coordinatrice/gestion" page
+     */
     @PostMapping("/etablissements/deleteAcademicSkill")
     public String academicSkillDelete(HttpSession session, @RequestParam("idAcademicSkill") int idAcademicSkill) {
         Coordinator  coordinator = getCoordinatorFromSession(session);
@@ -241,6 +259,15 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/gestion";
     }
 
+    /**
+     * Creates a new ProfessionalSkill in the database with the designation submitted from the form.
+     * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
+     * the user is redirected to the '/login' page
+     *
+     * @param session the current HTTP session
+     * @param designation the designation of the ProfessionalSkill to create
+     * @return a redirection to the "/coordinatrice/gestion" page
+     */
     @PostMapping("/etablissements/addProfessionalSkill")
     public String professionalSkillAdd(HttpSession session, @RequestParam("designation") String designation) {
         Coordinator coordinator = getCoordinatorFromSession(session);
@@ -257,6 +284,15 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/gestion";
     }
 
+    /**
+     * Deletes a ProfessionalSkill from the database using the id submitted from the form.
+     * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
+     * the user is redirected to the '/login' page
+     *
+     * @param session the current HTTP session.
+     * @param idProfessionalSkill the id of the ProfessionalSkill to delete
+     * @return a redirection to the "/coordinatrice/gestion" page
+     */
     @PostMapping("/etablissements/deleteProfessionalSkill")
     public String professionalSkillDelete(HttpSession session, @RequestParam("idProfessionalSkill") int idProfessionalSkill) {
         Coordinator coordinator = getCoordinatorFromSession(session);

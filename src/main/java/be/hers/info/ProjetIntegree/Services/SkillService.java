@@ -28,31 +28,51 @@ public class SkillService {
         return new DAOProfessionalSkill().findAll();
     }
 
-    public boolean deleteAcademicSkill(int idAcademicSkill) throws SQLException {
+    /** Deletes an AcademicSkill from the database using the given id.
+     *
+     * @param idAcademicSkill the id of the AcademicSkill to delete
+     * @throws SQLException in case of any SQL problems encountered while deleting the AcademicSkill
+     */
+    public void deleteAcademicSkill(int idAcademicSkill) throws SQLException {
         AcademicSkill academicSkill = new AcademicSkill();
         academicSkill.setNumAcademicSkill(idAcademicSkill);
 
-        return new DAOAcademicSkill().delete(academicSkill);
+        new DAOAcademicSkill().delete(academicSkill);
     }
 
-    public boolean addAcademicSkill(String designation) throws SQLException {
+    /** Creates a new AcademicSkill in the database with the given designation.
+     *
+     * @param designation the designation of the AcademicSkill to create
+     * @throws SQLException in case of any SQL problems encountered while creating the AcademicSkill
+     */
+    public void addAcademicSkill(String designation) throws SQLException {
         AcademicSkill academicSkill = new AcademicSkill();
         academicSkill.setDesignation(designation);
 
-        return new DAOAcademicSkill().create(academicSkill);
+        new DAOAcademicSkill().create(academicSkill);
     }
 
-    public boolean deleteProfessionalSkill(int idProfessionalSkill) throws SQLException {
+    /** Deletes a ProfessionalSkill from the database using the given id.
+     *
+     * @param idProfessionalSkill the id of the ProfessionalSkill to delete
+     * @throws SQLException in case of any SQL problems encountered while deleting the ProfessionalSkill
+     */
+    public void deleteProfessionalSkill(int idProfessionalSkill) throws SQLException {
         ProfessionalSkill professionalSkill = new ProfessionalSkill();
         professionalSkill.setNumProfessionalSkill(idProfessionalSkill);
 
-        return new  DAOProfessionalSkill().delete(professionalSkill);
+        new DAOProfessionalSkill().delete(professionalSkill);
     }
 
-    public boolean addProfessionalSkill(String designation) throws SQLException {
+    /** Creates a new ProfessionalSkill in the database with the given designation.
+     *
+     * @param designation the designation of the ProfessionalSkill to create
+     * @throws SQLException in case of any SQL problems encountered while creating the ProfessionalSkill
+     */
+    public void addProfessionalSkill(String designation) throws SQLException {
         ProfessionalSkill professionalSkill = new ProfessionalSkill();
         professionalSkill.setDesignation(designation);
 
-        return new DAOProfessionalSkill().create(professionalSkill);
+        new DAOProfessionalSkill().create(professionalSkill);
     }
 }
