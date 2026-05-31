@@ -209,6 +209,70 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/gestion";
     }
 
+    @PostMapping("/etablissements/addAcademicSkill")
+    public String academicSkillAdd(HttpSession session, @RequestParam("designation") String designation) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if(coordinator == null || !coordinator.isAdmin()) {
+            return "redirect:/login";
+        }
+
+        try {
+            new SkillService().addAcademicSkill(designation);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/coordinatrice/gestion";
+    }
+
+    @PostMapping("/etablissements/deleteAcademicSkill")
+    public String academicSkillDelete(HttpSession session, @RequestParam("idAcademicSkill") int idAcademicSkill) {
+        Coordinator  coordinator = getCoordinatorFromSession(session);
+        if(coordinator == null || !coordinator.isAdmin()) {
+            return "redirect:/login";
+        }
+
+        try {
+            new SkillService().deleteAcademicSkill(idAcademicSkill);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/coordinatrice/gestion";
+    }
+
+    @PostMapping("/etablissements/addProfessionalSkill")
+    public String professionalSkillAdd(HttpSession session, @RequestParam("designation") String designation) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if(coordinator == null || !coordinator.isAdmin()) {
+            return "redirect:/login";
+        }
+
+        try {
+            new SkillService().addProfessionalSkill(designation);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/coordinatrice/gestion";
+    }
+
+    @PostMapping("/etablissements/deleteProfessionalSkill")
+    public String professionalSkillDelete(HttpSession session, @RequestParam("idProfessionalSkill") int idProfessionalSkill) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null || !coordinator.isAdmin()) {
+            return "redirect:/login";
+        }
+
+        try {
+            new SkillService().deleteProfessionalSkill(idProfessionalSkill);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/coordinatrice/gestion";
+    }
+
     /**
      * This function create an establishment in DB using the data put in the form.
      *

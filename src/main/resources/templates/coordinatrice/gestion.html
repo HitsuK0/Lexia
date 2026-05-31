@@ -360,7 +360,7 @@
         <div class="modal fade" id="modalAjoutRef" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <form th:action="@{/coordinatrice/etablissements/addReferrer}", th:object="${DTOReferrer}" method="POST">
+                    <form th:action="@{/coordinatrice/etablissements/addReferrer}" th:object="${DTOReferrer}" method="POST">
                         <div class="modal-header border-bottom">
                             <h5 class="modal-title fw-bold w-100 text-center">Ajouter un référent</h5>
                             <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
@@ -481,23 +481,25 @@
         <div class="modal fade" id="modalAjoutCompMetier" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center">Ajouter une compétence métier</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body px-4 py-3">
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Désignation</label>
-                            <input type="text" class="form-control form-control-sm" id="ajoutCompMetierDesig"
-                                   placeholder="Ex : Transcription"/>
+                    <form th:action="@{/coordinatrice/etablissements/addProfessionalSkill}" method="POST">
+                        <div class="modal-header border-bottom">
+                            <h5 class="modal-title fw-bold w-100 text-center">Ajouter une compétence métier</h5>
+                            <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                         </div>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm">
-                            <i class="bi bi-plus-lg me-1"></i> Ajouter
-                        </button>
-                    </div>
+                        <div class="modal-body px-4 py-3">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Désignation</label>
+                                <input type="text" name="designation" class="form-control form-control-sm" id="ajoutCompMetierDesig"
+                                       placeholder="Ex : Transcription"/>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top justify-content-center gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-lg me-1"></i> Ajouter
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -505,21 +507,23 @@
         <div class="modal fade" id="modalDeleteCompMetier" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center">Supprimer la compétence métier</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body px-4 py-3 text-center">
-                        <p>Êtes-vous sûr de vouloir supprimer la compétence <strong id="deleteCompMetierDesig"></strong> ?</p>
-                        <p class="text-danger fw-semibold">Cette action est irréversible.</p>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <input type="hidden" id="deleteCompMetierId"/>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash3 me-1"></i> Supprimer
-                        </button>
-                    </div>
+                    <form th:action="@{/coordinatrice/etablissements/deleteProfessionalSkill}" method="POST">
+                        <div class="modal-header border-bottom">
+                            <h5 class="modal-title fw-bold w-100 text-center">Supprimer la compétence métier</h5>
+                            <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body px-4 py-3 text-center">
+                            <p>Êtes-vous sûr de vouloir supprimer la compétence <strong id="deleteCompMetierDesig"></strong> ?</p>
+                            <p class="text-danger fw-semibold">Cette action est irréversible.</p>
+                        </div>
+                        <div class="modal-footer border-top justify-content-center gap-2">
+                            <input type="hidden" name="idProfessionalSkill" id="deleteCompMetierId"/>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash3 me-1"></i> Supprimer
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -527,23 +531,25 @@
         <div class="modal fade" id="modalAjoutCompAcad" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center">Ajouter une compétence académique</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body px-4 py-3">
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Désignation</label>
-                            <input type="text" class="form-control form-control-sm" id="ajoutCompAcadDesig"
-                                   placeholder="Ex : Mathématiques"/>
+                    <form th:action="@{/coordinatrice/etablissements/addAcademicSkill}" method="POST">
+                        <div class="modal-header border-bottom">
+                            <h5 class="modal-title fw-bold w-100 text-center">Ajouter une compétence académique</h5>
+                            <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                         </div>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm">
-                            <i class="bi bi-plus-lg me-1"></i> Ajouter
-                        </button>
-                    </div>
+                        <div class="modal-body px-4 py-3">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Désignation</label>
+                                <input type="text" name="designation" class="form-control form-control-sm" id="ajoutCompAcadDesig"
+                                       placeholder="Ex : Mathématiques"/>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top justify-content-center gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-lg me-1"></i> Ajouter
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -551,21 +557,23 @@
         <div class="modal fade" id="modalDeleteCompAcad" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center">Supprimer la compétence académique</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body px-4 py-3 text-center">
-                        <p>Êtes-vous sûr de vouloir supprimer la compétence <strong id="deleteCompAcadDesig"></strong> ?</p>
-                        <p class="text-danger fw-semibold">Cette action est irréversible.</p>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <input type="hidden" id="deleteCompAcadId"/>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash3 me-1"></i> Supprimer
-                        </button>
-                    </div>
+                    <form th:action="@{/coordinatrice/etablissements/deleteAcademicSkill}" method="POST">
+                        <div class="modal-header border-bottom">
+                            <h5 class="modal-title fw-bold w-100 text-center">Supprimer la compétence académique</h5>
+                            <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body px-4 py-3 text-center">
+                            <p>Êtes-vous sûr de vouloir supprimer la compétence <strong id="deleteCompAcadDesig"></strong> ?</p>
+                            <p class="text-danger fw-semibold">Cette action est irréversible.</p>
+                        </div>
+                        <div class="modal-footer border-top justify-content-center gap-2">
+                            <input type="hidden" name="idAcademicSkill" id="deleteCompAcadId"/>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash3 me-1"></i> Supprimer
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

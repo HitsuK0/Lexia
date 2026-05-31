@@ -27,4 +27,32 @@ public class SkillService {
     public List<ProfessionalSkill> getAllProfessionalSkills() throws SQLException {
         return new DAOProfessionalSkill().findAll();
     }
+
+    public boolean deleteAcademicSkill(int idAcademicSkill) throws SQLException {
+        AcademicSkill academicSkill = new AcademicSkill();
+        academicSkill.setNumAcademicSkill(idAcademicSkill);
+
+        return new DAOAcademicSkill().delete(academicSkill);
+    }
+
+    public boolean addAcademicSkill(String designation) throws SQLException {
+        AcademicSkill academicSkill = new AcademicSkill();
+        academicSkill.setDesignation(designation);
+
+        return new DAOAcademicSkill().create(academicSkill);
+    }
+
+    public boolean deleteProfessionalSkill(int idProfessionalSkill) throws SQLException {
+        ProfessionalSkill professionalSkill = new ProfessionalSkill();
+        professionalSkill.setNumProfessionalSkill(idProfessionalSkill);
+
+        return new  DAOProfessionalSkill().delete(professionalSkill);
+    }
+
+    public boolean addProfessionalSkill(String designation) throws SQLException {
+        ProfessionalSkill professionalSkill = new ProfessionalSkill();
+        professionalSkill.setDesignation(designation);
+
+        return new DAOProfessionalSkill().create(professionalSkill);
+    }
 }
