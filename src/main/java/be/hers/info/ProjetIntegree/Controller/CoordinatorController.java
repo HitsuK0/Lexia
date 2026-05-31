@@ -1,19 +1,16 @@
 package be.hers.info.ProjetIntegree.Controller;
 
-
-import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
 import be.hers.info.ProjetIntegree.DTO.DTOEstablishment;
 import be.hers.info.ProjetIntegree.DTO.DTOReferrer;
-import be.hers.info.ProjetIntegree.POJO.Coordinator;
-import be.hers.info.ProjetIntegree.POJO.Establishment;
+import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.EstablishementService;
 
 import be.hers.info.ProjetIntegree.Services.ReferrerService;
+import be.hers.info.ProjetIntegree.Services.SkillService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import org.w3c.dom.html.HTMLDocument;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -96,7 +93,7 @@ public class CoordinatorController {
         model.addAttribute("DTOEstablishmentEdit", new DTOEstablishment());
         // DTOEstablishment is used when we try to modify an
         ReferrerService referrerService = new ReferrerService();
-        List<DTOReferrer> allListReferrer = null;
+        List<Referrer> allListReferrer = null;
         try {
             allListReferrer = referrerService.getAllReferrer();
         } catch (SQLException e) {
@@ -107,24 +104,36 @@ public class CoordinatorController {
         return "coordinatrice/etablissements";
     }
 
-    // Temporaire
+    /**
+     * This function load the page "gestion".
+     * It adds all the data needed for the page to display (Skills, Referents and Establishments).
+     * If no user of Coordinator object was found in the session or if the Coordinator in the session
+     * is not an admin, it redirects the user to the '/login' page
+     *
+     * @param model used by Spring to add all the data in the page
+     * @param session the current HTTP session
+     * @return the page displayed for the Coordinator admin user
+     */
     @GetMapping("/gestion")
-    public String gestion(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("userRole", "COORDINATOR");
-        model.addAttribute("isAdmin", true);
+    public String gestion(Model model, HttpSession session) {
 
-        // Données hardcodés pour tester
-        Establishment etab = new Establishment(1, "Haute École Provinciale de Hainaut - Condorcet", "061000000");
-        Address adresse = new Address(6800, "Rue du Faubourg de la Prévoté, 142", "Fontaine-l'Évêque", null, null);
-        etab.setAddresses(List.of(adresse));
-        Referrer referrer = new Referrer(etab, "vanderberghe@example.com", "0476123456", "VANDERBERGHE-DUPONSELLE", "Jean-François");
-        etab.setReferrers(List.of(referrer));
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null || !coordinator.isAdmin()) {
+            return "redirect:/login";
+        }
 
-        model.addAttribute("etablissementList", List.of(etab));
-        model.addAttribute("referentList", new ArrayList<>());
-        model.addAttribute("professionalSkillList", new ArrayList<>());
-        model.addAttribute("academicSkillList", new ArrayList<>());
+        try {
+            model.addAttribute("referentList", new ReferrerService().getAllReferrer());
+            model.addAttribute("etablissementList", new EstablishementService().getAllFullEstablishments());
+            // il y a une faute 'etablishment'
+            model.addAttribute("professionalSkillList", new SkillService().getAllProfessionalSkills());
+            model.addAttribute("academicSkillList", new SkillService().getAllAcademicSkills());
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        model.addAttribute("DTOReferrerAdd", new DTOReferrer());
+        model.addAttribute("DTOEstablishmentAdd", new DTOReferrer());
 
         return "coordinatrice/gestion";
     }
@@ -152,22 +161,22 @@ public class CoordinatorController {
      * This function add a Referrer in the database
      * using the data the user put in the form.
      *
-     * @param model is param used by Spring to add all the data in the page.
      * @return the page "etablissements" where it comes from.
      */
     @PostMapping("/etablissements/addReferrer")
     public String attributeReferrer(
-                            @ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment,
-                            Model model) {
-
-        ReferrerService referrerService = new ReferrerService();
-        try {
-            referrerService.attributeReferrer(dtoEstablishment.getListReferrerSelected(), dtoEstablishment.getNumEstablishment());
-
-        } catch (SQLException e) {
-            // renvoyé la page d'erreur.
+                            @ModelAttribute("DTOReferrer") DTOReferrer dtoReferrer, HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if(coordinator == null || !coordinator.isAdmin()) {
+            return "redirect:/login";
         }
-        return "redirect:/coordinatrice/etablissements";
+
+        try {
+            new ReferrerService().createReferrer(dtoReferrer);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "redirect:/coordinatrice/gestion";
     }
 
     /**

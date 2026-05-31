@@ -16,21 +16,13 @@ import java.util.List;
 public class ReferrerService {
 
     /**
-     * This function find every Referrer in the DB and convert them into DTOReferrer
-     * @return a List of DTOReferrer with all Referrer
+     * This function find every Referrer in the DB
+     * @return a List of Referrer
      * @throws SQLException if the database encountered a problem
      */
-    public List<DTOReferrer> getAllReferrer() throws SQLException {
-        DAOReferrer daoReferrer = new DAOReferrer();
-        List<Referrer> list = daoReferrer.findAllWithoutEstablishment();
-        List<DTOReferrer> listDTOReferrer = new ArrayList<DTOReferrer>();
-        for (Referrer referrer : list) {
-            DTOReferrer dtoReferrer = new DTOReferrer(referrer);
-            listDTOReferrer.add(dtoReferrer);
-        }
-        return listDTOReferrer;
+    public List<Referrer> getAllReferrer() throws SQLException {
+        return new DAOReferrer().findAll();
     }
-
 
     /**
      * This method attribute the numEstablishment
@@ -48,8 +40,6 @@ public class ReferrerService {
             }
         }
     }
-
-
 
     /**
      * This function create a referrer with all the data needed

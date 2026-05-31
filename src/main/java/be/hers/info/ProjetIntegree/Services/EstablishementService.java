@@ -90,4 +90,8 @@ public class EstablishementService {
         Address address = daoAddress.find(dtoEstablishment.getNumAddress());
         daoAddress.update(address);
     }
+
+    public List<Establishment> getAllFullEstablishments() throws SQLException {
+        return new DAOEstablishment().findAllFullEstablishment();
+    }
 }
