@@ -23,10 +23,10 @@ public class Referrer {
      * @param phoneNumber      the phone number
      * @param surname          the surname of the referrer
      * @param name             the name of the referrer
-     * @throws IllegalArgumentException if refEstablishment, addressMail, phoneNumber,surname or name is null
+     * @throws IllegalArgumentException if addressMail, phoneNumber,surname or name is null
      */
     public Referrer(Establishment refEstablishment, String addressMail, String phoneNumber, String surname, String name) {
-        if (refEstablishment == null || addressMail == null || phoneNumber == null || surname == null || name == null) {
+        if (addressMail == null || phoneNumber == null || surname == null || name == null) {
             throw new IllegalArgumentException();
         }
 

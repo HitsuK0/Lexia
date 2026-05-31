@@ -112,6 +112,11 @@ public class DAOReferrer extends DAO<Referrer> {
                 referrer.setSurname(rs.getString("lastName"));
                 referrer.setPhoneNumber(rs.getString("phoneNumber"));
                 referrer.setAddressMail(rs.getString("emailAddress"));
+
+                if(rs.getObject("FKEstablishment") != null) {
+                    referrer.setRefEstablishment(new DAOEstablishment().find(rs.getInt("FKEstablishment")));
+                }
+
                 referrerList.add(referrer);
             }
         } finally {
@@ -192,7 +197,13 @@ public class DAOReferrer extends DAO<Referrer> {
             prStat.setString(2, objectToUpdateInDB.getSurname());
             prStat.setString(3, objectToUpdateInDB.getPhoneNumber());
             prStat.setString(4, objectToUpdateInDB.getAddressMail());
-            prStat.setInt(5, objectToUpdateInDB.getRefEstablishment().getNumEstablishment());
+
+            if(objectToUpdateInDB.getRefEstablishment() != null) {
+                prStat.setInt(5, objectToUpdateInDB.getRefEstablishment().getNumEstablishment());
+            }  else {
+                prStat.setNull(5, java.sql.Types.INTEGER);
+            }
+
             prStat.setInt(6, objectToUpdateInDB.getNumReferrer());
 
             int nbreLigne = prStat.executeUpdate();
