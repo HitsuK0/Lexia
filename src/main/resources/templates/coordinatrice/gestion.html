@@ -360,7 +360,7 @@
         <div class="modal fade" id="modalAjoutRef" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <form th:action="@{/coordinatrice/etablissements/addReferrer}" method="POST">
+                    <form th:action="@{/coordinatrice/etablissements/addReferrer}", th:object="${DTOReferrer}" method="POST">
                         <div class="modal-header border-bottom">
                             <h5 class="modal-title fw-bold w-100 text-center">Ajouter un référent</h5>
                             <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
@@ -369,24 +369,24 @@
                             <div class="row mb-3">
                                 <div class="col-6">
                                     <label class="form-label small fw-semibold">Nom</label>
-                                    <input type="text" name="surnameNewReferrer" class="form-control form-control-sm" id="ajoutRefNom" placeholder="Ex : DENY"/>
+                                    <input type="text" th:field="*{surnameNewReferrer}" class="form-control form-control-sm" id="ajoutRefNom" placeholder="Ex : DENY"/>
                                 </div>
                                 <div class="col-6">
                                     <label class="form-label small fw-semibold">Prénom</label>
-                                    <input type="text" name="nameNewReferrer" class="form-control form-control-sm" id="ajoutRefPrenom" placeholder="Ex : Laurence"/>
+                                    <input type="text" th:field="*{nameNewReferrer}" class="form-control form-control-sm" id="ajoutRefPrenom" placeholder="Ex : Laurence"/>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Téléphone</label>
-                                <input type="text" name="phoneNumberReferrer" class="form-control form-control-sm" id="ajoutRefTel" placeholder="Ex : 0476123456"/>
+                                <input type="text" th:field="*{phoneNumberReferrer}" class="form-control form-control-sm" id="ajoutRefTel" placeholder="Ex : 0476123456"/>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Email</label>
-                                <input type="email" name="mailReferrer" class="form-control form-control-sm" id="ajoutRefEmail" placeholder="Ex : laurence.deny@example.com"/>
+                                <input type="email" th:field="*{mailReferrer}" class="form-control form-control-sm" id="ajoutRefEmail" placeholder="Ex : laurence.deny@example.com"/>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Établissement lié <span class="text-muted fw-normal">(facultatif)</span></label>
-                                <select class="form-select form-select-sm" id="ajoutRefEtab" name="numEstablishement">
+                                <select class="form-select form-select-sm" id="ajoutRefEtab" th:field="*{numEstablishement}">
                                     <option value="0" selected>-- Aucun établissement --</option>
                                     <option th:each="etab : ${etablissementList}"
                                             th:value="${etab.numEstablishment}"

@@ -132,7 +132,7 @@ public class CoordinatorController {
             e.printStackTrace();
         }
 
-        model.addAttribute("DTOReferrerAdd", new DTOReferrer());
+        model.addAttribute("DTOReferrer", new DTOReferrer());
         model.addAttribute("DTOEstablishmentAdd", new DTOReferrer());
 
         return "coordinatrice/gestion";
@@ -158,8 +158,7 @@ public class CoordinatorController {
     }
 
     /**
-     * This function add a Referrer in the database
-     * using the data the user put in the form.
+     * This function adds a Referrer in the database using DTOReferrer
      *
      * @return the page "etablissements" where it comes from.
      */
