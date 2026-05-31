@@ -138,12 +138,8 @@ public class Referrer {
 
     /**
      * @param refEstablishment the establishment
-     * @throws IllegalArgumentException if refEstablishment is null
      */
     public void setRefEstablishment(Establishment refEstablishment) {
-        if (refEstablishment == null) {
-            throw new IllegalArgumentException("[POJOReferrer] L'établissement ne peut pas être null ou vide");
-        }
         this.refEstablishment = refEstablishment;
     }
 
