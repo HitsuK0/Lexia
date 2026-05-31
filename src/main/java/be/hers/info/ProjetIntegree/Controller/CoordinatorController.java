@@ -124,7 +124,7 @@ public class CoordinatorController {
 
         try {
             model.addAttribute("referentList", new ReferrerService().getAllReferrer());
-            model.addAttribute("establissementList", new EstablishementService().getAllFullEstablishments());
+            model.addAttribute("etablissementList", new EstablishementService().getAllFullEstablishments());
             model.addAttribute("professionalSkillList", new SkillService().getAllProfessionalSkills());
             model.addAttribute("academicSkillList", new SkillService().getAllAcademicSkills());
         } catch(SQLException e) {
@@ -135,25 +135,6 @@ public class CoordinatorController {
         model.addAttribute("DTOEstablishmentAdd", new DTOReferrer());
 
         return "coordinatrice/gestion";
-    }
-
-    /**
-     * This function create an establishment in DB using the data put in the form.
-     *
-     * @param dtoEstablishment is the DTOEstablishment the user is trying to add.
-     * @param model            is param used by Spring to add all the data in the page.
-     * @return the page "etablissements" where it comes from.
-     */
-    @PostMapping("/etablissements/createEstablishment")
-    public String addEstablishment(@ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment,
-                                   Model model) {
-        EstablishementService establishementService = new EstablishementService();
-        try {
-            establishementService.createEstablishment(dtoEstablishment);
-        } catch (SQLException e) {
-            // renvoyé la page d'erreur.
-        }
-        return "redirect:/coordinatrice/etablissements";
     }
 
     /** Creates a new Referrer in the database using the data submitted from the form.
@@ -226,6 +207,25 @@ public class CoordinatorController {
         }
 
         return "redirect:/coordinatrice/gestion";
+    }
+
+    /**
+     * This function create an establishment in DB using the data put in the form.
+     *
+     * @param dtoEstablishment is the DTOEstablishment the user is trying to add.
+     * @param model            is param used by Spring to add all the data in the page.
+     * @return the page "etablissements" where it comes from.
+     */
+    @PostMapping("/etablissements/createEstablishment")
+    public String addEstablishment(@ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment,
+                                   Model model) {
+        EstablishementService establishementService = new EstablishementService();
+        try {
+            establishementService.createEstablishment(dtoEstablishment);
+        } catch (SQLException e) {
+            // renvoyé la page d'erreur.
+        }
+        return "redirect:/coordinatrice/etablissements";
     }
 
     /**
