@@ -408,46 +408,48 @@
         <div class="modal fade" id="modalEditRef" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center">Modifier le référent</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body px-4 py-3">
-                        <input type="hidden" id="editRefId"/>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <label class="form-label small fw-semibold">Nom</label>
-                                <input type="text" class="form-control form-control-sm" id="editRefNom"/>
+                    <form th:action="@{/coordinatrice/etablissements/updateReferrer}" method="POST">
+                        <div class="modal-header border-bottom">
+                            <h5 class="modal-title fw-bold w-100 text-center">Modifier le référent</h5>
+                            <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body px-4 py-3">
+                            <input type="hidden" name="idReferrer" id="editRefId"/>
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small fw-semibold">Nom</label>
+                                    <input type="text"  class="form-control form-control-sm" name="surnameNewReferrer" id="editRefNom"/>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-semibold">Prénom</label>
+                                    <input type="text" class="form-control form-control-sm" name="nameNewReferrer" id="editRefPrenom"/>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <label class="form-label small fw-semibold">Prénom</label>
-                                <input type="text" class="form-control form-control-sm" id="editRefPrenom"/>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Téléphone</label>
+                                <input type="text" class="form-control form-control-sm" name="phoneNumberReferrer"  id="editRefTel"/>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Email</label>
+                                <input type="email" class="form-control form-control-sm" name="mailReferrer" id="editRefEmail"/>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Établissement lié <span class="text-muted fw-normal">(facultatif)</span></label>
+                                <select class="form-select form-select-sm" name="numEstablishement" id="editRefEtab">
+                                    <option value="0">-- Aucun établissement --</option>
+                                    <option th:each="etab : ${etablissementList}"
+                                            th:value="${etab.numEstablishment}"
+                                            th:text="${etab.nameBuilding}">Établissement</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Téléphone</label>
-                            <input type="text" class="form-control form-control-sm" id="editRefTel"/>
+                        <div class="modal-footer border-top justify-content-center gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-floppy me-1"></i> Enregistrer
+                            </button>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Email</label>
-                            <input type="email" class="form-control form-control-sm" id="editRefEmail"/>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Établissement lié <span class="text-muted fw-normal">(facultatif)</span></label>
-                            <select class="form-select form-select-sm" id="editRefEtab">
-                                <option value="">-- Aucun établissement --</option>
-                                <option th:each="etab : ${etablissementList}"
-                                        th:value="${etab.numEstablishment}"
-                                        th:text="${etab.nameBuilding}">Établissement</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm">
-                            <i class="bi bi-floppy me-1"></i> Enregistrer
-                        </button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

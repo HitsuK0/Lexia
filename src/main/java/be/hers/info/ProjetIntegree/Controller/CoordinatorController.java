@@ -178,6 +178,22 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/gestion";
     }
 
+    @PostMapping("/etablissements/updateReferrer")
+    public String referrerUpdate(DTOReferrer dtoReferrer, HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if(coordinator == null || !coordinator.isAdmin()) {
+            return "redirect:/login";
+        }
+
+        try {
+            new ReferrerService().updateReferrer(dtoReferrer);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return  "redirect:/coordinatrice/gestion";
+    }
+
     /**
      * This functions update the Establishment with the
      * Establishment the user put in the form

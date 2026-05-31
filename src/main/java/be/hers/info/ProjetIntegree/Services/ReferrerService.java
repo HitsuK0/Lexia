@@ -3,6 +3,7 @@ package be.hers.info.ProjetIntegree.Services;
 import be.hers.info.ProjetIntegree.DAO.DAOEstablishment;
 import be.hers.info.ProjetIntegree.DAO.DAOReferrer;
 import be.hers.info.ProjetIntegree.DTO.DTOReferrer;
+import be.hers.info.ProjetIntegree.POJO.Establishment;
 import be.hers.info.ProjetIntegree.POJO.Referrer;
 
 import java.sql.SQLException;
@@ -57,5 +58,19 @@ public class ReferrerService {
         referrer.setRefEstablishment(daoEstablishment.find(dtoReferrer.getNumEstablishement()));
         DAOReferrer daoReferrer = new DAOReferrer();
         daoReferrer.create(referrer);
+    }
+
+    public void updateReferrer(DTOReferrer dtoReferrer) throws SQLException {
+        Establishment establishment = null;
+        if(dtoReferrer.getNumEstablishement() != 0) {
+            establishment = new DAOEstablishment().find(dtoReferrer.getNumEstablishement());
+        }
+
+        Referrer referrer = new Referrer(establishment, dtoReferrer.getMailReferrer(), dtoReferrer.getPhoneNumberReferrer(),
+                dtoReferrer.getSurnameNewReferrer(), dtoReferrer.getNameNewReferrer());
+        referrer.setNumReferrer(dtoReferrer.getIdReferrer());
+
+        DAOReferrer daoReferrer = new DAOReferrer();
+        daoReferrer.update(referrer);
     }
 }
