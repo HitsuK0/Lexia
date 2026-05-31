@@ -2,12 +2,9 @@ package be.hers.info.ProjetIntegree.Services;
 
 import be.hers.info.ProjetIntegree.DAO.DAOAddress;
 import be.hers.info.ProjetIntegree.DAO.DAOEstablishment;
-import be.hers.info.ProjetIntegree.DAO.DAOReferrer;
 import be.hers.info.ProjetIntegree.DTO.DTOEstablishment;
-import be.hers.info.ProjetIntegree.DTO.DTOReferrer;
 import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
-import be.hers.info.ProjetIntegree.POJO.Referrer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,7 +16,6 @@ import java.util.List;
  * @reviewer Nicolas Jean-Francois, Halet Louis
  */
 public class EstablishementService {
-
 
     /**
      * This function get all the establishment available in DB.
@@ -38,7 +34,6 @@ public class EstablishementService {
         }
         return dtoEstablishments;
     }
-
 
     /**
      * This function create an establishment and an address in the database with the data in the param.
@@ -64,13 +59,10 @@ public class EstablishementService {
             )
         );
 
-
         DAOEstablishment daoEstablishment = new DAOEstablishment();
 
         daoEstablishment.create(establishment);
     }
-
-
 
     /**
      * This function makes an update of the Establishment
@@ -91,6 +83,13 @@ public class EstablishementService {
         daoAddress.update(address);
     }
 
+    /** Retrieves all the Establishments from the database with all their related data loaded
+     * (addresses + referrers also)
+     *
+     * @return a list containing all the Establishments with their full data, or an empty list
+     * if the table is empty
+     * @throws SQLException in case of any SQL problems encountered while retrieving the Establishments
+     */
     public List<Establishment> getAllFullEstablishments() throws SQLException {
         return new DAOEstablishment().findAllFullEstablishment();
     }

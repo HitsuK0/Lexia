@@ -60,6 +60,13 @@ public class ReferrerService {
         daoReferrer.create(referrer);
     }
 
+    /**
+     * Updates an existing Referrer in the database with the data from the given DTOReferrer.
+     *
+     * @param dtoReferrer the DTOReferrer containing the updated data of the Referrer.
+     * @throws SQLException in case of any SQL problems encountered while retrieving the Establishment
+     *                      or updating the Referrer.
+     */
     public void updateReferrer(DTOReferrer dtoReferrer) throws SQLException {
         Establishment establishment = null;
         if(dtoReferrer.getNumEstablishement() != 0) {
@@ -73,6 +80,13 @@ public class ReferrerService {
         new DAOReferrer().update(referrer);
     }
 
+    /**
+     * Deletes a Referrer from the database using the id contained in the given DTOReferrer,
+     * only the id of the Referrer is used
+     *
+     * @param dtoReferrer the DTOReferrer containing the id of the Referrer to delete.
+     * @throws SQLException in case of any SQL problems encountered while deleting the Referrer.
+     */
     public void deleteReferrer(DTOReferrer dtoReferrer) throws SQLException {
         Referrer referrer = new Referrer();
         referrer.setNumReferrer(dtoReferrer.getIdReferrer());

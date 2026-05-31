@@ -124,8 +124,7 @@ public class CoordinatorController {
 
         try {
             model.addAttribute("referentList", new ReferrerService().getAllReferrer());
-            model.addAttribute("etablissementList", new EstablishementService().getAllFullEstablishments());
-            // il y a une faute 'etablishment'
+            model.addAttribute("establissementList", new EstablishementService().getAllFullEstablishments());
             model.addAttribute("professionalSkillList", new SkillService().getAllProfessionalSkills());
             model.addAttribute("academicSkillList", new SkillService().getAllAcademicSkills());
         } catch(SQLException e) {
@@ -157,10 +156,13 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/etablissements";
     }
 
-    /**
-     * This function adds a Referrer in the database using DTOReferrer
+    /** Creates a new Referrer in the database using the data submitted from the form.
+     * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
+     * the user is redirected to the '/login' page
      *
-     * @return the page "etablissements" where it comes from.
+     * @param dtoReferrer the DTOReferrer containing the data of the Referrer to create
+     * @param session the current HTTP session
+     * @return a redirection to the "/coordinatrice/gestion" page
      */
     @PostMapping("/etablissements/addReferrer")
     public String attributeReferrer(
@@ -178,7 +180,14 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/gestion";
     }
 
-
+    /** Updates an existing Referrer in the database with the data submitted from the form.
+     * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
+     * the user is redirected to the '/login' page
+     *
+     * @param dtoReferrer the DTOReferrer containing the updated data of the Referrer
+     * @param session the current HTTP session
+     * @return a redirection to the "/coordinatrice/gestion" page
+     */
     @PostMapping("/etablissements/updateReferrer")
     public String referrerUpdate(DTOReferrer dtoReferrer, HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
@@ -195,6 +204,14 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/gestion";
     }
 
+    /** Deletes a Referrer from the database using the id contained in the DTOReferrer submitted
+     * from the form. If no user of Coordinator type is found in the session or if the Coordinator
+     * is not an admin, the user is redirected to the '/login' page
+     *
+     * @param dtoReferrer the DTOReferrer containing the id of the Referrer to delete
+     * @param session the current HTTP session
+     * @return a redirection to the "/coordinatrice/gestion" page
+     */
     @PostMapping("/etablissements/deleteReferrer")
     public String referrerDelete(DTOReferrer dtoReferrer, HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
