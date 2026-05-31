@@ -178,6 +178,7 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/gestion";
     }
 
+
     @PostMapping("/etablissements/updateReferrer")
     public String referrerUpdate(DTOReferrer dtoReferrer, HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
@@ -191,7 +192,23 @@ public class CoordinatorController {
             e.printStackTrace();
         }
 
-        return  "redirect:/coordinatrice/gestion";
+        return "redirect:/coordinatrice/gestion";
+    }
+
+    @PostMapping("/etablissements/deleteReferrer")
+    public String referrerDelete(DTOReferrer dtoReferrer, HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if(coordinator == null || !coordinator.isAdmin()) {
+            return "redirect:/login";
+        }
+
+        try {
+            new ReferrerService().deleteReferrer(dtoReferrer);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/coordinatrice/gestion";
     }
 
     /**

@@ -70,7 +70,13 @@ public class ReferrerService {
                 dtoReferrer.getSurnameNewReferrer(), dtoReferrer.getNameNewReferrer());
         referrer.setNumReferrer(dtoReferrer.getIdReferrer());
 
-        DAOReferrer daoReferrer = new DAOReferrer();
-        daoReferrer.update(referrer);
+        new DAOReferrer().update(referrer);
+    }
+
+    public void deleteReferrer(DTOReferrer dtoReferrer) throws SQLException {
+        Referrer referrer = new Referrer();
+        referrer.setNumReferrer(dtoReferrer.getIdReferrer());
+
+        new DAOReferrer().delete(referrer);
     }
 }

@@ -457,21 +457,23 @@
         <div class="modal fade" id="modalDeleteRef" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center">Supprimer le référent</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body px-4 py-3 text-center">
-                        <p>Êtes-vous sûr de vouloir supprimer ce référent ?</p>
-                        <p class="text-danger fw-semibold">Cette action est irréversible.</p>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <input type="hidden" id="deleteRefId"/>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash3 me-1"></i> Supprimer
-                        </button>
-                    </div>
+                    <form th:action="@{/coordinatrice/etablissements/deleteReferrer}" method="POST">
+                        <div class="modal-header border-bottom">
+                            <h5 class="modal-title fw-bold w-100 text-center">Supprimer le référent</h5>
+                            <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body px-4 py-3 text-center">
+                            <p>Êtes-vous sûr de vouloir supprimer ce référent ?</p>
+                            <p class="text-danger fw-semibold">Cette action est irréversible.</p>
+                        </div>
+                        <div class="modal-footer border-top justify-content-center gap-2">
+                            <input type="hidden" name="idReferrer" id="deleteRefId"/>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash3 me-1"></i> Supprimer
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
