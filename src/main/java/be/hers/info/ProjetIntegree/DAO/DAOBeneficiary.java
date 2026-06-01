@@ -449,4 +449,38 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         }
         return beneficiary;
     }
+
+    /**
+     * Searches for a Beneficiary with the id of interpreter
+     *  Appointments are not loaded
+     * @param objectToSearchInDB the id to search for
+     * @return The list of Beneficiary if found, an empty list otherwise
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public List<Beneficiary> findByRefInterpreter(int objectToSearchInDB) throws SQLException {
+        List<Beneficiary> listBeneficiary = new ArrayList<>();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT numBeneficiary, login, password, firstName, lastName, phoneNumber,emailAddress " +
+                "FROM Beneficiary "+
+                "WHERE FKnumInterpreter = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setInt(1,objectToSearchInDB);
+            resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()) {
+
+                Beneficiary beneficiary = new Beneficiary(resultSet.getInt("numBeneficiary"), resultSet.getString("login"),
+                        resultSet.getString("password"), resultSet.getString("lastName"),
+                        resultSet.getString("firstName"),
+                        resultSet.getString("emailAddress"));
+                listBeneficiary.add(beneficiary);
+            }
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return listBeneficiary;
+    }
 }

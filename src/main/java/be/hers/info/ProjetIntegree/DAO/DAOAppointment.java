@@ -519,6 +519,7 @@ public class DAOAppointment extends DAO<Appointment> {
                 "JOIN Establishment e ON e.numEstablishment = ap.FKnumEstablishment " +
                 "JOIN Beneficiary b ON b.numBeneficiary = ap.FKnumBeneficiary " +
                 "WHERE rdv.numInterpreter = ? " +
+                "  AND ap.status <> 'en attente' " +
                 "  AND ( " +
                 "      (tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
                 "      OR " +
