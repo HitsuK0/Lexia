@@ -100,7 +100,6 @@ public class InterpreterController {
             Map<String, Object> event = new HashMap<>();
             Map<String, Object> extendedProps = new HashMap<>();
 
-            // AI MODIFIE UN PEU CE EVENT
             String skills = a.getAcademicSkillsNeeded().stream()
                     .map(s -> s.getDesignation())
                     .collect(Collectors.joining(", "));
@@ -337,7 +336,8 @@ public class InterpreterController {
      * Also redirect to the indsponibilites page.
      * It create an Absence in the Database.
      * @param dtoAbsence the dto to convert into a pojo
-     * @param model
+     * @param model the UI model to hold the list of absences and the active tab status
+     * @param request    the current HTTP request used to access the session
      * @return the page to redirect to.
      */
     @PostMapping("/indisponibilites")
@@ -363,17 +363,18 @@ public class InterpreterController {
     /**
      * Deletes a specific absence record based on its unique ID
      * @param id the unique identifier of the absence to be deleted
-     * @param interpreter The currently logged-in interpreter
+     * @param model the UI model to hold the list of absences and the active tab status
+     * @param request    the current HTTP request used to access the session
      * @return A redirect to the absences list view after deletion
      */
     @PostMapping("/indisponibilites/delete")
     public String deleteAbsence(@RequestParam int id,
-                                @ModelAttribute("InterpreterConnected") Interpreter interpreter) {
-
-        if(interpreter == null) {
+                                Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
             return "redirect:/login";
         }
-
         try {
             AbsenceService absenceService = new AbsenceService();
             absenceService.deleteAbsence(id);
@@ -388,14 +389,16 @@ public class InterpreterController {
      * Updates the details of an existing absence
      * The updated information is received as a model attribute and passed to the service
      * @param updatedAbsence The absence object containing the modified data
-     * @param interpreter the currently logged-in interpreter
+     * @param model the UI model to hold the list of absences and the active tab status
+     * @param request    the current HTTP request used to access the session
      * @return A redirect to the absences list view after the update is processed
      */
     @PostMapping("/indisponibilites/update")
     public String updateAbsence(@ModelAttribute Absence updatedAbsence,
-                                @ModelAttribute("InterpreterConnected") Interpreter interpreter) {
-
-        if(interpreter == null) {
+                                Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
             return "redirect:/login";
         }
 
