@@ -50,73 +50,74 @@
                     </tr>
                     </thead>
                     <tbody id="tableBody">
-                    <tr data-status="approved">
-                        <td>23 Février</td>
-                        <td>8h30 - 9h30</td>
-                        <td>Rendez-vous médical</td>
-                        <td>20 Février 2026</td>
-                        <td><span class="badge-statut approved">Validé</span></td>
-                        <td class="actions-cell">
-                            <button class="btn-action edit" disabled title="Non modifiable"><i class="bi bi-pencil"></i></button>
-                            <button class="btn-action delete" disabled title="Non modifiable"><i class="bi bi-trash"></i></button>
+                    <tr th:each="absence : ${punctualAbsencesList}"
+                        th:with="
+                            slot=${absence.timeSlot},
+                            isFullDay=${#strings.toString(slot.duration).equals('00:00') or #strings.toString(slot.startTime).equals('00:00')},
+                            statusVal=${absence.status}"
+                        th:attr="data-status=${statusVal == 'accepte'} ? 'approved' : (${statusVal == 'refuse'} ? 'refused' : 'pending')">
+
+                        <td>
+                            <span th:if="${slot.startDate != null and slot.endDate != null and !slot.startDate.equals(slot.endDate)}"
+                                  th:text="${#temporals.format(slot.startDate, 'dd/MM/yyyy')} + ' au ' + ${#temporals.format(slot.endDate, 'dd/MM/yyyy')}">
+                            </span>
+                            <span th:if="${slot.startDate != null and (slot.endDate == null or slot.startDate.equals(slot.endDate))}"
+                                  th:text="${#temporals.format(slot.startDate, 'dd/MM/yyyy')}">
+                            </span>
                         </td>
-                    </tr>
-                    <tr data-status="refused">
-                        <td>02 Mars</td>
-                        <td>Toute la journée</td>
-                        <td>/</td>
-                        <td>01 Mars 2026</td>
-                        <td><span class="badge-statut refused">Refusé</span></td>
-                        <td class="actions-cell">
-                            <button class="btn-action edit" disabled title="Non modifiable"><i class="bi bi-pencil"></i></button>
-                            <button class="btn-action delete" disabled title="Non modifiable"><i class="bi bi-trash"></i></button>
+
+                        <td>
+                            <span th:if="${isFullDay}">Toute la journée</span>
+                            <span th:unless="${isFullDay}"
+                                  th:with="endTime=${slot.startTime.plus(slot.duration)}"
+                                  th:text="${#temporals.format(slot.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(endTime, 'HH:mm')}">
+                            </span>
                         </td>
-                    </tr>
-                    <tr data-status="pending">
-                        <td>06 au 08 Mars</td>
-                        <td>Toute la journée</td>
-                        <td>Maladie : grippe</td>
-                        <td>06 Mars 2026</td>
-                        <td><span class="badge-statut pending">En Attente</span></td>
+
+                        <td th:text="${absence.privateReason ? 'Motif privé' : (absence.reason != null and !absence.reason.isEmpty() ? absence.reason : '/')}"></td>
+
+                        <td>—</td>
+
+                        <td>
+                            <span th:if="${statusVal == 'accepte'}" class="badge-statut approved">Validé</span>
+                            <span th:if="${statusVal == 'refuse'}" class="badge-statut refused">Refusé</span>
+                            <span th:if="${statusVal == 'en attente'}" class="badge-statut pending">En Attente</span>
+                        </td>
+
                         <td class="actions-cell">
-                            <button class="btn-action edit active"
+                            <button th:if="${statusVal == 'en attente'}"
+                                    class="btn-action edit active"
                                     data-bs-toggle="modal" data-bs-target="#modalEditIndispo"
-                                    data-start-date="2026-03-06"
-                                    data-end-date="2026-03-08"
-                                    data-start-hour=""
-                                    data-end-hour=""
-                                    data-all-day="true"
-                                    data-reason="Maladie : grippe"
-                                    title="Modifier"><i class="bi bi-pencil"></i>
+                                    th:attr="
+                                        data-absence-id=${absence.numAbsence},
+                                        data-start-date=${slot.startDate},
+                                        data-end-date=${slot.endDate},
+                                        data-start-hour=${isFullDay ? '' : #temporals.format(slot.startTime, 'HH:mm')},
+                                        data-end-hour=${isFullDay ? '' : #temporals.format(slot.startTime.plus(slot.duration), 'HH:mm')},
+                                        data-all-day=${isFullDay},
+                                        data-reason=${absence.reason}"
+                                    title="Modifier">
+                                <i class="bi bi-pencil"></i>
                             </button>
-                            <button class="btn-action delete active"
+                            <button th:unless="${statusVal == 'en attente'}" class="btn-action edit" disabled title="Non modifiable">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+
+                            <button th:if="${statusVal == 'en attente'}"
+                                    class="btn-action delete active"
                                     data-bs-toggle="modal" data-bs-target="#modalDeleteIndispo"
-                                    title="Supprimer"><i class="bi bi-trash"></i>
+                                    th:attr="data-absence-id=${absence.numAbsence}"
+                                    title="Supprimer">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            <button th:unless="${statusVal == 'en attente'}" class="btn-action delete" disabled title="Non modifiable">
+                                <i class="bi bi-trash"></i>
                             </button>
                         </td>
                     </tr>
-                    <tr data-status="pending">
-                        <td>08 Mars</td>
-                        <td>14h - 17h</td>
-                        <td>/</td>
-                        <td>08 Mars 2026</td>
-                        <td><span class="badge-statut pending">En Attente</span></td>
-                        <td class="actions-cell">
-                            <button class="btn-action edit active"
-                                    data-bs-toggle="modal" data-bs-target="#modalEditIndispo"
-                                    data-start-date="2026-03-08"
-                                    data-end-date="2026-03-08"
-                                    data-start-hour="14:00"
-                                    data-end-hour="17:00"
-                                    data-all-day="false"
-                                    data-reason=""
-                                    title="Modifier"><i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn-action delete active"
-                                    data-bs-toggle="modal" data-bs-target="#modalDeleteIndispo"
-                                    title="Supprimer"><i class="bi bi-trash"></i>
-                            </button>
-                        </td>
+
+                    <tr th:if="${punctualAbsencesList == null or punctualAbsencesList.isEmpty()}">
+                        <td colspan="6" class="text-center text-muted fst-italic">Aucune indisponibilité enregistrée.</td>
                     </tr>
                     </tbody>
                 </table>
@@ -127,7 +128,7 @@
             </nav>
         </div>
 
-        <!-- Modal Modifier -->
+        <!-- Modal "Modifier Indisponibilites" -->
         <div class="modal fade" id="modalEditIndispo" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
@@ -137,58 +138,62 @@
                         <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                     </div>
 
-                    <div class="modal-body px-4 py-3">
+                    <form th:action="@{/interprete/indisponibilites/update}" method="post">
+                        <input type="hidden" id="editAbsenceId" name="numAbsence" value=""/>
 
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label class="form-label small fw-semibold">Date début</label>
-                                <input type="date" id="editStartDate" class="form-control form-control-sm"/>
+                        <div class="modal-body px-4 py-3">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Date début</label>
+                                    <input type="date" id="editStartDate" name="timeSlot.startDate" class="form-control form-control-sm"/>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Date fin</label>
+                                    <input type="date" id="editEndDate" name="timeSlot.endDate" class="form-control form-control-sm"/>
+                                </div>
                             </div>
-                            <div class="col">
-                                <label class="form-label small fw-semibold">Date fin</label>
-                                <input type="date" id="editEndDate" class="form-control form-control-sm"/>
-                            </div>
-                        </div>
 
-                        <div class="mb-2">
-                            <label class="form-label small fw-semibold">Plage Horaire</label>
-                            <div class="d-flex gap-2" id="editTimeRange">
-                                <select id="editStartHour" class="form-select form-select-sm" size="5"></select>
-                                <select id="editEndHour" class="form-select form-select-sm" size="5"></select>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Plage Horaire</label>
+                                <div class="d-flex gap-2" id="editTimeRange">
+                                    <select id="editStartHour" name="timeSlot.startTime" class="form-select form-select-sm" size="5"></select>
+                                    <select id="editEndHour" name="editEndHour" class="form-select form-select-sm" size="5"></select>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editAllDay" name="editAllDay" value="true"/>
+                                    <label class="form-check-label small" for="editAllDay">Journée complète</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Motif <span class="text-muted fw-normal">(facultatif)</span></label>
+                                <textarea id="editReason" name="reason" class="form-control form-control-sm" rows="3" placeholder="Texte ..."></textarea>
+                            </div>
+
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="editAllDay"/>
-                                <label class="form-check-label small" for="editAllDay">Journée complète</label>
+                                <input class="form-check-input" type="checkbox" id="editReasonPrivate" name="privateReason" value="true"/>
+                                <label class="form-check-label small" for="editReasonPrivate">Rendre le motif privé</label>
+                            </div>
+                            <div class="text-muted" style="font-size: 0.78rem; margin-left: 1.5rem;">
+                                Seule la coordinatrice pourra voir le motif
                             </div>
                         </div>
 
-                        <div class="mb-2">
-                            <label class="form-label small fw-semibold">Motif <span class="text-muted fw-normal">(facultatif)</span></label>
-                            <textarea id="editReason" class="form-control form-control-sm" rows="3" placeholder="Texte ..."></textarea>
+                        <div class="modal-footer border-top justify-content-center gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Sauvegarder</button>
                         </div>
 
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="editReasonPrivate"/>
-                            <label class="form-check-label small" for="editReasonPrivate">Rendre le motif privé</label>
-                        </div>
-                        <div class="text-muted" style="font-size: 0.78rem; margin-left: 1.5rem;">
-                            Seule la coordinatrice pourra voir le motif
-                        </div>
-                    </div>
-
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm">Sauvegarder</button>
-                    </div>
+                    </form>
 
                 </div>
             </div>
         </div>
 
-        <!-- Modal Supprimer -->
+        <!-- Modal "Supprimer  indisponibilites"-->
         <div class="modal fade" id="modalDeleteIndispo" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
@@ -206,14 +211,17 @@
 
                     <div class="modal-footer border-0 justify-content-center gap-3">
                         <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-danger btn-sm px-4">Supprimer</button>
+                        <form id="deleteForm" th:action="@{/interprete/indisponibilites/delete}" method="post">
+                            <input type="hidden" id="deleteAbsenceId" name="id" value=""/>
+                            <button type="submit" class="btn btn-danger btn-sm px-4">Supprimer</button>
+                        </form>
                     </div>
 
                 </div>
             </div>
         </div>
 
-        <!-- Modal Déclarer -->
+        <!-- Modal "Déclarer Indisponibilites" -->
         <div class="modal fade" id="modalIndispo" tabindex="-1" aria-labelledby="modalIndispoLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
@@ -223,53 +231,55 @@
                         <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                     </div>
 
-                    <div class="modal-body px-4 py-3">
+                    <form th:action="@{/interprete/indisponibilites}" th:object="${DTOAbsence}" method="post">
 
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label class="form-label small fw-semibold">Date début</label>
-                                <input type="date" id="startDate" class="form-control form-control-sm"/>
+                        <div class="modal-body px-4 py-3">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Date début</label>
+                                    <input type="date" id="startDate" th:field="*{startDate}" class="form-control form-control-sm"/>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Date fin</label>
+                                    <input type="date" id="endDate" th:field="*{endDate}" class="form-control form-control-sm"/>
+                                </div>
                             </div>
-                            <div class="col">
-                                <label class="form-label small fw-semibold">Date fin</label>
-                                <input type="date" id="endDate" class="form-control form-control-sm"/>
-                            </div>
-                        </div>
 
-                        <div class="mb-2">
-                            <label class="form-label small fw-semibold">Plage Horaire</label>
-                            <div class="d-flex gap-2" id="timeRange">
-                                <select id="startHour" class="form-select form-select-sm" size="5"></select>
-                                <select id="endHour" class="form-select form-select-sm" size="5"></select>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Plage Horaire</label>
+                                <div class="d-flex gap-2" id="timeRange">
+                                    <select id="startHour" th:field="*{startTime}" class="form-select form-select-sm" size="5"></select>
+                                    <select id="endHour" th:field="*{endTime}" class="form-select form-select-sm" size="5"></select>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="allDay" th:field="*{fullDay}"/>
+                                    <label class="form-check-label small" for="allDay">Journée complète</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Motif <span class="text-muted fw-normal">(facultatif)</span></label>
+                                <textarea id="reason" th:field="*{reason}" class="form-control form-control-sm" rows="3" placeholder="Texte ..."></textarea>
+                            </div>
+
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="allDay"/>
-                                <label class="form-check-label small" for="allDay">Journée complète</label>
+                                <input class="form-check-input" type="checkbox" id="reasonPrivate" th:field="*{privateReason}"/>
+                                <label class="form-check-label small" for="reasonPrivate">Rendre le motif privé</label>
+                            </div>
+                            <div class="text-muted" style="font-size: 0.78rem; margin-left: 1.5rem;">
+                                Seule la coordinatrice pourra voir le motif
                             </div>
                         </div>
 
-                        <div class="mb-2">
-                            <label class="form-label small fw-semibold">Motif <span class="text-muted fw-normal">(facultatif)</span></label>
-                            <textarea id="reason" class="form-control form-control-sm" rows="3" placeholder="Texte ..."></textarea>
+                        <div class="modal-footer border-top justify-content-center gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Envoyez la demande</button>
                         </div>
 
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="reasonPrivate"/>
-                            <label class="form-check-label small" for="reasonPrivate">Rendre le motif privé</label>
-                        </div>
-                        <div class="text-muted" style="font-size: 0.78rem; margin-left: 1.5rem;">
-                            Seule la coordinatrice pourra voir le motif
-                        </div>
-
-                    </div>
-
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm">Envoyez la demande</button>
-                    </div>
+                    </form>
 
                 </div>
             </div>
@@ -376,6 +386,13 @@
                     document.getElementById('editStartHour').disabled = this.checked;
                     document.getElementById('editEndHour').disabled = this.checked;
                 });
+
+                document.getElementById('modalDeleteIndispo').addEventListener('show.bs.modal', function (e) {
+                    const btn = e.relatedTarget;
+                    document.getElementById('deleteAbsenceId').value = btn.dataset.absenceId;
+                });
+
+                document.getElementById('editAbsenceId').value = btn.dataset.absenceId;
             });
 
             /* Filters the table rows by status, showing only rows matching the
