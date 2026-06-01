@@ -152,8 +152,7 @@ public class InterpreterController {
      * @return The view name "interprete/indisponibilites", or a redirect to login if session is invalid
      */
     @GetMapping("/indisponibilites")
-    public String indisponibilites(HttpServletRequest request,
-                                   Model model) {
+    public String indisponibilites(HttpServletRequest request, Model model) {
         HttpSession session = request.getSession();
         Interpreter interpreter = getInterpreterFromSession(session);
         if (interpreter == null) {
@@ -172,6 +171,7 @@ public class InterpreterController {
         }
 
         model.addAttribute("activeTab", "indisponibilites");
+        model.addAttribute("DTOAbsence", new DTOAbsence());
         return "interprete/indisponibilites";
     }
 
@@ -201,7 +201,7 @@ public class InterpreterController {
         catch(BadStatusException bse){
             // afficher la page d'erreur
         }
-        return "interprete/indisponibilites";
+        return "redirect:/interprete/indisponibilites";
     }
 
     /**
