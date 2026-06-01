@@ -115,6 +115,14 @@ public class TimeSlotPunctual extends TimeSlot {
     }
 
     /**
+     * @return the end time calculated from startTime and duration
+     */
+    public LocalTime getEndTime() {
+        if (getStartTime() == null || getDuration() == null) return null;
+        return getStartTime().plusSeconds(getDuration().toSecondOfDay());
+    }
+
+    /**
      * @param startDate the start date to set
      * @throws IllegalArgumentException if startDate is null
      *                                  if this.endDate is not null and startDate is after this.endDate

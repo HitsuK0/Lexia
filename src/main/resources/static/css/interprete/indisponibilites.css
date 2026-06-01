@@ -105,3 +105,79 @@
     border-radius: 16px !important;
     overflow: hidden;
 }
+
+@media (max-width: 768px) {
+
+    /* Buttons full width */
+    .d-flex.justify-content-end {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .d-flex.justify-content-end .dropdown,
+    .d-flex.justify-content-end > button {
+        width: 100%;
+    }
+
+    .d-flex.justify-content-end .dropdown .btn,
+    .d-flex.justify-content-end .dropdown-menu {
+        width: 100%;
+    }
+
+    /* Hide table header */
+    .table-indispo thead {
+        display: none;
+    }
+
+    /* Each row becomes a card */
+    .table-indispo tbody tr {
+        display: block;
+        border: 1.5px solid #e8e0f5;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        padding: 10px 14px;
+        background: #fff;
+    }
+
+    .table-indispo tbody tr:hover {
+        background-color: #faf8ff;
+    }
+
+    /* Remove bottom border on cells */
+    .table-indispo tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right;
+        padding: 6px 0;
+        border-bottom: 1px solid #f0ecf8;
+        font-size: 0.85rem;
+    }
+
+    .table-indispo tbody td:last-child {
+        border-bottom: none;
+    }
+
+    /* Label before each cell value */
+    .table-indispo tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #593196;
+        text-align: left;
+        flex-shrink: 0;
+        margin-right: 10px;
+        font-size: 0.82rem;
+    }
+
+    .actions-cell {
+        justify-content: flex-end;
+    }
+
+    /* table-wrapper no overflow hidden on mobile to show cards */
+    .table-wrapper {
+        background: transparent;
+        box-shadow: none;
+        border: none;
+        overflow: visible;
+    }
+}
