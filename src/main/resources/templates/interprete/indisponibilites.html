@@ -57,7 +57,8 @@
                             endTime=${slot.endTime},
                             statusVal=${absence.status}"
                         th:attr="data-status=${statusVal == 'accepte'} ? 'approved' : (${statusVal == 'refuse'} ? 'refused' : 'pending')">
-                        <td>
+
+                        <td data-label="Date">
                             <span th:if="${slot.startDate != null and slot.endDate != null and !slot.startDate.equals(slot.endDate)}"
                                   th:text="${#temporals.format(slot.startDate, 'dd/MM/yyyy')} + ' au ' + ${#temporals.format(slot.endDate, 'dd/MM/yyyy')}">
                             </span>
@@ -66,24 +67,25 @@
                             </span>
                         </td>
 
-                        <td>
+                        <td data-label="Plage horaire">
                             <span th:if="${isFullDay}">Toute la journée</span>
                             <span th:unless="${isFullDay}"
                                   th:text="${#temporals.format(slot.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(endTime, 'HH:mm')}">
                             </span>
                         </td>
 
-                        <td th:text="${absence.privateReason ? 'Motif privé' : (absence.reason != null and !absence.reason.isEmpty() ? absence.reason : '/')}"></td>
+                        <td data-label="Motif"
+                            th:text="${absence.privateReason ? 'Motif privé' : (absence.reason != null and !absence.reason.isEmpty() ? absence.reason : '/')}"></td>
 
-                        <td>—</td>
+                        <td data-label="Date demande">—</td>
 
-                        <td>
+                        <td data-label="Statut">
                             <span th:if="${statusVal == 'accepte'}" class="badge-statut approved">Validé</span>
                             <span th:if="${statusVal == 'refuse'}" class="badge-statut refused">Refusé</span>
                             <span th:if="${statusVal == 'en attente'}" class="badge-statut pending">En Attente</span>
                         </td>
 
-                        <td class="actions-cell">
+                        <td data-label="Actions" class="actions-cell">
                             <button th:if="${statusVal == 'en attente'}"
                                     class="btn-action edit active"
                                     data-bs-toggle="modal" data-bs-target="#modalEditIndispo"
