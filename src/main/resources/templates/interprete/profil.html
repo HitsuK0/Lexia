@@ -1,6 +1,6 @@
 <!--
 @author Chloe Wellinger
-@rewiewer Jean-François Nicolas, Louis Halet
+@reviewer Jean-François Nicolas, Louis Halet
 -->
 
 <!DOCTYPE html>
@@ -18,10 +18,33 @@
                 <p class="text-muted fst-italic">Gérez vos informations personnelles et vos compétences</p>
             </div>
 
+            <!-- Erreur mot de passe renvoyée par le controller via ?passwordError=true -->
+            <div th:if="${param.passwordError}" class="alert alert-danger text-center mx-auto" style="max-width:600px;">
+                Les mots de passe ne correspondent pas ou le mot de passe actuel est incorrect.
+            </div>
+
             <div class="profil-wrapper mx-auto">
                 <div class="row g-0">
 
-                    <div class="col-auto profil-sidebar">
+                    <!-- Visible only on mobile -->
+                    <div class="d-block d-md-none mb-3">
+                        <div class="dropdown w-100">
+                            <button class="btn btn-outline-primary btn-sm w-100 d-flex justify-content-between align-items-center"
+                                    type="button" id="mobileSectionBtn"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                <span id="mobileSectionLabel">Informations personnelles</span>
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="mobileSectionBtn">
+                                <li><a class="dropdown-item" href="#" data-section="infos">Informations personnelles</a></li>
+                                <li><a class="dropdown-item" href="#" data-section="metiers">Compétences métiers</a></li>
+                                <li><a class="dropdown-item" href="#" data-section="academics">Compétences académiques</a></li>
+                                <li><a class="dropdown-item" href="#" data-section="account">Compte</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-auto profil-sidebar d-none d-md-block">
                         <p class="sidebar-title">A propos</p>
                         <ul class="sidebar-nav">
                             <li><a href="#" class="sidebar-link active" data-section="infos">Informations personnelles</a></li>
@@ -32,18 +55,17 @@
                     </div>
 
                     <div class="col profil-content">
-
                         <form id="formProfil" method="post" th:action="@{/interprete/profil}" th:object="${profileDTO}">
                             <input type="hidden" th:field="*{numInterpreter}"/>
+
                             <div id="section-infos" class="profil-section active">
 
                                 <div class="row mb-4">
                                     <div class="col-md-3">
                                         <label class="form-label small fw-semibold">Nom</label>
                                         <div class="input-edit-group">
-                                            <input type="text" class="form-control form-control-sm" th:field="*{lastName}" readonly
-                                                   id="inputNom"/>
-                                            <button class="btn-edit" onclick="toggleEdit('inputNom', this)" title="Modifier">
+                                            <input type="text" class="form-control form-control-sm" th:field="*{lastName}" readonly id="inputNom"/>
+                                            <button type="button" class="btn-edit" onclick="toggleEdit('inputNom', this)" title="Modifier">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                         </div>
@@ -51,20 +73,17 @@
                                     <div class="col-md-3">
                                         <label class="form-label small fw-semibold">Prénom</label>
                                         <div class="input-edit-group">
-                                            <input type="text" class="form-control form-control-sm" th:field="*{firstName}" readonly
-                                                   id="inputPrenom"/>
-                                            <button class="btn-edit" onclick="toggleEdit('inputPrenom', this)" title="Modifier">
+                                            <input type="text" class="form-control form-control-sm" th:field="*{firstName}" readonly id="inputPrenom"/>
+                                            <button type="button" class="btn-edit" onclick="toggleEdit('inputPrenom', this)" title="Modifier">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                         </div>
                                     </div>
-
-                                    <div class="col-mb-4">
+                                    <div class="col-md-4">
                                         <label class="form-label small fw-semibold">Heures prestées par semaine</label>
                                         <div class="input-edit-group">
-                                            <input type="number" class="form-control form-control-sm" th:field="*{weeklyWorkHours}"
-                                                   readonly id="inputHeures" style="max-width: 120px;"/>
-                                            <button class="btn-edit" onclick="toggleEdit('inputHeures', this)" title="Modifier">
+                                            <input type="number" class="form-control form-control-sm" th:field="*{weeklyWorkHours}" readonly id="inputHeures" style="max-width: 120px;"/>
+                                            <button type="button" class="btn-edit" onclick="toggleEdit('inputHeures', this)" title="Modifier">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                         </div>
@@ -77,9 +96,8 @@
                                     <div class="col-md-4">
                                         <label class="form-label small fw-semibold">Numéro Téléphone</label>
                                         <div class="input-edit-group">
-                                            <input type="text" class="form-control form-control-sm" th:field="*{phoneNumber}"
-                                                   readonly id="inputTel"/>
-                                            <button class="btn-edit" onclick="toggleEdit('inputTel', this)" title="Modifier">
+                                            <input type="text" class="form-control form-control-sm" th:field="*{phoneNumber}" readonly id="inputTel"/>
+                                            <button type="button" class="btn-edit" onclick="toggleEdit('inputTel', this)" title="Modifier">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                         </div>
@@ -90,9 +108,8 @@
                                     <div class="col-md-5">
                                         <label class="form-label small fw-semibold">Adresse e-mail</label>
                                         <div class="input-edit-group">
-                                            <input type="email" class="form-control form-control-sm"
-                                                   th:field="*{emailAddress}" readonly id="inputEmail"/>
-                                            <button class="btn-edit" onclick="toggleEdit('inputEmail', this)" title="Modifier">
+                                            <input type="email" class="form-control form-control-sm" th:field="*{emailAddress}" readonly id="inputEmail"/>
+                                            <button type="button" class="btn-edit" onclick="toggleEdit('inputEmail', this)" title="Modifier">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                         </div>
@@ -108,9 +125,8 @@
                                         <div class="col-md-5">
                                             <label class="form-label" style="font-size:0.75rem; color:#888;">Rue et numéro</label>
                                             <div class="input-edit-group">
-                                                <input type="text" class="form-control form-control-sm"
-                                                       th:field="*{postOfficeBox}" readonly id="inputRue"/>
-                                                <button class="btn-edit" onclick="toggleEdit('inputRue', this)" title="Modifier">
+                                                <input type="text" class="form-control form-control-sm" th:field="*{postOfficeBox}" readonly id="inputRue"/>
+                                                <button type="button" class="btn-edit" onclick="toggleEdit('inputRue', this)" title="Modifier">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
                                             </div>
@@ -118,9 +134,8 @@
                                         <div class="col-md-3">
                                             <label class="form-label" style="font-size:0.75rem; color:#888;">Code Postal</label>
                                             <div class="input-edit-group">
-                                                <input type="number" class="form-control form-control-sm" th:field="*{postcode}" readonly
-                                                       id="inputCP"/>
-                                                <button class="btn-edit" onclick="toggleEdit('inputCP', this)" title="Modifier">
+                                                <input type="number" class="form-control form-control-sm" th:field="*{postcode}" readonly id="inputCP"/>
+                                                <button type="button" class="btn-edit" onclick="toggleEdit('inputCP', this)" title="Modifier">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
                                             </div>
@@ -128,9 +143,8 @@
                                         <div class="col-md-3">
                                             <label class="form-label" style="font-size:0.75rem; color:#888;">Ville</label>
                                             <div class="input-edit-group">
-                                                <input type="text" class="form-control form-control-sm" th:field="*{locality}" readonly
-                                                       id="inputVille"/>
-                                                <button class="btn-edit" onclick="toggleEdit('inputVille', this)" title="Modifier">
+                                                <input type="text" class="form-control form-control-sm" th:field="*{locality}" readonly id="inputVille"/>
+                                                <button type="button" class="btn-edit" onclick="toggleEdit('inputVille', this)" title="Modifier">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
                                             </div>
@@ -143,7 +157,7 @@
                         <div id="section-metiers" class="profil-section">
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h6 class="fw-bold mb-0">Gérez vos types d'interprétation</h6>
-                                <button class="btn btn-outline-primary btn-sm"
+                                <button type="button" class="btn btn-outline-primary btn-sm"
                                         data-bs-toggle="modal" data-bs-target="#modalAddSkill"
                                         data-type="metier">
                                     + Ajouter une compétence métier
@@ -151,19 +165,26 @@
                             </div>
                             <p class="small text-muted mb-3">Compétences possédées</p>
                             <div class="d-flex flex-wrap gap-2" id="badgesMetiers">
-                                <span class="badge-skill">
-                                    <i class="bi bi-check-lg"></i> Transcription
-                                    <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesMetiers')" title="Retirer">
-                                        <i class="bi bi-x"></i>
-                                    </button>
-                                </span>
+                                        <span class="badge-skill" th:each="skill : ${profileDTO.professionalSkillListInterpreter}">
+                                            <i class="bi bi-check-lg"></i>
+                                            <span th:text="${skill.designation}">Compétence</span>
+                                            <form method="post" th:action="@{/interprete/profil/deleteProfessionalSkill}" style="display:inline;">
+                                                <input type="hidden" name="numProfessionalSkillSelected" th:value="${skill.numProfessionalSkill}"/>
+                                                <button type="submit" class="btn-badge-remove" title="Retirer">
+                                                    <i class="bi bi-x"></i>
+                                                </button>
+                                            </form>
+                                        </span>
+                                <p th:if="${#lists.isEmpty(profileDTO.professionalSkillListInterpreter)}" class="text-muted small">
+                                    Aucune compétence métier enregistrée.
+                                </p>
                             </div>
                         </div>
 
                         <div id="section-academics" class="profil-section">
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h6 class="fw-bold mb-0">Gérez vos différentes matières</h6>
-                                <button class="btn btn-outline-primary btn-sm"
+                                <button type="button" class="btn btn-outline-primary btn-sm"
                                         data-bs-toggle="modal" data-bs-target="#modalAddSkill"
                                         data-type="academic">
                                     + Ajouter une compétence académique
@@ -171,44 +192,39 @@
                             </div>
                             <p class="small text-muted mb-3">Matières possédées</p>
                             <div class="d-flex flex-wrap gap-2" id="badge-academics">
-                                <span class="badge-skill">
-                                    <i class="bi bi-check-lg"></i> Histoire
-                                    <button class="btn-badge-remove" onclick="removeSkill(this, 'badge-academics')" title="Retirer">
-                                        <i class="bi bi-x"></i>
-                                    </button>
-                                </span>
-                                <span class="badge-skill">
-                                    <i class="bi bi-check-lg"></i> Mathématiques
-                                    <button class="btn-badge-remove" onclick="removeSkill(this, 'badge-academics')" title="Retirer">
-                                        <i class="bi bi-x"></i>
-                                    </button>
-                                </span>
-                                <span class="badge-skill">
-                                    <i class="bi bi-check-lg"></i> Economie
-                                    <button class="btn-badge-remove" onclick="removeSkill(this, 'badge-academics')" title="Retirer">
-                                        <i class="bi bi-x"></i>
-                                    </button>
-                                </span>
+                                        <span class="badge-skill" th:each="skill : ${profileDTO.academicSkillListInterpreter}">
+                                            <i class="bi bi-check-lg"></i>
+                                            <span th:text="${skill.designation}">Matière</span>
+                                            <form method="post" th:action="@{/interprete/profil/deleteAcademicSkill}" style="display:inline;">
+                                                <input type="hidden" name="numAcademicSkillSelected" th:value="${skill.numAcademicSkill}"/>
+                                                <button type="submit" class="btn-badge-remove" title="Retirer">
+                                                    <i class="bi bi-x"></i>
+                                                </button>
+                                            </form>
+                                        </span>
+                                <p th:if="${#lists.isEmpty(profileDTO.academicSkillListInterpreter)}" class="text-muted small">
+                                    Aucune compétence académique enregistrée.
+                                </p>
                             </div>
                         </div>
 
                         <div id="section-account" class="profil-section">
                             <div class="mb-4">
                                 <label class="form-label small fw-semibold">Identifiant</label>
-                                <input type="text" class="form-control form-control-sm" value="IT01" readonly
-                                       style="max-width:220px"/>
+                                <input type="text" class="form-control form-control-sm"
+                                       th:value="${profileDTO.login}" readonly style="max-width:220px"/>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Mot de Passe</label>
                                 <div class="input-edit-group">
-                                    <input type="password" class="form-control form-control-sm" value="motdepasse123" readonly
-                                           style="max-width:220px"/>
-                                    <button class="btn-edit" data-bs-toggle="modal" data-bs-target="#modalPassword" title="Modifier">
+                                    <input type="password" class="form-control form-control-sm" value="••••••••" readonly style="max-width:220px"/>
+                                    <button type="button" class="btn-edit" data-bs-toggle="modal" data-bs-target="#modalPassword" title="Modifier">
                                         <i class="bi bi-pencil"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -230,8 +246,18 @@
                     </div>
                     <div class="modal-footer border-0 justify-content-center gap-3">
                         <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm px-4">Ajouter Compétence</button>
+                        <button type="button" class="btn btn-primary btn-sm px-4" onclick="submitAddSkill()">Ajouter Compétence</button>
                     </div>
+
+                    <form id="formAddProfessionalSkill" method="post"
+                          th:action="@{/interprete/profil/addProfessionalSkill}" style="display:none;">
+                        <input type="hidden" id="hiddenNumProfSkill" name="numProfessionalSkillSelected"/>
+                    </form>
+
+                    <form id="formAddAcademicSkill" method="post"
+                          th:action="@{/interprete/profil/addAcademicSkill}" style="display:none;">
+                        <input type="hidden" id="hiddenNumAcadSkill" name="numAcademicSkillSelected"/>
+                    </form>
                 </div>
             </div>
         </div>
@@ -244,30 +270,38 @@
                         <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                     </div>
                     <hr class="mx-3 mt-2"/>
-                    <div class="modal-body px-4">
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Ancien mot de passe</label>
-                            <input type="password" class="form-control form-control-sm" id="inputOldPassword"
-                                   placeholder="Entrez l'ancien mot de passe ..."/>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Nouveau mot de passe</label>
-                            <input type="password" class="form-control form-control-sm" id="inputNewPassword"
-                                   placeholder="Entrez le nouveau mot de passe ..."/>
-                            <div id="passwordError" style="display:none; color:#dc3545; font-size:0.875em;"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Confirmer le mot de passe</label>
-                            <input type="password" class="form-control form-control-sm" id="inputConfirmPassword"
-                                   placeholder="Confirmation ..."/>
-                            <div id="confirmError" style="display:none; color:#dc3545; font-size:0.875em;">
-                                Les mots de passe ne correspondent pas.
+                    <form id="formPassword" method="post"
+                          th:action="@{/interprete/profil/password}" th:object="${passwordDTO}">
+                        <div class="modal-body px-4">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Ancien mot de passe</label>
+                                <input type="password" class="form-control form-control-sm"
+                                       th:field="*{oldPassword}"
+                                       placeholder="Entrez l'ancien mot de passe ..."/>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Nouveau mot de passe</label>
+                                <input type="password" class="form-control form-control-sm"
+                                       th:field="*{newPassword}"
+                                       id="inputNewPassword"
+                                       placeholder="Entrez le nouveau mot de passe ..."/>
+                                <div id="passwordError" style="display:none; color:#dc3545; font-size:0.875em;"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Confirmer le mot de passe</label>
+                                <input type="password" class="form-control form-control-sm"
+                                       th:field="*{confirmPassword}"
+                                       id="inputConfirmPassword"
+                                       placeholder="Confirmation ..."/>
+                                <div id="confirmError" style="display:none; color:#dc3545; font-size:0.875em;">
+                                    Les mots de passe ne correspondent pas.
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer border-0 justify-content-center">
-                        <button type="button" class="btn btn-primary btn-sm px-5" onclick="savePassword()">Sauvegarder</button>
-                    </div>
+                        <div class="modal-footer border-0 justify-content-center">
+                            <button type="button" class="btn btn-primary btn-sm px-5" onclick="savePassword()">Sauvegarder</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -279,159 +313,13 @@
 
         <div th:replace="~{common/footer :: footer}"></div>
 
-        <script>
-            /* Handles sidebar navigation: on click, removes 'active' from all links and sections,
-            then sets the clicked link and its corresponding section as active. */
-            document.querySelectorAll('.sidebar-link').forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-                    document.querySelectorAll('.profil-section').forEach(s => s.classList.remove('active'));
-                    this.classList.add('active');
-                    document.getElementById('section-' + this.dataset.section).classList.add('active');
-                });
-            });
-
-            /* Allows you to check the email format before saving */
-            function isValidEmail(email) {
-                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return regex.test(email);
-            }
-
-            /* Allows you to check the phone number format before saving */
-            function isValidPhone(phone) {
-                const regex = /^[0-9\s]{7,15}$/;
-                return regex.test(phone);
-            }
-
-            /* Toggles a form field between readonly and editable mode,
-            and updates the edit button color to indicate the current state. */
-            function toggleEdit(id, btn) {
-                const input = document.getElementById(id);
-                const isReadonly = input.hasAttribute('readonly');
-
-                if (isReadonly) {
-                    document.querySelectorAll('.btn-edit').forEach(otherBtn => {
-                        const otherId = otherBtn.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
-                        if (otherId && otherId !== id) {
-                            const otherInput = document.getElementById(otherId);
-                            if (otherInput && !otherInput.hasAttribute('readonly')) {
-                                otherInput.setAttribute('readonly', true);
-                                otherBtn.style.color = '';
-                            }
-                        }
-                    });
-
-                    input.removeAttribute('readonly');
-                    input.focus();
-                    btn.style.color = '#593196';
-                } else {
-                    if (id === 'inputEmail' && !isValidEmail(input.value)) {
-                        input.classList.add('is-invalid');
-                        document.getElementById('emailError').style.display = 'block';
-                        return;
-                    }
-                    if (id === 'inputTel' && !isValidPhone(input.value)) {
-                        input.classList.add('is-invalid');
-                        document.getElementById('phoneError').style.display = 'block';
-                        return;
-                    }
-                    document.getElementById('emailError').style.display = 'none';
-                    document.getElementById('phoneError').style.display = 'none';
-                    input.classList.remove('is-invalid');
-                    input.setAttribute('readonly', true);
-                    btn.style.color = '';
-                }
-            }
-
-            const competences = {
-                metier: ['Transcription', 'Translittération', 'Translation'],
-                academic: ['Histoire', 'Anglais', 'Sciences', 'Mathématiques', 'Economie', 'Français', 'Géographie']
-            };
-
-            /* When the "Add Skill" modal opens, populates the dropdown with only the skills
-            the user doesn't already own, based on the badges currently displayed. */
-            document.getElementById('modalAddSkill').addEventListener('show.bs.modal', function (e) {
-                const type = e.relatedTarget.dataset.type;
-                const select = document.getElementById('selectCompetence');
-
-                const badgesId = type === 'metier' ? 'badgesMetiers' : 'badge-academics';
-                const possessed = Array.from(document.querySelectorAll(`#${badgesId} .badge-skill`))
-                    .map(b => b.querySelector('i')
-                    ? b.textContent.trim()
-                    : b.textContent.replace('✓ ', '').trim());
-
-                select.innerHTML = '<option value="" disabled selected>Choisissez une compétence</option>';
-                competences[type]
-                    .filter(c => !possessed.includes(c))
-                    .forEach(comp => {
-                        const option = document.createElement('option');
-                        option.value = comp.toLowerCase();
-                        option.textContent = comp;
-                        select.appendChild(option);
-                    });
-            });
-
-            /* Verifies that the password contains at least 8 characters, one uppercase,
-            one lowercase, one number, and a special character.*/
-            function isValidPassword(password) {
-                const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-                return regex.test(password);
-            }
-
-            /* Validates the new password and its confirmation before closing the modal,
-             otherwise displays the corresponding errors. */
-            function savePassword() {
-                const newPassword = document.getElementById('inputNewPassword').value;
-                const confirmPassword = document.getElementById('inputConfirmPassword').value;
-                const passwordError = document.getElementById('passwordError');
-                const confirmError = document.getElementById('confirmError');
-
-                passwordError.style.display = 'none';
-                confirmError.style.display = 'none';
-
-                if (!isValidPassword(newPassword)) {
-                    passwordError.innerHTML = 'Le mot de passe doit contenir au minimum :<br>' +
-                        '- 8 caractères<br>' +
-                        '- 1 majuscule<br>' +
-                        '- 1 chiffre<br>' +
-                        '- 1 caractère spécial (!@#$%...)';
-                    passwordError.style.display = 'block';
-                    return;
-                }
-
-                if (newPassword !== confirmPassword) {
-                    confirmError.style.display = 'block';
-                    return;
-                }
-
-                bootstrap.Modal.getInstance(document.getElementById('modalPassword')).hide();
-            }
-
-            function removeSkill(btn, containerId) {
-                btn.closest('.badge-skill').remove();
-                onFieldChanged();
-            }
-
-            function onFieldChanged() {
-                document.getElementById('btnSauvegarder').style.display = 'block';
-            }
-
-            document.addEventListener('DOMContentLoaded', function () {
-                document.querySelectorAll('input:not([type="radio"]), textarea, select').forEach(el => {
-                    el.addEventListener('input', onFieldChanged);
-                    el.addEventListener('change', onFieldChanged);
-                });
-
-                document.querySelectorAll('.input-edit-group input, .input-edit-group textarea').forEach(input => {
-                    input.addEventListener('blur', function () {
-                        if (!this.hasAttribute('readonly')) {
-                            const btn = this.closest('.input-edit-group').querySelector('.btn-edit');
-                            if (btn) toggleEdit(this.id, btn);
-                        }
-                    });
-                });
-            });
+        <script th:inline="javascript">
+            const allProfessionalSkills = [];
+            const allAcademicSkills     = [];
+            const ownedProfSkills       = [];
+            const ownedAcadSkills       = [];
         </script>
+
+        <script th:src="@{/js/interprete/profil.js}"></script>
     </body>
 </html>

@@ -138,3 +138,60 @@
 .btn-badge-remove:hover {
     opacity: 1;
 }
+
+/* Mobile: sidebar becomes a horizontal scrollable tab bar */
+@media (max-width: 768px) {
+    .profil-wrapper .row {
+        flex-direction: column;
+    }
+
+    .profil-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 0.5rem;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 0.25rem;
+        white-space: nowrap;
+        padding-bottom: 0.25rem;
+    }
+
+    .sidebar-nav li {
+        flex-shrink: 0;
+    }
+
+    .sidebar-title {
+        display: none;
+    }
+}
+
+/* Mobile: modals take full width with reduced margin */
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    .modal-content {
+        border-radius: 0.75rem;
+    }
+
+    /* Les selects de compétences prennent toute la largeur */
+    #selectCompetence {
+        width: 100%;
+    }
+}
+
+/* Mobile: floating save button spans full width at the bottom */
+@media (max-width: 768px) {
+    .btn-floating {
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        width: calc(100% - 2rem);
+    }
+}

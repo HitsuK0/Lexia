@@ -6,33 +6,43 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
-<head th:replace="~{common/head :: head('Mon Planning', '/css/interprete/planning.css')}"></head>
+    <head th:replace="~{common/head :: head('Mon Planning', '/css/interprete/planning.css')}"></head>
 
     <body>
         <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole=${userRole}, userName=${userName}, breadcrumb=null, isAdmin=${isAdmin})}"></nav>
 
-        <div class="container-fluid py-2 px-5">
+        <div class="container-fluid py-2 px-2 px-md-5">
 
             <div class="text-center mb-2">
                 <h1 class="fw-bold text-primary">Votre horaire de la semaine</h1>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-2  px-5">
+            <div id="planning-toolbar" class="mb-2 px-2 px-md-5">
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <div class="btn-group" id="btnGroupPlanning">
+                        <a th:href="@{/interprete/planning}" class="btn btn-primary btn-sm">Mon Planning</a>
+                        <a th:href="@{/interprete/planning/beneficiaires}" class="btn btn-outline-primary btn-sm">Mes Bénéficiaires</a>
+                    </div>
 
-                <div class="btn-group">
-                    <a th:href="@{/interprete/planning}" class="btn btn-primary btn-sm">Mon Planning</a>
-                    <a th:href="@{/interprete/planning/beneficiaires}" class="btn btn-outline-primary btn-sm">Mes Bénéficiaires</a>
+                    <div class="d-none d-lg-flex gap-3 small text-muted">
+                        <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Indisponibilité</span>
+                        <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
+                        <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-sm d-none d-lg-block"
+                            data-bs-toggle="modal" data-bs-target="#modalIndispo">
+                        <i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité
+                    </button>
                 </div>
 
-                <div class="d-flex gap-3 small text-muted">
-                    <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Indisponibilité</span>
-                    <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
-                    <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
+                <div class="d-lg-none mt-2">
+                    <button type="button" class="btn btn-primary btn-sm w-100"
+                            data-bs-toggle="modal" data-bs-target="#modalIndispo">
+                        <i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité
+                    </button>
                 </div>
 
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalIndispo">
-                    <i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité
-                </button>
             </div>
 
             <div id="calendar"></div>
@@ -100,178 +110,29 @@
             </div>
         </div>
 
+        <div class="modal fade" id="modalEvent" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="modalEventTitle"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="modalEventBody"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script th:src="@{/js/fullcalendar.min.js}"></script>
+        <script th:src="@{/js/interprete/planning.js}"></script>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-
-                const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-                    locale: 'fr',
-                    initialView: 'timeGridWeek',
-                    headerToolbar: {
-                        left: 'prev',
-                        center: 'title',
-                        right: 'next'
-                    },
-                    slotMinTime: '08:00:00',
-                    slotMaxTime: '19:00:00',
-                    allDaySlot: false,
-
-                    <!-- Function that allows you to click on a blank range and this opens the associated modal -->
-                    dateClick: function (info) {
-                        document.getElementById('dateStart').value = info.dateStr.split('T')[0];
-                        document.getElementById('dateEnd').value = info.dateStr.split('T')[0];
-
-                        const today = new Date().toISOString().split('T')[0];
-                        document.getElementById('dateStart').min = today;
-                        document.getElementById('dateEnd').min = info.dateStr.split('T')[0] > today
-                            ? info.dateStr.split('T')[0]
-                            : today;
-
-                        if (info.dateStr.includes('T')) {
-                            const heureStr = info.dateStr.split('T')[1].substring(0, 5);
-                            const [h, m] = heureStr.split(':').map(Number);
-                            const minutesArrondies = m < 30 ? 0 : 30;
-                            const totalMinutes = h * 60 + minutesArrondies;
-                            const heureArrondie = `${String(h).padStart(2, '0')}:${minutesArrondies === 0 ? '00' : '30'}`;
-
-                            generateHours('endHour', totalMinutes + 30, 19 * 60);
-                            document.getElementById('startHour').value = heureArrondie;
-                        }
-
-                        const modal = new bootstrap.Modal(document.getElementById('modalIndispo'));
-                        modal.show();
-                    },
-
-                    height: 'calc(100vh - 170px)',
-
-                    events: function(info, successCallback, failureCallback) {
-                        fetch(`/interprete/planning/events?start=${info.startStr}&end=${info.endStr}`)
-                            .then(response => response.json())
-                            .then(data => successCallback(data))
-                            .catch(() => failureCallback());
-                    },
-
-                    <!-- Allows you to set the icon according to the status of the appointment -->
-                    eventContent: function (arg) {
-                        const lines = arg.event.title.split('\n');
-                        const isAnnule = lines[0].startsWith('Annulé');
-                        const isIndispo = lines[0].startsWith('Indisponibilité');
-
-                        const icone = isAnnule
-                            ? '<i class="bi bi-x-circle" style="float:right; font-size:0.85rem;"></i>'
-                            : isIndispo
-                                ? '<i class="bi bi-slash-circle" style="float:right; font-size:0.85rem;"></i>'
-                                : '';
-
-                        const html = lines.map((l, i) =>
-                            `<div class="${i === 0 ? 'fw-bold' : 'small'}">${l}</div>`
-                        ).join('');
-
-                        return {html: `<div class="p-1">${icone}${html}</div>`};
-                    }
-                });
-
-                calendar.render();
-
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('dateStart').min = today;
-                document.getElementById('dateEnd').min   = today;
-
-                document.getElementById('dateStart').addEventListener('change', function () {
-                    document.getElementById('dateEnd').min = this.value;
-                });
-
-                function generateHours(selectId, start, end) {
-                    const select = document.getElementById(selectId);
-                    select.innerHTML = '<option value="" disabled selected>-- Heure --</option>';
-                    for (let t = start; t <= end; t += 5) {
-                        const hh = String(Math.floor(t / 60)).padStart(2, '0');
-                        const mm = String(t % 60).padStart(2, '0');
-                        const option = document.createElement('option');
-                        option.value = `${hh}:${mm}`;
-                        option.textContent = `${hh}:${mm}`;
-                        select.appendChild(option);
-                    }
-                }
-
-                generateHours('startHour', 8 * 60, 18 * 60 + 55);
-                generateHours('endHour', 8 * 60 + 5, 19 * 60);
-
-                document.getElementById('startHour').addEventListener('change', function () {
-                    const [h, m] = this.value.split(':').map(Number);
-                    const totalMinutes = h * 60 + m;
-                    generateHours('endHour', totalMinutes + 5, 19 * 60);
-                });
-
-                document.getElementById('fullDay').addEventListener('change', function () {
-                    document.getElementById('startHour').disabled = this.checked;
-                    document.getElementById('endHour').disabled = this.checked;
-                });
-
-                document.getElementById('btnSend').addEventListener('click', function () {
-                    let valid = true;
-
-                    const dateStart = document.getElementById('dateStart');
-                    const dateEnd = document.getElementById('dateEnd');
-                    const startHour = document.getElementById('startHour');
-                    const endHour = document.getElementById('endHour');
-                    const fullDay = document.getElementById('fullDay').checked;
-
-                    [dateStart, dateEnd, startHour, endHour].forEach(el => {
-                        el.classList.remove('is-invalid');
-                        const feedback = el.nextElementSibling;
-                        if (feedback && feedback.classList.contains('invalid-feedback')) {
-                            feedback.remove();
-                        }
-                    });
-
-                    function displayError(input, message) {
-                        input.classList.add('is-invalid');
-                        const div = document.createElement('div');
-                        div.classList.add('invalid-feedback');
-                        div.textContent = message;
-                        input.insertAdjacentElement('afterend', div);
-                        valid = false;
-                    }
-
-                    if (!dateStart.value) displayError(dateStart, 'La date de début est obligatoire.');
-                    if (!dateEnd.value) displayError(dateEnd, 'La date de fin est obligatoire.');
-                    if (dateStart.value && dateEnd.value && dateEnd.value < dateStart.value) {
-                        displayError(dateEnd, 'La date de fin doit être après la date de début.');
-                    }
-
-                    if (!fullDay) {
-                        if (!startHour.value) displayError(startHour, 'L\'heure de début est obligatoire.');
-                        if (!endHour.value) displayError(endHour, 'L\'heure de fin est obligatoire.');
-                    }
-
-                    if (!valid) return;
-
-                    bootstrap.Modal.getInstance(document.getElementById('modalIndispo')).hide();
-                });
-
-                /* Allows you to reset the form to zero after closing it */
-                document.getElementById('modalIndispo').addEventListener('hidden.bs.modal', function () {
-                    document.getElementById('dateStart').value  = '';
-                    document.getElementById('dateEnd').value    = '';
-                    document.getElementById('fullDay').checked  = false;
-                    document.getElementById('startHour').disabled = false;
-                    document.getElementById('endHour').disabled   = false;
-                    document.getElementById('motif').value      = '';
-                    document.getElementById('motifPrive').checked = false;
-                    generateHours('startHour', 8 * 60, 18 * 60 + 55);
-                    generateHours('endHour',   8 * 60 + 5, 19 * 60);
-                    ['dateStart','dateEnd','startHour','endHour'].forEach(id => {
-                        const el = document.getElementById(id);
-                        el.classList.remove('is-invalid');
-                        const fb = el.nextElementSibling;
-                        if (fb && fb.classList.contains('invalid-feedback')) fb.remove();
-                    });
-                });
-            });
-        </script>
+        <div class="d-flex d-lg-none gap-2 small text-muted flex-wrap justify-content-center mt-3 mb-2 px-3">
+            <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Indisponibilité</span>
+            <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
+            <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
+        </div>
 
         <div th:replace="~{common/footer :: footer}"></div>
     </body>

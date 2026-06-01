@@ -18,6 +18,7 @@ import java.util.List;
 
 public class DAOReferrer extends DAO<Referrer> {
 
+
     /**
      * Searches for a Referrer by its numReferer.
      * The Establishment is not loaded (lazy loading).
@@ -52,6 +53,40 @@ public class DAOReferrer extends DAO<Referrer> {
         }
         return referrer;
     }
+
+    /**
+     * Creates a list containing all the Referrers in the Referrer table
+     * without an Establishment.
+     * @return A list containing all the Referrers, or an empty list if the table is empty
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public List<Referrer> findAllWithoutEstablishment() throws SQLException {
+        String query = "SELECT NUMREFERER, FIRSTNAME, LASTNAME, PHONENUMBER, EMAILADDRESS " +
+                "FROM Referrer " +
+                "WHERE FKEstablishment IS NULL";
+        List<Referrer> referrerList = new ArrayList<>();
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        try {
+            prStat = connect.prepareStatement(query);
+            rs = prStat.executeQuery();
+
+            while (rs.next()) {
+                Referrer referrer = new Referrer();
+                referrer.setNumReferrer(rs.getInt("NUMREFERER"));
+                referrer.setName(rs.getString("FIRSTNAME"));
+                referrer.setSurname(rs.getString("LASTNAME"));
+                referrer.setPhoneNumber(rs.getString("PHONENUMBER"));
+                referrer.setAddressMail(rs.getString("EMAILADDRESS"));
+                referrerList.add(referrer);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, rs);
+        }
+        return referrerList;
+    }
+
 
     /**
      * Creates a list containing all the Referrers in the Referrer table.
@@ -166,6 +201,38 @@ public class DAOReferrer extends DAO<Referrer> {
         }
         return isUpdated;
     }
+
+
+    /**
+     * This method update the referrer link a new Establishment to objectToUpdateInDb.
+     *
+     * @param objectToUpdateInDB is the object to update.
+     * @param numEstablishment is the value of the Establishment to link to the Referrer.
+     * @return true if the update was made successfuly else false.
+     * @throws SQLException if the DB encountered a problem.
+     */
+    public boolean update(Referrer objectToUpdateInDB, int numEstablishment) throws SQLException {
+        boolean isUpdated = false;
+        String query = "UPDATE Referrer " +
+                "SET FKEstablishment = ? " +
+                "WHERE numReferer = ?";
+        PreparedStatement prStat = null;
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numEstablishment);
+            prStat.setInt(2, objectToUpdateInDB.getNumReferrer());
+
+            int nbreLigne = prStat.executeUpdate();
+            if (nbreLigne > 0) {
+                isUpdated = true;
+            }
+        } finally {
+            closeStatement(prStat);
+        }
+        return isUpdated;
+    }
+
+
 
     /**
      * Deletes the Referrer whose numReferer matches the numReferer of the Referrer passed as a parameter.

@@ -4,9 +4,7 @@ package be.hers.info.ProjetIntegree.Controller;
  * @reviewer Nicolas Jean-François
  */
 
-import be.hers.info.ProjetIntegree.DTO.DTOAbsence;
-import be.hers.info.ProjetIntegree.DTO.DTOInterpreterProfile;
-import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
+import be.hers.info.ProjetIntegree.DTO.*;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
 import be.hers.info.ProjetIntegree.Services.InterpreterProfileService;
@@ -31,7 +29,7 @@ import java.util.stream.Collectors;
 public class InterpreterController {
     /**
      * Retrieves the connected interpreter from the session.
-     * Returns null if no user is connected or if the connected user is not a interpreter.
+     * Returns null if no user is connected or if the connected user is not an interpreter.
      * This helper avoids relying on @ModelAttribute which may inject an empty POJO
      * instead of null when no session attribute exists.
      *
@@ -209,7 +207,6 @@ public class InterpreterController {
         model.addAttribute("activeTab", "planning");
 
         return "interprete/planning-beneficiaires";
-
     }
     /**
      * Search all Appointments within the Start and End time range linked to the beneficiary number passed in the URL.
