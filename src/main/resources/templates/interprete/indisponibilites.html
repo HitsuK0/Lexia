@@ -53,10 +53,10 @@
                     <tr th:each="absence : ${punctualAbsencesList}"
                         th:with="
                             slot=${absence.timeSlot},
-                            isFullDay=${#strings.toString(slot.duration).equals('00:00') or #strings.toString(slot.startTime).equals('00:00')},
+                            isFullDay=${slot.startTime != null and slot.startTime.hour == 0 and slot.startTime.minute == 0 and slot.duration.hour == 0 and slot.duration.minute == 0},
+                            endTime=${slot.endTime},
                             statusVal=${absence.status}"
                         th:attr="data-status=${statusVal == 'accepte'} ? 'approved' : (${statusVal == 'refuse'} ? 'refused' : 'pending')">
-
                         <td>
                             <span th:if="${slot.startDate != null and slot.endDate != null and !slot.startDate.equals(slot.endDate)}"
                                   th:text="${#temporals.format(slot.startDate, 'dd/MM/yyyy')} + ' au ' + ${#temporals.format(slot.endDate, 'dd/MM/yyyy')}">
@@ -69,7 +69,6 @@
                         <td>
                             <span th:if="${isFullDay}">Toute la journée</span>
                             <span th:unless="${isFullDay}"
-                                  th:with="endTime=${slot.startTime.plus(slot.duration)}"
                                   th:text="${#temporals.format(slot.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(endTime, 'HH:mm')}">
                             </span>
                         </td>
@@ -93,7 +92,7 @@
                                         data-start-date=${slot.startDate},
                                         data-end-date=${slot.endDate},
                                         data-start-hour=${isFullDay ? '' : #temporals.format(slot.startTime, 'HH:mm')},
-                                        data-end-hour=${isFullDay ? '' : #temporals.format(slot.startTime.plus(slot.duration), 'HH:mm')},
+                                        data-end-hour=${isFullDay ? '' : #temporals.format(endTime, 'HH:mm')},
                                         data-all-day=${isFullDay},
                                         data-reason=${absence.reason}"
                                     title="Modifier">
@@ -295,7 +294,7 @@
                 function generateHours(select, start, end) {
                     select.innerHTML = '';
                     for (let t = start; t <= end; t += 5) {
-                        const hh = Math.floor(t / 60);
+                        const hh = String(Math.floor(t / 60)).padStart(2, '0');
                         const mm = String(t % 60).padStart(2, '0');
                         const option = document.createElement('option');
                         option.value = `${hh}:${mm}`;
