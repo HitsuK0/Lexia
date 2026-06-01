@@ -7,7 +7,6 @@ package be.hers.info.ProjetIntegree.Controller;
 import be.hers.info.ProjetIntegree.DTO.*;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
-import be.hers.info.ProjetIntegree.Services.AppointmentFormService;
 import be.hers.info.ProjetIntegree.Services.InterpreterProfileService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,10 +14,13 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 // TODO: Delete default values from RequestParam once true params can be passed
 
@@ -44,25 +46,16 @@ public class InterpreterController {
     }
 
     /**
-     * Searches for all Appointments and Absences belonging to the interpreter as a parameter over a period defined by start and end.
-     * @param start the date retrieved via the URL
-     * @param end the date retrieved via the URL
+     * Redirect to the "interprete/planning" page
+     * Redirects to login if no beneficiary is found in session.
      * @return Redirect to the "interprete/planning" page
      */
     @GetMapping("/planning")
-    public String planning(@RequestParam(defaultValue = "2026-05-15") String start,
-                           @RequestParam(defaultValue = "2026-05-22") String end, HttpSession session, Model model) {
+    public String planning(HttpSession session, Model model) {
         Interpreter interpreter = getInterpreterFromSession(session);
         if (interpreter == null) {
             return "redirect:/login";
         }
-
-
-        String dateStart = start.substring(0,10);
-        String dateEnd = end.substring(0,10);
-        PlanningService planningService = new PlanningService();
-        interpreter.setAppointmentsList(planningService.getListAppointmentWithDateAndInterpreter(interpreter,dateStart,dateEnd));
-        interpreter.setAbsences(planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd));
 
         model.addAttribute("activeTab", "planning");
 
@@ -71,78 +64,240 @@ public class InterpreterController {
     }
 
     /**
-     * Searches for all Appointments belonging to the beneficiary as a parameter over a period defined by start and end.
-     * @param start the date retrieved via the URL
-     * @param end the date retrieved via the URL
-     * @param beneficiary The beneficiary linked to the appointment on the list
-     * @param request the request that triggered this function call
+     * Searches for all Absences and Appointments within the Start and End time range.
+     * Format the information found in a list on the Map for FullCalendar
+     * Redirects to login if no Interpreter is found in session.
+     * @param start the start date of the schedule
+     * @param end the end date of the schedule
+     * @param session the current HTTP session
+     * @param model the Spring UI model
+     * @return a formatted map list for FullCalendar
+     */
+    @GetMapping(value = "/planning/events", produces="application/json")
+    @ResponseBody
+    public List<Map<String,Object>> getEventsPlaningInterpreter(@RequestParam String start,
+                                                                @RequestParam String end, HttpSession session, Model model) {
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return Collections.emptyList();
+        }
+
+        String dateStart = start.substring(0,10);
+        String dateEnd = end.substring(0,10);
+        PlanningService planningService = new PlanningService();
+        List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndInterpreter(interpreter,dateStart,dateEnd);
+        List<Absence> absenceList = planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd);
+
+        interpreter.setAppointmentsList(appointmentList);
+        interpreter.setAbsences(absenceList);
+        LocalDate ldStart = LocalDate.parse(dateStart);
+        LocalDate ldEnd = LocalDate.parse(dateEnd);
+
+        List<Map<String,Object>> events = new ArrayList<>();
+        List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
+                .toList();
+        for( Appointment a : appointmentList){
+            Map<String, Object> event = new HashMap<>();
+            Map<String, Object> extendedProps = new HashMap<>();
+
+            String skills = a.getAcademicSkillsNeeded().stream()
+                    .map(s -> s.getDesignation())
+                    .collect(Collectors.joining(", "));
+            event.put("title", skills);
+
+            if(a.getTimeSlot() instanceof TimeSlotPunctual){
+                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
+                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+
+                switch (a.getStatus()){
+                    case "en attente":
+                        event.put("color","#f0ad4e");
+                        break;
+                    case "accepte":
+                        event.put("color","#81c784");
+                        break;
+                    case "refuse":
+                        event.put("color","#f28b82");
+                        break;
+                }
+            }else{
+                TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
+                int i = tsp.getDayNumber();
+                LocalDate ld = null;
+                for(LocalDate l : listDateBetweenStartEnd){
+                    if(l.getDayOfWeek().getValue() == i){
+                        ld = l;
+                        break;
+                    }
+                }
+                LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                event.put("color","#b39ddb");
+            }
+
+            String professionalSkills = a.getProfessionalSkillsNeeded().stream()
+                    .map(s -> s.getDesignation())
+                    .collect(Collectors.joining(", "));
+
+            extendedProps.put("type","appointment");
+            extendedProps.put("status",a.getStatus());
+            extendedProps.put("professionalSkills", professionalSkills);
+            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,1) + ". " + a.getBeneficiary().getFirstName());
+            extendedProps.put("locals", a.getAppointmentLocals());
+            extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
+            extendedProps.put("description", a.getDescription());
+            event.put("extendedProps",extendedProps);
+            events.add(event);
+
+        }
+        for(Absence a : absenceList){
+            Map<String, Object> event = new HashMap<>();
+            Map<String, Object> extendedProps = new HashMap<>();
+            event.put("title","Indisponibilité");
+            if(a.getTimeSlot() instanceof TimeSlotPunctual){
+                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
+                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+
+            }else{
+                TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
+                int i = tsp.getDayNumber();
+                LocalDate ld = null;
+                for(LocalDate l : listDateBetweenStartEnd){
+                    if(l.getDayOfWeek().getValue() == i){
+                        ld = l;
+                        break;
+                    }
+                }
+                LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+            }
+            event.put("color","#f0ad4e");
+            extendedProps.put("type","appointment");
+            extendedProps.put("reason", a.getReason());
+            event.put("extendedProps",extendedProps);
+            events.add(event);
+        }
+        return events;
+    }
+
+    /**
+     * Create a list of beneficiaries linked to the interpreter
+     * Redirects to login if no beneficiary is found in session.
+     * @param session the current HTTP session
+     * @param model   the Spring UI model
      * @return Redirect to the "interprete/planning/beneficiaires" page
      */
     @GetMapping("/planning/beneficiaires")
-    public String planningBeneficiaires(@RequestParam(defaultValue = "2026-05-22") String start,
-                                        @RequestParam(defaultValue = "2026-05-27") String end,
-                                        @ModelAttribute("BeneficiarySelected") Beneficiary beneficiary,
-                                        HttpSession session, HttpServletRequest request, Model model) {
-        Interpreter interpreter = getInterpreterFromSession(session);
+    public String planningBeneficiaires(HttpSession session, Model model) {
 
-        if(interpreter == null)
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
             return "redirect:/login";
+        }
+        PlanningService planningService = new PlanningService();
+        List<Beneficiary> beneficiaryList = planningService.getListBeneficiaryRefererInterpreter(interpreter.getNumInterpreter());
+        session.setAttribute("beneficiaryList", beneficiaryList);
+        model.addAttribute("activeTab", "planning");
+
+        return "interprete/planning-beneficiaires";
+    }
+    /**
+     * Search all Appointments within the Start and End time range linked to the beneficiary number passed in the URL.
+     * Format the information found in a list on the Map for FullCalendar
+     * Redirects to login if no Interpreter is found in session.
+     * @param start the start date of the schedule
+     * @param end the end date of the schedule
+     * @param session the current HTTP session
+     * @param model the Spring UI model
+     * @return a formatted map list for FullCalendar
+     */
+    @GetMapping(value = "/planning/beneficiaires/events", produces="application/json")
+    @ResponseBody
+    public List<Map<String,Object>> getEventsPlaningBeneficiary(@RequestParam String start,
+                                                                @RequestParam String end, @RequestParam("num") int num, HttpSession session, Model model) {
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return Collections.emptyList();
+        }
 
         String dateStart = start.substring(0, 10);
         String dateEnd = end.substring(0, 10);
 
         PlanningService planningService = new PlanningService();
-        List<Appointment> appointmentList = planningService.getListAppointmentsToBeneficiaryAndDate(
-                beneficiary.getNumBeneficiary(), dateStart, dateEnd);
+        List<Appointment> appointmentList = planningService.getListAppointmentsToBeneficiaryAndDate(num, dateStart, dateEnd);
 
-        session = request.getSession();
-        session.setAttribute("appointmentList", appointmentList);
-        model.addAttribute("activeTab", "planning");
+        LocalDate ldStart = LocalDate.parse(dateStart);
+        LocalDate ldEnd = LocalDate.parse(dateEnd);
 
-        AppointmentFormService appointmentFormService = new AppointmentFormService();
-        List<DTOBeneficiaryFormAppointment> hisBeneficiaries = appointmentFormService.findHisBeneficiaries(interpreter.getNumInterpreter());
-        model.addAttribute("beneficiariesList", hisBeneficiaries);
+        List<Map<String,Object>> events = new ArrayList<>();
+        List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
+                .toList();
+        for( Appointment a : appointmentList){
+            Map<String, Object> event = new HashMap<>();
+            Map<String, Object> extendedProps = new HashMap<>();
 
-        List<DTOEstablishmentFormAppointment> establishments = appointmentFormService.findAllEstablishments();
-        model.addAttribute("establishmentList", establishments);
 
-        List<AcademicSkill> academicSkills = appointmentFormService.findAllAcademicSkills();
-        model.addAttribute("academicSkillList", academicSkills);
+            String skills = a.getAcademicSkillsNeeded().stream()
+                    .map(s -> s.getDesignation())
+                    .collect(Collectors.joining(", "));
+            event.put("title", skills);
 
-        List<ProfessionalSkill> professionalSkills = appointmentFormService.findAllProfessionalSkills();
-        model.addAttribute("professionalSkillList", professionalSkills);
+            if(a.getTimeSlot() instanceof TimeSlotPunctual){
+                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
+                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
 
-        return "interprete/planning-beneficiaires";
-    }
+                switch (a.getStatus()){
+                    case "en attente":
+                        event.put("color","#f0ad4e");
+                        break;
+                    case "accepte":
+                        event.put("color","#81c784");
+                        break;
+                    case "refuse":
+                        event.put("color","#f28b82");
+                        break;
+                }
+            }else{
+                TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
+                int i = tsp.getDayNumber();
+                LocalDate ld = null;
+                for(LocalDate l : listDateBetweenStartEnd){
+                    if(l.getDayOfWeek().getValue() == i){
+                        ld = l;
+                        break;
+                    }
+                }
+                LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                event.put("color","#b39ddb");
+            }
 
-    /**
-     * Add the appointment created by the interpreter to the DB
-     * @param dtoAppointment the appointment to add to the DB
-     * @return a redirect to the planning page after the creation
-     */
-    @PostMapping("/planning/beneficiaires")
-    public String addAppointment(@ModelAttribute("newAppointment") DTOAppointmentForm dtoAppointment,
-                                 HttpSession session,
-                                 RedirectAttributes redirectAttributes){
-        Interpreter interpreter = getInterpreterFromSession(session);
+            String professionalSkills = a.getProfessionalSkillsNeeded().stream()
+                    .map(s -> s.getDesignation())
+                    .collect(Collectors.joining(", "));
 
-        if(interpreter == null)
-            return "redirect:/login";
+            extendedProps.put("type","appointment");
+            extendedProps.put("status",a.getStatus());
+            extendedProps.put("professionalSkills", professionalSkills);
+            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,1) + ". " + a.getBeneficiary().getFirstName());
+            extendedProps.put("locals", a.getAppointmentLocals());
+            extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
+            extendedProps.put("description", a.getDescription());
+            event.put("extendedProps",extendedProps);
+            events.add(event);
 
-        try {
-            AppointmentFormService appointmentFormService = new AppointmentFormService();
-            if(appointmentFormService.createAppointment(dtoAppointment))
-                redirectAttributes.addFlashAttribute("successMessage", "Rendez-vous créé avec succès");
-            else
-                redirectAttributes.addFlashAttribute("errorMessage", "La création du rendez-vous a échoué");
         }
-        catch(BadStatusException | SQLException | IllegalArgumentException e){
-            redirectAttributes.addFlashAttribute("errorMessage", "Une erreur est survenue : " + e.getMessage());
-        }
-
-        return "redirect:/interprete/planning/beneficiaires";
+        return events;
     }
-
 
     /**
      * Displays the list of punctual absences for the connected interpreter within a specific date range
@@ -181,7 +336,8 @@ public class InterpreterController {
      * Also redirect to the indsponibilites page.
      * It create an Absence in the Database.
      * @param dtoAbsence the dto to convert into a pojo
-     * @param model
+     * @param model the UI model to hold the list of absences and the active tab status
+     * @param request    the current HTTP request used to access the session
      * @return the page to redirect to.
      */
     @PostMapping("/indisponibilites")
@@ -207,18 +363,18 @@ public class InterpreterController {
     /**
      * Deletes a specific absence record based on its unique ID
      * @param id the unique identifier of the absence to be deleted
-     * @param interpreter The currently logged-in interpreter
+     * @param model the UI model to hold the list of absences and the active tab status
+     * @param request    the current HTTP request used to access the session
      * @return A redirect to the absences list view after deletion
      */
     @PostMapping("/indisponibilites/delete")
     public String deleteAbsence(@RequestParam int id,
-                                HttpSession session) {
+                                Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
         Interpreter interpreter = getInterpreterFromSession(session);
-
-        if(interpreter == null) {
+        if (interpreter == null) {
             return "redirect:/login";
         }
-
         try {
             AbsenceService absenceService = new AbsenceService();
             absenceService.deleteAbsence(id);
@@ -233,15 +389,16 @@ public class InterpreterController {
      * Updates the details of an existing absence
      * The updated information is received as a model attribute and passed to the service
      * @param updatedAbsence The absence object containing the modified data
-     * @param interpreter the currently logged-in interpreter
+     * @param model the UI model to hold the list of absences and the active tab status
+     * @param request    the current HTTP request used to access the session
      * @return A redirect to the absences list view after the update is processed
      */
     @PostMapping("/indisponibilites/update")
     public String updateAbsence(@ModelAttribute Absence updatedAbsence,
-                                HttpSession session) {
+                                Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
         Interpreter interpreter = getInterpreterFromSession(session);
-
-        if(interpreter == null) {
+        if (interpreter == null) {
             return "redirect:/login";
         }
 
