@@ -137,7 +137,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
     }
 
     /**
-     * Delete the line in the table where the id and the designation are the same in objectToDeleteFormDB.
+     * Delete the line in the table where the id is the same in objectToDeleteFormDB.
      * @param objectToDeleteFormDB is object to delete in the table.
      * @return true if the line was successfully deleted otherwise false.
      * @throws SQLException if an errors occurs during the database request.
@@ -146,13 +146,11 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
     public boolean delete(AcademicSkill objectToDeleteFormDB) throws SQLException {
         boolean isDeleted = false;
         String query = "DELETE FROM AcademicSkill " +
-                "WHERE numAcademicSkill = ? " +
-                "AND designation = ?";
+                "WHERE numAcademicSkill = ?";
         PreparedStatement prStat = null;
         try {
             prStat = connect.prepareStatement(query);
             prStat.setInt(1, objectToDeleteFormDB.getNumAcademicSkill());
-            prStat.setString(2, objectToDeleteFormDB.getDesignation());
             int nbreLigne = prStat.executeUpdate();
             if(nbreLigne > 0){
                 isDeleted = true;
