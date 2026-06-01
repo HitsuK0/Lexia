@@ -1,5 +1,10 @@
 package be.hers.info.ProjetIntegree.Controller;
 
+/**
+ * @authors Willinger Chloé, Leroy Rodriguez Aïnhoa, Vanderheyden Quentin, Vatafu Jean
+ * @reviewer Halet Louis
+ */
+
 import be.hers.info.ProjetIntegree.DTO.DTOEstablishment;
 import be.hers.info.ProjetIntegree.DTO.DTOReferrer;
 import be.hers.info.ProjetIntegree.POJO.*;

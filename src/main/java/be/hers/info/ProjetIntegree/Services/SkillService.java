@@ -1,5 +1,10 @@
 package be.hers.info.ProjetIntegree.Services;
 
+/**
+ * @author Vatafu Jean
+ * @reviewer Halet Louis
+ */
+
 import be.hers.info.ProjetIntegree.DAO.DAOAcademicSkill;
 import be.hers.info.ProjetIntegree.DAO.DAOProfessionalSkill;
 import be.hers.info.ProjetIntegree.POJO.AcademicSkill;
