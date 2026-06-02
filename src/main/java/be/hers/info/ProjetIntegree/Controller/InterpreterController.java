@@ -178,7 +178,7 @@ public class InterpreterController {
                 event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
             }
             event.put("color","#f0ad4e");
-            extendedProps.put("type","appointment");
+            extendedProps.put("type","absence");
             extendedProps.put("reason", a.getReason());
             event.put("extendedProps",extendedProps);
             events.add(event);
