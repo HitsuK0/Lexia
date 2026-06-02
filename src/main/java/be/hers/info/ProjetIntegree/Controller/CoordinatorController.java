@@ -137,7 +137,7 @@ public class CoordinatorController {
         }
 
         model.addAttribute("DTOReferrer", new DTOReferrer());
-        model.addAttribute("DTOEstablishmentAdd", new DTOReferrer());
+        model.addAttribute("DTOEstablishment", new DTOEstablishment());
 
         return "coordinatrice/gestion";
     }
