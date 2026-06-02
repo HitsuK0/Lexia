@@ -1,0 +1,307 @@
+document.addEventListener('DOMContentLoaded', function () {
+
+    let currentBeneficiaryNum = null;
+
+    if (beneficiariesList && beneficiariesList.length > 0) {
+        currentBeneficiaryNum = beneficiariesList[0].numBeneficiary;
+    }
+
+    /**
+     * Fills the #rdvBeneficiary select with beneficiariesList entries.
+     * Resets the select before inserting options. Does nothing if the list is empty.
+     */
+    function fillBeneficiarySelect() {
+        const select = document.getElementById('rdvBeneficiary');
+        select.innerHTML = '<option value="" disabled selected>Choisissez un bénéficiaire</option>';
+        if (beneficiariesList && beneficiariesList.length > 0) {
+            beneficiariesList.forEach(b => {
+                const option = document.createElement('option');
+                option.value = b.numBeneficiary;
+                option.textContent = b.lastName + ' ' + b.firstName;
+                select.appendChild(option);
+            });
+        }
+    }
+
+    /**
+     * Populates a <select> with time options in 5-minute increments.
+     * Resets the select before inserting options.
+     * @param {string} selectId - Target select element id
+     * @param {number} start - Start time in minutes from midnight (e.g. 480 = 08:00)
+     * @param {number} end - End time in minutes from midnight (e.g. 1140 = 19:00)
+     */
+    function generateTimeOptions(selectId, start, end) {
+        const select = document.getElementById(selectId);
+        select.innerHTML = '<option value="" disabled selected>-- Heure --</option>';
+        for (let t = start; t <= end; t += 5) {
+            const hh = String(Math.floor(t / 60)).padStart(2, '0');
+            const mm = String(t % 60).padStart(2, '0');
+            const option = document.createElement('option');
+            option.value = `${hh}:${mm}`;
+            option.textContent = `${hh}:${mm}`;
+            select.appendChild(option);
+        }
+    }
+
+    /**
+     * Fetches establishments from the server and fills #rdvEstablishment.
+     * GET /interprete/planning/beneficiaires/etablissements
+     */
+    function loadEstablishments() {
+        fetch('/interprete/planning/beneficiaires/etablissements')
+            .then(r => r.json())
+            .then(data => {
+                const select = document.getElementById('rdvEstablishment');
+                data.forEach(e => {
+                    const option = document.createElement('option');
+                    option.value = e.numEstablishment;
+                    option.textContent = e.nameBuilding;
+                    select.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error loading establishments:', err));
+    }
+
+    /**
+     * Updates the currently selected beneficiary and refreshes calendar events.
+     * @param {HTMLElement} element - The clicked <a> element, must have data-num and data-nom
+     */
+    function changeBeneficiary(element) {
+        currentBeneficiaryNum = parseInt(element.dataset.num);
+        document.getElementById('beneficiaireSelectionne').textContent = element.dataset.nom;
+        calendar.refetchEvents();
+    }
+
+    /**
+     * Displays an inline validation error on a form input.
+     * @param {HTMLElement} input - The invalid input element
+     * @param {string} message - The error message to display
+     */
+    function displayError(input, message) {
+        input.classList.add('is-invalid');
+        const div = document.createElement('div');
+        div.classList.add('invalid-feedback');
+        div.textContent = message;
+        input.insertAdjacentElement('afterend', div);
+    }
+
+    fillBeneficiarySelect();
+    loadEstablishments();
+    generateTimeOptions('rdvHourStart', 8 * 60, 18 * 60 + 55);
+    generateTimeOptions('rdvHourEnd', 8 * 60 + 5, 19 * 60);
+
+    const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        locale: 'fr',
+        initialView: 'timeGridWeek',
+        headerToolbar: {
+            left: 'prev',
+            center: 'title',
+            right: 'next'
+        },
+        slotMinTime: '08:00:00',
+        slotMaxTime: '19:00:00',
+        allDaySlot: false,
+
+        /**
+         * Dynamically loads appointments for the current beneficiary.
+         * Fetches GET /interprete/planning/beneficiaires/events with start, end and num params.
+         * Returns an empty list if no beneficiary is selected.
+         */
+        events: function (fetchInfo, successCallback, failureCallback) {
+            if (currentBeneficiaryNum === null) {
+                successCallback([]);
+                return;
+            }
+
+            const start = fetchInfo.startStr;
+            const end = fetchInfo.endStr;
+
+            fetch(`/interprete/planning/beneficiaires/events?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&num=${currentBeneficiaryNum}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network error');
+                    return response.json();
+                })
+                .then(data => successCallback(data))
+                .catch(err => {
+                    console.error('Error loading beneficiary events:', err);
+                    failureCallback(err);
+                });
+        },
+
+        /**
+         * Opens the RDV modal when clicking on a calendar slot.
+         * Ignores past dates. Pre-fills date and start time based on the clicked slot.
+         */
+        dateClick: function (info) {
+            const today = new Date().toISOString().split('T')[0];
+            const clickedDate = info.dateStr.split('T')[0];
+
+            if (clickedDate < today) return;
+
+            document.getElementById('rdvDate').value = clickedDate;
+            document.getElementById('rdvDate').min = today;
+
+            if (info.dateStr.includes('T')) {
+                const hourStr = info.dateStr.split('T')[1].substring(0, 5);
+                const [h, m] = hourStr.split(':').map(Number);
+                const roundedMinutes = m < 5 ? 0 : m;
+                const totalMinutes = h * 60 + roundedMinutes;
+                generateTimeOptions('rdvHourEnd', totalMinutes + 5, 19 * 60);
+                const roundedHour = `${String(h).padStart(2, '0')}:${String(roundedMinutes).padStart(2, '0')}`;
+                document.getElementById('rdvHourStart').value = roundedHour;
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('modalRDV'));
+            modal.show();
+        },
+
+        height: 'calc(100vh - 170px)',
+
+        /**
+         * Renders the HTML content of each calendar event.
+         * Displays academic skills, professional skills, beneficiary name, locals, and a pending icon.
+         */
+        eventContent: function (arg) {
+            const ep = arg.event.extendedProps;
+            const lines = [];
+
+            lines.push(`<div class="fw-bold">${arg.event.title || ''}</div>`);
+
+            if (ep.professionalSkills) {
+                lines.push(`<div class="small">${ep.professionalSkills}</div>`);
+            }
+            if (ep.beneficiary) {
+                lines.push(`<div class="small">${ep.beneficiary}</div>`);
+            }
+            if (ep.locals && ep.locals.length > 0) {
+                const localsStr = Array.isArray(ep.locals) ? ep.locals.join(', ') : ep.locals;
+                lines.push(`<div class="small">${localsStr}</div>`);
+            }
+
+            const icon = (ep.status === 'en attente')
+                ? '<i class="bi bi-hourglass-split" style="float:right; font-size:0.85rem;"></i>'
+                : '';
+
+            return { html: `<div class="p-1">${icon}${lines.join('')}</div>` };
+        }
+    });
+
+    calendar.render();
+
+    /** Binds click listeners on each beneficiary dropdown item, delegates to changeBeneficiary(). */
+    document.querySelectorAll('.dropdown-beneficiary').forEach(el => {
+        el.addEventListener('click', function (e) {
+            e.preventDefault();
+            changeBeneficiary(this);
+        });
+    });
+
+    /** On modal open, pre-selects the current beneficiary and sets the min date to today. */
+    document.getElementById('modalRDV').addEventListener('show.bs.modal', function () {
+        if (currentBeneficiaryNum !== null) {
+            document.getElementById('rdvBeneficiary').value = currentBeneficiaryNum;
+        }
+        document.getElementById('rdvDate').min = new Date().toISOString().split('T')[0];
+    });
+
+    /** Hides the academic skills error message as soon as at least one checkbox is checked. */
+    document.querySelectorAll('.skill-check').forEach(cb => {
+        cb.addEventListener('change', function () {
+            if (document.querySelectorAll('.skill-check:checked').length > 0) {
+                document.getElementById('rdvAcademicSkillsError').style.display = 'none';
+            }
+        });
+    });
+
+    /** Regenerates end time options to always be at least 5 minutes after the selected start time. */
+    document.getElementById('rdvHourStart').addEventListener('change', function () {
+        const [h, m] = this.value.split(':').map(Number);
+        generateTimeOptions('rdvHourEnd', h * 60 + m + 5, 19 * 60);
+    });
+
+    /** Validates the RDV form and sends a POST to /interprete/planning/beneficiaires/rdv. Closes the modal on success. */
+    document.getElementById('btnSendRDV').addEventListener('click', function () {
+        let valid = true;
+
+        const rdvBeneficiary   = document.getElementById('rdvBeneficiary');
+        const rdvDate          = document.getElementById('rdvDate');
+        const rdvHourStart     = document.getElementById('rdvHourStart');
+        const rdvHourEnd       = document.getElementById('rdvHourEnd');
+        const rdvEstablishment = document.getElementById('rdvEstablishment');
+        const rdvLocal         = document.getElementById('rdvLocal');
+        const selectedSkills   = document.querySelectorAll('.skill-check:checked');
+        const skillsError      = document.getElementById('rdvAcademicSkillsError');
+        const atLeastOneComp   = Array.from(document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')).some(cb => cb.checked);
+        const compsError       = document.getElementById('rdvCompsError');
+
+        [rdvBeneficiary, rdvDate, rdvHourStart, rdvHourEnd, rdvEstablishment, rdvLocal].forEach(el => {
+            el.classList.remove('is-invalid');
+            const feedback = el.nextElementSibling;
+            if (feedback && feedback.classList.contains('invalid-feedback')) feedback.remove();
+        });
+        skillsError.style.display = 'none';
+        compsError.style.display = 'none';
+
+        if (!rdvBeneficiary.value)          { displayError(rdvBeneficiary, 'Veuillez sélectionner un bénéficiaire.'); valid = false; }
+        if (!rdvDate.value)                 { displayError(rdvDate, 'La date est obligatoire.'); valid = false; }
+        if (!rdvHourStart.value)            { displayError(rdvHourStart, "L'heure de début est obligatoire."); valid = false; }
+        if (!rdvHourEnd.value)              { displayError(rdvHourEnd, "L'heure de fin est obligatoire."); valid = false; }
+        if (selectedSkills.length === 0)    { skillsError.style.display = 'block'; valid = false; }
+        if (!atLeastOneComp)                { compsError.style.display = 'block'; valid = false; }
+        if (!rdvEstablishment.value)        { displayError(rdvEstablishment, "L'établissement est obligatoire."); valid = false; }
+        if (!rdvLocal.value.trim())         { displayError(rdvLocal, 'Le local est obligatoire.'); valid = false; }
+
+        if (!valid) return;
+
+        const payload = {
+            numBeneficiary:     parseInt(rdvBeneficiary.value),
+            date:               rdvDate.value,
+            startTime:          rdvHourStart.value,
+            endTime:            rdvHourEnd.value,
+            academicSkills:     Array.from(selectedSkills).map(cb => cb.value),
+            professionalSkills: Array.from(document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation'))
+                .filter(cb => cb.checked).map(cb => cb.id),
+            numEstablishment:   parseInt(rdvEstablishment.value),
+            local:              rdvLocal.value.trim(),
+            description:        document.getElementById('rdvDescription').value.trim()
+        };
+
+        fetch('/interprete/planning/beneficiaires/rdv', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+            .then(r => {
+                if (!r.ok) throw new Error('Server error');
+                bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
+                calendar.refetchEvents();
+            })
+            .catch(err => console.error('Error sending RDV request:', err));
+    });
+
+    /** Resets all modal fields (inputs, checkboxes, selects, time slots) on modal close. */
+    document.getElementById('modalRDV').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('rdvBeneficiary').value = '';
+        document.getElementById('rdvDate').value = '';
+        document.getElementById('rdvDate').min = new Date().toISOString().split('T')[0];
+        document.getElementById('rdvEstablishment').selectedIndex = 0;
+        document.getElementById('rdvLocal').value = '';
+        document.getElementById('rdvDescription').value = '';
+        document.getElementById('rdvAcademicSkillsError').style.display = 'none';
+        document.getElementById('rdvCompsError').style.display = 'none';
+
+        document.querySelectorAll('.skill-check').forEach(cb => cb.checked = false);
+        document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')
+            .forEach(cb => cb.checked = true);
+
+        generateTimeOptions('rdvHourStart', 8 * 60, 18 * 60 + 55);
+        generateTimeOptions('rdvHourEnd', 8 * 60 + 5, 19 * 60);
+
+        ['rdvBeneficiary', 'rdvDate', 'rdvHourStart', 'rdvHourEnd'].forEach(id => {
+            const el = document.getElementById(id);
+            el.classList.remove('is-invalid');
+            const fb = el.nextElementSibling;
+            if (fb && fb.classList.contains('invalid-feedback')) fb.remove();
+        });
+    });
+});
