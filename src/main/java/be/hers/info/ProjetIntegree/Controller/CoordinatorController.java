@@ -121,12 +121,15 @@ public class CoordinatorController {
      */
     @GetMapping("/gestion")
     public String gestion(Model model, HttpSession session) {
-//
-//        Coordinator coordinator = getCoordinatorFromSession(session);
-//        if (coordinator == null || !coordinator.isAdmin()) {
-//            return "redirect:/login";
-//        }
 
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null || !coordinator.isAdmin()) {
+            return "redirect:/login";
+        }
+        String userName = coordinator.getLastName().toUpperCase() + " " + coordinator.getFirstName();
+        model.addAttribute("userName", userName);
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", coordinator.isAdmin());
         try {
             model.addAttribute("referentList", new ReferrerService().getAllReferrer());
             model.addAttribute("etablissementList", new EstablishementService().getAllFullEstablishments());
@@ -322,8 +325,10 @@ public class CoordinatorController {
      * @return the page "etablissements" where it comes from.
      */
     @PostMapping("/etablissements/createEstablishment")
-    public String addEstablishment(@ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment,
+    public String addEstablishment(
+                                   @ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment,
                                    Model model) {
+
         EstablishementService establishementService = new EstablishementService();
         try {
             establishementService.createEstablishment(dtoEstablishment);
@@ -342,8 +347,10 @@ public class CoordinatorController {
      * @return the page "etablissements" where it comes from.
      */
     @PostMapping("etablissements/updateEstablishment")
-    public String updateEstablishment(@ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
+    public String updateEstablishment(
+                                      @ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
                                       Model model) {
+
         EstablishementService establishementService = new EstablishementService();
         try {
             establishementService.updateEstablishment(dtoEstablishment);

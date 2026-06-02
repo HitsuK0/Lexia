@@ -80,13 +80,23 @@ public class EstablishementService {
      */
     public void updateEstablishment(DTOEstablishment dtoEstablishment) throws SQLException {
         DAOEstablishment daoEstablishment = new DAOEstablishment();
-        daoEstablishment.update(
-                new Establishment(dtoEstablishment.getNumEstablishment(),
-                dtoEstablishment.getNameBuilding(),
-                dtoEstablishment.getPhoneNumber())
-        );
+        DAOReferrer daoReferrer = new DAOReferrer();
+        for(int id : dtoEstablishment.getListReferrerSelected()){
+            daoEstablishment.addReferrerAtEstablishment(
+                    dtoEstablishment.getNumEstablishment(),
+                    daoReferrer.find(id).getNumReferrer()
+            );
+        }
+        Establishment establishment = new Establishment();
+        establishment.setNameBuilding(dtoEstablishment.getNameBuilding());
+        establishment.setPhoneNumber(dtoEstablishment.getPhoneNumber());
+        establishment.setEducationLevel(dtoEstablishment.getEducationLevelInt());
+        daoEstablishment.update(establishment);
         DAOAddress daoAddress = new DAOAddress();
         Address address = daoAddress.find(dtoEstablishment.getNumAddress());
+        address.setLocality(dtoEstablishment.getLocality());
+        address.setPostcode(dtoEstablishment.getPostcode());
+        address.setPostOfficeBox(dtoEstablishment.getPostOfficeBox());
         daoAddress.update(address);
     }
 
