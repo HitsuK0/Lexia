@@ -121,11 +121,11 @@ public class CoordinatorController {
      */
     @GetMapping("/gestion")
     public String gestion(Model model, HttpSession session) {
-
-        Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null || !coordinator.isAdmin()) {
-            return "redirect:/login";
-        }
+//
+//        Coordinator coordinator = getCoordinatorFromSession(session);
+//        if (coordinator == null || !coordinator.isAdmin()) {
+//            return "redirect:/login";
+//        }
 
         try {
             model.addAttribute("referentList", new ReferrerService().getAllReferrer());
