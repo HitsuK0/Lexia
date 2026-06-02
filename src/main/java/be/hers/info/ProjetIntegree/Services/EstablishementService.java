@@ -2,9 +2,11 @@ package be.hers.info.ProjetIntegree.Services;
 
 import be.hers.info.ProjetIntegree.DAO.DAOAddress;
 import be.hers.info.ProjetIntegree.DAO.DAOEstablishment;
+import be.hers.info.ProjetIntegree.DAO.DAOReferrer;
 import be.hers.info.ProjetIntegree.DTO.DTOEstablishment;
 import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
+import be.hers.info.ProjetIntegree.POJO.Referrer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -59,8 +61,14 @@ public class EstablishementService {
                     addresse
             )
         );
-        DAOEstablishment daoEstablishment = new DAOEstablishment();
-        daoEstablishment.create(establishment);
+        List<Referrer> referrers = new ArrayList<>();
+        DAOReferrer daoReferrer = new DAOReferrer();
+        for(int id : dtoEstablishment.getListReferrerSelected()){
+            referrers.add(daoReferrer.find(id));
+        }
+        establishment.setReferrers(referrers);
+        new DAOEstablishment().create(establishment);
+
     }
 
     /**

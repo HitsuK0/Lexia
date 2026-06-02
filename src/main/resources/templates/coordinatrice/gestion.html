@@ -291,32 +291,32 @@
                                 <div class="col-4">
                                     <label class="form-label small fw-semibold">Niveau d'éducation</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" th:field="*{educationLevel}" value="autre" type="checkbox" id="checkAutreEdit">
-                                        <label class="form-check-label" for="checkAutreEdit">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="autre" type="checkbox" id="ajoutEtabCheckAutre">
+                                        <label class="form-check-label" for="ajoutEtabCheckAutre">
                                             Autre
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" th:field="*{educationLevel}" value="maternelle" type="checkbox" id="checkMaternelleEdit">
-                                        <label class="form-check-label" for="checkMaternelleEdit">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="maternelle" type="checkbox" id="ajoutEtabCheckMaternelle">
+                                        <label class="form-check-label" for="ajoutEtabCheckMaternelle">
                                             Maternelle
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" th:field="*{educationLevel}" value="primaire" type="checkbox"  id="checkPrimaireEdit">
-                                        <label class="form-check-label" for="checkPrimaireEdit">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="primaire" type="checkbox"  id="ajoutEtabCheckPrimaire">
+                                        <label class="form-check-label" for="ajoutEtabCheckPrimaire">
                                             Primaire
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" th:field="*{educationLevel}" value="secondaire" type="checkbox" id="checkSecondaireEdit">
-                                        <label class="form-check-label" for="checkSecondaireEdit">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="secondaire" type="checkbox" id="ajoutEtabCheckSecondaire">
+                                        <label class="form-check-label" for="ajoutEtabCheckSecondaire">
                                             Secondaire
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" th:field="*{educationLevel}" value="supérieur" type="checkbox"  id="checkSupEdit">
-                                        <label class="form-check-label" for="checkSupEdit">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="supérieur" type="checkbox"  id="ajoutEtabCheckSup">
+                                        <label class="form-check-label" for="ajoutEtabCheckSup">
                                             Supérieur
                                         </label>
                                     </div>
@@ -373,8 +373,47 @@
                                 </div>
                             </div>
                             <div class="mb-3">
+                                <label class="form-label small fw-semibold">Numero de téléphone</label>
+                                <input type="text" th:field="*{phoneNumber}" class="form-control form-control-sm" id="editEtabNumTel" placeholder="06111333999"/>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">Niveau d'éducation</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="autre" type="checkbox" id="editEtabCheckAutre">
+                                        <label class="form-check-label" for="editEtabCheckAutre">
+                                            Autre
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="maternelle" type="checkbox" id="editEtabCheckMaternelle">
+                                        <label class="form-check-label" for="editEtabCheckMaternelle">
+                                            Maternelle
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="primaire" type="checkbox"  id="editEtabCheckPrimaire">
+                                        <label class="form-check-label" for="editEtabCheckPrimaire">
+                                            Primaire
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="secondaire" type="checkbox" id="editEtabCheckSecondaire">
+                                        <label class="form-check-label" for="editEtabCheckSecondaire">
+                                            Secondaire
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="supérieur" type="checkbox"  id="editEtabCheckSup">
+                                        <label class="form-check-label" for="editEtabCheckSup">
+                                            Supérieur
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label small fw-semibold">Personne référente <span class="text-muted fw-normal">(facultatif)</span></label>
-                                <select class="form-select form-select-sm" id="editEtabRef">
+                                <select th:field="*{listReferrerSelected}" class="form-select form-select-sm" id="editEtabRef">
                                     <option value="">-- Aucun référent --</option>
                                     <option th:each="ref : ${referentList}"
                                             th:value="${ref.numReferrer}"
