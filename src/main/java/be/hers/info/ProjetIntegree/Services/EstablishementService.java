@@ -58,9 +58,7 @@ public class EstablishementService {
                     addresse
             )
         );
-
         DAOEstablishment daoEstablishment = new DAOEstablishment();
-
         daoEstablishment.create(establishment);
     }
 
