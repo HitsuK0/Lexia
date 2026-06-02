@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 data.forEach(e => {
                     const option = document.createElement('option');
                     option.value = e.numEstablishment;
-                    option.textContent = e.nameBuilding;
+                    option.textContent = e.name;
                     select.appendChild(option);
                 });
             })
@@ -271,10 +271,14 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         })
-            .then(r => {
-                if (!r.ok) throw new Error('Server error');
-                bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
-                calendar.refetchEvents();
+            .then(r => r.text())
+            .then(result => {
+                if (result === 'ok') {
+                    bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
+                    calendar.refetchEvents();
+                } else {
+                    console.error('Erreur lors de la création du RDV');
+                }
             })
             .catch(err => console.error('Error sending RDV request:', err));
     });
