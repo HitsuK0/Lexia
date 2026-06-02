@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (props.locals && props.locals.length > 0) html += `<div class="small">${props.locals.join(', ')}</div>`;
                 if (props.description) html += `<div class="small">📝 ${props.description}</div>`;
             } else if (props.type === 'absence') {
-                if (props.reason && props.reason !== '') html += `<div class="small"> ${props.reason}</div>`;
+                if (props.reason && props.reason !== '') html += `<div class="small">Motif : ${props.reason}</div>`;
             }
 
             return {html: `<div class="p-1">${icone}${html}</div>`};
