@@ -29,6 +29,7 @@ public class EstablishementService {
         List<DTOEstablishment> dtoEstablishments = new ArrayList<>();
         establishments = daoEstablishment.findAllFullEstablishment();
         Iterator<Establishment> iterator = establishments.iterator();
+
         while(iterator.hasNext()){
             dtoEstablishments.add(new DTOEstablishment(iterator.next()));
         }

@@ -68,10 +68,14 @@
                                     <span th:text="${!etab.addresses.isEmpty() ? etab.addresses[0].postcode + ' ' + etab.addresses[0].locality : '/'}">Code Ville</span>
                                 </td>
                                 <td th:text="${!etab.referrers.isEmpty() ? etab.referrers[0].surname + ' ' + etab.referrers[0].name : '/'}" data-label="Référent"></td>
-                                <td th:text="${etablissement.phoneNumber}"></td>
+                                <td th:text="${etab.phoneNumber}"></td>
                                 <td>
-                                    <span th:each="level, i : ${etablissement.educationLevel}">
-                                        <span th:text="${level}"></span>
+                                    <span th:each="level, i : ${etab.educationLevel}">
+                                        <span th:if="${level == 0}">Autre</span>
+                                        <span th:if="${level == 1}">Maternelle</span>
+                                        <span th:if="${level == 2}">Primaire</span>
+                                        <span th:if="${level == 3}">Secondaire</span>
+                                        <span th:if="${level == 4}">Supérieur</span>
                                         <span th:if="${!i.last}">, </span>
                                     </span>
                                 </td>
