@@ -156,12 +156,19 @@ public class InterpreterController {
             Map<String, Object> event = new HashMap<>();
             Map<String, Object> extendedProps = new HashMap<>();
             event.put("title","Indisponibilité");
+
             if(a.getTimeSlot() instanceof TimeSlotPunctual){
                 TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
-                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+                LocalDateTime ldt = LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
                 event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
 
+                if (!tsp.getStartDate().equals(tsp.getEndDate())) {
+                    LocalDateTime ldtEnd = LocalDateTime.of(tsp.getEndDate().plusDays(1), tsp.getStartTime())
+                            .plusSeconds(tsp.getDuration().toSecondOfDay());
+                    event.put("end", ldtEnd);
+                } else {
+                    event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                }
             }else{
                 TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
                 int i = tsp.getDayNumber();
@@ -176,6 +183,7 @@ public class InterpreterController {
                 event.put("start",ldt);
                 event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
             }
+
             event.put("color","#f0ad4e");
             extendedProps.put("type","absence");
             extendedProps.put("reason", a.getReason());
