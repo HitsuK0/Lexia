@@ -397,13 +397,15 @@ public class CoordinatorController {
         //En pause en attendant les modifs de Chloé
     }
 
-    @PostMapping("utilisateurs/deleteUser")
-    public String deleteUser(HttpSession session){
+    @GetMapping("utilisateurs/deleteUser")
+    public String deleteUser(HttpSession session, @PathVariable String login){
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null)
             return "redirect:/login";
 
-        //En pause en attendant les modifs de Chloé
+        String messageToFrondEnd = deleteUser(login);
+
+        return "utilisateurs";
     }
 
     // Temporaire
