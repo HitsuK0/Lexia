@@ -354,8 +354,20 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/etablissements";
     }
 
+    /**
+     * Retrieve all users along with the number of users, the number of interpreters,
+     * the number of resas and the number of beneficiaries
+     * @param model is param used by Spring to add all the data in the page.
+     * @param session the current HTTP session
+     * @return a redirection to the "coordinatrice/utilisateurs" page if the user is a coordinator connected.
+     * Otherwise, return a redirection to the "/login" page
+     */
     @GetMapping("/utilisateurs")
-    public String utilisateurs(Model model) {
+    public String utilisateurs(Model model, HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null)
+            return "redirect:/login";
+
         try{
             CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
             int numberBeneficiaries = coordinatorUsersService.countBeneficiaries();
@@ -396,6 +408,12 @@ public class CoordinatorController {
         return "coordinatrice/utilisateur-detail";
     }
 
+    /**
+     * Create a new coordinator, interpreter or beneficiary in the database using the datas submitted from the form
+     * @param session the current HTTP session
+     * @return a redirection to the "coordinatrice/utilisateurs" page if the user is a coordinator connected.
+     *         Otherwise, return a redirection to the "/login" page
+     */
     @PostMapping("utilisateurs/addUser")
     public String addUser(HttpSession session){
         Coordinator coordinator = getCoordinatorFromSession(session);
@@ -405,6 +423,12 @@ public class CoordinatorController {
         //En pause en attendant les modifs de Chloé
     }
 
+    /**
+     * Update in the database the coordinator, interpreter or beneficiary selected sends by the frontend
+     * @param session the current HTTP session
+     * @return a redirection to the "coordinatrice/utilisateurs" page if the user is a coordinator connected.
+     *         Otherwise, return a redirection to the "/login" page
+     */
     @GetMapping("utilisateurs/updateUser")
     public String updateUser(HttpSession session){
         Coordinator coordinator = getCoordinatorFromSession(session);
@@ -414,6 +438,13 @@ public class CoordinatorController {
         //En pause en attendant les modifs de Chloé
     }
 
+    /**
+     * Delete in the database the coordinator, interpreter or beneficiary selected. His login is sent by the frontend
+     * @param session the current HTTP session
+     * @param login the login of the user to delete
+     * @return a redirection to the "coordinatrice/utilisateurs" page if the user is a coordinator connected.
+     *         Otherwise, return a redirection to the "/login" page
+     */
     @PostMapping("utilisateurs/deleteUser")
     public String deleteUser(HttpSession session, @RequestParam String login){
         Coordinator coordinator = getCoordinatorFromSession(session);
