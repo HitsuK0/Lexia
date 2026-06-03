@@ -362,7 +362,7 @@ public class CoordinatorController {
             model.addAttribute("numberBeneficiaries", numberBeneficiaries);
 
             int numberInterpreters = coordinatorUsersService.countInterpreters();
-            model.addAttribute("numberInterpreter", numberInterpreters);
+            model.addAttribute("numberInterpreters", numberInterpreters);
 
             int numberResas = coordinatorUsersService.countResas();
             model.addAttribute("numberResas", numberResas);
@@ -414,7 +414,7 @@ public class CoordinatorController {
         //En pause en attendant les modifs de Chloé
     }
 
-    @DeleteMapping("utilisateurs/deleteUser")
+    @PostMapping("utilisateurs/deleteUser")
     public String deleteUser(HttpSession session, @RequestParam String login){
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null)
