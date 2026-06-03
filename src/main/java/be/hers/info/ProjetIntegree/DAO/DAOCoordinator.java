@@ -254,4 +254,23 @@ public class DAOCoordinator extends DAO<Coordinator> {
         }
         return isUpdated;
     }
+
+    public int countNumberResas() throws SQLException {
+        int numberResas = 0;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT COUNT(*) FROM Coordinator" +
+                       "WHERE isadmin = 0";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next())
+                numberResas = resultSet.getInt(1);
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return numberResas;
+    }
 }

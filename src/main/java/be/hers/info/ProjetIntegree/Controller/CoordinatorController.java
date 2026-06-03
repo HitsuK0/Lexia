@@ -8,6 +8,7 @@ package be.hers.info.ProjetIntegree.Controller;
 import be.hers.info.ProjetIntegree.DTO.DTOEstablishment;
 import be.hers.info.ProjetIntegree.DTO.DTOReferrer;
 import be.hers.info.ProjetIntegree.POJO.*;
+import be.hers.info.ProjetIntegree.Services.CoordinatorUsersService;
 import be.hers.info.ProjetIntegree.Services.EstablishementService;
 
 import be.hers.info.ProjetIntegree.Services.ReferrerService;
@@ -352,13 +353,21 @@ public class CoordinatorController {
         }
         return "redirect:/coordinatrice/etablissements";
     }
-
-    // Temporaire
+    
     @GetMapping("/utilisateurs")
     public String utilisateurs(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("userRole", "COORDINATOR");
-        model.addAttribute("isAdmin", true);
+        try{
+            CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
+            int numberBeneficiaries = coordinatorUsersService.countBeneficiaries();
+
+            int numberInterpreter = coordinatorUsersService.countInterpreters();
+            int numberCoordinator = coordinatorUsersService.countResas();
+        }
+        catch(SQLException e){
+
+        }
+
+
         return "coordinatrice/utilisateurs";
     }
 

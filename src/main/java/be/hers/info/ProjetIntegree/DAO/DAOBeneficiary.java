@@ -507,4 +507,22 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         }
         return listBeneficiary;
     }
+
+    public int countNumberBeneficiaries() throws SQLException {
+        int numberBeneficiaries = 0;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT COUNT(*) FROM Beneficiary";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next())
+                numberBeneficiaries = resultSet.getInt(1);
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return numberBeneficiaries;
+    }
 }

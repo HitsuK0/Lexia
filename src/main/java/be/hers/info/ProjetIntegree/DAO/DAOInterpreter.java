@@ -261,6 +261,34 @@ public class DAOInterpreter extends DAO<Interpreter> {
     }
 
     /**
+     * Deletes the Interpreter whose login matches the login passed as a parameter.
+     * Precondition: the login passed as a parameter cannot be null.
+     * @param login the login of the Interpreter to be deleted from the table.
+     * @return true if the Interpreter was successfully deleted, false otherwise.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public boolean delete(String login) throws SQLException {
+        boolean isDeleted = false;
+        PreparedStatement prStat = null;
+
+        String query = "DELETE FROM Interpreter " +
+                "WHERE login = ?";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setString(1, login);
+
+            int nbLinesDelete = prStat.executeUpdate();
+            if(nbLinesDelete > 0) {
+                isDeleted = true;
+            }
+        } finally {
+            closeStatement(prStat);
+        }
+        return isDeleted;
+    }
+
+    /**
      * Authenticates an interpreter using their login and password
      * If the matching interpreter is also referenced as a coordinator, the corresponding Coordinator
      * is returned instead of the Interpreter
@@ -490,5 +518,23 @@ public class DAOInterpreter extends DAO<Interpreter> {
         }
         return isDeleted;
 
+    }
+
+    public int countNumberInterpreters() throws SQLException {
+        int numberInterpreters = 0;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT COUNT(*) FROM Interpreter";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next())
+                numberInterpreters = resultSet.getInt(1);
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return numberInterpreters;
     }
 }
