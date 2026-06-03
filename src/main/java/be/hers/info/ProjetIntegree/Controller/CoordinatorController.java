@@ -379,6 +379,33 @@ public class CoordinatorController {
         return "coordinatrice/utilisateur-detail";
     }
 
+    @PostMapping("utilisateurs/addUser")
+    public String addUser(HttpSession session){
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null)
+            return "redirect:/login";
+
+        //En pause en attendant les modifs de Chloé
+    }
+
+    @GetMapping("utilisateurs/updateUser")
+    public String updateUser(HttpSession session){
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null)
+            return "redirect:/login";
+
+        //En pause en attendant les modifs de Chloé
+    }
+
+    @PostMapping("utilisateurs/deleteUser")
+    public String deleteUser(HttpSession session){
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null)
+            return "redirect:/login";
+
+        //En pause en attendant les modifs de Chloé
+    }
+
     // Temporaire
     @GetMapping("/horaire/base")
     public String horaireBase(Model model) {
