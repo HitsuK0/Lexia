@@ -314,10 +314,12 @@
         <div th:replace="~{common/footer :: footer}"></div>
 
         <script th:inline="javascript">
-            const allProfessionalSkills = [];
-            const allAcademicSkills     = [];
-            const ownedProfSkills       = [];
-            const ownedAcadSkills       = [];
+            /*<![CDATA[*/
+            const allProfessionalSkills = /*[[${profileDTO.professionalSkillList}]]*/ [];
+            const allAcademicSkills     = /*[[${profileDTO.academicSkillList}]]*/ [];
+            const ownedProfSkills       = /*[[${profileDTO.professionalSkillListInterpreter}]]*/ [];
+            const ownedAcadSkills       = /*[[${profileDTO.academicSkillListInterpreter}]]*/ [];
+            /*]]>*/
         </script>
 
         <script th:src="@{/js/interprete/profil.js}"></script>
