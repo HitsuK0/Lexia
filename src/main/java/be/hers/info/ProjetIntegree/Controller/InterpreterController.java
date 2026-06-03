@@ -4,6 +4,8 @@ package be.hers.info.ProjetIntegree.Controller;
  * @reviewer Nicolas Jean-François
  */
 
+import be.hers.info.ProjetIntegree.DAO.DAOAcademicSkill;
+import be.hers.info.ProjetIntegree.DAO.DAOProfessionalSkill;
 import be.hers.info.ProjetIntegree.DTO.*;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
@@ -515,117 +517,143 @@ public class InterpreterController {
     }
 
     /**
-     * Controller for the pages named "Mon profil" part Professional Skill
-     * Before adding the object, search for the Professional Skill in the list of available Professional Skills using the id (NumProfessionalSkillSelected)     * Ajoute dans les listes de professionalSkill de l'interprete en session et dans le profileDTO
-     * Also features the action in DB
+     * Controller for the pages named "Mon profil" part Professional Skill.
+     * Adds a professional skill to the connected interpreter.
+     * Checks first if the interpreter already owns the skill to avoid a unique constraint
+     * violation in the database on double form submission.
+     * Loads the skill from the database after insertion to update the interpreter's session list.
+     * The profileDTO reconstructed by Spring via @ModelAttribute does not carry its skill lists
+     * — only numProfessionalSkillSelected is used from it.
      * Reads the interpreter directly from the session.
      * Redirects to login if no interpreter is found in session.
      *
-     * @param profileDTO the profile form data submitted by the user
-     * @param request     the current HTTP request used to access the session
-     * @return a redirect to "/interpreter/profil" after adding, or a redirect to "/login" if the session is invalid
+     * @param profileDTO the profile form data submitted by the user,
+     *                   only numProfessionalSkillSelected is read from it
+     * @param request    the current HTTP request used to access the session
+     * @return a redirect to "/interprete/profil" after adding,
+     *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/addProfessionalSkill")
-    public String addProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpServletRequest request) {
+    public String addProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
+                                       HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         Interpreter interpreter = getInterpreterFromSession(session);
         if (interpreter == null) {
             return "redirect:/login";
         }
-        ProfessionalSkill p = null;
+
         try {
             InterpreterProfileService profileService = new InterpreterProfileService();
-            boolean res = profileService.addProfessionalSkill(interpreter.getNumInterpreter(), profileDTO.getNumProfessionalSkillSelected());
-            if(res){
-                p = profileDTO.findProfessionalSkillById(profileDTO.getNumProfessionalSkillSelected());
-                if(p != null){
-                    if(!interpreter.getProfessionalSkillsList().contains(p)){
+            int numSkill = profileDTO.getNumProfessionalSkillSelected();
+
+            boolean alreadyOwned = interpreter.getProfessionalSkillsList() != null &&
+                    interpreter.getProfessionalSkillsList().stream()
+                            .anyMatch(s -> s.getNumProfessionalSkill() == numSkill);
+
+            if (!alreadyOwned) {
+                boolean res = profileService.addProfessionalSkill(interpreter.getNumInterpreter(), numSkill);
+                if (res) {
+                    DAOProfessionalSkill dao = new DAOProfessionalSkill();
+                    ProfessionalSkill p = dao.find(numSkill);
+                    if (p != null) {
+                        if (interpreter.getProfessionalSkillsList() == null) {
+                            interpreter.setProfessionalSkillsList(new ArrayList<>());
+                        }
                         interpreter.getProfessionalSkillsList().add(p);
                     }
-                    if(!profileDTO.getProfessionalSkillListInterpreter().contains((p))){
-                        profileDTO.getProfessionalSkillListInterpreter().add(p);
-                    }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         session.setAttribute("currentUser", interpreter);
-
-        return "redirect:/interprete/profil";
+        return "redirect:/interprete/profil?section=metiers";
     }
 
     /**
-     * Controller for the pages named "Mon profil" part Professional Skill
-     * Before deleting the object, search for the Professional Skill in the list of available Professional Skills using the ID (NumProfessionalSkillSelected)
-     * Deletes the Professional Skill from the interpreter's session list and from the profileDTO
-     * Also performs the action in the database
+     * Controller for the pages named "Mon profil" part Professional Skill.
+     * Deletes a professional skill from the connected interpreter.
+     * Removes the skill from the interpreter's session list by matching its ID directly,
+     * since the profileDTO reconstructed by Spring via @ModelAttribute does not carry its
+     * skill lists — only numProfessionalSkillSelected is used from it.
      * Reads the interpreter directly from the session.
      * Redirects to login if no interpreter is found in session.
      *
-     * @param profileDTO the profile form data submitted by the user
-     * @param request     the current HTTP request used to access the session
-     * @return a redirect to "/interpreter/profil" after deleting, or a redirect to "/login" if the session is invalid
+     * @param profileDTO the profile form data submitted by the user,
+     *                   only numProfessionalSkillSelected is read from it
+     * @param request    the current HTTP request used to access the session
+     * @return a redirect to "/interprete/profil" after deleting,
+     *         or a redirect to "/login" if the session is invalid
      */
-
     @PostMapping("/profil/deleteProfessionalSkill")
-    public String deleteProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpServletRequest request) {
+    public String deleteProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
+                                          HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         Interpreter interpreter = getInterpreterFromSession(session);
         if (interpreter == null) {
             return "redirect:/login";
         }
-        ProfessionalSkill p = null;
+
         try {
             InterpreterProfileService profileService = new InterpreterProfileService();
-            boolean res = profileService.deleteProfessionalSkill(interpreter.getNumInterpreter(), profileDTO.getNumProfessionalSkillSelected());
-            if(res){
-                p = profileDTO.findProfessionalSkillById(profileDTO.getNumProfessionalSkillSelected());
-                if(p != null){
-                    interpreter.getProfessionalSkillsList().remove(p);
-                    profileDTO.getProfessionalSkillListInterpreter().remove(p);
-                }
-
+            int numSkill = profileDTO.getNumProfessionalSkillSelected();
+            boolean res = profileService.deleteProfessionalSkill(interpreter.getNumInterpreter(), numSkill);
+            if (res && interpreter.getProfessionalSkillsList() != null) {
+                interpreter.getProfessionalSkillsList()
+                        .removeIf(s -> s.getNumProfessionalSkill() == numSkill);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        session.setAttribute("currentUser", interpreter);
 
-        return "redirect:/interprete/profil";
+        session.setAttribute("currentUser", interpreter);
+        return "redirect:/interprete/profil?section=metiers";
     }
 
     /**
-     * Controller for the pages named "Mon profil" part Academic Skill
-     * Before adding the object, search for the Academic Skill in the list of available Academic Skills using the ID (NumAcademicSkillSelected)
-     * Adds it to the interpreter's Academic Skill lists in the session and to the profileDTO
-     * Also performs the action in the database
+     * Controller for the pages named "Mon profil" part Academic Skill.
+     * Adds an academic skill to the connected interpreter.
+     * Checks first if the interpreter already owns the skill to avoid a unique constraint
+     * violation in the database on double form submission.
+     * Loads the skill from the database after insertion to update the interpreter's session list.
+     * The profileDTO reconstructed by Spring via @ModelAttribute does not carry its skill lists
+     * — only numAcademicSkillSelected is used from it.
      * Reads the interpreter directly from the session.
      * Redirects to login if no interpreter is found in session.
      *
-     * @param profileDTO the profile form data submitted by the user
-     * @param request     the current HTTP request used to access the session
-     * @return a redirect to "/interpreter/profil" after adding, or a redirect to "/login" if the session is invalid
+     * @param profileDTO the profile form data submitted by the user,
+     *                   only numAcademicSkillSelected is read from it
+     * @param request    the current HTTP request used to access the session
+     * @return a redirect to "/interprete/profil" after adding,
+     *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/addAcademicSkill")
-    public String addAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpServletRequest request) {
+    public String addAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
+                                   HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         Interpreter interpreter = getInterpreterFromSession(session);
         if (interpreter == null) {
             return "redirect:/login";
         }
-        AcademicSkill a = null;
+
         try {
             InterpreterProfileService profileService = new InterpreterProfileService();
-            boolean res = profileService.addAcademicSkill(interpreter.getNumInterpreter(), profileDTO.getNumAcademicSkillSelected());
-            if(res){
-                a = profileDTO.findAcademicSkillById(profileDTO.getNumAcademicSkillSelected());
-                if(a != null){
-                    if(!interpreter.getAcademicSkillsList().contains(a)){
+            int numSkill = profileDTO.getNumAcademicSkillSelected();
+
+            boolean alreadyOwned = interpreter.getAcademicSkillsList() != null &&
+                    interpreter.getAcademicSkillsList().stream()
+                            .anyMatch(s -> s.getNumAcademicSkill() == numSkill);
+
+            if (!alreadyOwned) {
+                boolean res = profileService.addAcademicSkill(interpreter.getNumInterpreter(), numSkill);
+                if (res) {
+                    DAOAcademicSkill dao = new DAOAcademicSkill();
+                    AcademicSkill a = dao.find(numSkill);
+                    if (a != null) {
+                        if (interpreter.getAcademicSkillsList() == null) {
+                            interpreter.setAcademicSkillsList(new ArrayList<>());
+                        }
                         interpreter.getAcademicSkillsList().add(a);
-                    }
-                    if(!profileDTO.getAcademicSkillListInterpreter().contains((a))){
-                        profileDTO.getAcademicSkillListInterpreter().add(a);
                     }
                 }
             }
@@ -633,46 +661,47 @@ public class InterpreterController {
             e.printStackTrace();
         }
         session.setAttribute("currentUser", interpreter);
-
-        return "redirect:/interprete/profil";
+        return "redirect:/interprete/profil?section=academics";
     }
 
     /**
-     * Controller for the pages named "Mon profil" part Academic Skill
-     * Before deleting the object, search for the Academic Skill in the list of available Academic Skills using the ID (NumAcademicSkillSelected)
-     * Deletes it from the interpreter's Academic Skill lists in the session and from the profileDTO
-     * Also performs the action in the database
+     * Controller for the pages named "Mon profil" part Academic Skill.
+     * Deletes an academic skill from the connected interpreter.
+     * Removes the skill from the interpreter's session list by matching its ID directly,
+     * since the profileDTO reconstructed by Spring via @ModelAttribute does not carry its
+     * skill lists — only numAcademicSkillSelected is used from it.
      * Reads the interpreter directly from the session.
      * Redirects to login if no interpreter is found in session.
      *
-     * @param profileDTO the profile form data submitted by the user
-     * @param request     the current HTTP request used to access the session
-     * @return a redirect to "/interpreter/profil" after deleting, or a redirect to "/login" if the session is invalid
+     * @param profileDTO the profile form data submitted by the user,
+     *                   only numAcademicSkillSelected is read from it
+     * @param request    the current HTTP request used to access the session
+     * @return a redirect to "/interprete/profil" after deleting,
+     *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/deleteAcademicSkill")
-    public String deleteAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpServletRequest request) {
+    public String deleteAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
+                                      HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         Interpreter interpreter = getInterpreterFromSession(session);
         if (interpreter == null) {
             return "redirect:/login";
         }
-        AcademicSkill a = null;
+
         try {
             InterpreterProfileService profileService = new InterpreterProfileService();
-            boolean res = profileService.deleteAcademicSkill(interpreter.getNumInterpreter(), profileDTO.getNumAcademicSkillSelected());
-            if(res){
-                a = profileDTO.findAcademicSkillById(profileDTO.getNumAcademicSkillSelected());
-                if(a != null){
-                    interpreter.getAcademicSkillsList().remove(a);
-                    profileDTO.getAcademicSkillListInterpreter().remove(a);
-                }
+            int numSkill = profileDTO.getNumAcademicSkillSelected();
+            boolean res = profileService.deleteAcademicSkill(interpreter.getNumInterpreter(), numSkill);
+            if (res && interpreter.getAcademicSkillsList() != null) {
+                interpreter.getAcademicSkillsList()
+                        .removeIf(s -> s.getNumAcademicSkill() == numSkill);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        session.setAttribute("currentUser", interpreter);
 
-        return "redirect:/interprete/profil";
+        session.setAttribute("currentUser", interpreter);
+        return "redirect:/interprete/profil?section=academics";
     }
 
     /**
