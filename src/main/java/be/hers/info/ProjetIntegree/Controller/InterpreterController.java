@@ -7,6 +7,7 @@ package be.hers.info.ProjetIntegree.Controller;
 import be.hers.info.ProjetIntegree.DTO.*;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AbsenceService;
+import be.hers.info.ProjetIntegree.Services.AppointmentFormService;
 import be.hers.info.ProjetIntegree.Services.InterpreterProfileService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,8 +22,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
-// TODO: Delete default values from RequestParam once true params can be passed
 
 @Controller
 @RequestMapping("/interprete")
@@ -207,6 +206,7 @@ public class InterpreterController {
 
         return "interprete/planning-beneficiaires";
     }
+
     /**
      * Search all Appointments within the Start and End time range linked to the beneficiary number passed in the URL.
      * Format the information found in a list on the Map for FullCalendar
@@ -439,6 +439,7 @@ public class InterpreterController {
 
         return "interprete/profil";
     }
+
     /** Controller for the pages named "Mon profil"
      * Handles the submission of the profile edit form.
      * Saves the modified personal data (lastName, firstName, phoneNumber, emailAddress, address, weeklyWorkHours) of the connected interpreter.
@@ -468,6 +469,7 @@ public class InterpreterController {
 
         return "redirect:/interprete/profil";
     }
+
     /** Controller for the pages named "Mon profil"
      * Handles the submission of the password change modal.
      * Verifies that newPassword and confirmPassword match, then updates the password in the database.
@@ -482,6 +484,7 @@ public class InterpreterController {
      *         with "?passwordError=true" appended if passwords do not match,
      *         or a redirect to "/login" if the session is invalid
      */
+
     @PostMapping("/profil/password")
     public String changePassword(@ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -543,6 +546,7 @@ public class InterpreterController {
 
         return "redirect:/interprete/profil";
     }
+
     /**
      * Controller for the pages named "Mon profil" part Professional Skill
      * Before deleting the object, search for the Professional Skill in the list of available Professional Skills using the ID (NumProfessionalSkillSelected)
@@ -555,6 +559,7 @@ public class InterpreterController {
      * @param request     the current HTTP request used to access the session
      * @return a redirect to "/interpreter/profil" after deleting, or a redirect to "/login" if the session is invalid
      */
+
     @PostMapping("/profil/deleteProfessionalSkill")
     public String deleteProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -623,6 +628,7 @@ public class InterpreterController {
 
         return "redirect:/interprete/profil";
     }
+
     /**
      * Controller for the pages named "Mon profil" part Academic Skill
      * Before deleting the object, search for the Academic Skill in the list of available Academic Skills using the ID (NumAcademicSkillSelected)
@@ -661,5 +667,50 @@ public class InterpreterController {
         return "redirect:/interprete/profil";
     }
 
+    /**
+     * Returns the list of all establishments in JSON format.
+     * Used by the RDV modal in the beneficiary planning page to populate the establishment select.
+     * Redirects to an empty list if no interpreter is found in session.
+     *
+     * @param session the current HTTP session
+     * @return a list of DTOEstablishmentFormAppointment, or an empty list if the session is invalid
+     */
+    @GetMapping(value = "/planning/beneficiaires/etablissements", produces = "application/json")
+    @ResponseBody
+    public List<DTOEstablishmentFormAppointment> getEstablishments(HttpSession session) {
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null)
+            return Collections.emptyList();
 
+        AppointmentFormService service = new AppointmentFormService();
+        List<DTOEstablishmentFormAppointment> list = service.findAllEstablishments();
+        return list != null ? list : Collections.emptyList();
+    }
+
+    /**
+     * Creates a new appointment from the RDV modal in the beneficiary planning page.
+     * Receives the appointment data as a JSON body sent by the JS fetch call.
+     * Returns "ok" if the appointment was successfully created, "error" otherwise.
+     *
+     * @param dtoAppointment the appointment data sent as JSON from the frontend
+     * @param session        the current HTTP session
+     * @return "ok" on success, "error" on failure
+     */
+    @PostMapping(value = "/planning/beneficiaires/rdv", consumes = "application/json")
+    @ResponseBody
+    public String createRDV(@RequestBody DTOAppointmentForm dtoAppointment, HttpSession session) {
+        Interpreter interpreter = getInterpreterFromSession(session);
+        if (interpreter == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AppointmentFormService service = new AppointmentFormService();
+            boolean success = service.createAppointment(dtoAppointment);
+            return success ? "ok" : "error";
+        } catch (BadStatusException | SQLException | IllegalArgumentException e) {
+            e.printStackTrace();
+            return "error";
+        }
+    }
 }
