@@ -520,6 +520,11 @@ public class DAOInterpreter extends DAO<Interpreter> {
 
     }
 
+    /**
+     * Return the number of interpreters in the interpreter table
+     * @return the number of interpreters in the interpreter table
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
     public int countNumberInterpreters() throws SQLException {
         int numberInterpreters = 0;
         PreparedStatement preparedStatement = null;

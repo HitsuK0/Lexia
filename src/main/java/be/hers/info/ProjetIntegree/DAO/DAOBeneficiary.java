@@ -508,6 +508,11 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         return listBeneficiary;
     }
 
+    /**
+     * Return the number of beneficiaries in the beneficiary table
+     * @return the number of beneficiaries in the beneficiary table
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
     public int countNumberBeneficiaries() throws SQLException {
         int numberBeneficiaries = 0;
         PreparedStatement preparedStatement = null;

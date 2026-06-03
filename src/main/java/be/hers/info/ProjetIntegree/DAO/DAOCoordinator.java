@@ -255,6 +255,11 @@ public class DAOCoordinator extends DAO<Coordinator> {
         return isUpdated;
     }
 
+    /**
+     * Return the number of resas in the coordinator table
+     * @return the number of resas in the coordinator table
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
     public int countNumberResas() throws SQLException {
         int numberResas = 0;
         PreparedStatement preparedStatement = null;
