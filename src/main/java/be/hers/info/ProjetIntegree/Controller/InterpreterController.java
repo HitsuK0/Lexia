@@ -348,26 +348,30 @@ public class InterpreterController {
      * @param dtoAbsence the dto to convert into a pojo
      * @param model the UI model to hold the list of absences and the active tab status
      * @param request    the current HTTP request used to access the session
-     * @return the page to redirect to.
+     * @return redirect the curent page.
      */
     @PostMapping("/indisponibilites")
     public String createIndisponibilite(@ModelAttribute("DTOAbsence") DTOAbsence dtoAbsence, Model model, HttpServletRequest request) {
         HttpSession session = request.getSession();
+        String pageReferer = request.getHeader("Referer");
         Interpreter interpreter = getInterpreterFromSession(session);
         if (interpreter == null) {
             return "redirect:/login";
         }
-        AbsenceService absenceService = new  AbsenceService();
-        try{
-            absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter());
+        if(dtoAbsence.getStartTime() != null && dtoAbsence.getStartDate()!= null && dtoAbsence.getEndDate()!= null && dtoAbsence.getEndTime()!=null ){
+            AbsenceService absenceService = new  AbsenceService();
+            try{
+                absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter());
+            }
+            catch(SQLException sql){
+                // afficher la page d'erreur
+            }
+            catch(BadStatusException bse){
+                // afficher la page d'erreur
+            }
         }
-        catch(SQLException sql){
-            // afficher la page d'erreur
-        }
-        catch(BadStatusException bse){
-            // afficher la page d'erreur
-        }
-        return "redirect:/interprete/indisponibilites";
+
+        return "redirect:"+pageReferer;
     }
 
     /**
