@@ -353,20 +353,28 @@ public class CoordinatorController {
         }
         return "redirect:/coordinatrice/etablissements";
     }
-    
+
     @GetMapping("/utilisateurs")
     public String utilisateurs(Model model) {
         try{
             CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
             int numberBeneficiaries = coordinatorUsersService.countBeneficiaries();
+            model.addAttribute("numberBeneficiaries", numberBeneficiaries);
 
-            int numberInterpreter = coordinatorUsersService.countInterpreters();
-            int numberCoordinator = coordinatorUsersService.countResas();
+            int numberInterpreters = coordinatorUsersService.countInterpreters();
+            model.addAttribute("numberInterpreter", numberInterpreters);
+
+            int numberResas = coordinatorUsersService.countResas();
+            model.addAttribute("numberResas", numberResas);
+
+            int numberUsers = numberBeneficiaries + numberInterpreters;
+            model.addAttribute("numberUsers", numberUsers);
         }
         catch(SQLException e){
-
+            //Faudra trouver ce qu'on va vraiment retourner pour TOUS les catch de TOUS les controllers
+            // parce que pour l'instant, c'est à chier. On va se faire défoncer si les profs voient ça
+            e.printStackTrace();
         }
-
 
         return "coordinatrice/utilisateurs";
     }
