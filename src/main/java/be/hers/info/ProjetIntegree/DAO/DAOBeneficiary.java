@@ -377,6 +377,30 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
     }
 
     /**
+     * Deletes the Beneficiary whose login matches the login passed as a parameter
+     * Precondition: the login passed as a parameter cannot be null
+     * @param login the login of the beneficiary to delete
+     * @return true if the Beneficiary was successfully deleted, false otherwise
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public boolean delete(String login) throws SQLException {
+        boolean isDeleted = false;
+        PreparedStatement preparedStatement = null;
+        String query = "DELETE FROM Beneficiary WHERE login = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setString(1, login);
+
+            if(preparedStatement.executeUpdate() > 0)
+                isDeleted = true;
+        } finally {
+            closeStatement(preparedStatement);
+        }
+        return isDeleted;
+    }
+
+    /**
      * Updates the Beneficiary's password whose numBeneficiary matches the id
      * of the Beneficiary passed as a parameter
      * Precondition: the Beneficiary passed as a parameter cannot be null
