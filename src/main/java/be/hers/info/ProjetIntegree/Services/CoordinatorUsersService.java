@@ -7,9 +7,8 @@ import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
 import java.sql.SQLException;
 
 public class CoordinatorUsersService {
-    public String deleteUser(String login) throws SQLException {
+    public boolean deleteUser(String login) throws SQLException {
         boolean isDeleted = false;
-        String
 
         if(login.startsWith("B")){
             DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
@@ -20,8 +19,7 @@ public class CoordinatorUsersService {
             isDeleted = daoInterpreter.delete(login);
         }
 
-        if(isDeleted)
-            return
+        return isDeleted;
     }
 
     public int countBeneficiaries() throws SQLException {

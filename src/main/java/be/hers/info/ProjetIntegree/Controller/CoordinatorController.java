@@ -371,8 +371,8 @@ public class CoordinatorController {
             model.addAttribute("numberUsers", numberUsers);
         }
         catch(SQLException e){
-            //Faudra trouver ce qu'on va vraiment retourner pour TOUS les catch de TOUS les controllers
-            // parce que pour l'instant, c'est à chier. On va se faire défoncer si les profs voient ça
+            //Faudra trouver ce qu'on va vraiment retourner pour TOUS les catchs de TOUS les controllers
+            //parce que pour l'instant, c'est à chier. On va se faire défoncer si les profs voient ça
             e.printStackTrace();
         }
 
@@ -414,13 +414,23 @@ public class CoordinatorController {
         //En pause en attendant les modifs de Chloé
     }
 
-    @GetMapping("utilisateurs/deleteUser")
-    public String deleteUser(HttpSession session, @PathVariable String login){
+    @DeleteMapping("utilisateurs/deleteUser")
+    public String deleteUser(HttpSession session, @RequestParam String login){
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null)
             return "redirect:/login";
 
-        String messageToFrondEnd = deleteUser(login);
+        try{
+            CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
+            if(!coordinatorUsersService.deleteUser(login)){
+                //On fera la même chose que dans les catchs
+            }
+        }
+        catch(SQLException e){
+            //Faudra trouver ce qu'on va vraiment retourner pour TOUS les catchs de TOUS les controllers
+            //parce que pour l'instant, c'est à chier. On va se faire défoncer si les profs voient ça
+            e.printStackTrace();
+        }
 
         return "utilisateurs";
     }

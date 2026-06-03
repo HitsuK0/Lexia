@@ -259,7 +259,7 @@ public class DAOCoordinator extends DAO<Coordinator> {
         int numberResas = 0;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String query = "SELECT COUNT(*) FROM Coordinator" +
+        String query = "SELECT COUNT(*) FROM Coordinator " +
                        "WHERE isadmin = 0";
 
         try {
