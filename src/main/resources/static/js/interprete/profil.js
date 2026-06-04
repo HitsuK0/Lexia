@@ -99,7 +99,6 @@ function onFieldChanged() {
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    /* Restaure la section active depuis le paramètre URL (?section=metiers etc.) */
     const urlParams = new URLSearchParams(window.location.search);
     const sectionParam = urlParams.get('section');
     if (sectionParam) {
@@ -155,13 +154,13 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-    /* Listeners pour afficher le bouton sauvegarder dès qu'un champ change. */
+    /* Listeners to display the save button as soon as a field changes. */
     document.querySelectorAll('input:not([type="radio"]), textarea, select').forEach(el => {
         el.addEventListener('input', onFieldChanged);
         el.addEventListener('change', onFieldChanged);
     });
 
-    /* Repasse en readonly automatiquement quand on quitte un champ éditable. */
+    /* Repasse en readonly automatically when on leaves a field editable. */
     document.querySelectorAll('.input-edit-group input, .input-edit-group textarea').forEach(input => {
         input.addEventListener('blur', function () {
             if (!this.hasAttribute('readonly')) {
@@ -193,6 +192,31 @@ document.addEventListener('DOMContentLoaded', function () {
             this.classList.remove('is-invalid');
             document.getElementById('phoneError').style.display = 'none';
         }
+    });
+
+    /* Resets the password modal fields and criteria on close. */
+    document.getElementById('modalPassword').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('inputNewPassword').value = '';
+        document.getElementById('inputConfirmPassword').value = '';
+        document.getElementById('passwordError').style.display = 'none';
+        document.getElementById('confirmError').style.display = 'none';
+
+        const criteres = ['crit-length', 'crit-upper', 'crit-lower', 'crit-number', 'crit-special'];
+        const labels = [
+            '8 caractères minimum',
+            '1 lettre majuscule',
+            '1 lettre minuscule',
+            '1 chiffre',
+            '1 caractère spécial (!@#$%...)'
+        ];
+        criteres.forEach((id, i) => {
+            document.getElementById(id).innerHTML =
+                `<i class="bi bi-x-circle-fill text-danger"></i> ${labels[i]}`;
+        });
+
+        // Réinitialise aussi l'ancien mot de passe si présent
+        const oldPassword = document.querySelector('#formPassword [name="oldPassword"]');
+        if (oldPassword) oldPassword.value = '';
     });
 
     /* Validates the new password in real time as the user types,
