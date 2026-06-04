@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.querySelectorAll('.skill-check').forEach(cb => cb.checked = false);
         document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')
-            .forEach(cb => cb.checked = true);
+            .forEach(cb => cb.checked = false);
 
         generateTimeOptions('rdvHourStart', 8 * 60, 18 * 60 + 55);
         generateTimeOptions('rdvHourEnd', 8 * 60 + 5, 19 * 60);
