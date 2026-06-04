@@ -181,6 +181,7 @@ public class InterpreterController {
                         break;
                     }
                 }
+                if (ld == null) continue;
                 LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
                 event.put("start",ldt);
                 event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
@@ -285,6 +286,7 @@ public class InterpreterController {
                         break;
                     }
                 }
+                if (ld == null) continue;
                 LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
                 event.put("start",ldt);
                 event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
