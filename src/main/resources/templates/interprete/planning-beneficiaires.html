@@ -102,53 +102,19 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small fw-semibold">Matières</label>
-                            <div id="rdvAcademicSkills" class="d-flex flex-wrap gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillMath" value="mathematiques"/>
-                                    <label class="form-check-label small" for="skillMath">Mathématiques</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillFr" value="francais"/>
-                                    <label class="form-check-label small" for="skillFr">Français</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillEn" value="anglais"/>
-                                    <label class="form-check-label small" for="skillEn">Anglais</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillSci" value="sciences"/>
-                                    <label class="form-check-label small" for="skillSci">Sciences</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillHist" value="histoire"/>
-                                    <label class="form-check-label small" for="skillHist">Histoire</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillCours" value="cours"/>
-                                    <label class="form-check-label small" for="skillCours">Cours</label>
-                                </div>
-                            </div>
-                            <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une matière.</div>
+                            <label class="form-label small fw-semibold">Matière</label>
+                            <select id="rdvAcademicSkill" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une matière</option>
+                            </select>
+                            <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une matière.</div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small fw-semibold">Compétences requises</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranscription"/>
-                                    <label class="form-check-label small" for="compTranscription">Transcription</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranslitteration"/>
-                                    <label class="form-check-label small" for="compTranslitteration">Translittération</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranslation"/>
-                                    <label class="form-check-label small" for="compTranslation">Translation</label>
-                                </div>
-                            </div>
-                            <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une compétence requise.</div>
+                            <label class="form-label small fw-semibold">Compétence requise</label>
+                            <select id="rdvProfessionalSkill" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une compétence</option>
+                            </select>
+                            <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une compétence requise.</div>
                         </div>
 
                         <div class="mb-3">

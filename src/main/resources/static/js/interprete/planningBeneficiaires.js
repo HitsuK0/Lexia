@@ -62,6 +62,38 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(err => console.error('Error loading establishments:', err));
     }
 
+    /* Fetches academic skills from the server and fills #rdvAcademicSkill. */
+    function loadAcademicSkills() {
+        fetch('/interprete/planning/beneficiaires/academic-skills')
+            .then(r => r.json())
+            .then(data => {
+                const select = document.getElementById('rdvAcademicSkill');
+                data.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.numAcademicSkill;
+                    option.textContent = s.designation;
+                    select.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error loading academic skills:', err));
+    }
+
+    /* Fetches professional skills from the server and fills #rdvProfessionalSkill. */
+    function loadProfessionalSkills() {
+        fetch('/interprete/planning/beneficiaires/professional-skills')
+            .then(r => r.json())
+            .then(data => {
+                const select = document.getElementById('rdvProfessionalSkill');
+                data.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.numProfessionalSkill;
+                    option.textContent = s.designation;
+                    select.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error loading professional skills:', err));
+    }
+
     /**
      * Updates the currently selected beneficiary and refreshes calendar events.
      * @param {HTMLElement} element - The clicked <a> element, must have data-num and data-nom
@@ -87,6 +119,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fillBeneficiarySelect();
     loadEstablishments();
+    loadAcademicSkills();
+    loadProfessionalSkills();
     generateTimeOptions('rdvHourStart', 8 * 60, 18 * 60 + 55);
     generateTimeOptions('rdvHourEnd', 8 * 60 + 5, 19 * 60);
 
@@ -232,15 +266,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('rdvDate').min = new Date().toISOString().split('T')[0];
     });
 
-    /** Hides the academic skills error message as soon as at least one checkbox is checked. */
-    document.querySelectorAll('.skill-check').forEach(cb => {
-        cb.addEventListener('change', function () {
-            if (document.querySelectorAll('.skill-check:checked').length > 0) {
-                document.getElementById('rdvAcademicSkillsError').style.display = 'none';
-            }
-        });
-    });
-
     /** Regenerates end time options to always be at least 5 minutes after the selected start time. */
     document.getElementById('rdvHourStart').addEventListener('change', function () {
         const [h, m] = this.value.split(':').map(Number);
@@ -251,18 +276,18 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('btnSendRDV').addEventListener('click', function () {
         let valid = true;
 
-        const rdvBeneficiary   = document.getElementById('rdvBeneficiary');
-        const rdvDate          = document.getElementById('rdvDate');
-        const rdvHourStart     = document.getElementById('rdvHourStart');
-        const rdvHourEnd       = document.getElementById('rdvHourEnd');
-        const rdvEstablishment = document.getElementById('rdvEstablishment');
-        const rdvLocal         = document.getElementById('rdvLocal');
-        const selectedSkills   = document.querySelectorAll('.skill-check:checked');
-        const skillsError      = document.getElementById('rdvAcademicSkillsError');
-        const atLeastOneComp   = Array.from(document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')).some(cb => cb.checked);
-        const compsError       = document.getElementById('rdvCompsError');
+        const rdvBeneficiary      = document.getElementById('rdvBeneficiary');
+        const rdvDate             = document.getElementById('rdvDate');
+        const rdvHourStart        = document.getElementById('rdvHourStart');
+        const rdvHourEnd          = document.getElementById('rdvHourEnd');
+        const rdvEstablishment    = document.getElementById('rdvEstablishment');
+        const rdvLocal            = document.getElementById('rdvLocal');
+        const rdvAcademicSkill    = document.getElementById('rdvAcademicSkill');
+        const rdvProfessionalSkill = document.getElementById('rdvProfessionalSkill');
+        const skillsError         = document.getElementById('rdvAcademicSkillsError');
+        const compsError          = document.getElementById('rdvCompsError');
 
-        [rdvBeneficiary, rdvDate, rdvHourStart, rdvHourEnd, rdvEstablishment, rdvLocal].forEach(el => {
+        [rdvBeneficiary, rdvDate, rdvHourStart, rdvHourEnd, rdvEstablishment, rdvLocal, rdvAcademicSkill, rdvProfessionalSkill].forEach(el => {
             el.classList.remove('is-invalid');
             const feedback = el.nextElementSibling;
             if (feedback && feedback.classList.contains('invalid-feedback')) feedback.remove();
@@ -270,28 +295,28 @@ document.addEventListener('DOMContentLoaded', function () {
         skillsError.style.display = 'none';
         compsError.style.display = 'none';
 
-        if (!rdvBeneficiary.value)          { displayError(rdvBeneficiary, 'Veuillez sélectionner un bénéficiaire.'); valid = false; }
-        if (!rdvDate.value)                 { displayError(rdvDate, 'La date est obligatoire.'); valid = false; }
-        if (!rdvHourStart.value)            { displayError(rdvHourStart, "L'heure de début est obligatoire."); valid = false; }
-        if (!rdvHourEnd.value)              { displayError(rdvHourEnd, "L'heure de fin est obligatoire."); valid = false; }
-        if (selectedSkills.length === 0)    { skillsError.style.display = 'block'; valid = false; }
-        if (!atLeastOneComp)                { compsError.style.display = 'block'; valid = false; }
-        if (!rdvEstablishment.value)        { displayError(rdvEstablishment, "L'établissement est obligatoire."); valid = false; }
-        if (!rdvLocal.value.trim())         { displayError(rdvLocal, 'Le local est obligatoire.'); valid = false; }
+        if (!rdvBeneficiary.value)       { displayError(rdvBeneficiary,   'Veuillez sélectionner un bénéficiaire.'); valid = false; }
+        if (!rdvDate.value)              { displayError(rdvDate,          'La date est obligatoire.'); valid = false; }
+        if (!rdvHourStart.value)         { displayError(rdvHourStart,     "L'heure de début est obligatoire."); valid = false; }
+        if (!rdvHourEnd.value)           { displayError(rdvHourEnd,       "L'heure de fin est obligatoire."); valid = false; }
+        if (!rdvAcademicSkill.value)     { skillsError.style.display = 'block'; valid = false; }
+        if (!rdvProfessionalSkill.value) { compsError.style.display = 'block'; valid = false; }
+        if (!rdvEstablishment.value)     { displayError(rdvEstablishment, "L'établissement est obligatoire."); valid = false; }
+        if (!rdvLocal.value.trim())      { displayError(rdvLocal,         'Le local est obligatoire.'); valid = false; }
 
         if (!valid) return;
 
         const payload = {
-            numBeneficiary:     parseInt(rdvBeneficiary.value),
-            date:               rdvDate.value,
-            startTime:          rdvHourStart.value,
-            endTime:            rdvHourEnd.value,
-            academicSkills:     Array.from(selectedSkills).map(cb => cb.value),
-            professionalSkills: Array.from(document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation'))
-                .filter(cb => cb.checked).map(cb => cb.id),
-            numEstablishment:   parseInt(rdvEstablishment.value),
-            local:              rdvLocal.value.trim(),
-            description:        document.getElementById('rdvDescription').value.trim()
+            numBeneficiary:              parseInt(rdvBeneficiary.value),
+            startDate:                   rdvDate.value,
+            endDate:                     rdvDate.value,
+            startTime:                   rdvHourStart.value,
+            endTime:                     rdvHourEnd.value,
+            numAcademicSkillsNeeded:     [parseInt(rdvAcademicSkill.value)],
+            numProfessionalSkillsNeeded: [parseInt(rdvProfessionalSkill.value)],
+            numEstablishment:            parseInt(rdvEstablishment.value),
+            appointmentLocals:           [rdvLocal.value.trim()],
+            description:                 document.getElementById('rdvDescription').value.trim()
         };
 
         fetch('/interprete/planning/beneficiaires/rdv', {
@@ -317,19 +342,17 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('rdvDate').value = '';
         document.getElementById('rdvDate').min = new Date().toISOString().split('T')[0];
         document.getElementById('rdvEstablishment').selectedIndex = 0;
+        document.getElementById('rdvAcademicSkill').selectedIndex = 0;
+        document.getElementById('rdvProfessionalSkill').selectedIndex = 0;
         document.getElementById('rdvLocal').value = '';
         document.getElementById('rdvDescription').value = '';
         document.getElementById('rdvAcademicSkillsError').style.display = 'none';
         document.getElementById('rdvCompsError').style.display = 'none';
 
-        document.querySelectorAll('.skill-check').forEach(cb => cb.checked = false);
-        document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')
-            .forEach(cb => cb.checked = false);
-
         generateTimeOptions('rdvHourStart', 8 * 60, 18 * 60 + 55);
         generateTimeOptions('rdvHourEnd', 8 * 60 + 5, 19 * 60);
 
-        ['rdvBeneficiary', 'rdvDate', 'rdvHourStart', 'rdvHourEnd'].forEach(id => {
+        ['rdvBeneficiary', 'rdvDate', 'rdvHourStart', 'rdvHourEnd', 'rdvEstablishment', 'rdvLocal', 'rdvAcademicSkill', 'rdvProfessionalSkill'].forEach(id => {
             const el = document.getElementById(id);
             el.classList.remove('is-invalid');
             const fb = el.nextElementSibling;
