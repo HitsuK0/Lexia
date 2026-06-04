@@ -296,6 +296,13 @@
                                        th:field="*{newPassword}"
                                        id="inputNewPassword"
                                        placeholder="Entrez le nouveau mot de passe ..."/>
+                                <div id="passwordCriteria" style="font-size:0.875em; margin-top:0.4rem;">
+                                    <div id="crit-length"  class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 8 caractères minimum</div>
+                                    <div id="crit-upper"   class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 lettre majuscule</div>
+                                    <div id="crit-lower"   class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 lettre minuscule</div>
+                                    <div id="crit-number"  class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 chiffre</div>
+                                    <div id="crit-special" class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 caractère spécial (!@#$%...)</div>
+                                </div>
                                 <div id="passwordError" style="display:none; color:#dc3545; font-size:0.875em;"></div>
                             </div>
                             <div class="mb-3">

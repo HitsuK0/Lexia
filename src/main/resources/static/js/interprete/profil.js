@@ -59,15 +59,14 @@ otherwise displays the corresponding errors. */
 function savePassword() {
     const newPassword = document.getElementById('inputNewPassword').value;
     const confirmPassword = document.getElementById('inputConfirmPassword').value;
-    const passwordError = document.getElementById('passwordError');
     const confirmError = document.getElementById('confirmError');
+    const passwordError = document.getElementById('passwordError');
 
     passwordError.style.display = 'none';
     confirmError.style.display = 'none';
 
     if (!isValidPassword(newPassword)) {
-        passwordError.innerHTML = 'Le mot de passe doit contenir au minimum :<br>' +
-            '- 8 caractères<br>- 1 majuscule<br>- 1 chiffre<br>- 1 caractère spécial (!@#$%...)';
+        passwordError.textContent = 'Veuillez respecter tous les critères du mot de passe.';
         passwordError.style.display = 'block';
         return;
     }
@@ -199,14 +198,30 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Validates the new password in real time as the user types,
     showing or hiding the format error message accordingly. */
     document.getElementById('inputNewPassword').addEventListener('input', function () {
-        const passwordError = document.getElementById('passwordError');
-        if (!isValidPassword(this.value)) {
-            passwordError.innerHTML = 'Le mot de passe doit contenir au minimum :<br>' +
-                '- 8 caractères<br>- 1 majuscule<br>- 1 chiffre<br>- 1 caractère spécial (!@#$%...)';
-            passwordError.style.display = 'block';
-        } else {
-            passwordError.style.display = 'none';
-        }
+        const val = this.value;
+
+        const criteria = [
+            { id: 'crit-length',  test: val.length >= 8 },
+            { id: 'crit-upper',   test: /[A-Z]/.test(val) },
+            { id: 'crit-lower',   test: /[a-z]/.test(val) },
+            { id: 'crit-number',  test: /[0-9]/.test(val) },
+            { id: 'crit-special', test: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val) }
+        ];
+
+        criteria.forEach(c => {
+            const el = document.getElementById(c.id);
+            if (c.test) {
+                el.innerHTML = el.innerHTML.replace(
+                    /<i[^>]*><\/i>/,
+                    '<i class="bi bi-check-circle-fill text-success"></i>'
+                );
+            } else {
+                el.innerHTML = el.innerHTML.replace(
+                    /<i[^>]*><\/i>/,
+                    '<i class="bi bi-x-circle-fill text-danger"></i>'
+                );
+            }
+        });
     });
 
     /* Checks in real time whether the confirmation password matches the new password,
