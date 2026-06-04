@@ -136,6 +136,25 @@ function onFieldChanged() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sectionParam = urlParams.get('section');
+    if (sectionParam) {
+        document.querySelectorAll('.profil-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+
+        const targetSection = document.getElementById('section-' + sectionParam);
+        if (targetSection) targetSection.classList.add('active');
+
+        const targetLink = document.querySelector(`.sidebar-link[data-section="${sectionParam}"]`);
+        if (targetLink) targetLink.classList.add('active');
+
+        const mobileItem = document.querySelector(`.dropdown-menu [data-section="${sectionParam}"]`);
+        if (mobileItem) {
+            document.getElementById('mobileSectionLabel').textContent = mobileItem.textContent;
+        }
+    }
+
     document.querySelectorAll('input:not([type="radio"]), textarea, select').forEach(el => {
         el.addEventListener('input', onFieldChanged);
         el.addEventListener('change', onFieldChanged);
