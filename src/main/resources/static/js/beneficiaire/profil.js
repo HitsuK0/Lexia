@@ -135,4 +135,40 @@ document.addEventListener('DOMContentLoaded', function () {
         el.addEventListener('change', onFieldChanged);
     });
 
+    /* Validates the email address in real time as the user types,
+showing or hiding the error message accordingly. */
+    document.getElementById('inputEmail').addEventListener('input', function () {
+        if (!isValidEmail(this.value)) {
+            this.classList.add('is-invalid');
+            document.getElementById('emailError').style.display = 'block';
+        } else {
+            this.classList.remove('is-invalid');
+            document.getElementById('emailError').style.display = 'none';
+        }
+    });
+
+    /* Validates the phone number in real time as the user types,
+    showing or hiding the error message accordingly. */
+    document.getElementById('inputTel').addEventListener('input', function () {
+        if (!isValidPhone(this.value)) {
+            this.classList.add('is-invalid');
+            document.getElementById('phoneError').style.display = 'block';
+        } else {
+            this.classList.remove('is-invalid');
+            document.getElementById('phoneError').style.display = 'none';
+        }
+    });
+
+    /* Checks in real time whether the confirmation password matches the new password,
+    showing or hiding the mismatch error message accordingly. */
+    document.getElementById('inputConfirmPassword').addEventListener('input', function () {
+        const confirmError = document.getElementById('confirmError');
+        const newPassword = document.getElementById('inputNewPassword').value;
+        if (this.value !== newPassword) {
+            confirmError.style.display = 'block';
+        } else {
+            confirmError.style.display = 'none';
+        }
+    });
+
 });
