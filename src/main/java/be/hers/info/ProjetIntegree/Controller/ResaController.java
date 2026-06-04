@@ -22,9 +22,9 @@ public class ResaController {
     }
 
     // Temporaire — réutilise le même template que la coordinatrice
-    @GetMapping("/etablissements")
+    @GetMapping("/gestion")
     public String etablissements(Model model) {
-        return "coordinatrice/etablissements";
+        return "coordinatrice/gestion";
     }
 
     // Temporaire
