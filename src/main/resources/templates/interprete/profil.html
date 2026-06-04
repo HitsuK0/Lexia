@@ -140,11 +140,22 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <label class="form-label" style="font-size:0.75rem; color:#888;">Ville</label>
                                             <div class="input-edit-group">
                                                 <input type="text" class="form-control form-control-sm" th:field="*{locality}" readonly id="inputVille"/>
                                                 <button type="button" class="btn-edit" onclick="toggleEdit('inputVille', this)" title="Modifier">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="form-label" style="font-size:0.75rem; color:#888;">
+                                                Lieu-dit <span class="text-muted fw-normal">(facultatif)</span>
+                                            </label>
+                                            <div class="input-edit-group">
+                                                <input type="text" class="form-control form-control-sm" th:field="*{hamlet}" readonly id="inputLieuDit"/>
+                                                <button type="button" class="btn-edit" onclick="toggleEdit('inputLieuDit', this)" title="Modifier">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
                                             </div>
