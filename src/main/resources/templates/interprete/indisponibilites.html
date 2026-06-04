@@ -74,8 +74,12 @@
                             </span>
                         </td>
 
-                        <td data-label="Motif"
-                            th:text="${absence.privateReason ? 'Motif privé' : (absence.reason != null and !absence.reason.isEmpty() ? absence.reason : '/')}"></td>
+                        <td data-label="Motif">
+                            <span th:text="${absence.reason != null and !absence.reason.isEmpty() ? absence.reason : '/'}"></span>
+                            <span th:if="${absence.privateReason}" class="badge bg-secondary ms-1" style="font-size:0.7rem;">
+                                <i class="bi bi-lock-fill"></i> Privé
+                            </span>
+                        </td>
 
                         <td data-label="Date demande">—</td>
 
