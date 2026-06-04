@@ -26,9 +26,9 @@
 
                 <div class="d-flex gap-3 small text-muted" style="position: absolute; left: 50%; transform: translateX(-50%);">
                     <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-hourglass-split" style="font-size:0.7rem;"></i>&nbsp;</span> Demande en attente</span>
-                    <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
-                    <span><span class="badge" style="background-color:#81c784;">&nbsp;&nbsp;</span> Accepté</span>
-                    <span><span class="badge" style="background-color:#f28b82;">&nbsp;&nbsp;</span> Refusé</span>
+                    <span><span class="badge" style="background-color:#b39ddb;">&nbsp;</span> Horaire de base</span>
+                    <span><span class="badge" style="background-color:#81c784;">&nbsp;<i class="bi bi-check-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Accepté</span>
+                    <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Refusé</span>
                 </div>
 
                 <div class="d-flex align-items-center gap-2 ms-auto">
@@ -175,6 +175,21 @@
                         <button type="button" class="btn btn-primary btn-sm px-4" id="btnSendRDV">Envoyez la demande</button>
                     </div>
 
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalEvent" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="modalEventTitle"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="modalEventBody"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
+                    </div>
                 </div>
             </div>
         </div>

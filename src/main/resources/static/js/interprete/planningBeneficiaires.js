@@ -183,6 +183,34 @@ document.addEventListener('DOMContentLoaded', function () {
                 : '';
 
             return { html: `<div class="p-1">${icon}${lines.join('')}</div>` };
+        },
+
+        /* Opens the event detail modal on click, displaying the appointment's
+        schedule, beneficiary, establishment, locals, description and professional skills. */
+        eventClick: function (info) {
+            const props = info.event.extendedProps;
+            const start = info.event.start.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+            const end = info.event.end?.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}) ?? '';
+
+            document.getElementById('modalEventTitle').textContent = info.event.title;
+
+            let body = `<p><strong>Horaire :</strong> ${start} – ${end}</p>`;
+
+            if (props.beneficiary)       body += `<p><strong>Bénéficiaire :</strong> ${props.beneficiary}</p>`;
+            if (props.establishment)     body += `<p><strong>Établissement :</strong> ${props.establishment}</p>`;
+            if (props.locals?.length > 0) body += `<p><strong>Local :</strong> ${Array.isArray(props.locals) ? props.locals.join(', ') : props.locals}</p>`;
+            if (props.description)       body += `<p><strong>Description :</strong> ${props.description}</p>`;
+            if (props.professionalSkills) body += `<p><strong>Compétence métier :</strong> ${props.professionalSkills}</p>`;
+
+            const statusLabels = {
+                'en attente': '<span class="badge" style="background-color:#f0ad4e;">En attente</span>',
+                'accepte':    '<span class="badge" style="background-color:#81c784;">Accepté</span>',
+                'refuse':     '<span class="badge" style="background-color:#f28b82;">Refusé</span>'
+            };
+            if (props.status) body += `<p><strong>Statut :</strong> ${statusLabels[props.status] ?? props.status}</p>`;
+
+            document.getElementById('modalEventBody').innerHTML = body;
+            new bootstrap.Modal(document.getElementById('modalEvent')).show();
         }
     });
 
