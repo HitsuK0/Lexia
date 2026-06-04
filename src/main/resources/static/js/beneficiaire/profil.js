@@ -125,4 +125,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (oldPassword) oldPassword.value = '';
     });
 
+    /* Shows the save button as soon as any field value changes. */
+    function onFieldChanged() {
+        document.getElementById('btnSauvegarder').style.display = 'block';
+    }
+
+    document.querySelectorAll('input:not([type="radio"]), textarea, select').forEach(el => {
+        el.addEventListener('input', onFieldChanged);
+        el.addEventListener('change', onFieldChanged);
+    });
+
 });
