@@ -238,4 +238,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 `<i class="bi bi-x-circle-fill text-danger"></i> ${labels[i]}`;
         });
     });
+
+    /* Automatically adds a skill badge when a skill is selected from the dropdown. */
+    document.getElementById('selectMetier').addEventListener('change', function () {
+        addSkill('selectMetier', 'badgesMetiers');
+    });
+
+    document.getElementById('selectAcademic').addEventListener('change', function () {
+        addSkill('selectAcademic', 'badgesAcademics');
+    });
 });
