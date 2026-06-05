@@ -1,5 +1,7 @@
 package be.hers.info.ProjetIntegree.DTO;
 
+import java.util.List;
+
 /**
  * DTO used to carry the beneficiary's editable profile fields between the HTML form and the controller.
  * The login and numBeneficiary are read-only and carried for identification only.
@@ -17,6 +19,10 @@ public class DTOBeneficiaryProfile {
     private String phoneNumber;
     private String emailAddress;
 
+    private int hourQuota;
+    private int educationLevel;
+    private List<String> communicationLanguage;
+
     // Address fields flattened for form binding
     private String postOfficeBox;
     private int postcode;
@@ -32,25 +38,33 @@ public class DTOBeneficiaryProfile {
     /**
      * Creates a fully initialised DTOBeneficiaryProfile.
      *
-     * @param numBeneficiary the id of the beneficiary (read-only, for identification)
-     * @param login          the login of the beneficiary (read-only)
-     * @param lastName       the last name of the beneficiary
-     * @param firstName      the first name of the beneficiary
-     * @param phoneNumber    the phone number of the beneficiary
-     * @param emailAddress   the email address of the beneficiary
-     * @param postOfficeBox  the street and number of the address
-     * @param postcode       the postal code of the address
-     * @param locality       the city of the address
-     * @param hamlet         the hamlet of the address (optional)
+     * @param numBeneficiary      the id of the beneficiary (read-only, for identification)
+     * @param login               the login of the beneficiary (read-only)
+     * @param lastName            the last name of the beneficiary
+     * @param firstName           the first name of the beneficiary
+     * @param phoneNumber         the phone number of the beneficiary
+     * @param emailAddress        the email address of the beneficiary
+     * @param hourQuota           the weekly hour quota of the beneficiary
+     * @param educationLevel      the education level of the beneficiary (0 to 4)
+     * @param communicationLanguage the list of communication languages of the beneficiary
+     * @param postOfficeBox       the street and number of the address
+     * @param postcode            the postal code of the address
+     * @param locality            the city of the address
+     * @param hamlet              the hamlet of the address (optional)
      */
-    public DTOBeneficiaryProfile(int numBeneficiary, String login, String lastName, String firstName, String phoneNumber,
-                                 String emailAddress, String postOfficeBox, int postcode, String locality, String hamlet) {
+    public DTOBeneficiaryProfile(int numBeneficiary, String login, String lastName, String firstName,
+                                 String phoneNumber, String emailAddress,
+                                 int hourQuota, int educationLevel, List<String> communicationLanguage,
+                                 String postOfficeBox, int postcode, String locality, String hamlet) {
         this.numBeneficiary = numBeneficiary;
         this.login = login;
         this.lastName = lastName;
         this.firstName = firstName;
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
+        this.hourQuota = hourQuota;
+        this.educationLevel = educationLevel;
+        this.communicationLanguage = communicationLanguage;
         this.postOfficeBox = postOfficeBox;
         this.postcode = postcode;
         this.locality = locality;
@@ -92,6 +106,24 @@ public class DTOBeneficiaryProfile {
 
     /** @param emailAddress the email address of the beneficiary */
     public void setEmailAddress(String emailAddress) { this.emailAddress = emailAddress; }
+
+    /** @return the weekly hour quota of the beneficiary */
+    public int getHourQuota() { return hourQuota; }
+
+    /** @param hourQuota the weekly hour quota of the beneficiary */
+    public void setHourQuota(int hourQuota) { this.hourQuota = hourQuota; }
+
+    /** @return the education level of the beneficiary (0 = other, 1 = nursery, 2 = primary, 3 = secondary, 4 = higher) */
+    public int getEducationLevel() { return educationLevel; }
+
+    /** @param educationLevel the education level of the beneficiary (0 to 4) */
+    public void setEducationLevel(int educationLevel) { this.educationLevel = educationLevel; }
+
+    /** @return the list of communication languages of the beneficiary */
+    public List<String> getCommunicationLanguage() { return communicationLanguage; }
+
+    /** @param communicationLanguage the list of communication languages of the beneficiary */
+    public void setCommunicationLanguage(List<String> communicationLanguage) { this.communicationLanguage = communicationLanguage; }
 
     /** @return the street and number of the address */
     public String getPostOfficeBox() { return postOfficeBox; }
