@@ -68,48 +68,6 @@ public class CoordinatorController {
     }
 
     /**
-     * This function load the page "etablissement".
-     * It also add all the data needed for the display (all the establishment registered in DB)
-     * The page enable to add and modify an Establishment and to attribute a referrer for an Establishment.
-     *
-     * @param model is param used by Spring to add all the data in the page.
-     * @return the page displayed for the users.
-     */
-    @GetMapping("/etablissements")
-    public String etablissements(Model model, HttpSession session) {
-        Coordinator coordinator = getCoordinatorFromSession(session);
-        if(coordinator == null)
-            return "redirect:login";
-        String userName = coordinator.getLastName().toUpperCase() + " " + coordinator.getFirstName();
-        model.addAttribute("userName", userName);
-        model.addAttribute("userRole", "COORDINATOR");
-        model.addAttribute("isAdmin", true);
-        EstablishementService establishmentService = new EstablishementService();
-        List<DTOEstablishment> listEstablishment = null;
-        try {
-            listEstablishment = establishmentService.getEtablissements();
-        } catch (SQLException e) {
-            // renvoyé sur la page d'erreur.
-        }
-        model.addAttribute("listEstablishment", listEstablishment);
-        // listEstablishment is used for the display in the table.
-        model.addAttribute("DTOEstablishmentAdd", new DTOEstablishment());
-        // DTOEstablishmentAdd is used when the user try to add an Establishment
-        model.addAttribute("DTOEstablishmentEdit", new DTOEstablishment());
-        // DTOEstablishment is used when we try to modify an
-        ReferrerService referrerService = new ReferrerService();
-        List<Referrer> allListReferrer = null;
-        try {
-            allListReferrer = referrerService.getAllReferrer();
-        } catch (SQLException e) {
-            //renvoyé sur la page d'erreur.
-        }
-        model.addAttribute("allListReferrer", allListReferrer);
-        model.addAttribute("listReferrerSelected", new ArrayList<Integer>());
-        return "coordinatrice/etablissements";
-    }
-
-    /**
      * This function load the page "gestion".
      * It adds all the data needed for the page to display (Skills, Referents and Establishments).
      * If no user of Coordinator object was found in the session or if the Coordinator in the session
@@ -326,7 +284,7 @@ public class CoordinatorController {
      */
     @PostMapping("/etablissements/createEstablishment")
     public String addEstablishment(
-                                   @ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment,
+                                   @ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
                                    Model model) {
 
         EstablishementService establishementService = new EstablishementService();
@@ -347,8 +305,7 @@ public class CoordinatorController {
      * @return the page "etablissements" where it comes from.
      */
     @PostMapping("etablissements/updateEstablishment")
-    public String updateEstablishment(
-                                      @ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
+    public String updateEstablishment(@ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
                                       Model model) {
 
         EstablishementService establishementService = new EstablishementService();
