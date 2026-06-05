@@ -284,8 +284,7 @@ public class CoordinatorController {
      * @return the page "etablissements" where it comes from.
      */
     @PostMapping("/etablissements/createEstablishment")
-    public String addEstablishment(
-                                   @ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
+    public String addEstablishment(@ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
                                    Model model) {
 
         EstablishementService establishementService = new EstablishementService();
@@ -308,7 +307,6 @@ public class CoordinatorController {
     @PostMapping("etablissements/updateEstablishment")
     public String updateEstablishment(@ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
                                       Model model) {
-
         EstablishementService establishementService = new EstablishementService();
         try {
             establishementService.updateEstablishment(dtoEstablishment);

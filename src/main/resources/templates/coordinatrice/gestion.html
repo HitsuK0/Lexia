@@ -85,6 +85,7 @@
                                             data-bs-toggle="modal" data-bs-target="#modalEditEtab"
                                             th:data-id="${etab.numEstablishment}"
                                             th:data-name="${etab.nameBuilding}"
+                                            th:data-id-address="${!etab.addresses.isEmpty() ? etab.addresses[0].numAddress : ''}"
                                             th:data-rue="${!etab.addresses.isEmpty() ? etab.addresses[0].postOfficeBox : ''}"
                                             th:data-cp="${!etab.addresses.isEmpty() ? etab.addresses[0].postcode : ''}"
                                             th:data-ville="${!etab.addresses.isEmpty() ? etab.addresses[0].locality : ''}"
