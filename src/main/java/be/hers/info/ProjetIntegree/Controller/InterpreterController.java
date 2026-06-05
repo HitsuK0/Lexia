@@ -405,13 +405,12 @@ public class InterpreterController {
      * Updates the details of an existing absence
      * The updated information is received as a model attribute and passed to the service
      * @param updatedAbsence The absence object containing the modified data
-     * @param model the UI model to hold the list of absences and the active tab status
      * @param request    the current HTTP request used to access the session
      * @return A redirect to the absences list view after the update is processed
      */
     @PostMapping("/indisponibilites/update")
     public String updateAbsence(@ModelAttribute Absence updatedAbsence,
-                                Model model, HttpServletRequest request) {
+                                HttpServletRequest request) {
         HttpSession session = request.getSession();
         Interpreter interpreter = getInterpreterFromSession(session);
         if (interpreter == null) {

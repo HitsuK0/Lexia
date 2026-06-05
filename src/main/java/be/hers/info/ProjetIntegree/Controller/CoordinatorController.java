@@ -5,13 +5,16 @@ package be.hers.info.ProjetIntegree.Controller;
  * @reviewer Halet Louis
  */
 
+import be.hers.info.ProjetIntegree.DAO.DAOAcademicSkill;
+import be.hers.info.ProjetIntegree.DAO.DAOProfessionalSkill;
 import be.hers.info.ProjetIntegree.DTO.DTOEstablishment;
+import be.hers.info.ProjetIntegree.DTO.DTOInterpreterProfile;
+import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
 import be.hers.info.ProjetIntegree.DTO.DTOReferrer;
 import be.hers.info.ProjetIntegree.POJO.*;
-import be.hers.info.ProjetIntegree.Services.EstablishementService;
+import be.hers.info.ProjetIntegree.Services.*;
 
-import be.hers.info.ProjetIntegree.Services.ReferrerService;
-import be.hers.info.ProjetIntegree.Services.SkillService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -40,13 +43,187 @@ public class CoordinatorController {
         return null;
     }
 
-    // Temporaire
+    /** Controller for the pages named "Mon profil"
+     * Displays the profile page for the connected Coordinator.
+     * @param session the current HTTP session
+     * @param model the Spring UI model
+     * @return the view "/interprete/profil", or a redirect to "/login"
+     */
     @GetMapping("/profil")
-    public String profil(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("userRole", "COORDINATOR");
-        model.addAttribute("isAdmin", true);
+    public String profil(HttpSession session, Model model) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        InterpreterProfileService profileService = new InterpreterProfileService();
+        DTOInterpreterProfile profileDTO = profileService.buildProfileDTO(coordinator);
+
+        model.addAttribute("profileDTO", profileDTO);
+        model.addAttribute("passwordDTO", new DTOPasswordChange());
+        model.addAttribute("activeTab", "profil");
+
         return "interprete/profil";
+    }
+
+
+    @PostMapping("/profil")
+    public String saveProfile(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            InterpreterProfileService profileService = new InterpreterProfileService();
+            profileService.saveProfile(coordinator, profileDTO);
+            session.setAttribute("currentUser", coordinator);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/interprete/profil";
+    }
+
+    @PostMapping("/profil/password")
+    public String changePassword(@ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            InterpreterProfileService profileService = new InterpreterProfileService();
+            boolean success = profileService.changePassword(coordinator, passwordDTO);
+            if (!success) {
+                return "redirect:/interprete/profil?passwordError=true";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/interprete/profil";
+    }
+
+    @PostMapping("/profil/addProfessionalSkill")
+    public String addProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
+                                       HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            InterpreterProfileService profileService = new InterpreterProfileService();
+            int numSkill = profileDTO.getNumProfessionalSkillSelected();
+
+            boolean alreadyOwned = coordinator.getProfessionalSkillsList() != null &&
+                    coordinator.getProfessionalSkillsList().stream()
+                            .anyMatch(s -> s.getNumProfessionalSkill() == numSkill);
+
+            if (!alreadyOwned) {
+                boolean res = profileService.addProfessionalSkill(coordinator.getNumInterpreter(), numSkill);
+                if (res) {
+                    DAOProfessionalSkill dao = new DAOProfessionalSkill();
+                    ProfessionalSkill p = dao.find(numSkill);
+                    if (p != null) {
+                        if (coordinator.getProfessionalSkillsList() == null) {
+                            coordinator.setProfessionalSkillsList(new ArrayList<>());
+                        }
+                        coordinator.getProfessionalSkillsList().add(p);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        session.setAttribute("currentUser", coordinator);
+
+        return "redirect:/interprete/profil?section=metiers";
+    }
+
+    @PostMapping("/profil/deleteProfessionalSkill")
+    public String deleteProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
+                                          HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            InterpreterProfileService profileService = new InterpreterProfileService();
+            int numSkill = profileDTO.getNumProfessionalSkillSelected();
+            boolean res = profileService.deleteProfessionalSkill(coordinator.getNumInterpreter(), numSkill);
+            if (res && coordinator.getProfessionalSkillsList() != null) {
+                coordinator.getProfessionalSkillsList()
+                        .removeIf(s -> s.getNumProfessionalSkill() == numSkill);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        session.setAttribute("currentUser", coordinator);
+        return "redirect:/interprete/profil?section=metiers";
+    }
+
+    @PostMapping("/profil/addAcademicSkill")
+    public String addAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
+                                   HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            InterpreterProfileService profileService = new InterpreterProfileService();
+            int numSkill = profileDTO.getNumAcademicSkillSelected();
+
+            boolean alreadyOwned = coordinator.getAcademicSkillsList() != null &&
+                    coordinator.getAcademicSkillsList().stream()
+                            .anyMatch(s -> s.getNumAcademicSkill() == numSkill);
+
+            if (!alreadyOwned) {
+                boolean res = profileService.addAcademicSkill(coordinator.getNumInterpreter(), numSkill);
+                if (res) {
+                    DAOAcademicSkill dao = new DAOAcademicSkill();
+                    AcademicSkill a = dao.find(numSkill);
+                    if (a != null) {
+                        if (coordinator.getAcademicSkillsList() == null) {
+                            coordinator.setAcademicSkillsList(new ArrayList<>());
+                        }
+                        coordinator.getAcademicSkillsList().add(a);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        session.setAttribute("currentUser", coordinator);
+        return "redirect:/interprete/profil?section=academics";
+    }
+
+    @PostMapping("/profil/deleteAcademicSkill")
+    public String deleteAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
+                                      HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            InterpreterProfileService profileService = new InterpreterProfileService();
+            int numSkill = profileDTO.getNumAcademicSkillSelected();
+            boolean res = profileService.deleteAcademicSkill(coordinator.getNumInterpreter(), numSkill);
+            if (res && coordinator.getAcademicSkillsList() != null) {
+                coordinator.getAcademicSkillsList()
+                        .removeIf(s -> s.getNumAcademicSkill() == numSkill);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        session.setAttribute("currentUser", coordinator);
+        return "redirect:/interprete/profil?section=academics";
     }
 
     // Temporaire
