@@ -76,39 +76,37 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label small fw-semibold">Date de naissance</label>
+
+                        <div class="col-md-3" th:if="${userRole == 'INTERPRETER'}">
+                            <label class="form-label small fw-semibold">Heures prestées</label>
+                            <input type="number" class="form-control form-control-sm" readonly id="inputHeuresPrestees" placeholder="—"/>
+                        </div>
+
+                        <div class="col-md-3" th:if="${userRole == 'BENEFICIARY'}">
+                            <label class="form-label small fw-semibold">Quota d'heures</label>
                             <div class="input-edit-group">
-                                <input type="date" class="form-control form-control-sm" value="2003-12-10" readonly id="inputDateNaissance"/>
-                                <button class="btn-edit" onclick="toggleEdit('inputDateNaissance', this)" title="Modifier">
+                                <input type="number" class="form-control form-control-sm" readonly id="inputQuota" placeholder="—"/>
+                                <button class="btn-edit" onclick="toggleEdit('inputQuota', this)" title="Modifier">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label small fw-semibold">Genre</label>
-                            <div class="d-flex gap-3 mt-1">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="genre" id="genreHomme" value="homme" checked/>
-                                    <label class="form-check-label small" for="genreHomme">Homme</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="genre" id="genreFemme" value="femme"/>
-                                    <label class="form-check-label small" for="genreFemme">Femme</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="genre" id="genreNR" value="nr"/>
-                                    <label class="form-check-label small" for="genreNR">NR</label>
-                                </div>
+                        <div class="col-md-3" th:if="${userRole == 'BENEFICIARY'}">
+                            <label class="form-label small fw-semibold">Niveau d'éducation</label>
+                            <div class="input-edit-group">
+                                <input type="number" class="form-control form-control-sm" readonly id="inputEducation" min="0" max="4" placeholder="0-4"/>
+                                <button class="btn-edit" onclick="toggleEdit('inputEducation', this)" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Diplômes</label>
-                        <div class="input-edit-group align-items-start">
-                            <textarea class="form-control form-control-sm" rows="2" readonly id="inputDiplomes">Diplôme lié au métier</textarea>
-                            <button class="btn-edit mt-1" onclick="toggleEdit('inputDiplomes', this)" title="Modifier">
+                    <div class="mb-3" th:if="${userRole == 'BENEFICIARY'}">
+                        <label class="form-label small fw-semibold">Langue(s) de communication</label>
+                        <div class="input-edit-group">
+                            <input type="text" class="form-control form-control-sm" readonly id="inputLangues" placeholder="—"/>
+                            <button class="btn-edit" onclick="toggleEdit('inputLangues', this)" title="Modifier">
                                 <i class="bi bi-pencil"></i>
                             </button>
                         </div>
@@ -172,6 +170,17 @@
                                 <div class="input-edit-group">
                                     <input type="text" class="form-control form-control-sm" value="Bruxelles" readonly id="inputVille"/>
                                     <button class="btn-edit" onclick="toggleEdit('inputVille', this)" title="Modifier">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label" style="font-size:0.75rem; color:#888;">
+                                    Lieu-dit <span class="text-muted fw-normal">(facultatif)</span>
+                                </label>
+                                <div class="input-edit-group">
+                                    <input type="text" class="form-control form-control-sm" value="" readonly id="inputLieuDit"/>
+                                    <button class="btn-edit" onclick="toggleEdit('inputLieuDit', this)" title="Modifier">
                                         <i class="bi bi-pencil"></i>
                                     </button>
                                 </div>
