@@ -390,7 +390,7 @@ public class CoordinatorController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return "redirect:/coordinatrice/gestion";
+        return "redirect:/coordinatrice/gestion?tab=referents";
     }
 
     /** Updates an existing Referrer in the database with the data submitted from the form.
@@ -414,7 +414,7 @@ public class CoordinatorController {
             e.printStackTrace();
         }
 
-        return "redirect:/coordinatrice/gestion";
+        return "redirect:/coordinatrice/gestion?tab=referents";
     }
 
     /** Deletes a Referrer from the database using the id contained in the DTOReferrer submitted
@@ -438,7 +438,7 @@ public class CoordinatorController {
             e.printStackTrace();
         }
 
-        return "redirect:/coordinatrice/gestion";
+        return "redirect:/coordinatrice/gestion?tab=referents";
     }
 
     /**
@@ -463,7 +463,7 @@ public class CoordinatorController {
             e.printStackTrace();
         }
 
-        return "redirect:/coordinatrice/gestion";
+        return "redirect:/coordinatrice/gestion?tab=competences";
     }
 
     /**
@@ -488,7 +488,7 @@ public class CoordinatorController {
             e.printStackTrace();
         }
 
-        return "redirect:/coordinatrice/gestion";
+        return "redirect:/coordinatrice/gestion?tab=competences";
     }
 
     /**
@@ -513,7 +513,7 @@ public class CoordinatorController {
             e.printStackTrace();
         }
 
-        return "redirect:/coordinatrice/gestion";
+        return "redirect:/coordinatrice/gestion?tab=competences";
     }
 
     /**
@@ -538,19 +538,17 @@ public class CoordinatorController {
             e.printStackTrace();
         }
 
-        return "redirect:/coordinatrice/gestion";
+        return "redirect:/coordinatrice/gestion?tab=competences";
     }
 
     /**
      * This function create an establishment in DB using the data put in the form.
      *
      * @param dtoEstablishment is the DTOEstablishment the user is trying to add.
-     * @param model            is param used by Spring to add all the data in the page.
      * @return the page "etablissements" where it comes from.
      */
     @PostMapping("/etablissements/createEstablishment")
-    public String addEstablishment(@ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment,
-                                   Model model) {
+    public String addEstablishment(@ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment) {
         EstablishementService establishementService = new EstablishementService();
         try {
             establishementService.createEstablishment(dtoEstablishment);
