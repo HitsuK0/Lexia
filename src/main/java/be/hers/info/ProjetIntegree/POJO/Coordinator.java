@@ -17,7 +17,6 @@ public class Coordinator extends Interpreter {
     public Coordinator() {
         super();
         this.isAdmin = false;
-
     }
 
     /**
@@ -32,10 +31,9 @@ public class Coordinator extends Interpreter {
      * @param weeklyWorkHours the number of hours worked over the week
      * @param address the address of the interpreter
      */
-    public Coordinator(String login, String password, String lastName, String firstName, String email, String phoneNumber, int weeklyWorkHours, Address address) {
-        super(login,password,lastName,firstName,email,phoneNumber,weeklyWorkHours,address);
+    public Coordinator(String login, String password, String lastName, String firstName, String phoneNumber, String email, int weeklyWorkHours, Address address) {
+        super(login,password,lastName,firstName, phoneNumber, email,weeklyWorkHours,address);
         this.isAdmin = false;
-
     }
 
     /**
@@ -46,16 +44,15 @@ public class Coordinator extends Interpreter {
      * @param password the interpreter’s hashed password
      * @param lastName the last name of the interpreter
      * @param firstName the first name of the interpreter
-     * @param email the email of the interpreter
      * @param phoneNumber the phone number of the interpreter
+     * @param email the email of the interpreter
      * @param weeklyWorkHours the number of hours worked over the week
      * @param address the address of the interpreter
      */
-    public Coordinator(int numInterpreter,String login, String password, String lastName, String firstName, String email, String phoneNumber,
+    public Coordinator(int numInterpreter,String login, String password, String lastName, String firstName, String phoneNumber, String email,
                        int weeklyWorkHours, Address address) {
-        super(numInterpreter,login, password,lastName,firstName,email,phoneNumber,weeklyWorkHours,address);
+        super(numInterpreter, login, password,lastName,firstName, phoneNumber, email, weeklyWorkHours,address);
         this.isAdmin = false;
-
     }
     /**
      * Create a coordinator with his list of Appointment, ProfessionalSkill, AcademicSkill and Beneficiary without his numCoordinator
@@ -82,8 +79,6 @@ public class Coordinator extends Interpreter {
         super(numInterpreter, login, password,lastName,firstName,phoneNumber,email,address,weeklyWorkHours,absences, appointmentsList, professionalSkillsList,academicSkillsList,beneficiariesList);
         this.isAdmin = false;
     }
-
-
 
     /**
      * Create a complete coordinator.
