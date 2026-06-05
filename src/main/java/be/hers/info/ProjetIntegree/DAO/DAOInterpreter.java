@@ -51,8 +51,8 @@ public class DAOInterpreter extends DAO<Interpreter> {
                         rs.getString("password"),
                         rs.getString("lastName"),
                         rs.getString("firstName"),
-                        rs.getString("phoneNumber"),
                         rs.getString("emailAddress"),
+                        rs.getString("phoneNumber"),
                         rs.getInt("weeklyWorkHours"),
                         addressInterpreter
                 );
