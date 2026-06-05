@@ -293,7 +293,7 @@ public class CoordinatorController {
         } catch (SQLException e) {
             // renvoyé la page d'erreur.
         }
-        return "redirect:/coordinatrice/etablissements";
+        return "redirect:/coordinatrice/gestion";
     }
 
     /**
@@ -314,7 +314,7 @@ public class CoordinatorController {
         } catch (SQLException e) {
             // renvoyé la page d'erreur.
         }
-        return "redirect:/coordinatrice/etablissements";
+        return "redirect:/coordinatrice/gestion";
     }
 
     // Temporaire

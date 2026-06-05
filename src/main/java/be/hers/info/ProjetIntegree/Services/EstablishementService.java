@@ -78,6 +78,7 @@ public class EstablishementService {
      * @param dtoEstablishment
      * @throws SQLException
      */
+    // Test pas encore possible car le js ne complete pas le num address (du coup find renvoie null).
     public void updateEstablishment(DTOEstablishment dtoEstablishment) throws SQLException {
         DAOEstablishment daoEstablishment = new DAOEstablishment();
         DAOReferrer daoReferrer = new DAOReferrer();
