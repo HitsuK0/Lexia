@@ -66,7 +66,14 @@ public class CoordinatorController {
         return "interprete/profil";
     }
 
-
+    /** Controller for the page "Mon profil" of the connected coordinator.
+     * Handles the submission of the profile edit form.
+     * Saves the modified personal data.
+     * The login and password are NOT modified here.
+     * @param profileDTO the profile form data submitted by the user
+     * @param session the current HTTP session
+     * @return a redirect to "/interprete/profil" after saving, or a redirect to "/login" if the session is invalid
+     */
     @PostMapping("/profil")
     public String saveProfile(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
@@ -85,6 +92,14 @@ public class CoordinatorController {
         return "redirect:/interprete/profil";
     }
 
+    /** Controller for the page "Mon profil" of the connected coordinator.
+     * Handles the submission of the password change modal.
+     * @param passwordDTO the password change form data submitted by the user
+     * @param session the current HTTP session
+     * @return a redirect to "/interprete/profil" after the operation,
+     *         with "?passwordError=true" appended if passwords do not match,
+     *         or a redirect to "/login" if the session is invalid
+     */
     @PostMapping("/profil/password")
     public String changePassword(@ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
@@ -105,6 +120,15 @@ public class CoordinatorController {
         return "redirect:/interprete/profil";
     }
 
+    /** Controller for the page "Mon profil" of the connected coordinator.
+     * Adds a professional skill to the connected coordinator.
+     * Checks first if the coordinator already owns the skill to avoid a unique constraint
+     * violation in the database on double form submission.
+     * @param profileDTO the profile form data submitted by the user
+     * @param session the current HTTP session
+     * @return a redirect to "/interprete/profil?section=metiers" after adding,
+     *         or a redirect to "/login" if the session is invalid
+     */
     @PostMapping("/profil/addProfessionalSkill")
     public String addProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
                                        HttpSession session) {
@@ -142,6 +166,14 @@ public class CoordinatorController {
         return "redirect:/interprete/profil?section=metiers";
     }
 
+    /** Controller for the page "Mon profil" of the connected coordinator, section Professional Skill.
+     * Deletes a professional skill from the connected coordinator.
+     * Removes the skill from the coordinator's session list by matching its ID directly.
+     * @param profileDTO the profile form data submitted by the user.
+     * @param session the current HTTP session
+     * @return a redirect to "/interprete/profil?section=metiers" after deleting,
+     *         or a redirect to "/login" if the session is invalid
+     */
     @PostMapping("/profil/deleteProfessionalSkill")
     public String deleteProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
                                           HttpSession session) {
@@ -166,6 +198,16 @@ public class CoordinatorController {
         return "redirect:/interprete/profil?section=metiers";
     }
 
+    /**
+     * Controller for the page "Mon profil" of the connected coordinator, section Academic Skill.
+     * Adds an academic skill to the connected coordinator.
+     * Checks first if the coordinator already owns the skill to avoid a unique constraint
+     * violation in the database on double form submission.
+     * @param profileDTO the profile form data submitted by the user.
+     * @param session the current HTTP session
+     * @return a redirect to "/interprete/profil?section=academics" after adding,
+     *         or a redirect to "/login" if the session is invalid
+     */
     @PostMapping("/profil/addAcademicSkill")
     public String addAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
                                    HttpSession session) {
@@ -202,6 +244,14 @@ public class CoordinatorController {
         return "redirect:/interprete/profil?section=academics";
     }
 
+    /**
+     * Controller for the page "Mon profil" of the connected coordinator, section Academic Skill.
+     * Deletes an academic skill from the connected coordinator.
+     * @param profileDTO the profile form data submitted by the user.
+     * @param session the current HTTP session
+     * @return a redirect to "/interprete/profil?section=academics" after deleting,
+     *         or a redirect to "/login" if the session is invalid
+     */
     @PostMapping("/profil/deleteAcademicSkill")
     public String deleteAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
                                       HttpSession session) {
