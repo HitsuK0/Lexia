@@ -62,27 +62,30 @@
                                     </div>
                                 </div>
 
-                                <!-- TODO backend : ajouter hourQuota, educationLevel, communicationLanguage dans DTOBeneficiaryProfile et BeneficiaryProfileService -->
                                 <div class="row mb-4">
                                     <div class="col-md-3">
                                         <label class="form-label small fw-semibold">Quota d'heures</label>
-                                        <div class="input-edit-group">
-                                            <input type="number" class="form-control form-control-sm" readonly id="inputQuota"
-                                                   placeholder="Non disponible"/>
-                                        </div>
+                                        <input type="number" class="form-control form-control-sm" th:field="*{hourQuota}" readonly id="inputQuota"/>
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label small fw-semibold">Niveau d'éducation</label>
                                         <div class="input-edit-group">
-                                            <input type="number" class="form-control form-control-sm" readonly id="inputEducation"
-                                                   min="0" max="4" placeholder="0-4"/>
+                                            <input type="number" class="form-control form-control-sm" th:field="*{educationLevel}" readonly id="inputEducation" min="0" max="4"/>
+                                            <button type="button" class="btn-edit" onclick="toggleEdit('inputEducation', this)" title="Modifier">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="col-md-5">
                                         <label class="form-label small fw-semibold">Langue(s) de communication</label>
                                         <div class="input-edit-group">
-                                            <input type="text" class="form-control form-control-sm" readonly id="inputLangues"
-                                                   placeholder="Non disponible"/>
+                                            <input type="text" class="form-control form-control-sm"
+                                                   th:value="${#strings.listJoin(profileDTO.communicationLanguage, ', ')}"
+                                                   name="communicationLanguageDisplay"
+                                                   readonly id="inputLangues"/>
+                                            <button type="button" class="btn-edit" onclick="toggleEdit('inputLangues', this)" title="Modifier">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
