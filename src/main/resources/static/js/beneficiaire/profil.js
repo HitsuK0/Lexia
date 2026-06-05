@@ -27,11 +27,21 @@ function isValidPassword(password) {
 }
 
 /* Toggles a form field between readonly and editable mode,
-and updates the edit button color to indicate the current state. */
+and updates the edit button color to indicate the current state.
+Only one field can be edited at a time. */
 function toggleEdit(id, btn) {
     const input = document.getElementById(id);
     const isReadonly = input.hasAttribute('readonly');
+
     if (isReadonly) {
+        document.querySelectorAll('.input-edit-group input, .input-edit-group textarea').forEach(otherInput => {
+            if (otherInput.id !== id && !otherInput.hasAttribute('readonly')) {
+                otherInput.setAttribute('readonly', true);
+                const otherBtn = otherInput.closest('.input-edit-group').querySelector('.btn-edit');
+                if (otherBtn) otherBtn.style.color = '';
+            }
+        });
+
         input.removeAttribute('readonly');
         input.focus();
         btn.style.color = '#593196';
