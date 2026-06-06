@@ -624,7 +624,6 @@ public class CoordinatorController {
         return "coordinatrice/utilisateurs";
     }
 
-    // Temporaire
     @GetMapping("/utilisateurs/{id}")
     public String utilisateurDetail(@PathVariable String id, Model model) {
         model.addAttribute("userName", "NOM Prenom");
@@ -648,13 +647,27 @@ public class CoordinatorController {
      *         Otherwise, return a redirection to the "/login" page
      */
     @PostMapping("utilisateurs/addUser")
-    public String addUser(HttpSession session){
+    public String addUser(HttpSession session, @ModelAttribute DTOUserAdd dtoAddUser, Model model){
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null)
             return "redirect:/login";
 
-        //En pause en attendant les modifs de Chloé
-        return "";
+        try{
+            String result = "";
+            switch (dtoAddUser.getRole()) {
+                case "1" -> result = addResa(dtoAddUser);
+                case "2" -> result = addInterpreter(dtoAddUser);
+                case "3" -> result = addBeneficiary(dtoAddUser);
+                case "4" -> result = addCoordinator(dtoAddUser);
+            }
+
+            return result;
+        }
+        catch(SQLException e) {
+            //Faudra trouver ce qu'on va vraiment retourner pour TOUS les catchs de TOUS les controllers
+            //parce que pour l'instant, c'est à chier. On va se faire défoncer si les profs voient ça
+            e.printStackTrace();
+        }
     }
 
     /**
