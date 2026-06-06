@@ -9,6 +9,7 @@ import be.hers.info.ProjetIntegree.DAO.DAOBeneficiary;
 import be.hers.info.ProjetIntegree.DAO.DAOCoordinator;
 import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryUsers;
+import be.hers.info.ProjetIntegree.DTO.DTOInterpreterUsers;
 import be.hers.info.ProjetIntegree.POJO.Beneficiary;
 
 import java.sql.SQLException;
@@ -17,12 +18,42 @@ import java.util.List;
 
 public class CoordinatorUsersService {
     /**
-     * @return A list containing all the Beneficiaries without his password
+     * @return A list containing all the beneficiaries without his password
      * @throws SQLException If an SQL error occurs with this method.
      */
     public List<DTOBeneficiaryUsers> findAllBeneficiary() throws SQLException {
         DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
         return daoBeneficiary.findAllDTOBeneficiaryUsers();
+    }
+
+    /**
+     * @return A list containing all the interpreters without his password, his absences, his appointmentsList,
+     * and his beneficiariesList
+     * @throws SQLException If an SQL error occurs with this method.
+     */
+    public List<DTOInterpreterUsers> findAllInterpreters() throws SQLException {
+        DAOInterpreter daoInterpreter = new DAOInterpreter();
+        return daoInterpreter.findAllDTOInterpreterUsers();
+    }
+
+    /**
+     * @return A list containing all the resas without his password, his absences, his appointmentsList,
+     * and his beneficiariesList
+     * @throws SQLException If an SQL error occurs with this method.
+     */
+    public List<DTOInterpreterUsers> findAllResas() throws SQLException {
+        DAOInterpreter daoInterpreter = new DAOInterpreter();
+        return daoInterpreter.findAllDTOResaUsers();
+    }
+
+    /**
+     * @return A list containing all the coordinators without his password, his absences, his appointmentsList,
+     * and his beneficiariesList
+     * @throws SQLException If an SQL error occurs with this method.
+     */
+    public List<DTOInterpreterUsers> findAllCoordinator() throws SQLException {
+        DAOInterpreter daoInterpreter = new DAOInterpreter();
+        return daoInterpreter.findAllDTOCoordinatorUsers();
     }
 
     /**
