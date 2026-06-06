@@ -42,8 +42,8 @@ public class CoordinatorUsersService {
      * @throws SQLException If an SQL error occurs with this method.
      */
     public List<DTOInterpreterUsers> findAllResas() throws SQLException {
-        DAOInterpreter daoInterpreter = new DAOInterpreter();
-        return daoInterpreter.findAllDTOResaUsers();
+        DAOCoordinator daoCoordinator = new DAOCoordinator();
+        return daoCoordinator.findAllDTOResaUsers();
     }
 
     /**
@@ -52,8 +52,8 @@ public class CoordinatorUsersService {
      * @throws SQLException If an SQL error occurs with this method.
      */
     public List<DTOInterpreterUsers> findAllCoordinator() throws SQLException {
-        DAOInterpreter daoInterpreter = new DAOInterpreter();
-        return daoInterpreter.findAllDTOCoordinatorUsers();
+        DAOCoordinator daoCoordinator = new DAOCoordinator();
+        return daoCoordinator.findAllDTOCoordinatorUsers();
     }
 
     /**
