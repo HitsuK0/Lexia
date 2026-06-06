@@ -1,6 +1,7 @@
 package be.hers.info.ProjetIntegree.DAO;
 
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
+import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryUsers;
 import be.hers.info.ProjetIntegree.POJO.*;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleType;
@@ -140,6 +141,53 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
 
                 Beneficiary beneficiary = new Beneficiary(resultSet.getInt("numBeneficiary"), resultSet.getString("login"),
                         resultSet.getString("password"), resultSet.getString("lastName"),
+                        resultSet.getString("firstName"), resultSet.getString("phoneNumber"),
+                        resultSet.getString("emailAddress"), address, resultSet.getInt("hourQuota"),
+                        resultSet.getInt("educationLevel"), interpreter, languages);
+
+                listBeneficiary.add(beneficiary);
+            }
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return listBeneficiary;
+    }
+
+    /**
+     * Creates a list containing all the Beneficiaries in the Beneficiary table
+     * For each Beneficiary, the Address is loaded via DAOAddress and the Interpreter
+     * of reference is loaded via DAOInterpreter
+     * Appointments are not loaded
+     * @return A list containing all the Beneficiaries without his password, an empty list if the table is empty
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public List<DTOBeneficiaryUsers> findAllDTOBeneficiaryUsers() throws SQLException {
+        List<DTOBeneficiaryUsers> listBeneficiary = new ArrayList<>();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT numBeneficiary, login, firstName, lastName, phoneNumber, " +
+                "emailAddress, hourQuota, educationLevel, communicationLanguage, FKnumInterpreter, FKAddress " +
+                "FROM Beneficiary";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+
+            DAOInterpreter interpreterDAO = new DAOInterpreter();
+            DAOAddress addressDAO = new DAOAddress();
+
+            while(resultSet.next()) {
+                Address address = addressDAO.find(resultSet.getInt("FKAddress"));
+                Interpreter interpreter = interpreterDAO.find(resultSet.getInt("FKnumInterpreter"));
+
+                String langStr = resultSet.getString("communicationLanguage");
+                List<String> languages = new ArrayList<>();
+                if(langStr != null && !langStr.isEmpty()) {
+                    languages = Arrays.stream(langStr.split(",")).collect(Collectors.toList());
+                }
+
+                DTOBeneficiaryUsers beneficiary = new DTOBeneficiaryUsers(resultSet.getInt("numBeneficiary"),
+                        resultSet.getString("login"), resultSet.getString("lastName"),
                         resultSet.getString("firstName"), resultSet.getString("phoneNumber"),
                         resultSet.getString("emailAddress"), address, resultSet.getInt("hourQuota"),
                         resultSet.getInt("educationLevel"), interpreter, languages);

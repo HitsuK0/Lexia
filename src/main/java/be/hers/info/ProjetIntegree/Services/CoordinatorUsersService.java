@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoordinatorUsersService {
-    public List<Beneficiary> findAllBeneficiary(){
-        List<DTOBeneficiaryUsers> beneficiaries = new ArrayList<>();
+    public List<DTOBeneficiaryUsers> findAllBeneficiary() throws SQLException {
+        DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+        return daoBeneficiary.findAllDTOBeneficiaryUsers();
     }
 
     /**
