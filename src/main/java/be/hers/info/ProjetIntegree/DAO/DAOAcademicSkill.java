@@ -58,8 +58,8 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
         String query = "SELECT * FROM AcademicSkill ps " +
-                "JOIN AcademicSkillInterpreter psi ON ps.numAcademicSkill = ips.numAcademicSkill " +
-                "WHERE ips.numInterpreter = ?";
+                "JOIN AcademicSkillInterpreter psi ON ps.numAcademicSkill = psi.numAcademicSkill " +
+                "WHERE psi.numInterpreter = ?";
         try {
             prStat = connect.prepareStatement(query);
             prStat.setInt(1, numInterpreter);

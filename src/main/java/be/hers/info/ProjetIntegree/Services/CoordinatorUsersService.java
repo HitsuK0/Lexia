@@ -51,7 +51,7 @@ public class CoordinatorUsersService {
      * and his beneficiariesList
      * @throws SQLException If an SQL error occurs with this method.
      */
-    public List<DTOInterpreterUsers> findAllCoordinator() throws SQLException {
+    public List<DTOInterpreterUsers> findAllCoordinators() throws SQLException {
         DAOCoordinator daoCoordinator = new DAOCoordinator();
         return daoCoordinator.findAllDTOCoordinatorUsers();
     }

@@ -1,5 +1,6 @@
 package be.hers.info.ProjetIntegree.DAO;
 
+import be.hers.info.ProjetIntegree.DTO.DTOInterpreterUsers;
 import be.hers.info.ProjetIntegree.POJO.*;
 
 import oracle.jdbc.OraclePreparedStatement;
@@ -61,6 +62,63 @@ public class DAOInterpreter extends DAO<Interpreter> {
             closeStatementAndResultSet(prStat, rs);
         }
         return interpreterFind;
+    }
+
+    /**
+     * Creates a list containing all the Interpreters in the table which aren't resa or coordinator.
+     * For each Interpreter, the Address is loaded eagerly via DAOAddress, the list of academic skills is loaded
+     * eagerly via DAOAcademicSkills and the list of professional skills is loaded eagerly via DAOProfessionalSkills.
+     * Absences and Beneficiaries are not loaded
+     * @return a list containing all the Interpreters which aren't resa or coordinator
+     * or an empty list if the table is empty.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<DTOInterpreterUsers> findAllDTOInterpreterUsers() throws SQLException {
+        List<DTOInterpreterUsers> interpreters = new ArrayList<>();
+        DTOInterpreterUsers interpreter = null;
+        Address address = null;
+        List<AcademicSkill> listAcademicSkills = null;
+        List<ProfessionalSkill> listProfessionalSkills = null;
+        DAOAddress daoAddress = new DAOAddress();
+        DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
+        DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        String query = "SELECT * FROM Interpreter i " +
+                "WHERE NOT EXISTS (" +
+                "SELECT 1 FROM Coordinator c " +
+                "WHERE c.FKnumInterpreter = i.numInterpreter)";
+        try {
+            prStat = connect.prepareStatement(query);
+            resultSet = prStat.executeQuery();
+            while (resultSet.next()) {
+                daoAddress = new DAOAddress();
+                address = daoAddress.find(resultSet.getInt("FKAddress"));
+
+                listProfessionalSkills = daoProfessionalSkill.findByInterpreter(
+                        resultSet.getInt("numInterpreter"));
+
+                listAcademicSkills = daoAcademicSkill.findByInterpreter(
+                        resultSet.getInt("numInterpreter"));
+
+                interpreter = new DTOInterpreterUsers(
+                        resultSet.getInt("numInterpreter"),
+                        resultSet.getString("login"),
+                        resultSet.getString("lastName"),
+                        resultSet.getString("firstName"),
+                        resultSet.getString("phoneNumber"),
+                        resultSet.getString("emailAddress"),
+                        address,
+                        resultSet.getInt("weeklyWorkHours"),
+                        listProfessionalSkills,
+                        listAcademicSkills
+                );
+                interpreters.add(interpreter);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return interpreters;
     }
 
     /**

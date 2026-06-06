@@ -117,24 +117,28 @@ public class DAOCoordinator extends DAO<Coordinator> {
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
         List<DTOInterpreterUsers> resaList = new ArrayList<>();
+        DTOInterpreterUsers resa = null;
+        List<AcademicSkill> listAcademicSkills = new ArrayList<>();
+        List<ProfessionalSkill> listProfessionalSkills = new ArrayList<>();
+        Interpreter interpreter = null;
         DAOInterpreter daoInterpreter = new DAOInterpreter();
         DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
         DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
-        String query = "SELECT numCoordinator, FKNumInterpreter" +
+        String query = "SELECT numCoordinator, FKNumInterpreter " +
                        "FROM Coordinator " +
-                       "WHERE isAdmin = 1";
+                       "WHERE isAdmin = 0";
         try {
             prStat = connect.prepareStatement(query);
             resultSet = prStat.executeQuery();
             while(resultSet.next()){
-                Interpreter interpreter = daoInterpreter.find(resultSet.getInt("FKnumInterpreter"));
-                List<ProfessionalSkill> listProfessionalSkills = daoProfessionalSkill.findByInterpreter(
+                interpreter = daoInterpreter.find(resultSet.getInt("FKnumInterpreter"));
+                listProfessionalSkills = daoProfessionalSkill.findByInterpreter(
                         interpreter.getNumInterpreter());
 
-                List<AcademicSkill> listAcademicSkills = daoAcademicSkill.findByInterpreter(
+                listAcademicSkills = daoAcademicSkill.findByInterpreter(
                         interpreter.getNumInterpreter());
 
-                DTOInterpreterUsers resa = new DTOInterpreterUsers(
+                resa = new DTOInterpreterUsers(
                         resultSet.getInt("numCoordinator"),
                         interpreter.getLogin(),
                         interpreter.getLastName(),
@@ -165,24 +169,28 @@ public class DAOCoordinator extends DAO<Coordinator> {
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
         List<DTOInterpreterUsers> coordinatorList = new ArrayList<>();
+        Interpreter interpreter = null;
+        List<ProfessionalSkill> listProfessionalSkills = new ArrayList<>();
+        List<AcademicSkill> listAcademicSkills = new ArrayList<>();
+        DTOInterpreterUsers coordinator = null;
         DAOInterpreter daoInterpreter = new DAOInterpreter();
         DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
         DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
-        String query = "SELECT numCoordinator, FKNumInterpreter" +
+        String query = "SELECT numCoordinator, FKNumInterpreter " +
                 "FROM Coordinator " +
-                "WHERE isAdmin = 0";
+                "WHERE isAdmin = 1";
         try {
             prStat = connect.prepareStatement(query);
             resultSet = prStat.executeQuery();
             while(resultSet.next()){
-                Interpreter interpreter = daoInterpreter.find(resultSet.getInt("FKnumInterpreter"));
-                List<ProfessionalSkill> listProfessionalSkills = daoProfessionalSkill.findByInterpreter(
+                interpreter = daoInterpreter.find(resultSet.getInt("FKnumInterpreter"));
+                listProfessionalSkills = daoProfessionalSkill.findByInterpreter(
                         interpreter.getNumInterpreter());
 
-                List<AcademicSkill> listAcademicSkills = daoAcademicSkill.findByInterpreter(
+                listAcademicSkills = daoAcademicSkill.findByInterpreter(
                         interpreter.getNumInterpreter());
 
-                DTOInterpreterUsers coordinator = new DTOInterpreterUsers(
+                coordinator = new DTOInterpreterUsers(
                         resultSet.getInt("numCoordinator"),
                         interpreter.getLogin(),
                         interpreter.getLastName(),
