@@ -311,4 +311,40 @@ public class DAOReferrer extends DAO<Referrer> {
         }
         return referrerList;
     }
+
+    /**
+     * Searches for all Referrers who work at a certain Establishment
+     * The Establishment is not loaded (lazy loading).
+     * @param numEstablishment the id of the Establishment
+     * @return A list of Referrers linked to the Establishment, or an empty list if none are found
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public List<Referrer> findAllByWork(int numEstablishment) throws SQLException {
+        String query = "SELECT r.numReferer, r.firstName, r.lastName, r.phoneNumber, r.emailAddress, r.FKEstablishment " +
+                "FROM Referrer r " +
+                "JOIN Work w on r.numReferer = w.numReferer " +
+                "WHERE w.numEstablishment = ?";
+        List<Referrer> referrerList = new ArrayList<>();
+        PreparedStatement prStat = null;
+        ResultSet rs = null;
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numEstablishment);
+            rs = prStat.executeQuery();
+
+            while (rs.next()) {
+                Referrer referrer = new Referrer();
+                referrer.setNumReferrer(rs.getInt("numReferer"));
+                referrer.setName(rs.getString("firstName"));
+                referrer.setSurname(rs.getString("lastName"));
+                referrer.setPhoneNumber(rs.getString("phoneNumber"));
+                referrer.setAddressMail(rs.getString("emailAddress"));
+                referrerList.add(referrer);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, rs);
+        }
+        return referrerList;
+    }
 }
