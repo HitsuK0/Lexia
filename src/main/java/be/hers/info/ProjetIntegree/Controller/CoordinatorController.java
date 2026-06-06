@@ -605,7 +605,7 @@ public class CoordinatorController {
     }
 
     // Temporaire
-    @GetMapping("/horaire/base")
+    @GetMapping("/horaire-base")
     public String horaireBase(Model model) {
         model.addAttribute("userName", "NOM Prenom");
         model.addAttribute("userRole", "COORDINATOR");
