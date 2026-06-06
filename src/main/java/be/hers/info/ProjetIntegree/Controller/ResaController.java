@@ -45,6 +45,13 @@ public class ResaController {
     }
 
 
+    /** Function who redirect to the page accueil for the resa.
+     *
+     * @param session is the session of the user,
+     * @param model is used to give attribute to thymeleaf
+     * @return the page resa/accueil if the user is connected.
+     * else return /login for connection.
+     */
     @GetMapping("/accueil")
     public String accueil(HttpSession session, Model model) {
         Coordinator resa = getCoordinatorFromSession(session);
@@ -59,6 +66,13 @@ public class ResaController {
     }
 
 
+    /** Function who redirect to the page profil for the resa.
+     * Put all the attribute in model for the profil information.
+     * @param session is the session of the user,
+     * @param model is used to give attribute to thymeleaf
+     * @return the page interprete/profil if the user is connected.
+     * else return /login for connection.
+     */
     @GetMapping("/profil")
     public String profil(HttpSession session, Model model) {
         Coordinator resa = getCoordinatorFromSession(session);
