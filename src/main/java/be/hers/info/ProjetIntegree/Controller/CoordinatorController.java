@@ -1,7 +1,7 @@
 package be.hers.info.ProjetIntegree.Controller;
 
 /**
- * @authors Willinger Chloé, Leroy Rodriguez Aïnhoa, Vanderheyden Quentin, Vatafu Jean
+ * @authors Willinger Chloé, Leroy Rodriguez Aïnhoa, Vanderheyden Quentin, Vatafu Jean, Rosman Loïs
  * @reviewer Halet Louis
  */
 
@@ -593,6 +593,8 @@ public class CoordinatorController {
             return "redirect:/login";
 
         try{
+
+
             CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
             int numberBeneficiaries = coordinatorUsersService.countBeneficiaries();
             model.addAttribute("numberBeneficiaries", numberBeneficiaries);
@@ -645,6 +647,7 @@ public class CoordinatorController {
             return "redirect:/login";
 
         //En pause en attendant les modifs de Chloé
+        return "";
     }
 
     /**
@@ -660,6 +663,7 @@ public class CoordinatorController {
             return "redirect:/login";
 
         //En pause en attendant les modifs de Chloé
+        return "";
     }
 
     /**

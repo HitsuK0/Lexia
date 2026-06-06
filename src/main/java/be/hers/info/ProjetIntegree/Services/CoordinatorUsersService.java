@@ -1,12 +1,25 @@
 package be.hers.info.ProjetIntegree.Services;
 
+/**
+ * @authors Rosman Loïs
+ * @reviewer Nicolas Jean-François, Halet Louis
+ */
+
 import be.hers.info.ProjetIntegree.DAO.DAOBeneficiary;
 import be.hers.info.ProjetIntegree.DAO.DAOCoordinator;
 import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
+import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryUsers;
+import be.hers.info.ProjetIntegree.POJO.Beneficiary;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CoordinatorUsersService {
+    public List<Beneficiary> findAllBeneficiary(){
+        List<DTOBeneficiaryUsers> beneficiaries = new ArrayList<>();
+    }
+
     /**
      * Delete a user with his login
      * @param login the login of the user to delete
