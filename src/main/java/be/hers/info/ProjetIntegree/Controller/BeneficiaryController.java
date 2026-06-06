@@ -5,6 +5,7 @@ import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AppointmentFormService;
+import be.hers.info.ProjetIntegree.Services.AppointmentService;
 import be.hers.info.ProjetIntegree.Services.BeneficiaryProfileService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -101,7 +102,6 @@ public class BeneficiaryController {
             Map<String, Object> event = new HashMap<>();
             Map<String, Object> extendedProps = new HashMap<>();
 
-
             String skills = a.getAcademicSkillsNeeded().stream()
                     .map(s -> s.getDesignation())
                     .collect(Collectors.joining(", "));
@@ -168,9 +168,9 @@ public class BeneficiaryController {
      * @param session        the current HTTP session
      * @return "ok" on success, "error" on failure
      */
-    @PostMapping(value = "/planning/beneficiaires/rdv", consumes = "application/json")
+    @PostMapping(value = "/beneficiaire/planning/rdv", consumes = "application/json")
     @ResponseBody
-    public String createRDV(@RequestBody DTOAppointmentForm dtoAppointment, HttpSession session) {
+    public String createRDVPlanning(@RequestBody DTOAppointmentForm dtoAppointment, HttpSession session) {
         Beneficiary beneficiary = getBeneficiaryFromSession(session);
         if (beneficiary == null) {
             return "redirect:/login";
@@ -185,6 +185,34 @@ public class BeneficiaryController {
             return "error";
         }
     }
+
+    /**
+     * Creates a new appointment from the RDV modal in the beneficiary planning page.
+     * Receives the appointment data as a JSON body sent by the JS fetch call.
+     * Returns "ok" if the appointment was successfully created, "error" otherwise.
+     *
+     * @param dtoAppointment the appointment data sent as JSON from the frontend
+     * @param session        the current HTTP session
+     * @return "ok" on success, "error" on failure
+     */
+    @PostMapping(value = "/beneficiaire/demandes/rdv", consumes = "application/json")
+    @ResponseBody
+    public String createRDVDemandes(@RequestBody DTOAppointmentForm dtoAppointment, HttpSession session) {
+        Beneficiary beneficiary = getBeneficiaryFromSession(session);
+        if (beneficiary == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AppointmentFormService service = new AppointmentFormService();
+            boolean success = service.createAppointment(dtoAppointment);
+            return success ? "ok" : "error";
+        } catch (BadStatusException | SQLException | IllegalArgumentException e) {
+            e.printStackTrace();
+            return "error";
+        }
+    }
+
     /** Controller for the pages named "Mes demandes"
      * Displays the list of appointment requests for the connected beneficiary.
      * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
@@ -195,15 +223,52 @@ public class BeneficiaryController {
      * @return the view "beneficiaire/demandes", or a redirect to "/login"
      */
     @GetMapping("/demandes")
-    public String demandes(HttpSession session, Model model) {
+    public String demandes(HttpSession session, Model model, @RequestParam(required = false) String status) {
         Beneficiary beneficiary = getBeneficiaryFromSession(session);
         if (beneficiary == null) {
             return "redirect:/login";
         }
+
+        AppointmentFormService service = new AppointmentFormService();
+        model.addAttribute("establishmentList", service.findAllEstablishments());
+        model.addAttribute("academicSkillList", service.findAllAcademicSkills());
+        model.addAttribute("professionalSkillList", service.findAllProfessionalSkills());
+        List<Appointment> appointmentList = new ArrayList<Appointment>();
+
+        AppointmentService appointmentService = new AppointmentService();
+        appointmentList = appointmentService.findRequestsForBeneficiary(beneficiary, status);
+
+        model.addAttribute("requests", appointmentList);
+        model.addAttribute("status", status);
         model.addAttribute("activeTab", "demandes");
         return "beneficiaire/demandes";
     }
 
+    /** Controller for the trash icon button on the "Mes demandes" page.
+     * Deletes the appointment request identified by numAppointment.
+     * Reads the beneficiary directly from the session.
+     * Redirects to login if no beneficiary is found in session.
+     *
+     * @param numAppointment the id of the appointment request to delete
+     * @param session the current HTTP session
+     * @return a redirect to "/beneficiaire/demandes" after the deletion attempt,
+     *         a redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/demandes/delete")
+    public String deleteRDV(@RequestParam int numAppointment, HttpSession session) {
+        Beneficiary beneficiary = getBeneficiaryFromSession(session);
+        if(beneficiary == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AppointmentService appointmentService = new AppointmentService();
+            appointmentService.deleteAppointmentRequest(numAppointment);
+        } catch (SQLException | BadStatusException e) {
+            e.printStackTrace();
+        }
+        return "redirect:/beneficiaire/demandes";
+    }
     /** Controller for the pages named "Mon profil"
      * Displays the profile page for the connected beneficiary.
      * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
