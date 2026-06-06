@@ -44,7 +44,7 @@ public class ResaController {
         return null;
     }
 
-    
+
     @GetMapping("/accueil")
     public String accueil(HttpSession session, Model model) {
         Coordinator resa = getCoordinatorFromSession(session);
@@ -95,7 +95,7 @@ public class ResaController {
     @PostMapping("/profil")
     public String saveProfile(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        Interpreter resa = getCoordinatorFromSession(session);
+        Coordinator resa = getCoordinatorFromSession(session);
         if (resa == null) {
             return "redirect:/login";
         }
@@ -108,7 +108,7 @@ public class ResaController {
             e.printStackTrace();
         }
 
-        return "redirect:/interprete/profil";
+        return "redirect:/resa/profil";
     }
 
     /** Controller for the pages named "Mon profil"
@@ -121,7 +121,7 @@ public class ResaController {
      *
      * @param passwordDTO the password change form data submitted by the user
      * @param request     the current HTTP request used to access the session
-     * @return a redirect to "/interprete/profil" after the operation,
+     * @return a redirect to "/resa/profil" after the operation,
      *         with "?passwordError=true" appended if passwords do not match,
      *         or a redirect to "/login" if the session is invalid
      */
@@ -129,7 +129,7 @@ public class ResaController {
     @PostMapping("/profil/password")
     public String changePassword(@ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        Interpreter resa = getCoordinatorFromSession(session);
+        Coordinator resa = getCoordinatorFromSession(session);
         if (resa == null) {
             return "redirect:/login";
         }
@@ -138,13 +138,13 @@ public class ResaController {
             InterpreterProfileService profileService = new InterpreterProfileService();
             boolean success = profileService.changePassword(resa, passwordDTO);
             if (!success) {
-                return "redirect:/interprete/profil?passwordError=true";
+                return "redirect:/resa/profil?passwordError=true";
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return "redirect:/interprete/profil";
+        return "redirect:/resa/profil";
     }
 
     /**
@@ -161,14 +161,14 @@ public class ResaController {
      * @param profileDTO the profile form data submitted by the user,
      *                   only numProfessionalSkillSelected is read from it
      * @param request    the current HTTP request used to access the session
-     * @return a redirect to "/interprete/profil" after adding,
+     * @return a redirect to "/resa/profil" after adding,
      *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/addProfessionalSkill")
     public String addProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
                                        HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        Interpreter resa = getCoordinatorFromSession(session);
+        Coordinator resa = getCoordinatorFromSession(session);
         if (resa == null) {
             return "redirect:/login";
         }
@@ -198,7 +198,7 @@ public class ResaController {
             e.printStackTrace();
         }
         session.setAttribute("currentUser", resa);
-        return "redirect:/interprete/profil?section=metiers";
+        return "redirect:/resa/profil?section=metiers";
     }
 
     /**
@@ -213,14 +213,14 @@ public class ResaController {
      * @param profileDTO the profile form data submitted by the user,
      *                   only numProfessionalSkillSelected is read from it
      * @param request    the current HTTP request used to access the session
-     * @return a redirect to "/interprete/profil" after deleting,
+     * @return a redirect to "/resa/profil" after deleting,
      *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/deleteProfessionalSkill")
     public String deleteProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
                                           HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        Interpreter resa = getCoordinatorFromSession(session);
+        Coordinator resa = getCoordinatorFromSession(session);
         if (resa == null) {
             return "redirect:/login";
         }
@@ -238,7 +238,7 @@ public class ResaController {
         }
 
         session.setAttribute("currentUser", resa);
-        return "redirect:/interprete/profil?section=metiers";
+        return "redirect:/resa/profil?section=metiers";
     }
 
     /**
@@ -255,14 +255,14 @@ public class ResaController {
      * @param profileDTO the profile form data submitted by the user,
      *                   only numAcademicSkillSelected is read from it
      * @param request    the current HTTP request used to access the session
-     * @return a redirect to "/interprete/profil" after adding,
+     * @return a redirect to "/resa/profil" after adding,
      *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/addAcademicSkill")
     public String addAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
                                    HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        Interpreter resa = getCoordinatorFromSession(session);
+        Coordinator resa = getCoordinatorFromSession(session);
         if (resa == null) {
             return "redirect:/login";
         }
@@ -292,7 +292,7 @@ public class ResaController {
             e.printStackTrace();
         }
         session.setAttribute("currentUser", resa);
-        return "redirect:/interprete/profil?section=academics";
+        return "redirect:/resa/profil?section=academics";
     }
 
     /**
@@ -307,7 +307,7 @@ public class ResaController {
      * @param profileDTO the profile form data submitted by the user,
      *                   only numAcademicSkillSelected is read from it
      * @param request    the current HTTP request used to access the session
-     * @return a redirect to "/interprete/profil" after deleting,
+     * @return a redirect to "/resa/profil" after deleting,
      *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/deleteAcademicSkill")
@@ -332,7 +332,7 @@ public class ResaController {
         }
 
         session.setAttribute("currentUser", resa);
-        return "redirect:/interprete/profil?section=academics";
+        return "redirect:/resa/profil?section=academics";
     }
 
     
@@ -367,7 +367,7 @@ public class ResaController {
         }
 
         model.addAttribute("DTOReferrer", new DTOReferrer());
-        model.addAttribute("DTOEstablishmentAdd", new DTOReferrer());
+        model.addAttribute("DTOEstablishment", new DTOEstablishment());
 
         return "coordinatrice/gestion";
     }
@@ -394,7 +394,7 @@ public class ResaController {
             e.printStackTrace();
         }
 
-        return "redirect:/coordinatrice/gestion?tab=competences";
+        return "redirect:/resa/gestion?tab=competences";
     }
 
     /**
@@ -419,7 +419,7 @@ public class ResaController {
             e.printStackTrace();
         }
 
-        return "redirect:/coordinatrice/gestion?tab=competences";
+        return "redirect:/resa/gestion?tab=competences";
     }
 
     /**
@@ -444,7 +444,7 @@ public class ResaController {
             e.printStackTrace();
         }
 
-        return "redirect:/coordinatrice/gestion?tab=competences";
+        return "redirect:/resa/gestion?tab=competences";
     }
 
     /**
@@ -469,7 +469,7 @@ public class ResaController {
             e.printStackTrace();
         }
 
-        return "redirect:/coordinatrice/gestion?tab=competences";
+        return "redirect:/resa/gestion?tab=competences";
     }
 
     /**
@@ -497,7 +497,7 @@ public class ResaController {
      * @param model            is param used by Spring to add all the data in the page.
      * @return the page "etablissements" where it comes from.
      */
-    @PostMapping("etablissements/updateEstablishment")
+    @PostMapping("/etablissements/updateEstablishment")
     public String updateEstablishment(@ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
                                       Model model) {
         EstablishementService establishementService = new EstablishementService();
