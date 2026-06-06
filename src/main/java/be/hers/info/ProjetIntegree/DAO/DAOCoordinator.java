@@ -110,8 +110,6 @@ public class DAOCoordinator extends DAO<Coordinator> {
      * Creates a list containing all the Coordinator not admin in the table.
      * Precondition :
      * For each Coordinator, the Interpreter exist in database
-     *
-     * The initialized fields are: numCoordinator, isAdmin and the Interpreter with heritage
      * @return a list containing all the Coordinator in the table. An empty list is returned if the table is empty.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
@@ -154,6 +152,54 @@ public class DAOCoordinator extends DAO<Coordinator> {
             closeStatementAndResultSet(prStat, resultSet);
         }
         return resaList;
+    }
+
+    /**
+     * Creates a list containing all the Coordinator admin in the table.
+     * Precondition :
+     * For each Coordinator, the Interpreter exist in database
+     * @return a list containing all the Coordinator in the table. An empty list is returned if the table is empty.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<DTOInterpreterUsers> findAllDTOCoordinatorUsers() throws SQLException {
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<DTOInterpreterUsers> coordinatorList = new ArrayList<>();
+        DAOInterpreter daoInterpreter = new DAOInterpreter();
+        DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
+        DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
+        String query = "SELECT numCoordinator, FKNumInterpreter" +
+                "FROM Coordinator " +
+                "WHERE isAdmin = 0";
+        try {
+            prStat = connect.prepareStatement(query);
+            resultSet = prStat.executeQuery();
+            while(resultSet.next()){
+                Interpreter interpreter = daoInterpreter.find(resultSet.getInt("FKnumInterpreter"));
+                List<ProfessionalSkill> listProfessionalSkills = daoProfessionalSkill.findByInterpreter(
+                        interpreter.getNumInterpreter());
+
+                List<AcademicSkill> listAcademicSkills = daoAcademicSkill.findByInterpreter(
+                        interpreter.getNumInterpreter());
+
+                DTOInterpreterUsers coordinator = new DTOInterpreterUsers(
+                        resultSet.getInt("numCoordinator"),
+                        interpreter.getLogin(),
+                        interpreter.getLastName(),
+                        interpreter.getFirstName(),
+                        interpreter.getPhoneNumber(),
+                        interpreter.getEmailAddress(),
+                        interpreter.getAddress(),
+                        interpreter.getWeeklyWorkHours(),
+                        listProfessionalSkills,
+                        listAcademicSkills
+                );
+                coordinatorList.add(coordinator);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return coordinatorList;
     }
 
     /**
