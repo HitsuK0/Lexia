@@ -24,7 +24,8 @@ public class DTOBeneficiaryUsers {
     private List<String> communicationLanguage;
 
     /**
-     * Initialize a DTOBeneficiaryUsers with num, login, lastName, firstName, phoneNumber and emailAddress
+     * Initialize a DTOBeneficiaryUsers with num, login, lastName, firstName, phoneNumber, emailAddress, address,
+     * quota of number hours, education level, reference interpreter and all his communication languages
      * @param numBeneficiary the id of the DTOBeneficiaryUsers
      * @param login the login of the DTOBeneficiaryUsers
      * @param lastName the lastName of the DTOBeneficiaryUsers
