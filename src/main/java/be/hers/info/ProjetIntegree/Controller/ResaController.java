@@ -33,7 +33,7 @@ public class ResaController {
         if(coordinator == null) {
             return "redirect:/login";
         }
-        return "redirect:/resa/accueil";
+        return "resa/accueil";
     }
 
     // Temporaire
