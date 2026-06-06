@@ -45,191 +45,40 @@
                             <th>Établissement</th>
                             <th>Local</th>
                             <th>Description</th>
-                            <th>Date Demande</th>
                             <th>Statut</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody id="tableBody">
-                        <tr data-status="approved">
-                            <td>4 Mars</td>
-                            <td>10h00 - 11h00</td>
-                            <td>Histoire</td>
-                            <td>Transcription</td>
-                            <td>HERS</td>
-                            <td>Local M5</td>
-                            <td>—</td>
-                            <td>24 Fév. 2026</td>
-                            <td><span class="badge-statut valide">Validé</span></td>
+                        <tr th:each="appointment : ${appointmentsList}"
+                            th:data-status="${appointment.status}">
+                            <td th:text="${appointment.dateDisplay}"></td>
+                            <td th:text="${appointment.timeDisplay}"></td>
+                            <td th:text="${appointment.academicSkillsDisplay}"></td>
+                            <td th:text="${appointment.professionalSkillsDisplay}"></td>
+                            <td th:text="${appointment.establishmentDisplay}"></td>
+                            <td th:text="${appointment.localsDisplay}"></td>
+                            <td th:text="${appointment.descriptionDisplay}"></td>
                             <td>
-                                <button class="btn btn-link p-0 text-muted" title="Suppression impossible" disabled>
+                                <span th:if="${appointment.status == 'accepte'}" class="badge-statut valide">Validé</span>
+                                <span th:if="${appointment.status == 'refuse'}" class="badge-statut refuse">Refusé</span>
+                                <span th:if="${appointment.status == 'en attente'}" class="badge-statut attente">En Attente</span>
+                            </td>
+                            <td>
+                                <button th:if="${appointment.status == 'en attente'}"
+                                        class="btn btn-link p-0 text-danger" title="Supprimer"
+                                        data-bs-toggle="modal" data-bs-target="#modalSuppression"
+                                        th:data-id="${appointment.numAppointment}">
+                                    <i class="bi bi-trash3 fs-5"></i>
+                                </button>
+                                <button th:unless="${appointment.status == 'en attente'}"
+                                        class="btn btn-link p-0 text-muted" title="Suppression impossible" disabled>
                                     <i class="bi bi-trash3 fs-5"></i>
                                 </button>
                             </td>
                         </tr>
-                        <tr data-status="refused">
-                            <td>2 Mars</td>
-                            <td>11h00 - 13h00</td>
-                            <td>Anglais</td>
-                            <td>Translittération</td>
-                            <td>HEPL</td>
-                            <td>Local A2</td>
-                            <td>Cours de rattrapage</td>
-                            <td>28 Fév. 2026</td>
-                            <td><span class="badge-statut refuse">Refusé</span></td>
-                            <td>
-                                <button class="btn btn-link p-0 text-muted" title="Suppression impossible" disabled>
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-status="pending">
-                            <td>4 Mars</td>
-                            <td>14h30 - 16h30</td>
-                            <td>Sciences, Mathématiques</td>
-                            <td>Transcription</td>
-                            <td>HERS</td>
-                            <td>Labo 2</td>
-                            <td>—</td>
-                            <td>28 Fév. 2026</td>
-                            <td><span class="badge-statut attente">En Attente</span></td>
-                            <td>
-                                <button class="btn btn-link p-0 text-danger" title="Supprimer"
-                                        data-bs-toggle="modal" data-bs-target="#modalSuppression">
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-status="pending">
-                            <td>6 Mars</td>
-                            <td>14h00 - 17h00</td>
-                            <td>Mathématiques</td>
-                            <td>Translation, Transcription</td>
-                            <td>HEPN</td>
-                            <td>Local B3</td>
-                            <td>Préparation examen</td>
-                            <td>01 Mars 2026</td>
-                            <td><span class="badge-statut attente">En Attente</span></td>
-                            <td>
-                                <button class="btn btn-link p-0 text-danger" title="Supprimer"
-                                        data-bs-toggle="modal" data-bs-target="#modalSuppression">
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-status="approved">
-                            <td>7 Mars</td>
-                            <td>08h30 - 10h00</td>
-                            <td>Français</td>
-                            <td>Transcription</td>
-                            <td>HERS</td>
-                            <td>Local C1</td>
-                            <td>—</td>
-                            <td>02 Mars 2026</td>
-                            <td><span class="badge-statut valide">Validé</span></td>
-                            <td>
-                                <button class="btn btn-link p-0 text-muted" title="Suppression impossible" disabled>
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-status="pending">
-                            <td>8 Mars</td>
-                            <td>09h00 - 11h00</td>
-                            <td>Géographie, Histoire</td>
-                            <td>Translittération</td>
-                            <td>HEPL</td>
-                            <td>Local D4</td>
-                            <td>—</td>
-                            <td>03 Mars 2026</td>
-                            <td><span class="badge-statut attente">En Attente</span></td>
-                            <td>
-                                <button class="btn btn-link p-0 text-danger" title="Supprimer"
-                                        data-bs-toggle="modal" data-bs-target="#modalSuppression">
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-status="refused">
-                            <td>9 Mars</td>
-                            <td>13h00 - 14h30</td>
-                            <td>Droit</td>
-                            <td>Translation</td>
-                            <td>HEPN</td>
-                            <td>Salle J2</td>
-                            <td>Cours magistral</td>
-                            <td>04 Mars 2026</td>
-                            <td><span class="badge-statut refuse">Refusé</span></td>
-                            <td>
-                                <button class="btn btn-link p-0 text-muted" title="Suppression impossible" disabled>
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-status="approved">
-                            <td>10 Mars</td>
-                            <td>10h00 - 12h00</td>
-                            <td>Sciences, Mathématiques</td>
-                            <td>Transcription, Translation</td>
-                            <td>HERS</td>
-                            <td>Labo 1</td>
-                            <td>—</td>
-                            <td>05 Mars 2026</td>
-                            <td><span class="badge-statut valide">Validé</span></td>
-                            <td>
-                                <button class="btn btn-link p-0 text-muted" title="Suppression impossible" disabled>
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-status="pending">
-                            <td>11 Mars</td>
-                            <td>14h00 - 16h00</td>
-                            <td>Économie</td>
-                            <td>Transcription</td>
-                            <td>HEPL</td>
-                            <td>Local E5</td>
-                            <td>Révision partielle</td>
-                            <td>06 Mars 2026</td>
-                            <td><span class="badge-statut attente">En Attente</span></td>
-                            <td>
-                                <button class="btn btn-link p-0 text-danger" title="Supprimer"
-                                        data-bs-toggle="modal" data-bs-target="#modalSuppression">
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-status="refused">
-                            <td>12 Mars</td>
-                            <td>11h00 - 13h00</td>
-                            <td>Histoire</td>
-                            <td>Translittération</td>
-                            <td>HEPN</td>
-                            <td>Local F1</td>
-                            <td>—</td>
-                            <td>07 Mars 2026</td>
-                            <td><span class="badge-statut refuse">Refusé</span></td>
-                            <td>
-                                <button class="btn btn-link p-0 text-muted" title="Suppression impossible" disabled>
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-status="approved">
-                            <td>13 Mars</td>
-                            <td>08h00 - 09h30</td>
-                            <td>Anglais</td>
-                            <td>Translation</td>
-                            <td>HERS</td>
-                            <td>Local G3</td>
-                            <td>—</td>
-                            <td>08 Mars 2026</td>
-                            <td><span class="badge-statut valide">Validé</span></td>
-                            <td>
-                                <button class="btn btn-link p-0 text-muted" title="Suppression impossible" disabled>
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
-                            </td>
+                        <tr th:if="${#lists.isEmpty(appointmentsList)}">
+                            <td colspan="9" class="text-center text-muted fst-italic">Aucune demande trouvée.</td>
                         </tr>
                         </tbody>
                     </table>
@@ -279,70 +128,25 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small fw-semibold">Matières</label>
-                            <div id="rdvAcademicSkills" class="d-flex flex-wrap gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillMath" value="mathematiques"/>
-                                    <label class="form-check-label small" for="skillMath">Mathématiques</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillHist" value="histoire"/>
-                                    <label class="form-check-label small" for="skillHist">Histoire</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillEn" value="anglais"/>
-                                    <label class="form-check-label small" for="skillEn">Anglais</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillSci" value="sciences"/>
-                                    <label class="form-check-label small" for="skillSci">Sciences</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillGeo" value="geographie"/>
-                                    <label class="form-check-label small" for="skillGeo">Géographie</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillFr" value="francais"/>
-                                    <label class="form-check-label small" for="skillFr">Français</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillDroit" value="droit"/>
-                                    <label class="form-check-label small" for="skillDroit">Droit</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillEco" value="economie"/>
-                                    <label class="form-check-label small" for="skillEco">Économie</label>
-                                </div>
-                            </div>
-                            <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une matière.</div>
+                            <label class="form-label small fw-semibold">Matière</label>
+                            <select id="rdvAcademicSkill" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une matière</option>
+                            </select>
+                            <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une matière.</div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small fw-semibold">Compétences requises</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranscription" checked/>
-                                    <label class="form-check-label small" for="compTranscription">Transcription</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranslitteration" checked/>
-                                    <label class="form-check-label small" for="compTranslitteration">Translittération</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranslation" checked/>
-                                    <label class="form-check-label small" for="compTranslation">Translation</label>
-                                </div>
-                            </div>
-                            <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une compétence requise.</div>
+                            <label class="form-label small fw-semibold">Compétence requise</label>
+                            <select id="rdvProfessionalSkill" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une compétence</option>
+                            </select>
+                            <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une compétence requise.</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Établissement</label>
                             <select id="rdvEstablishment" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez un établissement</option>
-                                <option value="hers">HERS</option>
-                                <option value="hepl">HEPL</option>
-                                <option value="hepn">HEPN</option>
                             </select>
                         </div>
 
@@ -383,11 +187,13 @@
                         <p class="text-muted small">Cette action est irréversible.</p>
                     </div>
                     <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler
-                        </button>
-                        <button type="button" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash3 me-1"></i> Supprimer
-                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <form method="post" th:action="@{/beneficiaire/demandes/delete}">
+                            <input type="hidden" id="deleteAppointmentId" name="id"/>
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash3 me-1"></i> Supprimer
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -395,219 +201,7 @@
 
         <div th:replace="~{common/footer :: footer}"></div>
 
-        <script>
-            const ROWS_PER_PAGE = 7;
-            let currentPage = 1;
-            let currentFilter = '';
-
-            /* Returns the rows matching the current filter. */
-            function getFilteredRows() {
-                return Array.from(document.querySelectorAll('#tableBody tr')).filter(row =>
-                    !currentFilter || row.dataset.status === currentFilter
-                );
-            }
-
-            /* Displays the rows for the given page and updates pagination. */
-            function renderPage(page) {
-                currentPage = page;
-                const filtered = getFilteredRows();
-                const totalPages = Math.ceil(filtered.length / ROWS_PER_PAGE);
-
-                document.querySelectorAll('#tableBody tr').forEach(row => row.style.display = 'none');
-
-                const start = (page - 1) * ROWS_PER_PAGE;
-                const end = start + ROWS_PER_PAGE;
-                filtered.slice(start, end).forEach(row => row.style.display = '');
-
-                renderPagination(totalPages);
-            }
-
-            /* Builds the pagination buttons dynamically for both top and bottom. */
-            function renderPagination(totalPages) {
-                ['pagination', 'paginationTop'].forEach(id => {
-                    const pagination = document.getElementById(id);
-                    pagination.innerHTML = '';
-
-                    const prevLi = document.createElement('li');
-                    prevLi.className = 'page-item';
-                    prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-arrow-left"></i> Précédent</a>`;
-                    if (currentPage === 1) {
-                        prevLi.style.display = 'none';
-                    } else {
-                        prevLi.addEventListener('click', function (e) {
-                            e.preventDefault();
-                            renderPage(currentPage - 1);
-                        });
-                    }
-                    pagination.appendChild(prevLi);
-
-                    for (let i = 1; i <= totalPages; i++) {
-                        const li = document.createElement('li');
-                        li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-                        li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-                        li.addEventListener('click', function (e) {
-                            e.preventDefault();
-                            renderPage(i);
-                        });
-                        pagination.appendChild(li);
-                    }
-
-                    const nextLi = document.createElement('li');
-                    nextLi.className = 'page-item';
-                    nextLi.innerHTML = `<a class="page-link" href="#">Suivant <i class="bi bi-arrow-right"></i></a>`;
-                    if (currentPage === totalPages || totalPages <= 1) {
-                        nextLi.style.display = 'none';
-                    } else {
-                        nextLi.addEventListener('click', function (e) {
-                            e.preventDefault();
-                            renderPage(currentPage + 1);
-                        });
-                    }
-                    pagination.appendChild(nextLi);
-                });
-            }
-
-            /* Filters the table rows by status and resets to page 1. */
-            document.getElementById('statusFilter').addEventListener('change', function () {
-                currentFilter = this.value;
-                renderPage(1);
-            });
-
-            /* Generates time options for a select element between start and end (in minutes). */
-            function generateHours(selectId, start, end) {
-                const select = document.getElementById(selectId);
-                select.innerHTML = '<option value="" disabled selected>-- Heure --</option>';
-                for (let t = start; t <= end; t += 5) {
-                    const hh = String(Math.floor(t / 60)).padStart(2, '0');
-                    const mm = String(t % 60).padStart(2, '0');
-                    const option = document.createElement('option');
-                    option.value = `${hh}:${mm}`;
-                    option.textContent = `${hh}:${mm}`;
-                    select.appendChild(option);
-                }
-            }
-
-            generateHours('startHour', 8 * 60, 18 * 60 + 55);
-            generateHours('endHour', 8 * 60 + 5, 19 * 60);
-
-            document.getElementById('startHour').addEventListener('change', function () {
-                const [h, m] = this.value.split(':').map(Number);
-                generateHours('endHour', h * 60 + m + 5, 19 * 60);
-            });
-
-            document.getElementById('fullDay').addEventListener('change', function () {
-                document.getElementById('startHour').disabled = this.checked;
-                document.getElementById('endHour').disabled = this.checked;
-            });
-
-            /* Hides the academic skills error message as soon as at least one is checked */
-            document.querySelectorAll('.skill-check').forEach(cb => {
-                cb.addEventListener('change', function () {
-                    if (document.querySelectorAll('.skill-check:checked').length > 0) {
-                        document.getElementById('rdvAcademicSkillsError').style.display = 'none';
-                    }
-                });
-            });
-
-            /* Validates the RDV form before submission. */
-            document.getElementById('btnSend').addEventListener('click', function () {
-                let valid = true;
-                const dateStart = document.getElementById('dateStart');
-                const dateEnd = document.getElementById('dateEnd');
-                const startHour = document.getElementById('startHour');
-                const endHour = document.getElementById('endHour');
-                const fullDay = document.getElementById('fullDay').checked;
-                const rdvEstablishment = document.getElementById('rdvEstablishment');
-                const rdvLocal = document.getElementById('rdvLocal');
-                const selectedSkills = document.querySelectorAll('.skill-check:checked');
-                const skillsError = document.getElementById('rdvAcademicSkillsError');
-                const atLeastOneComp = Array.from(document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')).some(cb => cb.checked);
-                const compsError = document.getElementById('rdvCompsError');
-
-                [dateStart, dateEnd, startHour, endHour, rdvEstablishment, rdvLocal].forEach(el => {
-                    el.classList.remove('is-invalid');
-                    const feedback = el.nextElementSibling;
-                    if (feedback && feedback.classList.contains('invalid-feedback')) feedback.remove();
-                });
-                skillsError.style.display = 'none';
-                compsError.style.display = 'none';
-
-                function displayError(input, message) {
-                    input.classList.add('is-invalid');
-                    const div = document.createElement('div');
-                    div.classList.add('invalid-feedback');
-                    div.textContent = message;
-                    input.insertAdjacentElement('afterend', div);
-                    valid = false;
-                }
-
-                if (!dateStart.value) displayError(dateStart, 'La date de début est obligatoire.');
-                if (!dateEnd.value) displayError(dateEnd, 'La date de fin est obligatoire.');
-                if (dateStart.value && dateEnd.value && dateEnd.value < dateStart.value)
-                    displayError(dateEnd, 'La date de fin doit être après la date de début.');
-                if (selectedSkills.length === 0) {
-                    skillsError.style.display = 'block';
-                    valid = false;
-                }
-                if (!atLeastOneComp) {
-                    compsError.style.display = 'block';
-                    valid = false;
-                }
-                if (!rdvEstablishment.value) displayError(rdvEstablishment, 'L\'établissement est obligatoire.');
-                if (!rdvLocal.value.trim()) displayError(rdvLocal, 'Le local est obligatoire.');
-                if (!fullDay) {
-                    if (!startHour.value) displayError(startHour, "L'heure de début est obligatoire.");
-                    if (!endHour.value) displayError(endHour, "L'heure de fin est obligatoire.");
-                }
-
-                if (!valid) return;
-                bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
-            });
-
-            /* Resets all modal fields when it is closed */
-            document.getElementById('modalRDV').addEventListener('hidden.bs.modal', function () {
-                document.getElementById('dateStart').value = '';
-                document.getElementById('dateEnd').value = '';
-                document.getElementById('dateStart').min = new Date().toISOString().split('T')[0];
-                document.getElementById('dateEnd').min = new Date().toISOString().split('T')[0];
-                document.getElementById('rdvLocal').value = '';
-                document.getElementById('rdvDescription').value = '';
-                document.getElementById('rdvAcademicSkillsError').style.display = 'none';
-                document.getElementById('rdvCompsError').style.display = 'none';
-                document.getElementById('fullDay').checked = false;
-                document.getElementById('startHour').disabled = false;
-                document.getElementById('endHour').disabled = false;
-
-                document.querySelectorAll('.skill-check').forEach(cb => cb.checked = false);
-                document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')
-                    .forEach(cb => cb.checked = true);
-
-                document.getElementById('rdvEstablishment').selectedIndex = 0;
-
-                generateHours('startHour', 8 * 60, 18 * 60 + 55);
-                generateHours('endHour', 8 * 60 + 5, 19 * 60);
-
-                ['dateStart', 'dateEnd', 'startHour', 'endHour', 'rdvEstablishment', 'rdvLocal'].forEach(id => {
-                    const el = document.getElementById(id);
-                    el.classList.remove('is-invalid');
-                    const fb = el.nextElementSibling;
-                    if (fb && fb.classList.contains('invalid-feedback')) fb.remove();
-                });
-            });
-
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('dateStart').min = today;
-            document.getElementById('dateEnd').min = today;
-
-            document.getElementById('dateStart').addEventListener('change', function () {
-                document.getElementById('dateEnd').min = this.value;
-                if (document.getElementById('dateEnd').value < this.value) {
-                    document.getElementById('dateEnd').value = this.value;
-                }
-            });
-
-            renderPage(1);
-        </script>
+        <script th:src="@{/js/beneficiaire/demandes.js}"></script>
 
     </body>
 </html>

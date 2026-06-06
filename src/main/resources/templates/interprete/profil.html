@@ -140,11 +140,22 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <label class="form-label" style="font-size:0.75rem; color:#888;">Ville</label>
                                             <div class="input-edit-group">
                                                 <input type="text" class="form-control form-control-sm" th:field="*{locality}" readonly id="inputVille"/>
                                                 <button type="button" class="btn-edit" onclick="toggleEdit('inputVille', this)" title="Modifier">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="form-label" style="font-size:0.75rem; color:#888;">
+                                                Lieu-dit <span class="text-muted fw-normal">(facultatif)</span>
+                                            </label>
+                                            <div class="input-edit-group">
+                                                <input type="text" class="form-control form-control-sm" th:field="*{hamlet}" readonly id="inputLieuDit"/>
+                                                <button type="button" class="btn-edit" onclick="toggleEdit('inputLieuDit', this)" title="Modifier">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
                                             </div>
@@ -285,6 +296,13 @@
                                        th:field="*{newPassword}"
                                        id="inputNewPassword"
                                        placeholder="Entrez le nouveau mot de passe ..."/>
+                                <div id="passwordCriteria" style="font-size:0.875em; margin-top:0.4rem;">
+                                    <div id="crit-length"  class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 8 caractères minimum</div>
+                                    <div id="crit-upper"   class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 lettre majuscule</div>
+                                    <div id="crit-lower"   class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 lettre minuscule</div>
+                                    <div id="crit-number"  class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 chiffre</div>
+                                    <div id="crit-special" class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 caractère spécial (!@#$%...)</div>
+                                </div>
                                 <div id="passwordError" style="display:none; color:#dc3545; font-size:0.875em;"></div>
                             </div>
                             <div class="mb-3">
@@ -314,10 +332,12 @@
         <div th:replace="~{common/footer :: footer}"></div>
 
         <script th:inline="javascript">
-            const allProfessionalSkills = [];
-            const allAcademicSkills     = [];
-            const ownedProfSkills       = [];
-            const ownedAcadSkills       = [];
+            /*<![CDATA[*/
+            const allProfessionalSkills = /*[[${profileDTO.professionalSkillList}]]*/ [];
+            const allAcademicSkills     = /*[[${profileDTO.academicSkillList}]]*/ [];
+            const ownedProfSkills       = /*[[${profileDTO.professionalSkillListInterpreter}]]*/ [];
+            const ownedAcadSkills       = /*[[${profileDTO.academicSkillListInterpreter}]]*/ [];
+            /*]]>*/
         </script>
 
         <script th:src="@{/js/interprete/profil.js}"></script>

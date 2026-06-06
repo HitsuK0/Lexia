@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 /**
  * @author Halet Louis
@@ -49,8 +48,8 @@ public class DAOCoordinator extends DAO<Coordinator> {
                         interpreter.getPassword(),
                         interpreter.getLastName(),
                         interpreter.getFirstName(),
-                        interpreter.getEmailAddress(),
                         interpreter.getPhoneNumber(),
+                        interpreter.getEmailAddress(),
                         interpreter.getWeeklyWorkHours(),
                         interpreter.getAddress());
                 coordinator.setNumCoordinator(idToSearchInDB);
@@ -92,8 +91,8 @@ public class DAOCoordinator extends DAO<Coordinator> {
                         interpreter.getPassword(),
                         interpreter.getLastName(),
                         interpreter.getFirstName(),
-                        interpreter.getEmailAddress(),
                         interpreter.getPhoneNumber(),
+                        interpreter.getEmailAddress(),
                         interpreter.getWeeklyWorkHours(),
                         interpreter.getAddress());
                 coordinator.setNumCoordinator(resultSet.getInt("numCoordinator"));
@@ -134,8 +133,8 @@ public class DAOCoordinator extends DAO<Coordinator> {
                         interpreter.getPassword(),
                         interpreter.getLastName(),
                         interpreter.getFirstName(),
-                        interpreter.getEmailAddress(),
                         interpreter.getPhoneNumber(),
+                        interpreter.getEmailAddress(),
                         interpreter.getWeeklyWorkHours(),
                         interpreter.getAddress());
                 coordinator.setNumCoordinator(resultSet.getInt("numCoordinator"));
@@ -164,7 +163,6 @@ public class DAOCoordinator extends DAO<Coordinator> {
         boolean isInserted = false;
         OraclePreparedStatement prStat = null;
         ResultSet rs = null;
-        String local = null;
 
         String query = "INSERT INTO Coordinator (isAdmin,FKnumInterpreter) " +
                 "VALUES (?, ?) "+
@@ -186,7 +184,7 @@ public class DAOCoordinator extends DAO<Coordinator> {
                 objectToInsertInDB.setNumCoordinator(id);
                 isInserted = true;
             }
-        }finally {
+        } finally {
             closeStatementAndResultSet(prStat, rs);
         }
         return isInserted;

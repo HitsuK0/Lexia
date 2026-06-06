@@ -170,6 +170,53 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    /* Validates the absence declaration form before submission,
+   keeping the modal open and showing inline errors if fields are missing. */
+    document.getElementById('btnSendIndispo').addEventListener('click', function () {
+        let valid = true;
+
+        const startDate = document.getElementById('startDate');
+        const endDate   = document.getElementById('endDate');
+        const startHour = document.getElementById('startHour');
+        const endHour   = document.getElementById('endHour');
+        const fullDay   = document.getElementById('allDay').checked;
+
+        [startDate, endDate, startHour, endHour].forEach(el => {
+            el.classList.remove('is-invalid');
+            el.style.borderColor = '';
+            const fb = el.nextElementSibling;
+            if (fb && fb.classList.contains('invalid-feedback')) fb.remove();
+        });
+
+        function displayError(input, message) {
+            input.classList.add('is-invalid');
+            input.style.borderColor = '#dc3545';
+            const div = document.createElement('div');
+            div.classList.add('invalid-feedback');
+            div.style.display = 'block';
+            div.style.color = '#dc3545';
+            div.style.fontSize = '0.875rem';
+            div.textContent = message;
+            input.insertAdjacentElement('afterend', div);
+            valid = false;
+        }
+
+        if (!startDate.value) displayError(startDate, 'La date de début est obligatoire.');
+        if (!endDate.value)   displayError(endDate,   'La date de fin est obligatoire.');
+        if (startDate.value && endDate.value && endDate.value < startDate.value) {
+            displayError(endDate, 'La date de fin doit être après la date de début.');
+        }
+
+        if (!fullDay) {
+            if (!startHour.value) displayError(startHour, 'L\'heure de début est obligatoire.');
+            if (!endHour.value)   displayError(endHour,   'L\'heure de fin est obligatoire.');
+        }
+
+        if (valid) {
+            document.querySelector('#modalIndispo form').submit();
+        }
+    });
+
     /* Updates the table rows and pagination based on current page and filter */
     function updateTable() {
         const totalPages = Math.ceil(getVisibleRows().length / ROWS_PER_PAGE);

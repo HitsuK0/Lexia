@@ -65,7 +65,8 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         /* Opens the event detail modal on click, displaying the appointment's
-        schedule, beneficiary, establishment, local, description and professional skills. */
+        schedule, beneficiary, establishment, local, description and professional skills.
+        For absences, displays the reason if one was provided. */
         eventClick: function (info) {
             const props = info.event.extendedProps;
             const start = info.event.start.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
@@ -74,18 +75,28 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('modalEventTitle').textContent = info.event.title;
 
             let body = `<p><strong>Horaire :</strong> ${start} – ${end}</p>`;
-            if (props.beneficiary) body += `<p><strong>Bénéficiaire :</strong> ${props.beneficiary}</p>`;
-            if (props.establishment) body += `<p><strong>Établissement :</strong> ${props.establishment}</p>`;
-            if (props.locals?.length > 0) body += `<p><strong>Local :</strong> ${props.locals.join(', ')}</p>`;
-            if (props.description) body += `<p><strong>Description :</strong> ${props.description}</p>`;
-            if (props.professionalSkills) body += `<p><strong>Compétence métier :</strong> ${props.professionalSkills}</p>`;
+
+            if (props.type === 'appointment') {
+                if (props.beneficiary) body += `<p><strong>Bénéficiaire :</strong> ${props.beneficiary}</p>`;
+                if (props.establishment) body += `<p><strong>Établissement :</strong> ${props.establishment}</p>`;
+                if (props.locals?.length > 0) body += `<p><strong>Local :</strong> ${props.locals.join(', ')}</p>`;
+                if (props.description) body += `<p><strong>Description :</strong> ${props.description}</p>`;
+                if (props.professionalSkills) body += `<p><strong>Compétence métier :</strong> ${props.professionalSkills}</p>`;
+            } else if (props.type === 'absence') {
+                if (props.reason && props.reason !== '') {
+                    body += `<p><strong>Motif :</strong> ${props.reason}</p>`;
+                } else {
+                    body += `<p class="text-muted fst-italic">Aucun motif renseigné</p>`;
+                }
+            }
 
             document.getElementById('modalEventBody').innerHTML = body;
             new bootstrap.Modal(document.getElementById('modalEvent')).show();
         },
 
         /* Sets the event display content with an icon based on the appointment status
-        (cancelled or unavailability), and shows appointment details below the title. */
+        (cancelled or unavailability), and shows appointment details below the title.
+        For absences, displays the reason if one was provided. */
         eventContent: function (arg) {
             const props = arg.event.extendedProps;
             const isAnnule = arg.event.title.startsWith('Annulé');
@@ -101,10 +112,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (props.type === 'appointment') {
                 if (props.professionalSkills) html += `<div class="small">${props.professionalSkills}</div>`;
-                if (props.beneficiary) html += `<div class="small">Bénéficiare : ${props.beneficiary}</div>`;
+                if (props.beneficiary) html += `<div class="small">Bénéficiaire : ${props.beneficiary}</div>`;
                 if (props.establishment) html += `<div class="small">${props.establishment}</div>`;
                 if (props.locals && props.locals.length > 0) html += `<div class="small">${props.locals.join(', ')}</div>`;
                 if (props.description) html += `<div class="small">📝 ${props.description}</div>`;
+            } else if (props.type === 'absence') {
+                if (props.reason && props.reason !== '') html += `<div class="small">Motif : ${props.reason}</div>`;
             }
 
             return {html: `<div class="p-1">${icone}${html}</div>`};
@@ -154,46 +167,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* Validates the absence declaration form before submission,
     displaying inline error messages for missing or invalid fields. */
-    document.getElementById('btnSend').addEventListener('click', function () {
+    /* Validates the absence declaration form before submission,
+   keeping the modal open and showing inline errors if fields are missing. */
+    document.getElementById('btnSendPlanning').addEventListener('click', function () {
         let valid = true;
 
         const dateStart = document.getElementById('dateStart');
-        const dateEnd = document.getElementById('dateEnd');
+        const dateEnd   = document.getElementById('dateEnd');
         const startHour = document.getElementById('startHour');
-        const endHour = document.getElementById('endHour');
-        const fullDay = document.getElementById('fullDay').checked;
+        const endHour   = document.getElementById('endHour');
+        const fullDay   = document.getElementById('fullDay').checked;
 
         [dateStart, dateEnd, startHour, endHour].forEach(el => {
             el.classList.remove('is-invalid');
-            const feedback = el.nextElementSibling;
-            if (feedback && feedback.classList.contains('invalid-feedback')) {
-                feedback.remove();
-            }
+            el.style.borderColor = '';
+            const fb = el.nextElementSibling;
+            if (fb && fb.classList.contains('invalid-feedback')) fb.remove();
         });
 
         function displayError(input, message) {
             input.classList.add('is-invalid');
+            input.style.borderColor = '#dc3545';
             const div = document.createElement('div');
             div.classList.add('invalid-feedback');
+            div.style.display = 'block';
+            div.style.color = '#dc3545';
+            div.style.fontSize = '0.875rem';
             div.textContent = message;
             input.insertAdjacentElement('afterend', div);
             valid = false;
         }
 
         if (!dateStart.value) displayError(dateStart, 'La date de début est obligatoire.');
-        if (!dateEnd.value) displayError(dateEnd, 'La date de fin est obligatoire.');
+        if (!dateEnd.value)   displayError(dateEnd,   'La date de fin est obligatoire.');
         if (dateStart.value && dateEnd.value && dateEnd.value < dateStart.value) {
             displayError(dateEnd, 'La date de fin doit être après la date de début.');
         }
 
         if (!fullDay) {
             if (!startHour.value) displayError(startHour, 'L\'heure de début est obligatoire.');
-            if (!endHour.value) displayError(endHour, 'L\'heure de fin est obligatoire.');
+            if (!endHour.value)   displayError(endHour,   'L\'heure de fin est obligatoire.');
         }
 
-        if (!valid) return;
-
-        bootstrap.Modal.getInstance(document.getElementById('modalIndispo')).hide();
+        if (valid) {
+            document.querySelector('#modalIndispo form').submit();
+        }
     });
 
     /* Resets all absence modal fields to their default state after the modal is closed. */
