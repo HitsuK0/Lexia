@@ -266,7 +266,7 @@ public class DAOEstablishment extends DAO<Establishment>{
         boolean isInserted = false;
         PreparedStatement prStat = null;
         String query = """
-                INSERT INTO Work (numEstablishment, numReferrer)
+                INSERT INTO Work (numEstablishment, numReferer)
                 VALUES (?, ?)
                 """;
 
