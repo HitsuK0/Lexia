@@ -315,6 +315,7 @@ public class CoordinatorController {
             return "redirect:/login";
         }
         String userName = coordinator.getLastName().toUpperCase() + " " + coordinator.getFirstName();
+
         model.addAttribute("userName", userName);
         model.addAttribute("userRole", "COORDINATOR");
         model.addAttribute("isAdmin", coordinator.isAdmin());
