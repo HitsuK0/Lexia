@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoordinatorUsersService {
+    /**
+     * @return A list containing all the Beneficiaries without his password
+     * @throws SQLException If an SQL error occurs with this method.
+     */
     public List<DTOBeneficiaryUsers> findAllBeneficiary() throws SQLException {
         DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
         return daoBeneficiary.findAllDTOBeneficiaryUsers();
