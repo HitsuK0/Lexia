@@ -1,0 +1,584 @@
+<!--
+@author
+@reviewer
+-->
+
+<!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org" lang="fr">
+
+    <head th:replace="~{common/head :: head('Horaire de Base', '/css/coordinatrice/horaire-base.css')}"></head>
+
+    <body>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='horaire-base', userRole='COORDINATOR', userName=${userName}, breadcrumb='Horaire de Base', isAdmin=true)}"></nav>
+
+        <div class="container-fluid py-2 px-2 px-md-5">
+
+            <div class="text-center mb-3">
+                <h1 class="fw-bold text-primary">Horaire de Base</h1>
+                <p class="text-muted fst-italic small">Définissez et consultez les horaires récurrents des interprètes et bénéficiaires</p>
+            </div>
+
+            <!-- Onglets -->
+            <ul class="nav nav-tabs px-md-5 mb-0" id="horaireTab">
+                <li class="nav-item">
+                    <a class="nav-link active" id="tab-interprete" href="#" data-tab="interprete">
+                        <i class="bi bi-person-badge me-1"></i> Interprètes
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab-beneficiaire" href="#" data-tab="beneficiaire">
+                        <i class="bi bi-person me-1"></i> Bénéficiaires
+                    </a>
+                </li>
+            </ul>
+
+            <div id="section-interprete" class="horaire-section px-2 px-md-5 pt-3">
+                <div class="d-flex align-items-center justify-content-between mb-3 gap-2">
+                    <div class="dropdown">
+                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
+                                id="dropdownInterprete" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="interpreteSelectionne">MARTIN Sophie</span> <!-- TEMPORAIRE -->
+                        </button>
+                        <!-- TEMPORAIRE -->
+                        <ul class="dropdown-menu" aria-labelledby="dropdownInterprete" id="listeInterpretes">
+                            <li><a class="dropdown-item dropdown-interprete" href="#" data-id="1" data-nom="MARTIN Sophie">MARTIN Sophie</a></li>
+                            <li><a class="dropdown-item dropdown-interprete" href="#" data-id="2" data-nom="LEROY Thomas">LEROY Thomas</a></li>
+                            <li><a class="dropdown-item dropdown-interprete" href="#" data-id="3" data-nom="BRASSEUR Frédéric">BRASSEUR Frédéric</a></li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#modalAjoutCreneauInterprete">
+                        <i class="bi bi-plus-circle me-1"></i> Ajouter un créneau
+                    </button>
+                </div>
+                <div id="calendarInterprete"></div>
+            </div>
+
+            <div id="section-beneficiaire" class="horaire-section px-2 px-md-5 pt-3" style="display:none;">
+                <div class="d-flex align-items-center justify-content-between mb-3 gap-2">
+                    <div class="dropdown">
+                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
+                                id="dropdownBeneficiaire" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="beneficiaireSelectionne">DUPONT Jean</span> <!-- TEMPORAIRE -->
+                        </button>
+                        <!-- TEMPORAIRE -->
+                        <ul class="dropdown-menu" aria-labelledby="dropdownBeneficiaire" id="listeBeneficiaires">
+                            <li><a class="dropdown-item dropdown-beneficiaire" href="#" data-id="1" data-nom="DUPONT Jean">DUPONT Jean</a></li>
+                            <li><a class="dropdown-item dropdown-beneficiaire" href="#" data-id="2" data-nom="LAMBERT Marie">LAMBERT Marie</a></li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#modalAjoutCreneauBeneficiaire">
+                        <i class="bi bi-plus-circle me-1"></i> Ajouter un créneau
+                    </button>
+                </div>
+                <div id="calendarBeneficiaire"></div>
+            </div>
+
+        </div>
+
+        <div class="modal fade" id="modalAjoutCreneauInterprete" tabindex="-1" aria-labelledby="modalAjoutCreneauInterpreteLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalAjoutCreneauInterpreteLabel">Ajouter un créneau — Interprète</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Jour</label>
+                            <select id="creneauJourInterprete" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez un jour</option>
+                                <option value="1">Lundi</option>
+                                <option value="2">Mardi</option>
+                                <option value="3">Mercredi</option>
+                                <option value="4">Jeudi</option>
+                                <option value="5">Vendredi</option>
+                                <option value="6">Samedi</option>
+                                <option value="7">Dimanche</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Plage Horaire</label>
+                            <div class="d-flex gap-2">
+                                <select id="creneauHeureDebutInterprete" class="form-select form-select-sm" size="5"></select>
+                                <select id="creneauHeureFinInterprete" class="form-select form-select-sm" size="5"></select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="creneauIndispo"/>
+                                <label class="form-check-label small fw-semibold" for="creneauIndispo">
+                                    Indisponibilité récurrente
+                                    <span class="text-muted fw-normal">(ex: jamais disponible ce jour)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="creneauInterpreteFields">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Bénéficiaire</label>
+                                <!-- TEMPORAIRE -->
+                                <select id="creneauBeneficiaire" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Choisissez un bénéficiaire</option>
+                                    <option value="1">DUPONT Jean</option>
+                                    <option value="2">LAMBERT Marie</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Établissement</label>
+                                <!-- TEMPORAIRE -->
+                                <select id="creneauEtablissementInterprete" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Choisissez un établissement</option>
+                                    <option value="1">École Primaire Saint-Joseph</option>
+                                    <option value="2">Athénée Royal de Namur</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Local</label>
+                                <input type="text" id="creneauLocalInterprete" class="form-control form-control-sm" placeholder="Ex: Local M5, Labo 2..."/>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Description <span class="text-muted fw-normal">(facultatif)</span></label>
+                                <textarea id="creneauDescriptionInterprete" class="form-control form-control-sm" rows="2" placeholder="Texte..."></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnSauvegarderCreneauInterprete">
+                            <i class="bi bi-floppy me-1"></i> Sauvegarder
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Ajout Créneau Bénéficiaire -->
+        <div class="modal fade" id="modalAjoutCreneauBeneficiaire" tabindex="-1" aria-labelledby="modalAjoutCreneauBeneficiaireLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalAjoutCreneauBeneficiaireLabel">Ajouter un créneau — Bénéficiaire</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Jour</label>
+                            <select id="creneauJourBeneficiaire" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez un jour</option>
+                                <option value="1">Lundi</option>
+                                <option value="2">Mardi</option>
+                                <option value="3">Mercredi</option>
+                                <option value="4">Jeudi</option>
+                                <option value="5">Vendredi</option>
+                                <option value="6">Samedi</option>
+                                <option value="7">Dimanche</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Plage Horaire</label>
+                            <div class="d-flex gap-2">
+                                <select id="creneauHeureDebutBeneficiaire" class="form-select form-select-sm" size="5"></select>
+                                <select id="creneauHeureFinBeneficiaire" class="form-select form-select-sm" size="5"></select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Matière</label>
+                            <!-- TEMPORAIRE -->
+                            <select id="creneauAcademicSkill" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une matière</option>
+                                <option value="1">Mathématiques</option>
+                                <option value="2">Français</option>
+                                <option value="3">Histoire</option>
+                                <option value="4">Sciences</option>
+                            </select>
+                            <div id="creneauAcademicSkillError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une matière.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Compétence métier</label>
+                            <!-- TEMPORAIRE -->
+                            <select id="creneauProfessionalSkill" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une compétence</option>
+                                <option value="1">Transcription</option>
+                                <option value="2">Translittération</option>
+                                <option value="3">Translation</option>
+                            </select>
+                            <div id="creneauProfessionalSkillError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une compétence.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Interprète</label>
+                            <!-- TEMPORAIRE — référent en tête -->
+                            <select id="creneauInterprete" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez un interprète</option>
+                                <option value="1">MARTIN Sophie (Référent)</option>
+                                <option value="2">LEROY Thomas</option>
+                                <option value="3">BRASSEUR Frédéric</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Établissement</label>
+                            <!-- TEMPORAIRE -->
+                            <select id="creneauEtablissementBeneficiaire" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez un établissement</option>
+                                <option value="1">École Primaire Saint-Joseph</option>
+                                <option value="2">Athénée Royal de Namur</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Local</label>
+                            <input type="text" id="creneauLocalBeneficiaire" class="form-control form-control-sm" placeholder="Ex: Local M5, Labo 2..."/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Description <span class="text-muted fw-normal">(facultatif)</span></label>
+                            <textarea id="creneauDescriptionBeneficiaire" class="form-control form-control-sm" rows="2" placeholder="Texte..."></textarea>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnSauvegarderCreneauBeneficiaire">
+                            <i class="bi bi-floppy me-1"></i> Sauvegarder
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalEditCreneauInterprete" tabindex="-1" aria-labelledby="modalEditCreneauInterpreteLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalEditCreneauInterpreteLabel">Modifier le créneau — Interprète</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <input type="hidden" id="editCreneauInterpreteId"/>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Jour</label>
+                            <select id="editCreneauJourInterprete" class="form-select form-select-sm">
+                                <option value="1">Lundi</option>
+                                <option value="2">Mardi</option>
+                                <option value="3">Mercredi</option>
+                                <option value="4">Jeudi</option>
+                                <option value="5">Vendredi</option>
+                                <option value="6">Samedi</option>
+                                <option value="7">Dimanche</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Plage Horaire</label>
+                            <div class="d-flex gap-2">
+                                <select id="editCreneauHeureDebutInterprete" class="form-select form-select-sm" size="5"></select>
+                                <select id="editCreneauHeureFinInterprete" class="form-select form-select-sm" size="5"></select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="editCreneauIndispo"/>
+                                <label class="form-check-label small fw-semibold" for="editCreneauIndispo">
+                                    Indisponibilité récurrente
+                                    <span class="text-muted fw-normal">(ex: jamais disponible ce jour)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="editCreneauInterpreteFields">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Bénéficiaire</label>
+                                <!-- TEMPORAIRE -->
+                                <select id="editCreneauBeneficiaire" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Choisissez un bénéficiaire</option>
+                                    <option value="1">DUPONT Jean</option>
+                                    <option value="2">LAMBERT Marie</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Établissement</label>
+                                <!-- TEMPORAIRE -->
+                                <select id="editCreneauEtablissementInterprete" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Choisissez un établissement</option>
+                                    <option value="1">École Primaire Saint-Joseph</option>
+                                    <option value="2">Athénée Royal de Namur</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Local</label>
+                                <input type="text" id="editCreneauLocalInterprete" class="form-control form-control-sm" placeholder="Ex: Local M5, Labo 2..."/>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Description <span class="text-muted fw-normal">(facultatif)</span></label>
+                                <textarea id="editCreneauDescriptionInterprete" class="form-control form-control-sm" rows="2" placeholder="Texte..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-danger btn-sm" id="btnSupprimerCreneauInterprete">
+                            <i class="bi bi-trash3 me-1"></i> Supprimer
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnModifierCreneauInterprete">
+                            <i class="bi bi-floppy me-1"></i> Modifier
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalEditCreneauBeneficiaire" tabindex="-1" aria-labelledby="modalEditCreneauBeneficiaireLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalEditCreneauBeneficiaireLabel">Modifier le créneau — Bénéficiaire</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <input type="hidden" id="editCreneauBeneficiaireId"/>
+                        <input type="hidden" id="editCreneauId"/>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Jour</label>
+                            <select id="editCreneauJourBeneficiaire" class="form-select form-select-sm">
+                                <option value="1">Lundi</option>
+                                <option value="2">Mardi</option>
+                                <option value="3">Mercredi</option>
+                                <option value="4">Jeudi</option>
+                                <option value="5">Vendredi</option>
+                                <option value="6">Samedi</option>
+                                <option value="7">Dimanche</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Plage Horaire</label>
+                            <div class="d-flex gap-2">
+                                <select id="editCreneauHeureDebutBeneficiaire" class="form-select form-select-sm" size="5"></select>
+                                <select id="editCreneauHeureFinBeneficiaire" class="form-select form-select-sm" size="5"></select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Matière</label>
+                            <!-- TEMPORAIRE -->
+                            <select id="editCreneauAcademicSkill" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une matière</option>
+                                <option value="1">Mathématiques</option>
+                                <option value="2">Français</option>
+                                <option value="3">Histoire</option>
+                                <option value="4">Sciences</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Compétence métier</label>
+                            <!-- TEMPORAIRE -->
+                            <select id="editCreneauProfessionalSkill" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une compétence</option>
+                                <option value="1">Transcription</option>
+                                <option value="2">Translittération</option>
+                                <option value="3">Translation</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Interprète</label>
+                            <!-- TEMPORAIRE — référent en tête -->
+                            <select id="editCreneauInterprete" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez un interprète</option>
+                                <option value="1">MARTIN Sophie (Référent)</option>
+                                <option value="2">LEROY Thomas</option>
+                                <option value="3">BRASSEUR Frédéric</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Établissement</label>
+                            <!-- TEMPORAIRE -->
+                            <select id="editCreneauEtablissementBeneficiaire" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez un établissement</option>
+                                <option value="1">École Primaire Saint-Joseph</option>
+                                <option value="2">Athénée Royal de Namur</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Local</label>
+                            <input type="text" id="editCreneauLocalBeneficiaire" class="form-control form-control-sm" placeholder="Ex: Local M5, Labo 2..."/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Description <span class="text-muted fw-normal">(facultatif)</span></label>
+                            <textarea id="editCreneauDescriptionBeneficiaire" class="form-control form-control-sm" rows="2" placeholder="Texte..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-danger btn-sm" id="btnSupprimerCreneauBeneficiaire">
+                            <i class="bi bi-trash3 me-1"></i> Supprimer
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnModifierCreneauBeneficiaire">
+                            <i class="bi bi-floppy me-1"></i> Modifier
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalSuppression" tabindex="-1" aria-labelledby="modalSuppressionLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalSuppressionLabel">Confirmer la suppression</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3 text-center">
+                        <i class="bi bi-exclamation-triangle text-danger fs-1 mb-3 d-block"></i>
+                        <p class="mb-1">Êtes-vous sûr de vouloir supprimer ce créneau ?</p>
+                        <p class="text-muted small">Cette action est irréversible.</p>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="btnConfirmerSuppression">
+                            <i class="bi bi-trash3 me-1"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script th:src="@{/js/fullcalendar.min.js}"></script>
+
+        <!-- TEMPORAIRE — données hardcodées pour les screenshots -->
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            function getWeekDay(dayOffset) {
+                const now = new Date();
+                const day = now.getDay();
+                const monday = new Date(now);
+                monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1) + dayOffset);
+                return monday.toISOString().split('T')[0];
+            }
+
+            window.HARDCODED_EVENTS_INTERPRETE = [
+                {
+                    title: 'Cours de maths',
+                    start: getWeekDay(0) + 'T08:00:00',
+                    end:   getWeekDay(0) + 'T10:00:00',
+                    color: '#b39ddb',
+                    extendedProps: {
+                        id: 1, dayNumber: 1, startTime: '08:00', endTime: '10:00',
+                        beneficiary: 'DUPONT Jean',
+                        establishment: 'École Primaire Saint-Joseph',
+                        local: 'Local M5',
+                        description: 'Cours de soutien en maths',
+                        isAbsence: false
+                    }
+                },
+                {
+                    title: 'Indisponibilité',
+                    start: getWeekDay(1) + 'T00:00:00',
+                    end:   getWeekDay(2) + 'T00:00:00',
+                    color: '#f0ad4e',
+                    extendedProps: {
+                        id: 2, dayNumber: 2, startTime: '00:00', endTime: '23:59',
+                        isAbsence: true
+                    }
+                },
+                {
+                    title: 'Transcription',
+                    start: getWeekDay(2) + 'T14:00:00',
+                    end:   getWeekDay(2) + 'T16:30:00',
+                    color: '#b39ddb',
+                    extendedProps: {
+                        id: 3, dayNumber: 3, startTime: '14:00', endTime: '16:30',
+                        beneficiary: 'LAMBERT Marie',
+                        establishment: 'Athénée Royal de Namur',
+                        local: 'Labo 2',
+                        isAbsence: false
+                    }
+                },
+                {
+                    title: 'Translittération',
+                    start: getWeekDay(3) + 'T09:00:00',
+                    end:   getWeekDay(3) + 'T11:00:00',
+                    color: '#b39ddb',
+                    extendedProps: {
+                        id: 4, dayNumber: 4, startTime: '09:00', endTime: '11:00',
+                        beneficiary: 'DUPONT Jean',
+                        establishment: 'École Primaire Saint-Joseph',
+                        local: 'Local A3',
+                        description: 'Session de translittération',
+                        isAbsence: false
+                    }
+                }
+            ];
+            window.HARDCODED_EVENTS_BENEFICIAIRE = [
+                {
+                    title: 'Mathématiques',
+                    start: getWeekDay(0) + 'T10:00:00',
+                    end:   getWeekDay(0) + 'T12:00:00',
+                    color: '#b39ddb',
+                    extendedProps: {
+                        id: 5, dayNumber: 1, startTime: '10:00', endTime: '12:00',
+                        academicSkill: 'Mathématiques',
+                        professionalSkill: 'Transcription',
+                        interpreter: 'MARTIN Sophie (Référent)',
+                        establishment: 'École Primaire Saint-Joseph',
+                        local: 'Local M5'
+                    }
+                },
+                {
+                    title: 'Histoire',
+                    start: getWeekDay(2) + 'T08:00:00',
+                    end:   getWeekDay(2) + 'T09:30:00',
+                    color: '#b39ddb',
+                    extendedProps: {
+                        id: 6, dayNumber: 3, startTime: '08:00', endTime: '09:30',
+                        academicSkill: 'Histoire',
+                        professionalSkill: 'Translation',
+                        interpreter: 'LEROY Thomas',
+                        establishment: 'Athénée Royal de Namur',
+                        local: 'Salle 12'
+                    }
+                },
+                {
+                    title: 'Français',
+                    start: getWeekDay(4) + 'T13:00:00',
+                    end:   getWeekDay(4) + 'T15:00:00',
+                    color: '#b39ddb',
+                    extendedProps: {
+                        id: 7, dayNumber: 5, startTime: '13:00', endTime: '15:00',
+                        academicSkill: 'Français',
+                        professionalSkill: 'Translittération',
+                        interpreter: 'MARTIN Sophie (Référent)',
+                        establishment: 'École Primaire Saint-Joseph',
+                        local: 'Local B2',
+                        description: 'Cours de lecture'
+                    }
+                }
+            ];
+            window.CURRENT_INTERPRETE_ID = 1;
+            window.CURRENT_BENEFICIAIRE_ID = 1;
+            /*]]>*/
+        </script>
+
+        <script th:src="@{/js/coordinatrice/horaire-base.js}"></script>
+
+        <div th:replace="~{common/footer :: footer}"></div>
+    </body>
+</html>
