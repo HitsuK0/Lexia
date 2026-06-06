@@ -21,7 +21,8 @@ public class BeneficiaryProfileService {
     /**
      * Builds a {@link DTOBeneficiaryProfile} from the connected beneficiary.
      * Flattens the nested Address object into individual fields so the Thymeleaf form can bind them directly.
-     * If the beneficiary has no address yet (first login), the address fields in the DTO will be left empty so the form displays blank fields to fill in.
+     * If the beneficiary has no address yet (first login), the address fields
+     * in the DTO will be left empty so the form displays blank fields to fill in.
      *
      * @param beneficiary the currently connected beneficiary, must not be null
      * @return a DTOBeneficiaryProfile populated with the beneficiary's current data
@@ -34,6 +35,9 @@ public class BeneficiaryProfileService {
         dto.setFirstName(beneficiary.getFirstName());
         dto.setPhoneNumber(beneficiary.getPhoneNumber());
         dto.setEmailAddress(beneficiary.getEmailAddress());
+        dto.setHourQuota(beneficiary.getHourQuota());
+        dto.setEducationLevel(beneficiary.getEducationLevel());
+        dto.setCommunicationLanguage(beneficiary.getCommunicationLanguage());
 
         if (beneficiary.getAddress() != null) {
             Address address = beneficiary.getAddress();
@@ -48,8 +52,10 @@ public class BeneficiaryProfileService {
 
     /**
      * Saves the profile changes submitted by the beneficiary.
-     * Updates the editable fields of the Beneficiary and its Address in the database.
-     * If the beneficiary has no address yet (first login after account creation by a coordinator), a new Address is created in the database and linked to the beneficiary.
+     * Updates all editable fields of the Beneficiary and its Address in the database,
+     * including hourQuota, educationLevel and communicationLanguage.
+     * If the beneficiary has no address yet (first login after account creation by
+     * a coordinator), a new Address is created in the database and linked to the beneficiary.
      * If the beneficiary already has an address, it is updated in place.
      * The login, numBeneficiary and password are NOT updated here.
      *
@@ -62,6 +68,9 @@ public class BeneficiaryProfileService {
         beneficiary.setFirstName(dto.getFirstName());
         beneficiary.setPhoneNumber(dto.getPhoneNumber());
         beneficiary.setEmailAddress(dto.getEmailAddress());
+        beneficiary.setHourQuota(dto.getHourQuota());
+        beneficiary.setEducationLevel(dto.getEducationLevel());
+        beneficiary.setCommunicationLanguage(dto.getCommunicationLanguage());
 
         DAOAddress daoAddress = new DAOAddress();
         Address address = beneficiary.getAddress();
