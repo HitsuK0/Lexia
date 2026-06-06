@@ -113,10 +113,12 @@ document.addEventListener('DOMContentLoaded', function () {
     generateHours('creneauHeureFinInterprete', 8 * 60 + 5, 19 * 60);
     generateHours('creneauHeureDebutBeneficiaire', 8 * 60, 18 * 60 + 55);
     generateHours('creneauHeureFinBeneficiaire', 8 * 60 + 5, 19 * 60);
-    generateHours('editCreneauHeureDebut', 8 * 60, 18 * 60 + 55);
-    generateHours('editCreneauHeureFin', 8 * 60 + 5, 19 * 60);
+    generateHours('editCreneauHeureDebutInterprete', 8 * 60, 18 * 60 + 55);
+    generateHours('editCreneauHeureFinInterprete', 8 * 60 + 5, 19 * 60);
+    generateHours('editCreneauHeureDebutBeneficiaire', 8 * 60, 18 * 60 + 55);
+    generateHours('editCreneauHeureFinBeneficiaire', 8 * 60 + 5, 19 * 60);
 
-    // TEMPORAIRE
+    // TEMPORAIRE — remplacer par loadInterpretes() et loadBeneficiaires()
     currentInterpreteId = window.CURRENT_INTERPRETE_ID;
     currentBeneficiaireId = window.CURRENT_BENEFICIAIRE_ID;
 
@@ -152,27 +154,38 @@ document.addEventListener('DOMContentLoaded', function () {
         selectBeneficiaire(item);
     });
 
-    /* Regenerates end hour options to always be after the selected start hour - interpreter modal. */
+    /* Regenerates end hour options to always be after the selected start hour - interpreter add modal. */
     document.getElementById('creneauHeureDebutInterprete').addEventListener('change', function () {
         const [h, m] = this.value.split(':').map(Number);
         generateHours('creneauHeureFinInterprete', h * 60 + m + 5, 19 * 60);
     });
 
-    /* Regenerates end hour options to always be after the selected start hour - beneficiary modal. */
+    /* Regenerates end hour options to always be after the selected start hour - beneficiary add modal. */
     document.getElementById('creneauHeureDebutBeneficiaire').addEventListener('change', function () {
         const [h, m] = this.value.split(':').map(Number);
         generateHours('creneauHeureFinBeneficiaire', h * 60 + m + 5, 19 * 60);
     });
 
-    /* Regenerates end hour options to always be after the selected start hour - edit modal. */
-    document.getElementById('editCreneauHeureDebut').addEventListener('change', function () {
+    /* Regenerates end hour options to always be after the selected start hour - interpreter edit modal. */
+    document.getElementById('editCreneauHeureDebutInterprete').addEventListener('change', function () {
         const [h, m] = this.value.split(':').map(Number);
-        generateHours('editCreneauHeureFin', h * 60 + m + 5, 19 * 60);
+        generateHours('editCreneauHeureFinInterprete', h * 60 + m + 5, 19 * 60);
     });
 
-    /* Hides or shows appointment fields based on the unavailability checkbox. */
+    /* Regenerates end hour options to always be after the selected start hour - beneficiary edit modal. */
+    document.getElementById('editCreneauHeureDebutBeneficiaire').addEventListener('change', function () {
+        const [h, m] = this.value.split(':').map(Number);
+        generateHours('editCreneauHeureFinBeneficiaire', h * 60 + m + 5, 19 * 60);
+    });
+
+    /* Hides or shows appointment fields based on the unavailability checkbox - add modal. */
     document.getElementById('creneauIndispo').addEventListener('change', function () {
         document.getElementById('creneauInterpreteFields').style.display = this.checked ? 'none' : '';
+    });
+
+    /* Hides or shows appointment fields based on the unavailability checkbox - edit modal. */
+    document.getElementById('editCreneauIndispo').addEventListener('change', function () {
+        document.getElementById('editCreneauInterpreteFields').style.display = this.checked ? 'none' : '';
     });
 
     /* Resets the interpreter add creneau modal on close. */
@@ -180,6 +193,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('creneauJourInterprete').selectedIndex = 0;
         document.getElementById('creneauIndispo').checked = false;
         document.getElementById('creneauInterpreteFields').style.display = '';
+        document.getElementById('creneauLocalInterprete').value = '';
+        document.getElementById('creneauDescriptionInterprete').value = '';
         generateHours('creneauHeureDebutInterprete', 8 * 60, 18 * 60 + 55);
         generateHours('creneauHeureFinInterprete', 8 * 60 + 5, 19 * 60);
         clearErrors([
@@ -209,15 +224,34 @@ document.addEventListener('DOMContentLoaded', function () {
         ]);
     });
 
-    /* Resets the edit creneau modal on close. */
-    document.getElementById('modalEditCreneau').addEventListener('hidden.bs.modal', function () {
-        document.getElementById('editCreneauId').value = '';
-        generateHours('editCreneauHeureDebut', 8 * 60, 18 * 60 + 55);
-        generateHours('editCreneauHeureFin', 8 * 60 + 5, 19 * 60);
+    /* Resets the interpreter edit modal on close. */
+    document.getElementById('modalEditCreneauInterprete').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('editCreneauInterpreteId').value = '';
+        document.getElementById('editCreneauIndispo').checked = false;
+        document.getElementById('editCreneauInterpreteFields').style.display = '';
+        document.getElementById('editCreneauLocalInterprete').value = '';
+        document.getElementById('editCreneauDescriptionInterprete').value = '';
+        generateHours('editCreneauHeureDebutInterprete', 8 * 60, 18 * 60 + 55);
+        generateHours('editCreneauHeureFinInterprete', 8 * 60 + 5, 19 * 60);
         clearErrors([
-            document.getElementById('editCreneauJour'),
-            document.getElementById('editCreneauHeureDebut'),
-            document.getElementById('editCreneauHeureFin')
+            document.getElementById('editCreneauJourInterprete'),
+            document.getElementById('editCreneauHeureDebutInterprete'),
+            document.getElementById('editCreneauHeureFinInterprete')
+        ]);
+    });
+
+    /* Resets the beneficiary edit modal on close. */
+    document.getElementById('modalEditCreneauBeneficiaire').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('editCreneauBeneficiaireId').value = '';
+        document.getElementById('editCreneauId').value = '';
+        document.getElementById('editCreneauLocalBeneficiaire').value = '';
+        document.getElementById('editCreneauDescriptionBeneficiaire').value = '';
+        generateHours('editCreneauHeureDebutBeneficiaire', 8 * 60, 18 * 60 + 55);
+        generateHours('editCreneauHeureFinBeneficiaire', 8 * 60 + 5, 19 * 60);
+        clearErrors([
+            document.getElementById('editCreneauJourBeneficiaire'),
+            document.getElementById('editCreneauHeureDebutBeneficiaire'),
+            document.getElementById('editCreneauHeureFinBeneficiaire')
         ]);
     });
 
@@ -356,12 +390,13 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(err => console.error('Error saving beneficiary creneau:', err));
     });
 
-    /* Validates and submits the edit creneau form. */
-    document.getElementById('btnModifierCreneau').addEventListener('click', function () {
-        const id = document.getElementById('editCreneauId').value;
-        const jour = document.getElementById('editCreneauJour');
-        const heureDebut = document.getElementById('editCreneauHeureDebut');
-        const heureFin = document.getElementById('editCreneauHeureFin');
+    /* Validates and submits the interpreter edit form. */
+    document.getElementById('btnModifierCreneauInterprete').addEventListener('click', function () {
+        const id = document.getElementById('editCreneauInterpreteId').value;
+        const jour = document.getElementById('editCreneauJourInterprete');
+        const heureDebut = document.getElementById('editCreneauHeureDebutInterprete');
+        const heureFin = document.getElementById('editCreneauHeureFinInterprete');
+        const indispo = document.getElementById('editCreneauIndispo').checked;
         let valid = true;
 
         clearErrors([jour, heureDebut, heureFin]);
@@ -383,25 +418,85 @@ document.addEventListener('DOMContentLoaded', function () {
             body: JSON.stringify({
                 dayNumber: parseInt(jour.value),
                 startTime: heureDebut.value,
-                endTime: heureFin.value
+                endTime: heureFin.value,
+                isAbsence: indispo,
+                numBeneficiary: indispo ? null : parseInt(document.getElementById('editCreneauBeneficiaire').value) || null,
+                numEstablishment: indispo ? null : parseInt(document.getElementById('editCreneauEtablissementInterprete').value) || null,
+                local: indispo ? null : document.getElementById('editCreneauLocalInterprete').value.trim() || null,
+                description: indispo ? null : document.getElementById('editCreneauDescriptionInterprete').value.trim() || null
             })
         })
             .then(r => r.text())
             .then(result => {
                 if (result === 'ok') {
-                    bootstrap.Modal.getInstance(document.getElementById('modalEditCreneau')).hide();
-                    if (currentTab === 'interprete') calendarInterprete.refetchEvents();
-                    else calendarBeneficiaire.refetchEvents();
+                    bootstrap.Modal.getInstance(document.getElementById('modalEditCreneauInterprete')).hide();
+                    calendarInterprete.refetchEvents();
                 } else {
-                    console.error('Error updating creneau');
+                    console.error('Error updating interpreter creneau');
                 }
             })
-            .catch(err => console.error('Error updating creneau:', err));
+            .catch(err => console.error('Error updating interpreter creneau:', err));
     });
 
-    /* Opens the delete confirmation modal from the edit modal. */
-    document.getElementById('btnSupprimerCreneau').addEventListener('click', function () {
-        bootstrap.Modal.getInstance(document.getElementById('modalEditCreneau')).hide();
+    /* Validates and submits the beneficiary edit form. */
+    document.getElementById('btnModifierCreneauBeneficiaire').addEventListener('click', function () {
+        const id = document.getElementById('editCreneauBeneficiaireId').value;
+        const jour = document.getElementById('editCreneauJourBeneficiaire');
+        const heureDebut = document.getElementById('editCreneauHeureDebutBeneficiaire');
+        const heureFin = document.getElementById('editCreneauHeureFinBeneficiaire');
+        let valid = true;
+
+        clearErrors([jour, heureDebut, heureFin]);
+
+        if (!heureDebut.value) {
+            displayError(heureDebut, "L'heure de début est obligatoire.");
+            valid = false;
+        }
+        if (!heureFin.value) {
+            displayError(heureFin, "L'heure de fin est obligatoire.");
+            valid = false;
+        }
+
+        if (!valid) return;
+
+        fetch(`/coordinatrice/horaire-base/${id}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                dayNumber: parseInt(jour.value),
+                startTime: heureDebut.value,
+                endTime: heureFin.value,
+                numAcademicSkill: parseInt(document.getElementById('editCreneauAcademicSkill').value) || null,
+                numProfessionalSkill: parseInt(document.getElementById('editCreneauProfessionalSkill').value) || null,
+                numInterpreter: parseInt(document.getElementById('editCreneauInterprete').value) || null,
+                numEstablishment: parseInt(document.getElementById('editCreneauEtablissementBeneficiaire').value) || null,
+                local: document.getElementById('editCreneauLocalBeneficiaire').value.trim() || null,
+                description: document.getElementById('editCreneauDescriptionBeneficiaire').value.trim() || null
+            })
+        })
+            .then(r => r.text())
+            .then(result => {
+                if (result === 'ok') {
+                    bootstrap.Modal.getInstance(document.getElementById('modalEditCreneauBeneficiaire')).hide();
+                    calendarBeneficiaire.refetchEvents();
+                } else {
+                    console.error('Error updating beneficiary creneau');
+                }
+            })
+            .catch(err => console.error('Error updating beneficiary creneau:', err));
+    });
+
+    /* Opens the delete confirmation modal from the interpreter edit modal. */
+    document.getElementById('btnSupprimerCreneauInterprete').addEventListener('click', function () {
+        document.getElementById('editCreneauId').value = document.getElementById('editCreneauInterpreteId').value;
+        bootstrap.Modal.getInstance(document.getElementById('modalEditCreneauInterprete')).hide();
+        new bootstrap.Modal(document.getElementById('modalSuppression')).show();
+    });
+
+    /* Opens the delete confirmation modal from the beneficiary edit modal. */
+    document.getElementById('btnSupprimerCreneauBeneficiaire').addEventListener('click', function () {
+        document.getElementById('editCreneauId').value = document.getElementById('editCreneauBeneficiaireId').value;
+        bootstrap.Modal.getInstance(document.getElementById('modalEditCreneauBeneficiaire')).hide();
         new bootstrap.Modal(document.getElementById('modalSuppression')).show();
     });
 
@@ -427,11 +522,7 @@ document.addEventListener('DOMContentLoaded', function () {
     calendarInterprete = new FullCalendar.Calendar(document.getElementById('calendarInterprete'), {
         locale: 'fr',
         initialView: 'timeGridWeek',
-        headerToolbar: {
-            left: '',
-            center: '',
-            right: ''
-        },
+        headerToolbar: {left: '', center: '', right: ''},
         dayHeaderFormat: {weekday: 'long'},
         slotMinTime: '08:00:00',
         slotMaxTime: '19:00:00',
@@ -440,10 +531,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         /* Fetches base schedule events for the selected interpreter. */
         events: function (fetchInfo, successCallback, failureCallback) {
+            // TEMPORAIRE — remplacer par :
+            // if (currentInterpreteId === null) { successCallback([]); return; }
+            // fetch(`/coordinatrice/horaire-base/interprete/${currentInterpreteId}/events`)
+            //     .then(r => r.json()).then(data => successCallback(data))
+            //     .catch(err => { console.error(err); failureCallback(err); });
             successCallback(window.HARDCODED_EVENTS_INTERPRETE || []);
         },
 
-        /* Opens the add creneau modal when clicking on an empty slot,
+        /* Opens the interpreter add creneau modal when clicking on an empty slot,
         pre-filling the day and start time. */
         dateClick: function (info) {
             document.getElementById('creneauJourInterprete').value = info.date.getDay() === 0 ? 7 : info.date.getDay();
@@ -460,39 +556,45 @@ document.addEventListener('DOMContentLoaded', function () {
             new bootstrap.Modal(document.getElementById('modalAjoutCreneauInterprete')).show();
         },
 
-        /* Opens the edit modal when clicking on an existing event. */
+        /* Opens the interpreter edit modal when clicking on an existing event,
+        pre-filling all fields with the event data. */
         eventClick: function (info) {
             const props = info.event.extendedProps;
-            document.getElementById('editCreneauId').value = props.id;
-            document.getElementById('editCreneauJour').value = props.dayNumber;
+            document.getElementById('editCreneauInterpreteId').value = props.id;
+            document.getElementById('editCreneauJourInterprete').value = props.dayNumber;
 
-            generateHours('editCreneauHeureDebut', 8 * 60, 18 * 60 + 55);
-            generateHours('editCreneauHeureFin', 8 * 60 + 5, 19 * 60);
-            document.getElementById('editCreneauHeureDebut').value = props.startTime;
-            document.getElementById('editCreneauHeureFin').value = props.endTime;
+            generateHours('editCreneauHeureDebutInterprete', 8 * 60, 18 * 60 + 55);
+            generateHours('editCreneauHeureFinInterprete', 8 * 60 + 5, 19 * 60);
+            document.getElementById('editCreneauHeureDebutInterprete').value = props.startTime;
+            document.getElementById('editCreneauHeureFinInterprete').value = props.endTime;
 
-            new bootstrap.Modal(document.getElementById('modalEditCreneau')).show();
+            const indispo = props.isAbsence || false;
+            document.getElementById('editCreneauIndispo').checked = indispo;
+            document.getElementById('editCreneauInterpreteFields').style.display = indispo ? 'none' : '';
+
+            if (!indispo) {
+                document.getElementById('editCreneauLocalInterprete').value = props.local || '';
+                document.getElementById('editCreneauDescriptionInterprete').value = props.description || '';
+            }
+
+            new bootstrap.Modal(document.getElementById('modalEditCreneauInterprete')).show();
         },
 
-        /* Renders the HTML content of each calendar event. */
+        /* Renders the HTML content of each interpreter calendar event. */
         eventContent: function (arg) {
             const props = arg.event.extendedProps;
             const start = arg.event.start.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
-            const end   = arg.event.end?.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}) ?? '';
+            const end = arg.event.end?.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}) ?? '';
 
             let html = `<div class="fw-bold">${arg.event.title}</div>`;
             html += `<div class="small">${start} – ${end}</div>`;
+            if (props.isAbsence) html += `<div class="small fst-italic">Indisponibilité récurrente</div>`;
+            if (props.beneficiary) html += `<div class="small">Bénéficiaire : ${props.beneficiary}</div>`;
+            if (props.establishment) html += `<div class="small">${props.establishment}</div>`;
+            if (props.local) html += `<div class="small">${props.local}</div>`;
+            if (props.description) html += `<div class="small">Descritpion : ${props.description}</div>`;
 
-            if (props.beneficiary)        html += `<div class="small">Bénéficiaire : ${props.beneficiary}</div>`;
-            if (props.establishment)      html += `<div class="small">${props.establishment}</div>`;
-            if (props.local)              html += `<div class="small">${props.local}</div>`;
-            if (props.description)        html += `<div class="small">Description : ${props.description}</div>`;
-            if (props.academicSkill)      html += `<div class="small">Matière : ${props.academicSkill}</div>`;
-            if (props.professionalSkill)  html += `<div class="small">Compétence : ${props.professionalSkill}</div>`;
-            if (props.interpreter)        html += `<div class="small">Interprète : ${props.interpreter}</div>`;
-            if (props.isAbsence)          html += `<div class="small fst-italic">Indisponibilité récurrente</div>`;
-
-            return { html: `<div class="p-1">${html}</div>` };
+            return {html: `<div class="p-1">${html}</div>`};
         }
     });
 
@@ -500,11 +602,7 @@ document.addEventListener('DOMContentLoaded', function () {
     calendarBeneficiaire = new FullCalendar.Calendar(document.getElementById('calendarBeneficiaire'), {
         locale: 'fr',
         initialView: 'timeGridWeek',
-        headerToolbar: {
-            left: '',
-            center: '',
-            right: ''
-        },
+        headerToolbar: {left: '', center: '', right: ''},
         dayHeaderFormat: {weekday: 'long'},
         slotMinTime: '08:00:00',
         slotMaxTime: '19:00:00',
@@ -513,10 +611,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         /* Fetches base schedule events for the selected beneficiary. */
         events: function (fetchInfo, successCallback, failureCallback) {
+            // TEMPORAIRE - à remplacer par 
+            // if (currentBeneficiaireId === null) { successCallback([]); return; }
+            // fetch(`/coordinatrice/horaire-base/beneficiaire/${currentBeneficiaireId}/events`)
+            //     .then(r => r.json()).then(data => successCallback(data))
+            //     .catch(err => { console.error(err); failureCallback(err); });
             successCallback(window.HARDCODED_EVENTS_BENEFICIAIRE || []);
         },
 
-        /* Opens the add creneau modal when clicking on an empty slot,
+        /* Opens the beneficiary add creneau modal when clicking on an empty slot,
         pre-filling the day and start time. */
         dateClick: function (info) {
             document.getElementById('creneauJourBeneficiaire').value = info.date.getDay() === 0 ? 7 : info.date.getDay();
@@ -533,39 +636,40 @@ document.addEventListener('DOMContentLoaded', function () {
             new bootstrap.Modal(document.getElementById('modalAjoutCreneauBeneficiaire')).show();
         },
 
-        /* Opens the edit modal when clicking on an existing event. */
+        /* Opens the beneficiary edit modal when clicking on an existing event,
+        pre-filling all fields with the event data. */
         eventClick: function (info) {
             const props = info.event.extendedProps;
+            document.getElementById('editCreneauBeneficiaireId').value = props.id;
             document.getElementById('editCreneauId').value = props.id;
-            document.getElementById('editCreneauJour').value = props.dayNumber;
+            document.getElementById('editCreneauJourBeneficiaire').value = props.dayNumber;
 
-            generateHours('editCreneauHeureDebut', 8 * 60, 18 * 60 + 55);
-            generateHours('editCreneauHeureFin', 8 * 60 + 5, 19 * 60);
-            document.getElementById('editCreneauHeureDebut').value = props.startTime;
-            document.getElementById('editCreneauHeureFin').value = props.endTime;
+            generateHours('editCreneauHeureDebutBeneficiaire', 8 * 60, 18 * 60 + 55);
+            generateHours('editCreneauHeureFinBeneficiaire', 8 * 60 + 5, 19 * 60);
+            document.getElementById('editCreneauHeureDebutBeneficiaire').value = props.startTime;
+            document.getElementById('editCreneauHeureFinBeneficiaire').value = props.endTime;
+            document.getElementById('editCreneauLocalBeneficiaire').value = props.local || '';
+            document.getElementById('editCreneauDescriptionBeneficiaire').value = props.description || '';
 
-            new bootstrap.Modal(document.getElementById('modalEditCreneau')).show();
+            new bootstrap.Modal(document.getElementById('modalEditCreneauBeneficiaire')).show();
         },
 
-        /* Renders the HTML content of each calendar event. */
+        /* Renders the HTML content of each beneficiary calendar event. */
         eventContent: function (arg) {
             const props = arg.event.extendedProps;
             const start = arg.event.start.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
-            const end   = arg.event.end?.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}) ?? '';
+            const end = arg.event.end?.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}) ?? '';
 
             let html = `<div class="fw-bold">${arg.event.title}</div>`;
             html += `<div class="small">${start} – ${end}</div>`;
+            if (props.academicSkill) html += `<div class="small">Matière : ${props.academicSkill}</div>`;
+            if (props.professionalSkill) html += `<div class="small">Compétence : ${props.professionalSkill}</div>`;
+            if (props.interpreter) html += `<div class="small">Interprète : ${props.interpreter}</div>`;
+            if (props.establishment) html += `<div class="small">${props.establishment}</div>`;
+            if (props.local) html += `<div class="small">${props.local}</div>`;
+            if (props.description) html += `<div class="small">Description : ${props.description}</div>`;
 
-            if (props.beneficiary)        html += `<div class="small">Bénéficiaire : ${props.beneficiary}</div>`;
-            if (props.establishment)      html += `<div class="small">${props.establishment}</div>`;
-            if (props.local)              html += `<div class="small">${props.local}</div>`;
-            if (props.description)        html += `<div class="small">Description : ${props.description}</div>`;
-            if (props.academicSkill)      html += `<div class="small">Matière : ${props.academicSkill}</div>`;
-            if (props.professionalSkill)  html += `<div class="small">Compétence : ${props.professionalSkill}</div>`;
-            if (props.interpreter)        html += `<div class="small">Interprète : ${props.interpreter}</div>`;
-            if (props.isAbsence)          html += `<div class="small fst-italic">Indisponibilité récurrente</div>`;
-
-            return { html: `<div class="p-1">${html}</div>` };
+            return {html: `<div class="p-1">${html}</div>`};
         }
     });
 
