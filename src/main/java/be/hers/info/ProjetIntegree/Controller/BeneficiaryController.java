@@ -1,19 +1,23 @@
 package be.hers.info.ProjetIntegree.Controller;
 
+import be.hers.info.ProjetIntegree.DTO.DTOAppointmentForm;
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
-import be.hers.info.ProjetIntegree.POJO.Beneficiary;
+import be.hers.info.ProjetIntegree.POJO.*;
+import be.hers.info.ProjetIntegree.Services.AppointmentFormService;
 import be.hers.info.ProjetIntegree.Services.BeneficiaryProfileService;
+import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Nicolas Jean-François
@@ -43,6 +47,7 @@ public class BeneficiaryController {
 
     /** Controller for the pages named "Mon planning"
      * Displays the weekly calendar page for the connected beneficiary.
+     * Pass on model the establishmentList, the academicSkillList and the professionalSkillList
      * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
      * Redirects to login if no beneficiary is found in session.
      *
@@ -56,10 +61,130 @@ public class BeneficiaryController {
         if (beneficiary == null) {
             return "redirect:/login";
         }
+        AppointmentFormService service = new AppointmentFormService();
+        model.addAttribute("establishmentList", service.findAllEstablishments());
+        model.addAttribute("academicSkillList", service.findAllAcademicSkills());
+        model.addAttribute("professionalSkillList", service.findAllProfessionalSkills());
+
         model.addAttribute("activeTab", "planning");
         return "beneficiaire/planning";
     }
+    /**
+     * Search all Appointments within the Start and End time range linked to the connected beneficiary.
+     * Format the information found in a list on the Map for FullCalendar
+     * @param start the start date of the schedule
+     * @param end the end date of the schedule
+     * @param session the current HTTP session
+     * @param model the Spring UI model
+     * @return a formatted map list for FullCalendar
+     */
+    @GetMapping(value = "/planning/events", produces="application/json")
+    @ResponseBody
+    public List<Map<String,Object>> getEventsPlaningBeneficiary(@RequestParam String start,
+                                                                @RequestParam String end, HttpSession session, Model model) {
+        Beneficiary beneficiary = getBeneficiaryFromSession(session);
+        if (beneficiary == null) {
+            return Collections.emptyList();
+        }
+        String dateStart = start.substring(0,10);
+        String dateEnd = end.substring(0,10);
+        PlanningService planningService = new PlanningService();
+        List<Appointment> appointmentList = planningService.getListAppointmentsToBeneficiaryAndDate(beneficiary.getNumBeneficiary(), dateStart, dateEnd);
+        System.out.println(appointmentList);
+        LocalDate ldStart = LocalDate.parse(dateStart);
+        LocalDate ldEnd = LocalDate.parse(dateEnd);
 
+        List<Map<String,Object>> events = new ArrayList<>();
+        List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
+                .toList();
+        for( Appointment a : appointmentList){
+            Map<String, Object> event = new HashMap<>();
+            Map<String, Object> extendedProps = new HashMap<>();
+
+
+            String skills = a.getAcademicSkillsNeeded().stream()
+                    .map(s -> s.getDesignation())
+                    .collect(Collectors.joining(", "));
+            event.put("title", skills);
+
+            if(a.getTimeSlot() instanceof TimeSlotPunctual){
+                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
+                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+
+                switch (a.getStatus()){
+                    case "en attente":
+                        event.put("color","#f0ad4e");
+                        break;
+                    case "accepte":
+                        event.put("color","#81c784");
+                        break;
+                    case "refuse":
+                        event.put("color","#f28b82");
+                        break;
+                }
+            }else{
+                TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
+                int i = tsp.getDayNumber();
+                LocalDate ld = null;
+                for(LocalDate l : listDateBetweenStartEnd){
+                    if(l.getDayOfWeek().getValue() == i){
+                        ld = l;
+                        break;
+                    }
+                }
+                if (ld == null) continue;
+                LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
+                event.put("start",ldt);
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                event.put("color","#b39ddb");
+            }
+
+            String professionalSkills = a.getProfessionalSkillsNeeded().stream()
+                    .map(s -> s.getDesignation())
+                    .collect(Collectors.joining(", "));
+
+            extendedProps.put("type","appointment");
+            extendedProps.put("status",a.getStatus());
+            extendedProps.put("professionalSkills", professionalSkills);
+            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,1) + ". " + a.getBeneficiary().getFirstName());
+            extendedProps.put("locals", a.getAppointmentLocals());
+            extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
+            extendedProps.put("description", a.getDescription());
+            event.put("extendedProps",extendedProps);
+            events.add(event);
+
+        }
+        return events;
+
+    }
+    /**
+     * Creates a new appointment from the RDV modal in the beneficiary planning page.
+     * Receives the appointment data as a JSON body sent by the JS fetch call.
+     * Returns "ok" if the appointment was successfully created, "error" otherwise.
+     *
+     * @param dtoAppointment the appointment data sent as JSON from the frontend
+     * @param session        the current HTTP session
+     * @return "ok" on success, "error" on failure
+     */
+    @PostMapping(value = "/planning/beneficiaires/rdv", consumes = "application/json")
+    @ResponseBody
+    public String createRDV(@RequestBody DTOAppointmentForm dtoAppointment, HttpSession session) {
+        Beneficiary beneficiary = getBeneficiaryFromSession(session);
+        if (beneficiary == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AppointmentFormService service = new AppointmentFormService();
+            boolean success = service.createAppointment(dtoAppointment);
+            return success ? "ok" : "error";
+        } catch (BadStatusException | SQLException | IllegalArgumentException e) {
+            e.printStackTrace();
+            return "error";
+        }
+    }
     /** Controller for the pages named "Mes demandes"
      * Displays the list of appointment requests for the connected beneficiary.
      * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
