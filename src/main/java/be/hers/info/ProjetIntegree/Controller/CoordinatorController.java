@@ -583,8 +583,6 @@ public class CoordinatorController {
             model.addAttribute("numberUsers", numberUsers);
         }
         catch(SQLException e){
-            //Faudra trouver ce qu'on va vraiment retourner pour TOUS les catchs de TOUS les controllers
-            //parce que pour l'instant, c'est à chier. On va se faire défoncer si les profs voient ça
             e.printStackTrace();
         }
 
