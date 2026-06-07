@@ -276,6 +276,7 @@ public class CoordinatorController {
         return "redirect:/interprete/profil?section=academics";
     }
 
+
     // Temporaire
     @GetMapping("/plannings")
     public String plannings(Model model) {
@@ -285,6 +286,8 @@ public class CoordinatorController {
         return "coordinatrice/plannings";
     }
 
+
+
     // Temporaire
     @GetMapping("/validations")
     public String validations(Model model) {
@@ -292,48 +295,6 @@ public class CoordinatorController {
         model.addAttribute("userRole", "COORDINATOR");
         model.addAttribute("isAdmin", true);
         return "coordinatrice/validations";
-    }
-
-    /**
-     * This function load the page "etablissement".
-     * It also add all the data needed for the display (all the establishment registered in DB)
-     * The page enable to add and modify an Establishment and to attribute a referrer for an Establishment.
-     *
-     * @param model is param used by Spring to add all the data in the page.
-     * @return the page displayed for the users.
-     */
-    @GetMapping("/etablissements")
-    public String etablissements(Model model, HttpSession session) {
-        Coordinator coordinator = getCoordinatorFromSession(session);
-        if(coordinator == null)
-            return "redirect:login";
-        String userName = coordinator.getLastName().toUpperCase() + " " + coordinator.getFirstName();
-        model.addAttribute("userName", userName);
-        model.addAttribute("userRole", "COORDINATOR");
-        model.addAttribute("isAdmin", true);
-        EstablishementService establishmentService = new EstablishementService();
-        List<DTOEstablishment> listEstablishment = null;
-        try {
-            listEstablishment = establishmentService.getEtablissements();
-        } catch (SQLException e) {
-            // renvoyé sur la page d'erreur.
-        }
-        model.addAttribute("listEstablishment", listEstablishment);
-        // listEstablishment is used for the display in the table.
-        model.addAttribute("DTOEstablishmentAdd", new DTOEstablishment());
-        // DTOEstablishmentAdd is used when the user try to add an Establishment
-        model.addAttribute("DTOEstablishmentEdit", new DTOEstablishment());
-        // DTOEstablishment is used when we try to modify an
-        ReferrerService referrerService = new ReferrerService();
-        List<Referrer> allListReferrer = null;
-        try {
-            allListReferrer = referrerService.getAllReferrer();
-        } catch (SQLException e) {
-            //renvoyé sur la page d'erreur.
-        }
-        model.addAttribute("allListReferrer", allListReferrer);
-        model.addAttribute("listReferrerSelected", new ArrayList<Integer>());
-        return "coordinatrice/etablissements";
     }
 
     /**
@@ -353,7 +314,11 @@ public class CoordinatorController {
         if (coordinator == null || !coordinator.isAdmin()) {
             return "redirect:/login";
         }
+        String userName = coordinator.getLastName().toUpperCase() + " " + coordinator.getFirstName();
 
+        model.addAttribute("userName", userName);
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", coordinator.isAdmin());
         try {
             model.addAttribute("referentList", new ReferrerService().getAllReferrer());
             model.addAttribute("etablissementList", new EstablishementService().getAllFullEstablishments());
@@ -364,7 +329,7 @@ public class CoordinatorController {
         }
 
         model.addAttribute("DTOReferrer", new DTOReferrer());
-        model.addAttribute("DTOEstablishmentAdd", new DTOReferrer());
+        model.addAttribute("DTOEstablishment", new DTOEstablishment());
 
         return "coordinatrice/gestion";
     }
@@ -545,17 +510,20 @@ public class CoordinatorController {
      * This function create an establishment in DB using the data put in the form.
      *
      * @param dtoEstablishment is the DTOEstablishment the user is trying to add.
+     * @param model            is param used by Spring to add all the data in the page.
      * @return the page "etablissements" where it comes from.
      */
     @PostMapping("/etablissements/createEstablishment")
-    public String addEstablishment(@ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment) {
+    public String addEstablishment(@ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
+                                   Model model) {
+
         EstablishementService establishementService = new EstablishementService();
         try {
             establishementService.createEstablishment(dtoEstablishment);
         } catch (SQLException e) {
             // renvoyé la page d'erreur.
         }
-        return "redirect:/coordinatrice/etablissements";
+        return "redirect:/coordinatrice/gestion";
     }
 
     /**
@@ -575,7 +543,7 @@ public class CoordinatorController {
         } catch (SQLException e) {
             // renvoyé la page d'erreur.
         }
-        return "redirect:/coordinatrice/etablissements";
+        return "redirect:/coordinatrice/gestion";
     }
 
     // Temporaire
