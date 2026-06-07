@@ -119,12 +119,12 @@ public class CoordinatorUsersService {
      */
     public String addResaCoordinator(DTOUserAdd dtoUserAdd, boolean isAdmin) throws SQLException {
         Address address = new Address(dtoUserAdd.getPostcode(), dtoUserAdd.getPostOfficeBox(),
-                          dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
+                                      dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
 
-        Interpreter newResaInterpreter = new Interpreter(dtoUserAdd, address);
+        Interpreter newInterpreter = new Interpreter(dtoUserAdd, address);
         DAOInterpreter daoInterpreter = new DAOInterpreter();
         try {
-            if (!daoInterpreter.create(newResaInterpreter))
+            if (!daoInterpreter.create(newInterpreter))
                 return "Ajout interprète échoué";
         }
         catch(SQLException e){
@@ -132,14 +132,37 @@ public class CoordinatorUsersService {
         }
 
         try{
-            Coordinator newResaCoordinator = new Coordinator(dtoUserAdd, address, isAdmin);
+            Coordinator newCoordinator = new Coordinator(dtoUserAdd, address, isAdmin);
             DAOCoordinator daoCoordinator = new DAOCoordinator();
-            if(!daoCoordinator.create(newResaCoordinator))
+            if(!daoCoordinator.create(newCoordinator))
                 return "Ajout coordinatrice échoué";
         }
         catch(SQLException e){
-            daoInterpreter.delete(newResaInterpreter);
+            daoInterpreter.delete(newInterpreter);
             return "Ajout coordinatrice échoué";
+        }
+
+        return "Ajout réussi";
+    }
+
+    /**
+     * Add an interpreter to the database
+     * @param dtoUserAdd the interpreter to add in the database
+     * @return a string explaining if the add is a success or a failure
+     * @throws SQLException If an SQL error occurs with this method.
+     */
+    public String addInterpreter(DTOUserAdd dtoUserAdd) throws SQLException {
+        Address address = new Address(dtoUserAdd.getPostcode(), dtoUserAdd.getPostOfficeBox(),
+                                      dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
+
+        Interpreter newInterpreter = new Interpreter(dtoUserAdd, address);
+        DAOInterpreter daoInterpreter = new DAOInterpreter();
+        try {
+            if (!daoInterpreter.create(newInterpreter))
+                return "Ajout interprète échoué";
+        }
+        catch(SQLException e){
+            return "Ajout interprète échoué";
         }
 
         return "Ajout réussi";
