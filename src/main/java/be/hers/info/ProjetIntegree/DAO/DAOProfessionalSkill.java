@@ -51,6 +51,36 @@ public class DAOProfessionalSkill extends DAO<ProfessionalSkill> {
     }
 
     /**
+     * Searches all the professional skills to the interpreter
+     * @param numInterpreter the id of the interpreter we are looking for professional skills
+     * @return a list containing all the Professional skills to the interpreter
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<ProfessionalSkill> findByInterpreter(int numInterpreter) throws SQLException {
+        List<ProfessionalSkill> professionalSkills = new ArrayList<>();
+        ProfessionalSkill professionalSkill = null;
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        String query = "SELECT * FROM ProfessionalSkill ps " +
+                "JOIN ProfessionalSkillInterpreter psi ON ps.numProfessionalSkill = psi.numProfessionalSkill " +
+                "WHERE psi.numInterpreter = ?";
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numInterpreter);
+            resultSet = prStat.executeQuery();
+            while (resultSet.next()) {
+                professionalSkill = new ProfessionalSkill(
+                        resultSet.getInt("NumProfessionalSkill"),
+                        resultSet.getString("Designation"));
+                professionalSkills.add(professionalSkill);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return professionalSkills;
+    }
+
+    /**
      * Creates a list containing all the ProfessionalSkills in the table.
      * @return a list containing all the ProfessionalSkills, or an empty list if the table is empty.
      * @throws SQLException In case of any SQL problems encountered with this method.

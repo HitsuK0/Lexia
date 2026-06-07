@@ -1,11 +1,10 @@
 package be.hers.info.ProjetIntegree.DAO;
 
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
+import be.hers.info.ProjetIntegree.DTO.DTOUser;
 import be.hers.info.ProjetIntegree.POJO.*;
 import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleType;
 import oracle.jdbc.OracleTypes;
-import oracle.jdbc.proxy.annotation.Pre;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -143,6 +142,38 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                         resultSet.getString("firstName"), resultSet.getString("phoneNumber"),
                         resultSet.getString("emailAddress"), address, resultSet.getInt("hourQuota"),
                         resultSet.getInt("educationLevel"), interpreter, languages);
+
+                listBeneficiary.add(beneficiary);
+            }
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return listBeneficiary;
+    }
+
+    /**
+     * Creates a list containing all the Beneficiaries in the Beneficiary table
+     * For each Beneficiary, the Address is loaded via DAOAddress and the Interpreter
+     * of reference is loaded via DAOInterpreter
+     * Appointments are not loaded
+     * @return A list containing all the Beneficiaries without his password, an empty list if the table is empty
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public List<DTOUser> findAllDTOBeneficiaryUsers() throws SQLException {
+        List<DTOUser> listBeneficiary = new ArrayList<>();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT numBeneficiary, firstName, lastName, phoneNumber, emailAddress " +
+                       "FROM Beneficiary";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()) {
+                DTOUser beneficiary = new DTOUser(resultSet.getInt("numBeneficiary"),
+                        resultSet.getString("lastName"), resultSet.getString("firstName"),
+                        resultSet.getString("phoneNumber"), resultSet.getString("emailAddress"));
 
                 listBeneficiary.add(beneficiary);
             }
@@ -482,5 +513,28 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             closeStatementAndResultSet(preparedStatement, resultSet);
         }
         return listBeneficiary;
+    }
+
+    /**
+     * Return the number of beneficiaries in the beneficiary table
+     * @return the number of beneficiaries in the beneficiary table
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public int countNumberBeneficiaries() throws SQLException {
+        int numberBeneficiaries = 0;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT COUNT(*) FROM Beneficiary";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next())
+                numberBeneficiaries = resultSet.getInt(1);
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return numberBeneficiaries;
     }
 }

@@ -1,5 +1,7 @@
 package be.hers.info.ProjetIntegree.POJO;
 
+import be.hers.info.ProjetIntegree.DTO.DTOUserAdd;
+
 import java.util.List;
 
 /**
@@ -17,6 +19,17 @@ public class Coordinator extends Interpreter {
     public Coordinator() {
         super();
         this.isAdmin = false;
+    }
+
+    /**
+     * Create a resa coordinator without his numCoordinator. There isn't the numInterpreter.
+     * @param dtoUserAdd The user to add
+     * @param address The address of the user
+     * @param isAdmin If isAdmin is true, the coordinator will be the main coordinator. false if it's a resa
+     */
+    public Coordinator(DTOUserAdd dtoUserAdd, Address address, boolean isAdmin) {
+        super(dtoUserAdd, address);
+        this.isAdmin = isAdmin;
     }
 
     /**

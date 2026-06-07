@@ -2,6 +2,7 @@ package be.hers.info.ProjetIntegree.DAO;
 
 
 import be.hers.info.ProjetIntegree.POJO.AcademicSkill;
+import be.hers.info.ProjetIntegree.POJO.ProfessionalSkill;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleTypes;
 
@@ -43,6 +44,36 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
             closeStatementAndResultSet(prStat, rs);
         }
         return as;
+    }
+
+    /**
+     * Searches all the academic skills to the interpreter
+     * @param numInterpreter the id of the interpreter we are looking for academic skills
+     * @return a list containing all the academic skills to the interpreter
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<AcademicSkill> findByInterpreter(int numInterpreter) throws SQLException {
+        List<AcademicSkill> academicSkills = new ArrayList<>();
+        AcademicSkill academicSkill = null;
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        String query = "SELECT * FROM AcademicSkill ps " +
+                "JOIN AcademicSkillInterpreter psi ON ps.numAcademicSkill = psi.numAcademicSkill " +
+                "WHERE psi.numInterpreter = ?";
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numInterpreter);
+            resultSet = prStat.executeQuery();
+            while (resultSet.next()) {
+                academicSkill = new AcademicSkill(
+                        resultSet.getInt("NumAcademicSkill"),
+                        resultSet.getString("Designation"));
+                academicSkills.add(academicSkill);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return academicSkills;
     }
 
     /**
