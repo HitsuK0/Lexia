@@ -54,6 +54,8 @@
                                 <th>Ville</th>
                                 <th>Adresse Complète</th>
                                 <th>Personne Référente</th>
+                                <th>Numero de téléphone</th>
+                                <th>Niveau d'éducation</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -66,23 +68,30 @@
                                     <span th:text="${!etab.addresses.isEmpty() ? etab.addresses[0].postcode + ' ' + etab.addresses[0].locality : '/'}">Code Ville</span>
                                 </td>
                                 <td th:text="${!etab.referrers.isEmpty() ? etab.referrers[0].surname + ' ' + etab.referrers[0].name : '/'}" data-label="Référent"></td>
+                                <td th:text="${etab.phoneNumber}"></td>
+                                <td>
+                                    <span th:each="level, i : ${etab.educationLevel}">
+                                        <span th:if="${level == 0}">Autre</span>
+                                        <span th:if="${level == 1}">Maternelle</span>
+                                        <span th:if="${level == 2}">Primaire</span>
+                                        <span th:if="${level == 3}">Secondaire</span>
+                                        <span th:if="${level == 4}">Supérieur</span>
+                                        <span th:if="${!i.last}">, </span>
+                                    </span>
+                                </td>
+
                                 <td data-label="Actions">
                                     <button class="btn btn-link p-0 text-dark me-2"
                                             data-bs-toggle="modal" data-bs-target="#modalEditEtab"
                                             th:data-id="${etab.numEstablishment}"
                                             th:data-name="${etab.nameBuilding}"
+                                            th:data-id-address="${!etab.addresses.isEmpty() ? etab.addresses[0].numAddress : ''}"
                                             th:data-rue="${!etab.addresses.isEmpty() ? etab.addresses[0].postOfficeBox : ''}"
                                             th:data-cp="${!etab.addresses.isEmpty() ? etab.addresses[0].postcode : ''}"
                                             th:data-ville="${!etab.addresses.isEmpty() ? etab.addresses[0].locality : ''}"
                                             th:data-referent="${!etab.referrers.isEmpty() ? etab.referrers[0].numReferrer : ''}"
                                             title="Modifier">
                                         <i class="bi bi-pencil-square fs-5"></i>
-                                    </button>
-                                    <button class="btn btn-link p-0 text-danger"
-                                            data-bs-toggle="modal" data-bs-target="#modalDeleteEtab"
-                                            th:data-id="${etab.numEstablishment}"
-                                            title="Supprimer">
-                                        <i class="bi bi-trash3 fs-5"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -250,40 +259,81 @@
                         <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body px-4 py-3">
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Nom de l'établissement</label>
-                            <input type="text" class="form-control form-control-sm" id="ajoutEtabNom" placeholder="Ex : Haute Ecole Robert Schuman"/>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Rue et numéro</label>
-                            <input type="text" class="form-control form-control-sm" id="ajoutEtabRue" placeholder="Ex : Rue de la Cité, 64"/>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-4">
-                                <label class="form-label small fw-semibold">Code postal</label>
-                                <input type="text" class="form-control form-control-sm" id="ajoutEtabCp" placeholder="Ex : 6800"/>
+                        <form th:action="@{/coordinatrice/etablissements/createEstablishment}" th:object="${DTOEstablishment}" method="POST">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Nom de l'établissement</label>
+                                <input type="text" th:field="*{nameBuilding}" class="form-control form-control-sm" id="ajoutEtabNom" placeholder="Ex : Haute Ecole Robert Schuman"/>
                             </div>
-                            <div class="col-8">
-                                <label class="form-label small fw-semibold">Ville</label>
-                                <input type="text" class="form-control form-control-sm" id="ajoutEtabVille" placeholder="Ex : Libramont"/>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Rue et numéro</label>
+                                <input type="text" th:field="*{postOfficeBox}" class="form-control form-control-sm" id="ajoutEtabRue" placeholder="Ex : Rue de la Cité, 64"/>
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Personne référente <span class="text-muted fw-normal">(facultatif)</span></label>
-                            <select class="form-select form-select-sm" id="ajoutEtabRef">
-                                <option value="" selected>-- Aucun référent --</option>
-                                <option th:each="ref : ${referentList}"
-                                        th:value="${ref.numReferrer}"
-                                        th:text="${ref.surname + ' ' + ref.name}">Référent</option>
-                            </select>
-                        </div>
+                            <div class="row mb-3">
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">Code postal</label>
+                                    <input type="text" th:field="*{postcode}" class="form-control form-control-sm" id="ajoutEtabCp" placeholder="Ex : 6800"/>
+                                </div>
+                                <div class="col-8">
+                                    <label class="form-label small fw-semibold">Ville</label>
+                                    <input type="text" th:field="*{locality}" class="form-control form-control-sm" id="ajoutEtabVille" placeholder="Ex : Libramont"/>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Numero de téléphone</label>
+                                <input type="text" th:field="*{phoneNumber}" class="form-control form-control-sm" id="ajoutEtabNumTel" placeholder="06111333999"/>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">Niveau d'éducation</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="autre" type="checkbox" id="ajoutEtabCheckAutre">
+                                        <label class="form-check-label" for="ajoutEtabCheckAutre">
+                                            Autre
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="maternelle" type="checkbox" id="ajoutEtabCheckMaternelle">
+                                        <label class="form-check-label" for="ajoutEtabCheckMaternelle">
+                                            Maternelle
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="primaire" type="checkbox"  id="ajoutEtabCheckPrimaire">
+                                        <label class="form-check-label" for="ajoutEtabCheckPrimaire">
+                                            Primaire
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="secondaire" type="checkbox" id="ajoutEtabCheckSecondaire">
+                                        <label class="form-check-label" for="ajoutEtabCheckSecondaire">
+                                            Secondaire
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="supérieur" type="checkbox"  id="ajoutEtabCheckSup">
+                                        <label class="form-check-label" for="ajoutEtabCheckSup">
+                                            Supérieur
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Personne référente <span class="text-muted fw-normal">(facultatif)</span></label>
+                                <select th:field="*{listReferrerSelected}" class="form-select form-select-sm" id="ajoutEtabRef">
+                                    <option value="" selected>-- Aucun référent --</option>
+                                    <option th:each="ref : ${referentList}"
+                                            th:value="${ref.numReferrer}"
+                                            th:text="${ref.surname + ' ' + ref.name}">Référent</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-lg me-1"></i> Ajouter
+                            </button>
+                        </form>
                     </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm">
-                            <i class="bi bi-plus-lg me-1"></i> Ajouter
-                        </button>
-                    </div>
+                </div>
+                <div class="modal-footer border-top justify-content-center gap-2">
                 </div>
             </div>
         </div>
@@ -295,64 +345,85 @@
                         <h5 class="modal-title fw-bold w-100 text-center">Modifier l'établissement</h5>
                         <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="modal-body px-4 py-3">
-                        <input type="hidden" id="editEtabId"/>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Nom de l'établissement</label>
-                            <input type="text" class="form-control form-control-sm" id="editEtabNom"/>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Rue et numéro</label>
-                            <input type="text" class="form-control form-control-sm" id="editEtabRue"/>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-4">
-                                <label class="form-label small fw-semibold">Code postal</label>
-                                <input type="text" class="form-control form-control-sm" id="editEtabCp"/>
-                            </div>
-                            <div class="col-8">
-                                <label class="form-label small fw-semibold">Ville</label>
-                                <input type="text" class="form-control form-control-sm" id="editEtabVille"/>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Personne référente <span class="text-muted fw-normal">(facultatif)</span></label>
-                            <select class="form-select form-select-sm" id="editEtabRef">
-                                <option value="">-- Aucun référent --</option>
-                                <option th:each="ref : ${referentList}"
-                                        th:value="${ref.numReferrer}"
-                                        th:text="${ref.surname + ' ' + ref.name}">Référent</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm">
-                            <i class="bi bi-floppy me-1"></i> Enregistrer
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    <form th:action="@{/coordinatrice/etablissements/updateEstablishment}" th:object="${DTOEstablishment}" method="POST">
+                        <div class="modal-body px-4 py-3">
 
-        <div class="modal fade" id="modalDeleteEtab" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content modal-rounded">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center">Supprimer l'établissement</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body px-4 py-3 text-center">
-                        <p>Êtes-vous sûr de vouloir supprimer cet établissement ?</p>
-                        <p class="text-danger fw-semibold">Cette action est irréversible.</p>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <input type="hidden" id="deleteEtabId"/>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash3 me-1"></i> Supprimer
-                        </button>
-                    </div>
+                            <input type="hidden" th:field="*{numEstablishment}" id="editEtabId"/>
+                            <input type="hidden" th:field="*{numAddress}" id="editEtabIdAddress"/>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Nom de l'établissement</label>
+                                <input type="text" th:field="*{nameBuilding}" class="form-control form-control-sm" id="editEtabNom"/>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Rue et numéro</label>
+                                <input type="text" th:field="*{postOfficeBox}" class="form-control form-control-sm" id="editEtabRue"/>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">Code postal</label>
+                                    <input type="text" th:field="*{postcode}" class="form-control form-control-sm" id="editEtabCp"/>
+                                </div>
+                                <div class="col-8">
+                                    <label class="form-label small fw-semibold">Ville</label>
+                                    <input type="text" th:field="*{locality}" class="form-control form-control-sm" id="editEtabVille"/>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Numero de téléphone</label>
+                                <input type="text" th:field="*{phoneNumber}" class="form-control form-control-sm" id="editEtabNumTel" placeholder="06111333999"/>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">Niveau d'éducation</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="autre" type="checkbox" id="editEtabCheckAutre">
+                                        <label class="form-check-label" for="editEtabCheckAutre">
+                                            Autre
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="maternelle" type="checkbox" id="editEtabCheckMaternelle">
+                                        <label class="form-check-label" for="editEtabCheckMaternelle">
+                                            Maternelle
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="primaire" type="checkbox"  id="editEtabCheckPrimaire">
+                                        <label class="form-check-label" for="editEtabCheckPrimaire">
+                                            Primaire
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="secondaire" type="checkbox" id="editEtabCheckSecondaire">
+                                        <label class="form-check-label" for="editEtabCheckSecondaire">
+                                            Secondaire
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" th:field="*{educationLevel}" value="supérieur" type="checkbox"  id="editEtabCheckSup">
+                                        <label class="form-check-label" for="editEtabCheckSup">
+                                            Supérieur
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Personne référente <span class="text-muted fw-normal">(facultatif)</span></label>
+                                <select th:field="*{listReferrerSelected}" class="form-select form-select-sm" id="editEtabRef">
+                                    <option value="">-- Aucun référent --</option>
+                                    <option th:each="ref : ${referentList}"
+                                            th:value="${ref.numReferrer}"
+                                            th:text="${ref.surname + ' ' + ref.name}">Référent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top justify-content-center gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-floppy me-1"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
