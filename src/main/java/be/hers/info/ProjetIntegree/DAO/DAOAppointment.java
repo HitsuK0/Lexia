@@ -721,4 +721,59 @@ public class DAOAppointment extends DAO<Appointment> {
         }
         return absenceList;
     }
+    /**
+     * Retrieves all appointment requests submitted by a Beneficiary, optionally filtered by status.
+     * Only the fields needed for the request list view are loaded (numAppointment, status,
+     * timeSlot, required academic and professional skills).
+     * @param numBeneficiary the id of the Beneficiary whose requests are being retrieved
+     * @param status the status to filter on, or null/empty for no filter
+     * @return the list of appointment requests matching the criteria, an empty list if none
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public List<Appointment> findAllRequestsByBeneficiaryAndOptionalStatus(int numBeneficiary, String status) throws SQLException{
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<Appointment> appointmentList = new ArrayList<>();
+
+        boolean filterByStatus = status != null && !status.isEmpty();
+
+        String query = "SELECT numAppointment, status, FKTimeSlotPunctual " +
+                "FROM Appointment " +
+                "WHERE FKnumBeneficiary = ? " +
+                "AND FKTimeSlotPunctual IS NOT NULL";
+
+        if(filterByStatus){
+            query += " AND status = ?";
+        }
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numBeneficiary);
+            if(filterByStatus) {
+                prStat.setString(2, status);
+            }
+
+            resultSet = prStat.executeQuery();
+
+            DAOTimeSlotPunctual  daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+
+            while(resultSet.next()){
+                int numAppointment = resultSet.getInt("numAppointment");
+
+                TimeSlot timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
+
+                Appointment appointment = new Appointment(
+                        numAppointment,
+                        resultSet.getString("status"),
+                        findListAcademicSkillRequire(numAppointment),
+                        findListProfessionalSkillRequire(numAppointment),
+                        timeSlot
+                );
+                appointmentList.add(appointment);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return appointmentList;
+    }
 }
