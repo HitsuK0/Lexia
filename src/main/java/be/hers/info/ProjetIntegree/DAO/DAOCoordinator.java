@@ -1,6 +1,6 @@
 package be.hers.info.ProjetIntegree.DAO;
 
-import be.hers.info.ProjetIntegree.DTO.DTOInterpreterUsers;
+import be.hers.info.ProjetIntegree.DTO.DTOUser;
 import be.hers.info.ProjetIntegree.POJO.*;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleTypes;
@@ -113,17 +113,13 @@ public class DAOCoordinator extends DAO<Coordinator> {
      * @return a list containing all the Coordinator in the table. An empty list is returned if the table is empty.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
-    public List<DTOInterpreterUsers> findAllDTOResaUsers() throws SQLException {
+    public List<DTOUser> findAllDTOResaUsers() throws SQLException {
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
-        List<DTOInterpreterUsers> resaList = new ArrayList<>();
-        DTOInterpreterUsers resa = null;
-        List<AcademicSkill> listAcademicSkills = new ArrayList<>();
-        List<ProfessionalSkill> listProfessionalSkills = new ArrayList<>();
+        List<DTOUser> resaList = new ArrayList<>();
+        DTOUser resa = null;
         Interpreter interpreter = null;
         DAOInterpreter daoInterpreter = new DAOInterpreter();
-        DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
-        DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
         String query = "SELECT numCoordinator, FKNumInterpreter " +
                        "FROM Coordinator " +
                        "WHERE isAdmin = 0";
@@ -132,23 +128,13 @@ public class DAOCoordinator extends DAO<Coordinator> {
             resultSet = prStat.executeQuery();
             while(resultSet.next()){
                 interpreter = daoInterpreter.find(resultSet.getInt("FKnumInterpreter"));
-                listProfessionalSkills = daoProfessionalSkill.findByInterpreter(
-                        interpreter.getNumInterpreter());
 
-                listAcademicSkills = daoAcademicSkill.findByInterpreter(
-                        interpreter.getNumInterpreter());
-
-                resa = new DTOInterpreterUsers(
+                resa = new DTOUser(
                         resultSet.getInt("numCoordinator"),
-                        interpreter.getLogin(),
                         interpreter.getLastName(),
                         interpreter.getFirstName(),
                         interpreter.getPhoneNumber(),
-                        interpreter.getEmailAddress(),
-                        interpreter.getAddress(),
-                        interpreter.getWeeklyWorkHours(),
-                        listProfessionalSkills,
-                        listAcademicSkills
+                        interpreter.getEmailAddress()
                         );
                 resaList.add(resa);
             }
@@ -165,17 +151,13 @@ public class DAOCoordinator extends DAO<Coordinator> {
      * @return a list containing all the Coordinator in the table. An empty list is returned if the table is empty.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
-    public List<DTOInterpreterUsers> findAllDTOCoordinatorUsers() throws SQLException {
+    public List<DTOUser> findAllDTOCoordinatorUsers() throws SQLException {
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
-        List<DTOInterpreterUsers> coordinatorList = new ArrayList<>();
+        List<DTOUser> coordinatorList = new ArrayList<>();
         Interpreter interpreter = null;
-        List<ProfessionalSkill> listProfessionalSkills = new ArrayList<>();
-        List<AcademicSkill> listAcademicSkills = new ArrayList<>();
-        DTOInterpreterUsers coordinator = null;
+        DTOUser coordinator = null;
         DAOInterpreter daoInterpreter = new DAOInterpreter();
-        DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
-        DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
         String query = "SELECT numCoordinator, FKNumInterpreter " +
                 "FROM Coordinator " +
                 "WHERE isAdmin = 1";
@@ -184,23 +166,13 @@ public class DAOCoordinator extends DAO<Coordinator> {
             resultSet = prStat.executeQuery();
             while(resultSet.next()){
                 interpreter = daoInterpreter.find(resultSet.getInt("FKnumInterpreter"));
-                listProfessionalSkills = daoProfessionalSkill.findByInterpreter(
-                        interpreter.getNumInterpreter());
 
-                listAcademicSkills = daoAcademicSkill.findByInterpreter(
-                        interpreter.getNumInterpreter());
-
-                coordinator = new DTOInterpreterUsers(
+                coordinator = new DTOUser(
                         resultSet.getInt("numCoordinator"),
-                        interpreter.getLogin(),
                         interpreter.getLastName(),
                         interpreter.getFirstName(),
                         interpreter.getPhoneNumber(),
-                        interpreter.getEmailAddress(),
-                        interpreter.getAddress(),
-                        interpreter.getWeeklyWorkHours(),
-                        listProfessionalSkills,
-                        listAcademicSkills
+                        interpreter.getEmailAddress()
                 );
                 coordinatorList.add(coordinator);
             }

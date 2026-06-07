@@ -10,7 +10,6 @@ import be.hers.info.ProjetIntegree.DAO.DAOBeneficiary;
 import be.hers.info.ProjetIntegree.DAO.DAOCoordinator;
 import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
 import be.hers.info.ProjetIntegree.DTO.DTOUser;
-import be.hers.info.ProjetIntegree.DTO.DTOInterpreterUsers;
 import be.hers.info.ProjetIntegree.DTO.DTOUserAdd;
 import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Beneficiary;
@@ -35,7 +34,7 @@ public class CoordinatorUsersService {
      * and his beneficiariesList
      * @throws SQLException If an SQL error occurs with this method.
      */
-    public List<DTOInterpreterUsers> findAllInterpreters() throws SQLException {
+    public List<DTOUser> findAllInterpreters() throws SQLException {
         DAOInterpreter daoInterpreter = new DAOInterpreter();
         return daoInterpreter.findAllDTOInterpreterUsers();
     }
@@ -45,7 +44,7 @@ public class CoordinatorUsersService {
      * and his beneficiariesList
      * @throws SQLException If an SQL error occurs with this method.
      */
-    public List<DTOInterpreterUsers> findAllResas() throws SQLException {
+    public List<DTOUser> findAllResas() throws SQLException {
         DAOCoordinator daoCoordinator = new DAOCoordinator();
         return daoCoordinator.findAllDTOResaUsers();
     }
@@ -55,7 +54,7 @@ public class CoordinatorUsersService {
      * and his beneficiariesList
      * @throws SQLException If an SQL error occurs with this method.
      */
-    public List<DTOInterpreterUsers> findAllCoordinators() throws SQLException {
+    public List<DTOUser> findAllCoordinators() throws SQLException {
         DAOCoordinator daoCoordinator = new DAOCoordinator();
         return daoCoordinator.findAllDTOCoordinatorUsers();
     }

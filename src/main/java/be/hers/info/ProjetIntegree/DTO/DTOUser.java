@@ -6,7 +6,7 @@ package be.hers.info.ProjetIntegree.DTO;
  */
 
 public class DTOUser {
-    private int numBeneficiary;
+    private int numUser;
     private String lastName;
     private String firstName;
     private String phoneNumber;
@@ -14,14 +14,14 @@ public class DTOUser {
 
     /**
      * Initialize a DTOUser with num, lastName, firstName, phoneNumber, emailAddress
-     * @param numBeneficiary the id of the DTOUser
+     * @param numUser the id of the DTOUser
      * @param lastName the lastName of the DTOUser
      * @param firstName the firstName of the DTOUser
      * @param phoneNumber the phone number of the DTOUser
      * @param emailAddress the email address of the DTOUser
      */
-    public DTOUser(int numBeneficiary, String lastName, String firstName, String phoneNumber, String emailAddress) {
-        this.numBeneficiary = numBeneficiary;
+    public DTOUser(int numUser, String lastName, String firstName, String phoneNumber, String emailAddress) {
+        this.numUser = numUser;
         this.lastName = lastName;
         this.firstName = firstName;
         this.phoneNumber = phoneNumber;
@@ -31,16 +31,16 @@ public class DTOUser {
     /**
      * @return the id
      */
-    public int getNumBeneficiary() {
-        return numBeneficiary;
+    public int getNumUser() {
+        return numUser;
     }
 
     /**
-     * Set the numBeneficiary
-     * @param numBeneficiary the numBeneficiary to set
+     * Set the numUser
+     * @param numUser the numUser to set
      */
-    public void setNumBeneficiary(int numBeneficiary) {
-        this.numBeneficiary = numBeneficiary;
+    public void setNumUser(int numUser) {
+        this.numUser = numUser;
     }
 
     /**

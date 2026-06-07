@@ -593,13 +593,13 @@ public class CoordinatorController {
             List<DTOUser> beneficiaries = coordinatorUsersService.findAllBeneficiary();
             model.addAttribute("beneficiaries", beneficiaries);
 
-            List<DTOInterpreterUsers> interpreters = coordinatorUsersService.findAllInterpreters();
+            List<DTOUser> interpreters = coordinatorUsersService.findAllInterpreters();
             model.addAttribute("interpreters", interpreters);
 
-            List<DTOInterpreterUsers> resas = coordinatorUsersService.findAllResas();
+            List<DTOUser> resas = coordinatorUsersService.findAllResas();
             model.addAttribute("resas", resas);
 
-            List<DTOInterpreterUsers> coordinators = coordinatorUsersService.findAllCoordinators();
+            List<DTOUser> coordinators = coordinatorUsersService.findAllCoordinators();
             model.addAttribute("coordinators", coordinators);
 
             int numberBeneficiaries = coordinatorUsersService.countBeneficiaries();

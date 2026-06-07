@@ -163,32 +163,17 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         List<DTOUser> listBeneficiary = new ArrayList<>();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String query = "SELECT numBeneficiary, login, firstName, lastName, phoneNumber, " +
-                "emailAddress, hourQuota, educationLevel, communicationLanguage, FKnumInterpreter, FKAddress " +
-                "FROM Beneficiary";
+        String query = "SELECT numBeneficiary, firstName, lastName, phoneNumber, emailAddress " +
+                       "FROM Beneficiary";
 
         try {
             preparedStatement = connect.prepareStatement(query);
             resultSet = preparedStatement.executeQuery();
 
-            DAOInterpreter interpreterDAO = new DAOInterpreter();
-            DAOAddress addressDAO = new DAOAddress();
-
             while(resultSet.next()) {
-                Address address = addressDAO.find(resultSet.getInt("FKAddress"));
-                Interpreter interpreter = interpreterDAO.find(resultSet.getInt("FKnumInterpreter"));
-
-                String langStr = resultSet.getString("communicationLanguage");
-                List<String> languages = new ArrayList<>();
-                if(langStr != null && !langStr.isEmpty()) {
-                    languages = Arrays.stream(langStr.split(",")).collect(Collectors.toList());
-                }
-
                 DTOUser beneficiary = new DTOUser(resultSet.getInt("numBeneficiary"),
-                        resultSet.getString("login"), resultSet.getString("lastName"),
-                        resultSet.getString("firstName"), resultSet.getString("phoneNumber"),
-                        resultSet.getString("emailAddress"), address, resultSet.getInt("hourQuota"),
-                        resultSet.getInt("educationLevel"), interpreter, languages);
+                        resultSet.getString("lastName"), resultSet.getString("firstName"),
+                        resultSet.getString("phoneNumber"), resultSet.getString("emailAddress"));
 
                 listBeneficiary.add(beneficiary);
             }
