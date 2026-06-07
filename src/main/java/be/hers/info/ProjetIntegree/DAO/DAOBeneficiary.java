@@ -1,12 +1,10 @@
 package be.hers.info.ProjetIntegree.DAO;
 
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
-import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryUsers;
+import be.hers.info.ProjetIntegree.DTO.DTOUser;
 import be.hers.info.ProjetIntegree.POJO.*;
 import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleType;
 import oracle.jdbc.OracleTypes;
-import oracle.jdbc.proxy.annotation.Pre;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -161,8 +159,8 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
      * @return A list containing all the Beneficiaries without his password, an empty list if the table is empty
      * @throws SQLException In case of any SQL problems encountered with this method
      */
-    public List<DTOBeneficiaryUsers> findAllDTOBeneficiaryUsers() throws SQLException {
-        List<DTOBeneficiaryUsers> listBeneficiary = new ArrayList<>();
+    public List<DTOUser> findAllDTOBeneficiaryUsers() throws SQLException {
+        List<DTOUser> listBeneficiary = new ArrayList<>();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         String query = "SELECT numBeneficiary, login, firstName, lastName, phoneNumber, " +
@@ -186,7 +184,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                     languages = Arrays.stream(langStr.split(",")).collect(Collectors.toList());
                 }
 
-                DTOBeneficiaryUsers beneficiary = new DTOBeneficiaryUsers(resultSet.getInt("numBeneficiary"),
+                DTOUser beneficiary = new DTOUser(resultSet.getInt("numBeneficiary"),
                         resultSet.getString("login"), resultSet.getString("lastName"),
                         resultSet.getString("firstName"), resultSet.getString("phoneNumber"),
                         resultSet.getString("emailAddress"), address, resultSet.getInt("hourQuota"),

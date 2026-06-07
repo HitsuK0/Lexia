@@ -9,7 +9,7 @@ import be.hers.info.ProjetIntegree.DAO.DAOAddress;
 import be.hers.info.ProjetIntegree.DAO.DAOBeneficiary;
 import be.hers.info.ProjetIntegree.DAO.DAOCoordinator;
 import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
-import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryUsers;
+import be.hers.info.ProjetIntegree.DTO.DTOUser;
 import be.hers.info.ProjetIntegree.DTO.DTOInterpreterUsers;
 import be.hers.info.ProjetIntegree.DTO.DTOUserAdd;
 import be.hers.info.ProjetIntegree.POJO.Address;
@@ -18,7 +18,6 @@ import be.hers.info.ProjetIntegree.POJO.Coordinator;
 import be.hers.info.ProjetIntegree.POJO.Interpreter;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CoordinatorUsersService {
@@ -26,7 +25,7 @@ public class CoordinatorUsersService {
      * @return A list containing all the beneficiaries without his password
      * @throws SQLException If an SQL error occurs with this method.
      */
-    public List<DTOBeneficiaryUsers> findAllBeneficiary() throws SQLException {
+    public List<DTOUser> findAllBeneficiary() throws SQLException {
         DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
         return daoBeneficiary.findAllDTOBeneficiaryUsers();
     }

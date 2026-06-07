@@ -11,7 +11,6 @@ import be.hers.info.ProjetIntegree.DTO.*;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.*;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -591,7 +590,7 @@ public class CoordinatorController {
 
         try{
             CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
-            List<DTOBeneficiaryUsers> beneficiaries = coordinatorUsersService.findAllBeneficiary();
+            List<DTOUser> beneficiaries = coordinatorUsersService.findAllBeneficiary();
             model.addAttribute("beneficiaries", beneficiaries);
 
             List<DTOInterpreterUsers> interpreters = coordinatorUsersService.findAllInterpreters();
