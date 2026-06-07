@@ -2,6 +2,8 @@ package be.hers.info.ProjetIntegree.POJO;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import be.hers.info.ProjetIntegree.DTO.DTOUserAdd;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
@@ -29,6 +31,24 @@ public class Interpreter extends User{
         this.professionalSkillsList = new ArrayList<>();
         this.academicSkillsList = new ArrayList<>();
         this.beneficiariesList = new ArrayList<>();
+    }
+
+    /**
+     * Create an interpreter without his numInterpreter
+     * @param dtoUserAdd The user to add
+     * @param address The address of the user
+     * @throws IllegalArgumentException if weeklyWorkHours is negative
+     *                                  if address is null
+     */
+    public Interpreter(DTOUserAdd dtoUserAdd, Address address){
+        super("", "", dtoUserAdd.getLastName(), dtoUserAdd.getFirstName(), dtoUserAdd.getPhoneNumber(),
+                dtoUserAdd.getEmailAddress(), address);
+
+        if (weeklyWorkHours < 0)
+            throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
+
+        this.weeklyWorkHours = dtoUserAdd.getWeeklyWorkHours();
+
     }
 
     /**

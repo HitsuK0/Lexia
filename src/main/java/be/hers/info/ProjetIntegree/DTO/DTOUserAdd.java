@@ -1,29 +1,36 @@
 package be.hers.info.ProjetIntegree.DTO;
 
+import java.util.List;
+
 public class DTOUserAdd {
     private String lastName;
     private String firstName;
     private String emailAddress;
-    private String password;
     private String phoneNumber;
     private int postcode;
     private String postOfficeBox;
     private String locality;
     private String hamlet;
-    private int role;
+    private int hourQuota;
+    private int educationLevel;
+    private int weeklyWorkHours;
+    private List<String> communicationLanguage;
 
-    public DTOUserAdd(String lastName, String firstName, String emailAddress, String password, String phoneNumber,
-                      int postcode, String postOfficeBox, String locality, String hamlet, int role) {
+    public DTOUserAdd(String lastName, String firstName, String emailAddress, String phoneNumber,
+                      int postcode, String postOfficeBox, String locality, String hamlet, int hourQuota,
+                      int educationLevel, int weeklyWorkHours, List<String> communicationLanguage) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.emailAddress = emailAddress;
-        this.password = password;
         this.phoneNumber = phoneNumber;
         this.postcode = postcode;
         this.postOfficeBox = postOfficeBox;
         this.locality = locality;
         this.hamlet = hamlet;
-        this.role = role;
+        this.hourQuota = hourQuota;
+        this.educationLevel = educationLevel;
+        this.weeklyWorkHours = weeklyWorkHours;
+        this.communicationLanguage = communicationLanguage;
     }
 
     public String getLastName() {
@@ -48,14 +55,6 @@ public class DTOUserAdd {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getPhoneNumber() {
@@ -98,11 +97,35 @@ public class DTOUserAdd {
         this.hamlet = hamlet;
     }
 
-    public int getRole() {
-        return role;
+    public int getHourQuota() {
+        return hourQuota;
     }
 
-    public void setRole(int role) {
-        this.role = role;
+    public void setHourQuota(int hourQuota) {
+        this.hourQuota = hourQuota;
+    }
+
+    public int getEducationLevel() {
+        return educationLevel;
+    }
+
+    public void setEducationLevel(int educationLevel) {
+        this.educationLevel = educationLevel;
+    }
+
+    public int getWeeklyWorkHours() {
+        return weeklyWorkHours;
+    }
+
+    public void setWeeklyWorkHours(int weeklyWorkHours) {
+        this.weeklyWorkHours = weeklyWorkHours;
+    }
+
+    public List<String> getCommunicationLanguage() {
+        return communicationLanguage;
+    }
+
+    public void setCommunicationLanguage(List<String> communicationLanguage) {
+        this.communicationLanguage = communicationLanguage;
     }
 }

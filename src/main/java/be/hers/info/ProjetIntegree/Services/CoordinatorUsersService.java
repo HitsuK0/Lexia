@@ -10,7 +10,11 @@ import be.hers.info.ProjetIntegree.DAO.DAOCoordinator;
 import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryUsers;
 import be.hers.info.ProjetIntegree.DTO.DTOInterpreterUsers;
+import be.hers.info.ProjetIntegree.DTO.DTOUserAdd;
+import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Beneficiary;
+import be.hers.info.ProjetIntegree.POJO.Coordinator;
+import be.hers.info.ProjetIntegree.POJO.Interpreter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -105,5 +109,39 @@ public class CoordinatorUsersService {
     public int countResas() throws SQLException {
         DAOCoordinator daoCoordinator = new DAOCoordinator();
         return daoCoordinator.countNumberResas();
+    }
+
+    /**
+     * Add a resa to the database
+     * @param dtoUserAdd the resa to add in the database
+     * @return a string explaining if the add is a success or a failure
+     * @throws SQLException If an SQL error occurs with this method.
+     */
+    public String addResa(DTOUserAdd dtoUserAdd) throws SQLException {
+        Address address = new Address(dtoUserAdd.getPostcode(), dtoUserAdd.getPostOfficeBox(),
+                          dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
+
+        Interpreter newResaInterpreter = new Interpreter(dtoUserAdd, address);
+        DAOInterpreter daoInterpreter = new DAOInterpreter();
+        try {
+            if (!daoInterpreter.create(newResaInterpreter))
+                return "Ajout interprète échoué";
+        }
+        catch(SQLException e){
+            return "Ajout interprète échoué";
+        }
+
+        try{
+            Coordinator newResaCoordinator = new Coordinator(dtoUserAdd, address, false);
+            DAOCoordinator daoCoordinator = new DAOCoordinator();
+            if(!daoCoordinator.create(newResaCoordinator))
+                return "Ajout coordinatrice échoué";
+        }
+        catch(SQLException e){
+            daoInterpreter.delete(newResaInterpreter);
+            return "Ajout coordinatrice échoué";
+        }
+
+        return "Ajout réussi";
     }
 }

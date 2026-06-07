@@ -647,18 +647,20 @@ public class CoordinatorController {
      *         Otherwise, return a redirection to the "/login" page
      */
     @PostMapping("utilisateurs/addUser")
-    public String addUser(HttpSession session, @ModelAttribute DTOUserAdd dtoAddUser, Model model){
+    public String addUser(HttpSession session, @ModelAttribute DTOUserAdd dtoAddUser,
+                          @ModelAttribute int role, Model model){
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null)
             return "redirect:/login";
 
+        CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
         try{
             String result = "";
-            switch (dtoAddUser.getRole()) {
-                case "1" -> result = addResa(dtoAddUser);
-                case "2" -> result = addInterpreter(dtoAddUser);
-                case "3" -> result = addBeneficiary(dtoAddUser);
-                case "4" -> result = addCoordinator(dtoAddUser);
+            switch (role) {
+                case "1" -> result = coordinatorUsersService.addResa(dtoAddUser);
+                case "2" -> result = coordinatorUsersService.addInterpreter(dtoAddUser);
+                case "3" -> result = coordinatorUsersService.addBeneficiary(dtoAddUser);
+                case "4" -> result = coordinatorUsersService.addCoordinator(dtoAddUser);
             }
 
             return result;
@@ -666,6 +668,9 @@ public class CoordinatorController {
         catch(SQLException e) {
             //Faudra trouver ce qu'on va vraiment retourner pour TOUS les catchs de TOUS les controllers
             //parce que pour l'instant, c'est à chier. On va se faire défoncer si les profs voient ça
+            e.printStackTrace();
+        }
+        catch(IllegalArgumentException e){
             e.printStackTrace();
         }
     }
