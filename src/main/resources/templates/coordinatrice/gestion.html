@@ -89,7 +89,9 @@
                                             th:data-rue="${!etab.addresses.isEmpty() ? etab.addresses[0].postOfficeBox : ''}"
                                             th:data-cp="${!etab.addresses.isEmpty() ? etab.addresses[0].postcode : ''}"
                                             th:data-ville="${!etab.addresses.isEmpty() ? etab.addresses[0].locality : ''}"
+                                            th:data-tel="${etab.phoneNumber}"
                                             th:data-referent="${!etab.referrers.isEmpty() ? etab.referrers[0].numReferrer : ''}"
+                                            th:data-education="${etab.educationLevel}"
                                             title="Modifier">
                                         <i class="bi bi-pencil-square fs-5"></i>
                                     </button>
