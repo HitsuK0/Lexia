@@ -5,6 +5,8 @@ package be.hers.info.ProjetIntegree.POJO;
  * @reviewer Halet Louis, Nicolas Jean-François
  */
 
+import be.hers.info.ProjetIntegree.DTO.DTOUserAdd;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,39 @@ public class Beneficiary extends User{
         this.interpreter = null;
         this.communicationLanguage = new ArrayList<String>();
         this.appointmentList = new ArrayList<Appointment>();
+    }
+
+    /**
+     * Create a beneficiary without his numBeneficiary
+     * @param dtoUserAdd The beneficiary to add
+     * @param address The address of the user
+     * @throws IllegalArgumentException if address, communicationLanguage or password is null
+     *                                  if communicationLanguage or password is empty
+     *                                  if hourQuota is negative
+     *                                  if educationLevel is smaller than EDUCATION_LEVEL_MIN or greater than EDUCATION_LEVEL_MAX
+     */
+    public Beneficiary(DTOUserAdd dtoUserAdd, Address address) {
+        super("", dtoUserAdd.getPassword(), dtoUserAdd.getLastName(), dtoUserAdd.getFirstName(),
+                dtoUserAdd.getPhoneNumber(), dtoUserAdd.getEmailAddress(), address);
+
+        if(communicationLanguage == null)
+            throw new IllegalArgumentException("[POJOBeneficiary] L'interprète de référence et langue(s) de communication ne peuvent pas être null");
+
+        if(communicationLanguage.isEmpty())
+            throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de communication ne peut pas être vide");
+
+        if(hourQuota < 0)
+            throw new IllegalArgumentException("[POJOBeneficiary] Le quota d'heures ne peut pas être négatif");
+
+        if(educationLevel < EDUCATION_LEVEL_MIN || educationLevel > EDUCATION_LEVEL_MAX)
+            throw new IllegalArgumentException("[POJOBeneficiary] Le niveau d'éducation doit être compris entre "+
+                                                EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
+
+        this.hourQuota = dtoUserAdd.getHourQuota();
+        this.educationLevel = dtoUserAdd.getEducationLevel();
+        this.interpreter = null;
+        this.communicationLanguage = dtoUserAdd.getCommunicationLanguage();
+        this.appointmentList = new ArrayList<>();
     }
 
     /**

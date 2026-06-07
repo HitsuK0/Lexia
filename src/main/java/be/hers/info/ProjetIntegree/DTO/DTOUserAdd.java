@@ -3,6 +3,7 @@ package be.hers.info.ProjetIntegree.DTO;
 import java.util.List;
 
 public class DTOUserAdd {
+    private String password;
     private String lastName;
     private String firstName;
     private String emailAddress;
@@ -16,9 +17,10 @@ public class DTOUserAdd {
     private int weeklyWorkHours;
     private List<String> communicationLanguage;
 
-    public DTOUserAdd(String lastName, String firstName, String emailAddress, String phoneNumber,
+    public DTOUserAdd(String password, String lastName, String firstName, String emailAddress, String phoneNumber,
                       int postcode, String postOfficeBox, String locality, String hamlet, int hourQuota,
                       int educationLevel, int weeklyWorkHours, List<String> communicationLanguage) {
+        this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
         this.emailAddress = emailAddress;
@@ -31,6 +33,14 @@ public class DTOUserAdd {
         this.educationLevel = educationLevel;
         this.weeklyWorkHours = weeklyWorkHours;
         this.communicationLanguage = communicationLanguage;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getLastName() {

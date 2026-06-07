@@ -624,6 +624,7 @@ public class CoordinatorController {
         return "coordinatrice/utilisateurs";
     }
 
+    // Temporaire
     @GetMapping("/utilisateurs/{id}")
     public String utilisateurDetail(@PathVariable String id, Model model) {
         model.addAttribute("userName", "NOM Prenom");
@@ -648,7 +649,7 @@ public class CoordinatorController {
      */
     @PostMapping("utilisateurs/addUser")
     public String addUser(HttpSession session, @ModelAttribute DTOUserAdd dtoAddUser,
-                          @ModelAttribute int role, Model model){
+                          @ModelAttribute String role, Model model){
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null)
             return "redirect:/login";
@@ -663,32 +664,20 @@ public class CoordinatorController {
                 case "4" -> result = coordinatorUsersService.addResaCoordinator(dtoAddUser, true);
             }
 
-            return result;
+            model.addAttribute("message", result);
+
+            return "coordinatrice/utilisateurs";
         }
         catch(SQLException e) {
             //Faudra trouver ce qu'on va vraiment retourner pour TOUS les catchs de TOUS les controllers
             //parce que pour l'instant, c'est à chier. On va se faire défoncer si les profs voient ça
             e.printStackTrace();
+            return "coordinatrice/utilisateurs";
         }
         catch(IllegalArgumentException e){
             e.printStackTrace();
+            return "coordinatrice/utilisateurs";
         }
-    }
-
-    /**
-     * Update in the database the coordinator, interpreter or beneficiary selected sends by the frontend
-     * @param session the current HTTP session
-     * @return a redirection to the "coordinatrice/utilisateurs" page if the user is a coordinator connected.
-     *         Otherwise, return a redirection to the "/login" page
-     */
-    @GetMapping("utilisateurs/updateUser")
-    public String updateUser(HttpSession session){
-        Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null)
-            return "redirect:/login";
-
-        //En pause en attendant les modifs de Chloé
-        return "";
     }
 
     /**

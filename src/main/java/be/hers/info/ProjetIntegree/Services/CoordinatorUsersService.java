@@ -5,6 +5,7 @@ package be.hers.info.ProjetIntegree.Services;
  * @reviewer Nicolas Jean-François, Halet Louis
  */
 
+import be.hers.info.ProjetIntegree.DAO.DAOAddress;
 import be.hers.info.ProjetIntegree.DAO.DAOBeneficiary;
 import be.hers.info.ProjetIntegree.DAO.DAOCoordinator;
 import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
@@ -118,27 +119,36 @@ public class CoordinatorUsersService {
      * @throws SQLException If an SQL error occurs with this method.
      */
     public String addResaCoordinator(DTOUserAdd dtoUserAdd, boolean isAdmin) throws SQLException {
-        Address address = new Address(dtoUserAdd.getPostcode(), dtoUserAdd.getPostOfficeBox(),
+        Address newAddress = new Address(dtoUserAdd.getPostcode(), dtoUserAdd.getPostOfficeBox(),
                                       dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
+        DAOAddress daoAddress = new DAOAddress();
+        daoAddress.create(newAddress);
 
-        Interpreter newInterpreter = new Interpreter(dtoUserAdd, address);
+        Interpreter newInterpreter = new Interpreter(dtoUserAdd, newAddress);
         DAOInterpreter daoInterpreter = new DAOInterpreter();
         try {
-            if (!daoInterpreter.create(newInterpreter))
+            if (!daoInterpreter.create(newInterpreter)) {
+                daoAddress.delete(newAddress);
                 return "Ajout interprète échoué";
+            }
         }
         catch(SQLException e){
+            daoAddress.delete(newAddress);
             return "Ajout interprète échoué";
         }
 
         try{
-            Coordinator newCoordinator = new Coordinator(dtoUserAdd, address, isAdmin);
+            Coordinator newCoordinator = new Coordinator(dtoUserAdd, newAddress, isAdmin);
             DAOCoordinator daoCoordinator = new DAOCoordinator();
-            if(!daoCoordinator.create(newCoordinator))
+            if(!daoCoordinator.create(newCoordinator)){
+                daoInterpreter.delete(newInterpreter);
+                daoAddress.delete(newAddress);
                 return "Ajout coordinatrice échoué";
+            }
         }
         catch(SQLException e){
             daoInterpreter.delete(newInterpreter);
+            daoAddress.delete(newAddress);
             return "Ajout coordinatrice échoué";
         }
 
@@ -152,17 +162,50 @@ public class CoordinatorUsersService {
      * @throws SQLException If an SQL error occurs with this method.
      */
     public String addInterpreter(DTOUserAdd dtoUserAdd) throws SQLException {
-        Address address = new Address(dtoUserAdd.getPostcode(), dtoUserAdd.getPostOfficeBox(),
+        Address newAddress = new Address(dtoUserAdd.getPostcode(), dtoUserAdd.getPostOfficeBox(),
                                       dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
+        DAOAddress daoAddress = new DAOAddress();
+        daoAddress.create(newAddress);
 
-        Interpreter newInterpreter = new Interpreter(dtoUserAdd, address);
+        Interpreter newInterpreter = new Interpreter(dtoUserAdd, newAddress);
         DAOInterpreter daoInterpreter = new DAOInterpreter();
         try {
-            if (!daoInterpreter.create(newInterpreter))
+            if (!daoInterpreter.create(newInterpreter)){
+                daoAddress.delete(newAddress);
                 return "Ajout interprète échoué";
+            }
         }
         catch(SQLException e){
+            daoAddress.delete(newAddress);
             return "Ajout interprète échoué";
+        }
+
+        return "Ajout réussi";
+    }
+
+    /**
+     * Add a beneficiary to the database
+     * @param dtoUserAdd the beneficiary to add in the database
+     * @return a string explaining if the add is a success or a failure
+     * @throws SQLException If an SQL error occurs with this method.
+     */
+    public String addBeneficiary(DTOUserAdd dtoUserAdd) throws SQLException {
+        Address newAddress = new Address(dtoUserAdd.getPostcode(), dtoUserAdd.getPostOfficeBox(),
+                                      dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
+        DAOAddress daoAddress = new DAOAddress();
+        daoAddress.create(newAddress);
+
+        Beneficiary newBeneficiary = new Beneficiary(dtoUserAdd, newAddress);
+        DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+        try {
+            if (!daoBeneficiary.create(newBeneficiary)){
+                daoAddress.delete(newAddress);
+                return "Ajout bénéficiaire échoué";
+            }
+        }
+        catch(SQLException e){
+            daoAddress.delete(newAddress);
+            return "Ajout bénéficiaire échoué";
         }
 
         return "Ajout réussi";

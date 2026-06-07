@@ -35,20 +35,24 @@ public class Interpreter extends User{
 
     /**
      * Create an interpreter without his numInterpreter
-     * @param dtoUserAdd The user to add
+     * @param dtoUserAdd The interpreter to add
      * @param address The address of the user
      * @throws IllegalArgumentException if weeklyWorkHours is negative
      *                                  if address is null
      */
     public Interpreter(DTOUserAdd dtoUserAdd, Address address){
-        super("", "", dtoUserAdd.getLastName(), dtoUserAdd.getFirstName(), dtoUserAdd.getPhoneNumber(),
+        super("", dtoUserAdd.getPassword(), dtoUserAdd.getLastName(), dtoUserAdd.getFirstName(), dtoUserAdd.getPhoneNumber(),
                 dtoUserAdd.getEmailAddress(), address);
 
         if (weeklyWorkHours < 0)
             throw new IllegalArgumentException("[POJOInterpreter] Les heures prestées de la semaine ne peuvent pas être négative.");
 
         this.weeklyWorkHours = dtoUserAdd.getWeeklyWorkHours();
-
+        this.absences = new ArrayList<>();
+        this.appointmentsList = new ArrayList<>();
+        this.academicSkillsList = new ArrayList<>();
+        this.professionalSkillsList = new ArrayList<>();
+        this.beneficiariesList = new ArrayList<>();
     }
 
     /**
