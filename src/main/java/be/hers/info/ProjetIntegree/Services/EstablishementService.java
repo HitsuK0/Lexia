@@ -2,9 +2,11 @@ package be.hers.info.ProjetIntegree.Services;
 
 import be.hers.info.ProjetIntegree.DAO.DAOAddress;
 import be.hers.info.ProjetIntegree.DAO.DAOEstablishment;
+import be.hers.info.ProjetIntegree.DAO.DAOReferrer;
 import be.hers.info.ProjetIntegree.DTO.DTOEstablishment;
 import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
+import be.hers.info.ProjetIntegree.POJO.Referrer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class EstablishementService {
         List<DTOEstablishment> dtoEstablishments = new ArrayList<>();
         establishments = daoEstablishment.findAllFullEstablishment();
         Iterator<Establishment> iterator = establishments.iterator();
+
         while(iterator.hasNext()){
             dtoEstablishments.add(new DTOEstablishment(iterator.next()));
         }
@@ -58,10 +61,14 @@ public class EstablishementService {
                     addresse
             )
         );
+        List<Referrer> referrers = new ArrayList<>();
+        DAOReferrer daoReferrer = new DAOReferrer();
+        for(int id : dtoEstablishment.getListReferrerSelected()){
+            referrers.add(daoReferrer.find(id));
+        }
+        establishment.setReferrers(referrers);
+        new DAOEstablishment().create(establishment);
 
-        DAOEstablishment daoEstablishment = new DAOEstablishment();
-
-        daoEstablishment.create(establishment);
     }
 
     /**
@@ -71,15 +78,26 @@ public class EstablishementService {
      * @param dtoEstablishment
      * @throws SQLException
      */
+    // Test pas encore possible car le js ne complete pas le num address (du coup find renvoie null).
     public void updateEstablishment(DTOEstablishment dtoEstablishment) throws SQLException {
         DAOEstablishment daoEstablishment = new DAOEstablishment();
-        daoEstablishment.update(
-                new Establishment(dtoEstablishment.getNumEstablishment(),
-                dtoEstablishment.getNameBuilding(),
-                dtoEstablishment.getPhoneNumber())
-        );
+        DAOReferrer daoReferrer = new DAOReferrer();
+        for(int id : dtoEstablishment.getListReferrerSelected()){
+            daoEstablishment.addReferrerAtEstablishment(
+                    dtoEstablishment.getNumEstablishment(),
+                    daoReferrer.find(id).getNumReferrer()
+            );
+        }
+        Establishment establishment = new Establishment();
+        establishment.setNameBuilding(dtoEstablishment.getNameBuilding());
+        establishment.setPhoneNumber(dtoEstablishment.getPhoneNumber());
+        establishment.setEducationLevel(dtoEstablishment.getEducationLevelInt());
+        daoEstablishment.update(establishment);
         DAOAddress daoAddress = new DAOAddress();
         Address address = daoAddress.find(dtoEstablishment.getNumAddress());
+        address.setLocality(dtoEstablishment.getLocality());
+        address.setPostcode(dtoEstablishment.getPostcode());
+        address.setPostOfficeBox(dtoEstablishment.getPostOfficeBox());
         daoAddress.update(address);
     }
 
