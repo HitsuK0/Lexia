@@ -23,6 +23,9 @@ public class AppointmentFormService {
      * It creates an appointment in the database using the data in the DTOAppointment given in param.
      * @param appointmentDTO the appointmentDTO used to retrieve the data in the form.
      * @return true if the appointment is created successfully. Otherwise, return false
+     * @throws BadStatusException If an bad status error occurs with this method.
+     * @throws SQLException If an SQL error occurs with this method.
+     * @throws IllegalArgumentException If an element contained in an appointment isn't found
      */
     public boolean createAppointment(DTOAppointmentForm appointmentDTO) throws BadStatusException, SQLException {
         boolean estCree = false;
@@ -86,6 +89,7 @@ public class AppointmentFormService {
      * @return a list containing at least one beneficiary if the DB containing at least one
      *         an empty list if no beneficiary found
      *         null if SQLException is thrown
+     * @throws SQLException If an SQL error occurs with this method.
      */
     public List<DTOBeneficiaryFormAppointment> findHisBeneficiaries(int numInterpreter){
         try{

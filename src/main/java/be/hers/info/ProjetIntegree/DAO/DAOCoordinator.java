@@ -1,5 +1,6 @@
 package be.hers.info.ProjetIntegree.DAO;
 
+import be.hers.info.ProjetIntegree.DTO.DTOUser;
 import be.hers.info.ProjetIntegree.POJO.*;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleTypes;
@@ -106,11 +107,87 @@ public class DAOCoordinator extends DAO<Coordinator> {
     }
 
     /**
+     * Creates a list containing all the Coordinator not admin in the table.
+     * Precondition :
+     * For each Coordinator, the Interpreter exist in database
+     * @return a list containing all the Coordinator in the table. An empty list is returned if the table is empty.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<DTOUser> findAllDTOResaUsers() throws SQLException {
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<DTOUser> resaList = new ArrayList<>();
+        DTOUser resa = null;
+        Interpreter interpreter = null;
+        DAOInterpreter daoInterpreter = new DAOInterpreter();
+        String query = "SELECT numCoordinator, FKNumInterpreter " +
+                       "FROM Coordinator " +
+                       "WHERE isAdmin = 0";
+        try {
+            prStat = connect.prepareStatement(query);
+            resultSet = prStat.executeQuery();
+            while(resultSet.next()){
+                interpreter = daoInterpreter.find(resultSet.getInt("FKnumInterpreter"));
+
+                resa = new DTOUser(
+                        resultSet.getInt("numCoordinator"),
+                        interpreter.getLastName(),
+                        interpreter.getFirstName(),
+                        interpreter.getPhoneNumber(),
+                        interpreter.getEmailAddress()
+                        );
+                resaList.add(resa);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return resaList;
+    }
+
+    /**
+     * Creates a list containing all the Coordinator admin in the table.
+     * Precondition :
+     * For each Coordinator, the Interpreter exist in database
+     * @return a list containing all the Coordinator in the table. An empty list is returned if the table is empty.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<DTOUser> findAllDTOCoordinatorUsers() throws SQLException {
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<DTOUser> coordinatorList = new ArrayList<>();
+        Interpreter interpreter = null;
+        DTOUser coordinator = null;
+        DAOInterpreter daoInterpreter = new DAOInterpreter();
+        String query = "SELECT numCoordinator, FKNumInterpreter " +
+                "FROM Coordinator " +
+                "WHERE isAdmin = 1";
+        try {
+            prStat = connect.prepareStatement(query);
+            resultSet = prStat.executeQuery();
+            while(resultSet.next()){
+                interpreter = daoInterpreter.find(resultSet.getInt("FKnumInterpreter"));
+
+                coordinator = new DTOUser(
+                        resultSet.getInt("numCoordinator"),
+                        interpreter.getLastName(),
+                        interpreter.getFirstName(),
+                        interpreter.getPhoneNumber(),
+                        interpreter.getEmailAddress()
+                );
+                coordinatorList.add(coordinator);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return coordinatorList;
+    }
+
+    /**
      * Creates a list containing all the Coordinator in the table.
      * Precondition :
      * For each Coordinator, the Interpreter exist in database
      *
-     * The initialized fields are: numCoordinator, isAdmin and the Interpreter with heritage     * @return a list containing all the Appointment in the table. An empty list is returned if the table is empty.
+     * The initialized fields are: numCoordinator, isAdmin and the Interpreter with heritage
      * @return a list containing all the Coordinator in the table. An empty list is returned if the table is empty.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
@@ -251,5 +328,29 @@ public class DAOCoordinator extends DAO<Coordinator> {
             closeStatement(prStat);
         }
         return isUpdated;
+    }
+
+    /**
+     * Return the number of resas in the coordinator table
+     * @return the number of resas in the coordinator table
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public int countNumberResas() throws SQLException {
+        int numberResas = 0;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT COUNT(*) FROM Coordinator " +
+                       "WHERE isadmin = 0";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next())
+                numberResas = resultSet.getInt(1);
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return numberResas;
     }
 }

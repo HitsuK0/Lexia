@@ -1,5 +1,6 @@
 package be.hers.info.ProjetIntegree.DAO;
 
+import be.hers.info.ProjetIntegree.DTO.DTOUser;
 import be.hers.info.ProjetIntegree.POJO.*;
 
 import oracle.jdbc.OraclePreparedStatement;
@@ -8,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -61,6 +61,43 @@ public class DAOInterpreter extends DAO<Interpreter> {
             closeStatementAndResultSet(prStat, rs);
         }
         return interpreterFind;
+    }
+
+    /**
+     * Creates a list containing all the Interpreters in the table which aren't resa or coordinator.
+     * For each Interpreter, the Address is loaded eagerly via DAOAddress, the list of academic skills is loaded
+     * eagerly via DAOAcademicSkills and the list of professional skills is loaded eagerly via DAOProfessionalSkills.
+     * Absences and Beneficiaries are not loaded
+     * @return a list containing all the Interpreters which aren't resa or coordinator
+     * or an empty list if the table is empty.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<DTOUser> findAllDTOInterpreterUsers() throws SQLException {
+        List<DTOUser> interpreters = new ArrayList<>();
+        DTOUser interpreter = null;
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        String query = "SELECT numInterpreter, lastName, firstName, phoneNumber, emailAddress FROM Interpreter i " +
+                "WHERE NOT EXISTS (" +
+                "SELECT 1 FROM Coordinator c " +
+                "WHERE c.FKnumInterpreter = i.numInterpreter)";
+        try {
+            prStat = connect.prepareStatement(query);
+            resultSet = prStat.executeQuery();
+            while (resultSet.next()) {
+                interpreter = new DTOUser(
+                        resultSet.getInt("numInterpreter"),
+                        resultSet.getString("lastName"),
+                        resultSet.getString("firstName"),
+                        resultSet.getString("phoneNumber"),
+                        resultSet.getString("emailAddress")
+                );
+                interpreters.add(interpreter);
+            }
+        } finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return interpreters;
     }
 
     /**
@@ -490,5 +527,28 @@ public class DAOInterpreter extends DAO<Interpreter> {
         }
         return isDeleted;
 
+    }
+
+    /**
+     * Return the number of interpreters in the interpreter table
+     * @return the number of interpreters in the interpreter table
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public int countNumberInterpreters() throws SQLException {
+        int numberInterpreters = 0;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT COUNT(*) FROM Interpreter";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next())
+                numberInterpreters = resultSet.getInt(1);
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+        return numberInterpreters;
     }
 }

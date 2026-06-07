@@ -1,20 +1,16 @@
 package be.hers.info.ProjetIntegree.Controller;
 
 /**
- * @authors Willinger Chloé, Leroy Rodriguez Aïnhoa, Vanderheyden Quentin, Vatafu Jean
+ * @authors Willinger Chloé, Leroy Rodriguez Aïnhoa, Vanderheyden Quentin, Vatafu Jean, Rosman Loïs
  * @reviewer Halet Louis
  */
 
 import be.hers.info.ProjetIntegree.DAO.DAOAcademicSkill;
 import be.hers.info.ProjetIntegree.DAO.DAOProfessionalSkill;
-import be.hers.info.ProjetIntegree.DTO.DTOEstablishment;
-import be.hers.info.ProjetIntegree.DTO.DTOInterpreterProfile;
-import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
-import be.hers.info.ProjetIntegree.DTO.DTOReferrer;
+import be.hers.info.ProjetIntegree.DTO.*;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.*;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -546,12 +542,50 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/gestion";
     }
 
-    // Temporaire
+    /**
+     * Retrieve all users along with the number of users, the number of interpreters,
+     * the number of resas and the number of beneficiaries
+     * @param model is param used by Spring to add all the data in the page.
+     * @param session the current HTTP session
+     * @return a redirection to the "coordinatrice/utilisateurs" page if the user is a coordinator connected.
+     * Otherwise, return a redirection to the "/login" page
+     */
     @GetMapping("/utilisateurs")
-    public String utilisateurs(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("userRole", "COORDINATOR");
-        model.addAttribute("isAdmin", true);
+    public String utilisateurs(Model model, HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null)
+            return "redirect:/login";
+
+        try{
+            CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
+            List<DTOUser> beneficiaries = coordinatorUsersService.findAllBeneficiary();
+            model.addAttribute("beneficiaries", beneficiaries);
+
+            List<DTOUser> interpreters = coordinatorUsersService.findAllInterpreters();
+            model.addAttribute("interpreters", interpreters);
+
+            List<DTOUser> resas = coordinatorUsersService.findAllResas();
+            model.addAttribute("resas", resas);
+
+            List<DTOUser> coordinators = coordinatorUsersService.findAllCoordinators();
+            model.addAttribute("coordinators", coordinators);
+
+            int numberBeneficiaries = coordinatorUsersService.countBeneficiaries();
+            model.addAttribute("numberBeneficiaries", numberBeneficiaries);
+
+            int numberInterpreters = coordinatorUsersService.countInterpreters();
+            model.addAttribute("numberInterpreters", numberInterpreters);
+
+            int numberResas = coordinatorUsersService.countResas();
+            model.addAttribute("numberResas", numberResas);
+
+            int numberUsers = numberBeneficiaries + numberInterpreters;
+            model.addAttribute("numberUsers", numberUsers);
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+
         return "coordinatrice/utilisateurs";
     }
 
@@ -570,6 +604,43 @@ public class CoordinatorController {
         }
 
         return "coordinatrice/utilisateur-detail";
+    }
+
+    /**
+     * Create a new coordinator, interpreter or beneficiary in the database using the datas submitted from the form
+     * @param session the current HTTP session
+     * @return a redirection to the "coordinatrice/utilisateurs" page if the user is a coordinator connected.
+     *         Otherwise, return a redirection to the "/login" page
+     */
+    @PostMapping("utilisateurs/addUser")
+    public String addUser(HttpSession session, @ModelAttribute DTOUserAdd dtoAddUser,
+                          @RequestParam String role, Model model){
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null)
+            return "redirect:/login";
+
+        CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
+        try{
+            String result = "";
+            switch (role) {
+                case "1" -> result = coordinatorUsersService.addResaCoordinator(dtoAddUser, false);
+                case "2" -> result = coordinatorUsersService.addInterpreter(dtoAddUser);
+                case "3" -> result = coordinatorUsersService.addBeneficiary(dtoAddUser);
+                case "4" -> result = coordinatorUsersService.addResaCoordinator(dtoAddUser, true);
+            }
+
+            model.addAttribute("message", result);
+
+            return "redirect:/coordinatrice/utilisateurs";
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+            return "redirect:/coordinatrice/utilisateurs";
+        }
+        catch(IllegalArgumentException e){
+            e.printStackTrace();
+            return "redirect:/coordinatrice/utilisateurs";
+        }
     }
 
     // Temporaire
