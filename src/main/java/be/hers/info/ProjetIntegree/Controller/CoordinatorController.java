@@ -633,46 +633,16 @@ public class CoordinatorController {
 
             model.addAttribute("message", result);
 
-            return "coordinatrice/utilisateurs";
+            return "redirect:/coordinatrice/utilisateurs";
         }
         catch(SQLException e) {
-            //Faudra trouver ce qu'on va vraiment retourner pour TOUS les catchs de TOUS les controllers
-            //parce que pour l'instant, c'est à chier. On va se faire défoncer si les profs voient ça
             e.printStackTrace();
-            return "coordinatrice/utilisateurs";
+            return "redirect:/coordinatrice/utilisateurs";
         }
         catch(IllegalArgumentException e){
             e.printStackTrace();
-            return "coordinatrice/utilisateurs";
+            return "redirect:/coordinatrice/utilisateurs";
         }
-    }
-
-    /**
-     * Delete in the database the coordinator, interpreter or beneficiary selected. His login is sent by the frontend
-     * @param session the current HTTP session
-     * @param login the login of the user to delete
-     * @return a redirection to the "coordinatrice/utilisateurs" page if the user is a coordinator connected.
-     *         Otherwise, return a redirection to the "/login" page
-     */
-    @PostMapping("utilisateurs/deleteUser")
-    public String deleteUser(HttpSession session, @RequestParam String login){
-        Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null)
-            return "redirect:/login";
-
-        try{
-            CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
-            if(!coordinatorUsersService.deleteUser(login)){
-                //On fera la même chose que dans les catchs
-            }
-        }
-        catch(SQLException e){
-            //Faudra trouver ce qu'on va vraiment retourner pour TOUS les catchs de TOUS les controllers
-            //parce que pour l'instant, c'est à chier. On va se faire défoncer si les profs voient ça
-            e.printStackTrace();
-        }
-
-        return "coordinatrice/utilisateurs";
     }
 
     // Temporaire

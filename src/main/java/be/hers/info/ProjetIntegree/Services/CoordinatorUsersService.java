@@ -2,7 +2,7 @@ package be.hers.info.ProjetIntegree.Services;
 
 /**
  * @authors Rosman Loïs
- * @reviewer Nicolas Jean-François, Halet Louis
+ * @reviewer Nicolas Jean-François
  */
 
 import be.hers.info.ProjetIntegree.DAO.DAOAddress;
@@ -57,27 +57,6 @@ public class CoordinatorUsersService {
     public List<DTOUser> findAllCoordinators() throws SQLException {
         DAOCoordinator daoCoordinator = new DAOCoordinator();
         return daoCoordinator.findAllDTOCoordinatorUsers();
-    }
-
-    /**
-     * Delete a user with his login
-     * @param login the login of the user to delete
-     * @return true if the user is deleted. Otherwise, return false
-     * @throws SQLException If an SQL error occurs with this method.
-     */
-    public boolean deleteUser(String login) throws SQLException {
-        boolean isDeleted = false;
-
-        if(login.startsWith("B")){
-            DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
-            isDeleted = daoBeneficiary.delete(login);
-        }
-        else if(login.startsWith("I") || login.startsWith("C")){
-            DAOInterpreter daoInterpreter = new DAOInterpreter();
-            isDeleted = daoInterpreter.delete(login);
-        }
-
-        return isDeleted;
     }
 
     /**

@@ -1,5 +1,10 @@
 package be.hers.info.ProjetIntegree.DTO;
 
+/**
+ * @authors Rosman Loïs
+ * @reviewer Nicolas Jean-François
+ */
+
 import java.util.List;
 
 public class DTOUserAdd {
@@ -16,6 +21,11 @@ public class DTOUserAdd {
     private int educationLevel;
     private int weeklyWorkHours;
     private List<String> communicationLanguage;
+
+    /**
+     * Initialize a default DTOUserAdd
+     */
+    public DTOUserAdd(){}
 
     /**
      * Initialize a DTOUserAdd

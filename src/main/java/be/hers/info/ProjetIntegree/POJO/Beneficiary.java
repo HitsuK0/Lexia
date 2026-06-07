@@ -49,16 +49,16 @@ public class Beneficiary extends User{
         super("", dtoUserAdd.getPassword(), dtoUserAdd.getLastName(), dtoUserAdd.getFirstName(),
                 dtoUserAdd.getPhoneNumber(), dtoUserAdd.getEmailAddress(), address);
 
-        if(communicationLanguage == null)
+        if(dtoUserAdd.getCommunicationLanguage() == null)
             throw new IllegalArgumentException("[POJOBeneficiary] L'interprète de référence et langue(s) de communication ne peuvent pas être null");
 
-        if(communicationLanguage.isEmpty())
+        if(dtoUserAdd.getCommunicationLanguage().isEmpty())
             throw new IllegalArgumentException("[POJOBeneficiary] La liste des langues de communication ne peut pas être vide");
 
-        if(hourQuota < 0)
+        if(dtoUserAdd.getHourQuota() < 0)
             throw new IllegalArgumentException("[POJOBeneficiary] Le quota d'heures ne peut pas être négatif");
 
-        if(educationLevel < EDUCATION_LEVEL_MIN || educationLevel > EDUCATION_LEVEL_MAX)
+        if(dtoUserAdd.getEducationLevel() < EDUCATION_LEVEL_MIN || dtoUserAdd.getEducationLevel() > EDUCATION_LEVEL_MAX)
             throw new IllegalArgumentException("[POJOBeneficiary] Le niveau d'éducation doit être compris entre "+
                                                 EDUCATION_LEVEL_MIN+" et "+EDUCATION_LEVEL_MAX);
 
