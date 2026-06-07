@@ -112,12 +112,12 @@ public class CoordinatorUsersService {
     }
 
     /**
-     * Add a resa to the database
-     * @param dtoUserAdd the resa to add in the database
+     * Add a resa or a coordinator to the database
+     * @param dtoUserAdd the resa or the coordinator to add in the database
      * @return a string explaining if the add is a success or a failure
      * @throws SQLException If an SQL error occurs with this method.
      */
-    public String addResa(DTOUserAdd dtoUserAdd) throws SQLException {
+    public String addResaCoordinator(DTOUserAdd dtoUserAdd, boolean isAdmin) throws SQLException {
         Address address = new Address(dtoUserAdd.getPostcode(), dtoUserAdd.getPostOfficeBox(),
                           dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
 
@@ -132,7 +132,7 @@ public class CoordinatorUsersService {
         }
 
         try{
-            Coordinator newResaCoordinator = new Coordinator(dtoUserAdd, address, false);
+            Coordinator newResaCoordinator = new Coordinator(dtoUserAdd, address, isAdmin);
             DAOCoordinator daoCoordinator = new DAOCoordinator();
             if(!daoCoordinator.create(newResaCoordinator))
                 return "Ajout coordinatrice échoué";

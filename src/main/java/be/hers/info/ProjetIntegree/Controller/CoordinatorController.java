@@ -657,10 +657,10 @@ public class CoordinatorController {
         try{
             String result = "";
             switch (role) {
-                case "1" -> result = coordinatorUsersService.addResa(dtoAddUser);
+                case "1" -> result = coordinatorUsersService.addResaCoordinator(dtoAddUser, false);
                 case "2" -> result = coordinatorUsersService.addInterpreter(dtoAddUser);
                 case "3" -> result = coordinatorUsersService.addBeneficiary(dtoAddUser);
-                case "4" -> result = coordinatorUsersService.addCoordinator(dtoAddUser);
+                case "4" -> result = coordinatorUsersService.addResaCoordinator(dtoAddUser, true);
             }
 
             return result;
