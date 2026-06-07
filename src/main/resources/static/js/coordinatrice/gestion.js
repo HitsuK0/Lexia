@@ -20,13 +20,10 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('editEtabRue').value   = btn.dataset.rue;
         document.getElementById('editEtabCp').value    = btn.dataset.cp;
         document.getElementById('editEtabVille').value = btn.dataset.ville;
+        document.getElementById('editEtabIdAddress').value = btn.dataset.idAddress;
+        document.getElementById('editEtabNumTel').value = btn.dataset.tel;
         const selectRef = document.getElementById('editEtabRef');
         selectRef.value = btn.dataset.referent || '';
-    });
-
-    /* Stores the establishment id in the delete modal when it opens. */
-    document.getElementById('modalDeleteEtab').addEventListener('show.bs.modal', function (e) {
-        document.getElementById('deleteEtabId').value = e.relatedTarget.dataset.id;
     });
 
     /* Pre-fills the edit referent modal with the data from the clicked row. */
@@ -59,5 +56,17 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('deleteCompAcadId').value      = btn.dataset.id;
         document.getElementById('deleteCompAcadDesig').textContent = btn.dataset.designation;
     });
+
+    // Activation of the tab according to the parameter? tab= in the URL
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab) {
+        document.querySelectorAll('#gestionTabs .nav-link').forEach(l => l.classList.remove('active'));
+        document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+        const link = document.querySelector(`#gestionTabs .nav-link[data-tab="${tab}"]`);
+        const section = document.getElementById('tab-' + tab);
+        if (link) link.classList.add('active');
+        if (section) section.classList.add('active');
+    }
 
 });
