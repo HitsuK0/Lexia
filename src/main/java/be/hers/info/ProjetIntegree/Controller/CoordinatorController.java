@@ -648,7 +648,7 @@ public class CoordinatorController {
      */
     @PostMapping("utilisateurs/addUser")
     public String addUser(HttpSession session, @ModelAttribute DTOUserAdd dtoAddUser,
-                          @ModelAttribute String role, Model model){
+                          @RequestParam String role, Model model){
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null)
             return "redirect:/login";
@@ -704,7 +704,7 @@ public class CoordinatorController {
             e.printStackTrace();
         }
 
-        return "utilisateurs";
+        return "coordinatrice/utilisateurs";
     }
 
     // Temporaire
