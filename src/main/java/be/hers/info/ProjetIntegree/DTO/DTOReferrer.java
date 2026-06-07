@@ -67,7 +67,7 @@ public class DTOReferrer {
 
     /**
      * Get the phone number of the Referrer.
-     * @return phonenNumber.
+     * @return phone Number.
      */
     public String getPhoneNumberReferrer() {
         return phoneNumberReferrer;
