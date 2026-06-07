@@ -179,7 +179,39 @@ public class Appointment {
             this.establishment = establishment;
         }
     }
+    /**
+     * Initialize an Appointment with the minimum fields needed to display
+     * @param numAppointment the id of the Appointment
+     * @param status the status of the Appointment
+     * @param listAcademicSkillRequire the list of academic skills needed (can be null, treated as empty)
+     * @param listProfessionalSkillRequire the list of professional skills needed
+     * @param timeSlot the timeSlot of the Appointment
+     * @throws IllegalArgumentException if timeSlot or listProfessionalSkillRequire is null
+     *                                  if listProfessionalSkillRequire is empty
+     */
+    public Appointment(int numAppointment, String status, List<AcademicSkill> listAcademicSkillRequire, List<ProfessionalSkill> listProfessionalSkillRequire, TimeSlot timeSlot) {
+        if(timeSlot == null || listProfessionalSkillRequire == null) {
+            throw new IllegalArgumentException("[POJOAppointment] La tranche horaire ou la liste des competences profesionnelles ne peut pas etre null.");
+        }
 
+        if(listProfessionalSkillRequire.isEmpty()) {
+            throw new IllegalArgumentException("[POJOAppointment] La liste des competences profesionnelles ne peut pas etre vide.");
+        }
+
+        this.numAppointment = numAppointment;
+        this.status = status;
+        this.timeSlot = timeSlot;
+        if(listAcademicSkillRequire != null) {
+            this.academicSkillsNeeded = listAcademicSkillRequire;
+        } else {
+            this.academicSkillsNeeded = new ArrayList<AcademicSkill>();
+        }
+
+        this.professionalSkillsNeeded = listProfessionalSkillRequire;
+        this.description = "";
+        this.appointmentLocals = new ArrayList<String>();
+        this.interpreters = new ArrayList<Interpreter>();
+    }
     /**
      * @return the id of the Appointment
      */
