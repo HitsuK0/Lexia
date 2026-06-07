@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('editEtabCp').value    = btn.dataset.cp;
         document.getElementById('editEtabVille').value = btn.dataset.ville;
         document.getElementById('editEtabIdAddress').value = btn.dataset.idAddress;
+        document.getElementById('editEtabNumTel').value = btn.dataset.tel;
         const selectRef = document.getElementById('editEtabRef');
         selectRef.value = btn.dataset.referent || '';
     });
