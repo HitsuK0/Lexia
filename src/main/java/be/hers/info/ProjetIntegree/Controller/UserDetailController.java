@@ -8,6 +8,7 @@ package be.hers.info.ProjetIntegree.Controller;
 import be.hers.info.ProjetIntegree.DAO.DAOCoordinator;
 import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
 import be.hers.info.ProjetIntegree.DAO.DAOBeneficiary;
+import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOInterpreterProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
 import be.hers.info.ProjetIntegree.POJO.*;
@@ -181,7 +182,7 @@ public class UserDetailController {
      *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/beneficiary/{id}")
-    public String saveBeneficiary(@PathVariable int id, @ModelAttribute("profileDTO") be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryProfile profileDTO,
+    public String saveBeneficiary(@PathVariable int id, @ModelAttribute("profileDTO") DTOBeneficiaryProfile profileDTO,
                                   HttpSession session) {
         if (getCoordinatorFromSession(session) == null) return "redirect:/login";
 
@@ -287,8 +288,9 @@ public class UserDetailController {
      */
     @PostMapping("/interpreter/{id}/role")
     public String changeRole(@PathVariable int id, @RequestParam("newRole") String newRole, HttpSession session) {
-        if (getCoordinatorFromSession(session) == null) return "redirect:/login";
-
+        if (getCoordinatorFromSession(session) == null)
+            return "redirect:/login";
+        newRole = newRole.toUpperCase();
         try {
             DAOInterpreter daoInterpreter = new DAOInterpreter();
             DAOCoordinator daoCoordinator = new DAOCoordinator();
