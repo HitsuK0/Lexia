@@ -165,7 +165,7 @@ public class InterpreterController {
                 event.put("start",ldt);
 
                 if (!tsp.getStartDate().equals(tsp.getEndDate())) {
-                    LocalDateTime ldtEnd = LocalDateTime.of(tsp.getEndDate().plusDays(1), tsp.getStartTime())
+                    LocalDateTime ldtEnd = LocalDateTime.of(tsp.getEndDate(), tsp.getStartTime())
                             .plusSeconds(tsp.getDuration().toSecondOfDay());
                     event.put("end", ldtEnd);
                 } else {
