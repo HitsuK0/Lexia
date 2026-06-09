@@ -428,31 +428,6 @@ public class CoordinatorController {
     }
 
     /**
-     * Deletes an AcademicSkill from the database using the id submitted from the form.
-     * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
-     * the user is redirected to the '/login' page
-     *
-     * @param session the current HTTP session
-     * @param idAcademicSkill the id of the AcademicSkill to delete
-     * @return a redirection to the "/coordinatrice/gestion" page
-     */
-    @PostMapping("/etablissements/deleteAcademicSkill")
-    public String academicSkillDelete(HttpSession session, @RequestParam("idAcademicSkill") int idAcademicSkill) {
-        Coordinator  coordinator = getCoordinatorFromSession(session);
-        if(coordinator == null || !coordinator.isAdmin()) {
-            return "redirect:/login";
-        }
-
-        try {
-            new SkillService().deleteAcademicSkill(idAcademicSkill);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return "redirect:/coordinatrice/gestion?tab=competences";
-    }
-
-    /**
      * Creates a new ProfessionalSkill in the database with the designation submitted from the form.
      * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
      * the user is redirected to the '/login' page
@@ -470,31 +445,6 @@ public class CoordinatorController {
 
         try {
             new SkillService().addProfessionalSkill(designation);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return "redirect:/coordinatrice/gestion?tab=competences";
-    }
-
-    /**
-     * Deletes a ProfessionalSkill from the database using the id submitted from the form.
-     * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
-     * the user is redirected to the '/login' page
-     *
-     * @param session the current HTTP session.
-     * @param idProfessionalSkill the id of the ProfessionalSkill to delete
-     * @return a redirection to the "/coordinatrice/gestion" page
-     */
-    @PostMapping("/etablissements/deleteProfessionalSkill")
-    public String professionalSkillDelete(HttpSession session, @RequestParam("idProfessionalSkill") int idProfessionalSkill) {
-        Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null || !coordinator.isAdmin()) {
-            return "redirect:/login";
-        }
-
-        try {
-            new SkillService().deleteProfessionalSkill(idProfessionalSkill);
         } catch (SQLException e) {
             e.printStackTrace();
         }
