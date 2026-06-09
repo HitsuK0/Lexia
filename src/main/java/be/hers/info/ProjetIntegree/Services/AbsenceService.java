@@ -35,7 +35,7 @@ public class AbsenceService {
         LocalTime duration;
         if(absenceDTO.isFullDay()){
             timeSlotPunctual.setStartTime(LocalTime.MIDNIGHT);
-            duration = LocalTime.MIDNIGHT.plus(Duration.ofHours(24));
+            duration = LocalTime.of(23, 59, 59);
         }
         else{
             timeSlotPunctual.setStartTime(absenceDTO.getStartTime());
