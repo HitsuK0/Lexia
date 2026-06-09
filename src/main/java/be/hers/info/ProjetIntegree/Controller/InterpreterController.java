@@ -187,9 +187,18 @@ public class InterpreterController {
                 event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
             }
 
+            boolean isFullDay = false;
+            if (a.getTimeSlot() instanceof TimeSlotPunctual) {
+                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
+                isFullDay = tsp.getStartTime() != null
+                        && tsp.getStartTime().equals(java.time.LocalTime.MIDNIGHT)
+                        && tsp.getDuration() != null
+                        && tsp.getDuration().getHour() == 23;
+            }
             event.put("color","#f0ad4e");
             extendedProps.put("type","absence");
             extendedProps.put("reason", a.getReason());
+            extendedProps.put("fullDay", isFullDay);
             event.put("extendedProps",extendedProps);
             events.add(event);
         }
