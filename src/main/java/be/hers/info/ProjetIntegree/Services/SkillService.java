@@ -33,18 +33,6 @@ public class SkillService {
         return new DAOProfessionalSkill().findAll();
     }
 
-    /** Deletes an AcademicSkill from the database using the given id.
-     *
-     * @param idAcademicSkill the id of the AcademicSkill to delete
-     * @throws SQLException in case of any SQL problems encountered while deleting the AcademicSkill
-     */
-    public void deleteAcademicSkill(int idAcademicSkill) throws SQLException {
-        AcademicSkill academicSkill = new AcademicSkill();
-        academicSkill.setNumAcademicSkill(idAcademicSkill);
-
-        new DAOAcademicSkill().delete(academicSkill);
-    }
-
     /** Creates a new AcademicSkill in the database with the given designation.
      *
      * @param designation the designation of the AcademicSkill to create
@@ -55,18 +43,6 @@ public class SkillService {
         academicSkill.setDesignation(designation);
 
         new DAOAcademicSkill().create(academicSkill);
-    }
-
-    /** Deletes a ProfessionalSkill from the database using the given id.
-     *
-     * @param idProfessionalSkill the id of the ProfessionalSkill to delete
-     * @throws SQLException in case of any SQL problems encountered while deleting the ProfessionalSkill
-     */
-    public void deleteProfessionalSkill(int idProfessionalSkill) throws SQLException {
-        ProfessionalSkill professionalSkill = new ProfessionalSkill();
-        professionalSkill.setNumProfessionalSkill(idProfessionalSkill);
-
-        new DAOProfessionalSkill().delete(professionalSkill);
     }
 
     /** Creates a new ProfessionalSkill in the database with the given designation.
