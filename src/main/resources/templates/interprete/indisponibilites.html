@@ -53,7 +53,7 @@
                     <tr th:each="absence : ${punctualAbsencesList}"
                         th:with="
                             slot=${absence.timeSlot},
-                            isFullDay=${slot.startTime != null and slot.startTime.hour == 0 and slot.startTime.minute == 0 and slot.duration.hour == 0 and slot.duration.minute == 0},
+                            isFullDay=${slot.startTime != null and slot.startTime.hour == 0 and slot.startTime.minute == 0 and slot.duration.hour == 23},
                             endTime=${slot.endTime},
                             statusVal=${absence.status}"
                         th:attr="data-status=${statusVal == 'accepte'} ? 'approved' : (${statusVal == 'refuse'} ? 'refused' : 'pending')">
