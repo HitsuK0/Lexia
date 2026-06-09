@@ -74,7 +74,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             document.getElementById('modalEventTitle').textContent = info.event.title;
 
-            let body = `<p><strong>Horaire :</strong> ${start} – ${end}</p>`;
+            let body = props.fullDay
+                ? `<p><strong>Horaire :</strong> Journée complète</p>`
+                : `<p><strong>Horaire :</strong> ${start} – ${end}</p>`;
 
             if (props.type === 'appointment') {
                 if (props.beneficiary) body += `<p><strong>Bénéficiaire :</strong> ${props.beneficiary}</p>`;
