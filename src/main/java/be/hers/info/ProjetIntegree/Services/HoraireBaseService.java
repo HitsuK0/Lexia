@@ -16,6 +16,38 @@ import java.util.stream.Collectors;
 public class HoraireBaseService {
 
     /**
+     * Finds an Interpreter by its numInterpreter.
+     *
+     * @param numInterpreter the id of the interpreter to find
+     * @return the Interpreter if found, null otherwise
+     * @throws SQLException if a database error occurs
+     */
+    public Interpreter findInterpreterById(int numInterpreter) throws SQLException {
+        return new DAOInterpreter().find(numInterpreter);
+    }
+
+    /**
+     * Finds a Beneficiary by its numBeneficiary.
+     *
+     * @param numBeneficiary the id of the beneficiary to find
+     * @return the Beneficiary if found, null otherwise
+     * @throws SQLException if a database error occurs
+     */
+    public Beneficiary findBeneficiaryById(int numBeneficiary) throws SQLException {
+        return new DAOBeneficiary().find(numBeneficiary);
+    }
+
+    /**
+     * Returns the full list of all interpreters.
+     *
+     * @return the list of all Interpreters
+     * @throws SQLException if a database error occurs
+     */
+    public List<Interpreter> findAllInterpreters() throws SQLException {
+        return new DAOInterpreter().findAll();
+    }
+
+    /**
      * Retrieves all Appointments with a TimeSlotBase linked to the given interpreter.
      * Uses a wide date range to ensure all base appointments are returned regardless of date.
      *
@@ -68,7 +100,7 @@ public class HoraireBaseService {
      * - The rest are sorted alphabetically by last name.
      * Note: since Interpreter has no explicit language field, the address locality is used as a best-effort proxy.
      *
-     * @param beneficiary   the beneficiary for whom the interpreter list is built
+     * @param beneficiary the beneficiary for whom the interpreter list is built
      * @param allInterpreters the full list of interpreters to sort
      * @return a list of maps, each containing "numInterpreter" and "label"
      */
@@ -81,11 +113,9 @@ public class HoraireBaseService {
 
         List<Interpreter> sorted = new ArrayList<>(allInterpreters);
         sorted.sort((a, b) -> {
-            // Priority 0 — referent always first
             if (a.getNumInterpreter() == referentId) return -1;
             if (b.getNumInterpreter() == referentId) return 1;
 
-            // Priority 3 — language match via address locality
             boolean aMatches = false;
             boolean bMatches = false;
             if (!benefLangs.isEmpty()) {
@@ -179,13 +209,9 @@ public class HoraireBaseService {
         if (!daoTSB.create(tsb))
             return false;
 
-        DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
-        DAOEstablishment daoEstablishment = new DAOEstablishment();
-        DAOInterpreter daoInterpreter = new DAOInterpreter();
-
-        Beneficiary beneficiary = daoBeneficiary.find(numBeneficiary);
-        Establishment establishment = daoEstablishment.find(numEstablishment);
-        Interpreter interpreter = daoInterpreter.find(numInterpreter);
+        Beneficiary beneficiary = new DAOBeneficiary().find(numBeneficiary);
+        Establishment establishment = new DAOEstablishment().find(numEstablishment);
+        Interpreter interpreter = new DAOInterpreter().find(numInterpreter);
 
         if (beneficiary == null || establishment == null || interpreter == null)
             return false;
@@ -208,8 +234,7 @@ public class HoraireBaseService {
         appointment.setAcademicSkillsNeeded(Collections.emptyList());
         appointment.setProfessionalSkillsNeeded(Collections.emptyList());
 
-        DAOAppointment daoAppointment = new DAOAppointment();
-        return daoAppointment.create(appointment);
+        return new DAOAppointment().create(appointment);
     }
 
     /**
@@ -240,17 +265,11 @@ public class HoraireBaseService {
         if (!daoTSB.create(tsb))
             return false;
 
-        DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
-        DAOEstablishment daoEstablishment = new DAOEstablishment();
-        DAOInterpreter daoInterpreter = new DAOInterpreter();
-        DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
-        DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
-
-        Beneficiary beneficiary = daoBeneficiary.find(numBeneficiary);
-        Establishment establishment = daoEstablishment.find(numEstablishment);
-        Interpreter interpreter = daoInterpreter.find(numInterpreter);
-        AcademicSkill academicSkill = daoAcademicSkill.find(numAcademicSkill);
-        ProfessionalSkill professionalSkill = daoProfessionalSkill.find(numProfessionalSkill);
+        Beneficiary beneficiary = new DAOBeneficiary().find(numBeneficiary);
+        Establishment establishment = new DAOEstablishment().find(numEstablishment);
+        Interpreter interpreter = new DAOInterpreter().find(numInterpreter);
+        AcademicSkill academicSkill = new DAOAcademicSkill().find(numAcademicSkill);
+        ProfessionalSkill professionalSkill = new DAOProfessionalSkill().find(numProfessionalSkill);
 
         if (beneficiary == null || establishment == null || interpreter == null || academicSkill == null || professionalSkill == null)
             return false;
@@ -273,8 +292,7 @@ public class HoraireBaseService {
         appointment.setAcademicSkillsNeeded(List.of(academicSkill));
         appointment.setProfessionalSkillsNeeded(List.of(professionalSkill));
 
-        DAOAppointment daoAppointment = new DAOAppointment();
-        return daoAppointment.create(appointment);
+        return new DAOAppointment().create(appointment);
     }
 
     /**
