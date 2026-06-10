@@ -48,6 +48,16 @@ public class HoraireBaseService {
     }
 
     /**
+     * Returns the full list of all beneficiary
+     *
+     * @return the list of all Beneficiary
+     * @throws SQLException if a database error occurs
+     */
+    public List<Beneficiary> findAllBeneficiaries() throws SQLException{
+        return new DAOBeneficiary().findAll();
+    }
+
+    /**
      * Retrieves all Appointments with a TimeSlotBase linked to the given interpreter.
      * Uses a wide date range to ensure all base appointments are returned regardless of date.
      *
