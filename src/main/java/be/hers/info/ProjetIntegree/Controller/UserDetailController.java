@@ -5,16 +5,14 @@ package be.hers.info.ProjetIntegree.Controller;
  * @reviewer Halet Louis, Wellinger Chloé
  */
 
-import be.hers.info.ProjetIntegree.DAO.DAOCoordinator;
-import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
-import be.hers.info.ProjetIntegree.DAO.DAOBeneficiary;
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOInterpreterProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
 import be.hers.info.ProjetIntegree.POJO.*;
-import be.hers.info.ProjetIntegree.Services.InterpreterProfileService;
 import be.hers.info.ProjetIntegree.Services.BeneficiaryProfileService;
+import be.hers.info.ProjetIntegree.Services.InterpreterProfileService;
 import be.hers.info.ProjetIntegree.Services.SkillService;
+import be.hers.info.ProjetIntegree.Services.UserDetailService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,24 +42,6 @@ public class UserDetailController {
     }
 
     /**
-     * Determines the user role string from an Interpreter object.
-     * Returns "COORDINATOR" if the interpreter is also a coordinator with isAdmin = true,
-     * "RESA" if isAdmin = false, and "INTERPRETER" otherwise.
-     *
-     * @param interpreter the interpreter to check
-     * @return the role string
-     * @throws SQLException if a database error occurs
-     */
-    private String resolveInterpreterRole(Interpreter interpreter) throws SQLException {
-        DAOCoordinator daoCoordinator = new DAOCoordinator();
-        Coordinator coordinator = daoCoordinator.findByFKnumInterpreter(interpreter.getNumInterpreter());
-        if (coordinator != null) {
-            return coordinator.isAdmin() ? "COORDINATOR" : "RESA";
-        }
-        return "INTERPRETER";
-    }
-
-    /**
      * Displays the detail page for an Interpreter, Resa or Coordinator.
      * Loads the interpreter's personal data, address, professional and academic skills.
      * Also loads all available skills so the coordinator can add new ones.
@@ -77,14 +57,15 @@ public class UserDetailController {
         if (getCoordinatorFromSession(session) == null) return "redirect:/login";
 
         try {
-            DAOInterpreter daoInterpreter = new DAOInterpreter();
-            Interpreter interpreter = daoInterpreter.find(id);
-            if (interpreter == null) return "redirect:/coordinatrice/utilisateurs";
+            UserDetailService userDetailService = new UserDetailService();
+            Interpreter interpreter = userDetailService.findInterpreterById(id);
+            if (interpreter == null)
+                return "redirect:/coordinatrice/utilisateurs";
 
-            String userRole = resolveInterpreterRole(interpreter);
+            String userRole = userDetailService.resolveInterpreterRole(id);
 
-            List<ProfessionalSkill> ownedProfSkills = daoInterpreter.getProfessionalSkill(id);
-            List<AcademicSkill> ownedAcadSkills = daoInterpreter.getAcademicSkill(id);
+            List<ProfessionalSkill> ownedProfSkills = userDetailService.getProfessionalSkillsOfInterpreter(id);
+            List<AcademicSkill> ownedAcadSkills = userDetailService.getAcademicSkillsOfInterpreter(id);
 
             SkillService skillService = new SkillService();
             List<ProfessionalSkill> allProfSkills = skillService.getAllProfessionalSkills();
@@ -122,12 +103,12 @@ public class UserDetailController {
         if (getCoordinatorFromSession(session) == null) return "redirect:/login";
 
         try {
-            DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
-            Beneficiary beneficiary = daoBeneficiary.find(id);
-            if (beneficiary == null) return "redirect:/coordinatrice/utilisateurs";
+            UserDetailService userDetailService = new UserDetailService();
+            Beneficiary beneficiary = userDetailService.findBeneficiaryById(id);
+            if (beneficiary == null)
+                return "redirect:/coordinatrice/utilisateurs";
 
-            DAOInterpreter daoInterpreter = new DAOInterpreter();
-            List<Interpreter> interpreterList = daoInterpreter.findAll();
+            List<Interpreter> interpreterList = userDetailService.findAllInterpreters();
 
             model.addAttribute("user", beneficiary);
             model.addAttribute("userRole", "BENEFICIARY");
@@ -157,8 +138,8 @@ public class UserDetailController {
         if (getCoordinatorFromSession(session) == null) return "redirect:/login";
 
         try {
-            DAOInterpreter daoInterpreter = new DAOInterpreter();
-            Interpreter interpreter = daoInterpreter.find(id);
+            UserDetailService userDetailService = new UserDetailService();
+            Interpreter interpreter = userDetailService.findInterpreterById(id);
             if (interpreter != null) {
                 InterpreterProfileService profileService = new InterpreterProfileService();
                 profileService.saveProfile(interpreter, profileDTO);
@@ -187,8 +168,8 @@ public class UserDetailController {
         if (getCoordinatorFromSession(session) == null) return "redirect:/login";
 
         try {
-            DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
-            Beneficiary beneficiary = daoBeneficiary.find(id);
+            UserDetailService userDetailService = new UserDetailService();
+            Beneficiary beneficiary = userDetailService.findBeneficiaryById(id);
             if (beneficiary != null) {
                 BeneficiaryProfileService profileService = new BeneficiaryProfileService();
                 profileService.saveProfile(beneficiary, profileDTO);
@@ -222,11 +203,11 @@ public class UserDetailController {
                 return "redirect:/coordinatrice/utilisateurs/interpreter/" + id + "?passwordError=true";
             }
 
-            DAOInterpreter daoInterpreter = new DAOInterpreter();
-            Interpreter interpreter = daoInterpreter.find(id);
+            UserDetailService userDetailService = new UserDetailService();
+            Interpreter interpreter = userDetailService.findInterpreterById(id);
             if (interpreter != null) {
                 interpreter.setPassword(passwordDTO.getNewPassword());
-                daoInterpreter.updatePassword(interpreter);
+                userDetailService.updateInterpreterPassword(interpreter);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -257,11 +238,11 @@ public class UserDetailController {
                 return "redirect:/coordinatrice/utilisateurs/beneficiary/" + id + "?passwordError=true";
             }
 
-            DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
-            Beneficiary beneficiary = daoBeneficiary.find(id);
+            UserDetailService userDetailService = new UserDetailService();
+            Beneficiary beneficiary = userDetailService.findBeneficiaryById(id);
             if (beneficiary != null) {
                 beneficiary.setPassword(passwordDTO.getNewPassword());
-                daoBeneficiary.updatePassword(beneficiary);
+                userDetailService.updateBeneficiaryPassword(beneficiary);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -292,12 +273,12 @@ public class UserDetailController {
             return "redirect:/login";
         newRole = newRole.toUpperCase();
         try {
-            DAOInterpreter daoInterpreter = new DAOInterpreter();
-            DAOCoordinator daoCoordinator = new DAOCoordinator();
-            Interpreter interpreter = daoInterpreter.find(id);
-            if (interpreter == null) return "redirect:/coordinatrice/utilisateurs";
+            UserDetailService userDetailService = new UserDetailService();
+            Interpreter interpreter = userDetailService.findInterpreterById(id);
+            if (interpreter == null)
+                return "redirect:/coordinatrice/utilisateurs";
 
-            Coordinator existingCoordinator = daoCoordinator.findByFKnumInterpreter(id);
+            Coordinator existingCoordinator = userDetailService.findCoordinatorByInterpreter(id);
             String currentRole = existingCoordinator != null
                     ? (existingCoordinator.isAdmin() ? "COORDINATOR" : "RESA")
                     : "INTERPRETER";
@@ -305,34 +286,31 @@ public class UserDetailController {
             // Case 1 : RESA <-> COORDINATOR — just change isAdmin
             if ((currentRole.equals("RESA") && newRole.equals("COORDINATOR")) || (currentRole.equals("COORDINATOR") && newRole.equals("RESA"))) {
                 existingCoordinator.setAdmin(newRole.equals("COORDINATOR"));
-                daoCoordinator.update(existingCoordinator);
+                userDetailService.updateCoordinator(existingCoordinator);
             }
 
             // Case 2 : INTERPRETER -> RESA or COORDINATOR
             else if (currentRole.equals("INTERPRETER") && (newRole.equals("RESA") || newRole.equals("COORDINATOR"))) {
                 // Change login : I0006 -> C0006
-                String oldLogin = interpreter.getLogin();
-                String newLogin = "C" + oldLogin.substring(1);
+                String newLogin = "C" + interpreter.getLogin().substring(1);
                 interpreter.setLogin(newLogin);
-                daoInterpreter.update(interpreter);
+                userDetailService.updateInterpreter(interpreter);
 
                 // Insert in Coordinator
                 Coordinator newCoordinator = new Coordinator();
                 newCoordinator.setNumInterpreter(id);
                 newCoordinator.setAdmin(newRole.equals("COORDINATOR"));
-                daoCoordinator.create(newCoordinator);
+                userDetailService.createCoordinator(newCoordinator);
             }
 
             // Case 3 : RESA or COORDINATOR -> INTERPRETER
             else if ((currentRole.equals("RESA") || currentRole.equals("COORDINATOR")) && newRole.equals("INTERPRETER")) {
-                // delete to Coordinator
-                daoCoordinator.delete(existingCoordinator);
+                userDetailService.deleteCoordinator(existingCoordinator);
 
                 // Change login : C0006 -> I0006
-                String oldLogin = interpreter.getLogin();
-                String newLogin = "I" + oldLogin.substring(1);
+                String newLogin = "I" + interpreter.getLogin().substring(1);
                 interpreter.setLogin(newLogin);
-                daoInterpreter.update(interpreter);
+                userDetailService.updateInterpreter(interpreter);
             }
 
         } catch (SQLException e) {
