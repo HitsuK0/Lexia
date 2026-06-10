@@ -273,16 +273,6 @@ public class CoordinatorController {
     }
 
 
-    // Temporaire
-    @GetMapping("/plannings")
-    public String plannings(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("userRole", "COORDINATOR");
-        model.addAttribute("isAdmin", true);
-        return "coordinatrice/plannings";
-    }
-
-
 
     // Temporaire
     @GetMapping("/validations")
@@ -291,6 +281,22 @@ public class CoordinatorController {
         model.addAttribute("userRole", "COORDINATOR");
         model.addAttribute("isAdmin", true);
         return "coordinatrice/validations";
+    }
+
+    // Temporaire
+    @GetMapping("/planning-gestion")
+    public String planning(HttpSession session, Model model) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("userName", coordinator.getFirstName() + " " + coordinator.getLastName());
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("breadcrumb", "Planning");
+        model.addAttribute("isAdmin", coordinator.isAdmin());
+
+        return "coordinatrice/planning-gestion";
     }
 
     /**
@@ -591,15 +597,6 @@ public class CoordinatorController {
             e.printStackTrace();
             return "redirect:/coordinatrice/utilisateurs";
         }
-    }
-
-    // Temporaire
-    @GetMapping("/gestion/competences")
-    public String gestionCompetences(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("userRole", "COORDINATOR");
-        model.addAttribute("isAdmin", true);
-        return "coordinatrice/gestion-competences";
     }
 
     /**
