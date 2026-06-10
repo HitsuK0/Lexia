@@ -5,8 +5,6 @@ package be.hers.info.ProjetIntegree.Controller;
  * @reviewer Halet Louis, Wellinger Chloé
  */
 
-import be.hers.info.ProjetIntegree.DAO.DAOBeneficiary;
-import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AppointmentFormService;
 import be.hers.info.ProjetIntegree.Services.HoraireBaseService;
@@ -104,7 +102,7 @@ public class HoraireBaseController {
 
     /**
      * Builds a FullCalendar event map for a recurring absence (Absence with TimeSlotBase).
-     * Places the event as an all-day block on the corresponding day of the current week.
+     * Places the event on the corresponding day of the current week.
      *
      * @param a the Absence to convert (must have a TimeSlotBase)
      * @return a Map representing the FullCalendar event, or null if the TimeSlot is not a TimeSlotBase
@@ -152,13 +150,12 @@ public class HoraireBaseController {
             return "redirect:/login";
 
         try {
-            DAOInterpreter daoInterpreter = new DAOInterpreter();
-            DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+            HoraireBaseService service = new HoraireBaseService();
             SkillService skillService = new SkillService();
             AppointmentFormService appointmentFormService = new AppointmentFormService();
 
-            model.addAttribute("interpreterList", daoInterpreter.findAll());
-            model.addAttribute("beneficiaryList", daoBeneficiary.findAll());
+            model.addAttribute("interpreterList", service.findAllInterpreters());
+            model.addAttribute("beneficiaryList", service.findAllBeneficiaries());
             model.addAttribute("allAcademicSkills", skillService.getAllAcademicSkills());
             model.addAttribute("allProfessionalSkills", skillService.getAllProfessionalSkills());
             model.addAttribute("establishmentList", appointmentFormService.findAllEstablishments());
@@ -190,19 +187,16 @@ public class HoraireBaseController {
         HoraireBaseService service = new HoraireBaseService();
 
         try {
-            DAOInterpreter daoInterpreter = new DAOInterpreter();
-            Interpreter interpreter = daoInterpreter.find(id);
+            Interpreter interpreter = service.findInterpreterById(id);
             if (interpreter == null)
                 return Collections.emptyList();
 
-            // Base appointments
             for (Appointment a : service.getBaseAppointmentsForInterpreter(interpreter)) {
                 Map<String, Object> event = buildAppointmentEvent(a);
                 if (event != null)
                     events.add(event);
             }
 
-            // Recurring absences
             for (Absence a : service.getBaseAbsencesForInterpreter(interpreter)) {
                 Map<String, Object> event = buildAbsenceEvent(a);
                 if (event != null)
@@ -265,16 +259,12 @@ public class HoraireBaseController {
             return Collections.emptyList();
 
         try {
-            DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
-            DAOInterpreter daoInterpreter = new DAOInterpreter();
-
-            Beneficiary beneficiary = daoBeneficiary.find(id);
+            HoraireBaseService service = new HoraireBaseService();
+            Beneficiary beneficiary = service.findBeneficiaryById(id);
             if (beneficiary == null)
                 return Collections.emptyList();
 
-            List<Interpreter> allInterpreters = daoInterpreter.findAll();
-
-            HoraireBaseService service = new HoraireBaseService();
+            List<Interpreter> allInterpreters = service.findAllInterpreters();
             return service.getSuggestedInterpreters(beneficiary, allInterpreters);
 
         } catch (SQLException e) {
@@ -297,7 +287,7 @@ public class HoraireBaseController {
      * @param isAbsence true if this is a recurring unavailability, false for an appointment
      * @param numBeneficiary the numBeneficiary (ignored if isAbsence is true)
      * @param numEstablishment the numEstablishment (ignored if isAbsence is true)
-     * @param local the local (ignored if isAbsence is true)
+     * @param local the local (room), may be null
      * @param description the description (optional, ignored if isAbsence is true)
      * @param session the current HTTP session
      * @return "ok" on success, "error" on failure, or "unauthorized" if session is invalid
