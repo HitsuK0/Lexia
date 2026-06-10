@@ -25,7 +25,40 @@ public class PlanningService {
         }
         return list;
     }
-
+    /**
+     * Searches for all Appointments belonging to the interpreter as a parameter over a period defined by start and end.
+     * @param coord The Coordinator linked to the appointment on the list
+     * @param start the date retrieved via the URL
+     * @param end the date retrieved via the URL
+     * @return The appointment list meets the constraints; an empty list is returned if no object is found.
+     */
+    public List<Appointment> getListAppointmentWithDateAndCoordinator(Coordinator coord, String start, String end){
+        DAOAppointment daoAppointment = new DAOAppointment();
+        List<Appointment> list = new ArrayList<>();
+        try{
+            list = daoAppointment.findAllAppointmentToInterpreterAndDate(coord, start,end);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+    /**
+     * Searches for all Absences belonging to the interpreter as a parameter over a period defined by start and end.
+     * @param coord The Coordinator linked to the appointment on the list
+     * @param start the date retrieved via the URL
+     * @param end the date retrieved via the URL
+     * @return The Absences list meets the constraints; an empty list is returned if no object is found.
+     */
+    public List<Absence> getListAbsenceWithDateAndCoordinator(Coordinator coord, String start, String end){
+        DAOAppointment daoAppointment = new DAOAppointment();
+        List<Absence> list =new ArrayList<>();
+        try{
+            list = daoAppointment.findAllAbsenceToInterpreterAndDate(coord, start,end);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return list;
+    }
     /**
      * Searches for all Absences belonging to the interpreter as a parameter over a period defined by start and end.
      * @param inter The interpreter linked to the appointment on the list
