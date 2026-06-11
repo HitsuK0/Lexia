@@ -397,7 +397,7 @@ public class DAOAbsenceTest {
     @Test
     @Order(20)
     public void findPunctualAbsencesInterpreter_GivenValidInterpreterAndDateRange_DoesNotReturnNull() throws SQLException, BadStatusException {
-        List<Absence> result = daoAbsence.findPunctualAbsencesInterpreter(interpreterTest, "2026-06-01", "2026-06-30");
+        List<Absence> result = daoAbsence.findPunctualAbsencesInterpreter(interpreterTest);
         assertNotNull(result);
     }
 
@@ -415,23 +415,28 @@ public class DAOAbsenceTest {
         Absence absenceWithInterpreter = new Absence(timeSlotPunctualTest);
         daoAbsence.create(absenceWithInterpreter, interpreterTest.getNumInterpreter());
 
-        List<Absence> result = daoAbsence.findPunctualAbsencesInterpreter(interpreterTest, "2026-06-01", "2026-06-30");
+        List<Absence> result = daoAbsence.findPunctualAbsencesInterpreter(interpreterTest);
         boolean found = result.stream()
                 .anyMatch(a -> a.getNumAbsence() == absenceWithInterpreter.getNumAbsence());
         assertTrue(found);
     }
 
     /**
-     * Tests that findPunctualAbsencesInterpreter() returns an empty list
-     * when the date range does not cover any absence.
-     * Given : an interpreter with an absence on 2026-06-10 and a date range of 2020-01-01 to 2020-01-31
-     * When  : findPunctualAbsencesInterpreter() is called with this out-of-range date range
+     * Tests that findPunctualAbsencesInterpreter() returns an empty list when the interpreter has no punctual absences linked.
+     * Given : a fresh interpreter with no absences
+     * When  : findPunctualAbsencesInterpreter() is called
      * Then  : the result must be empty
      */
     @Test
     @Order(22)
-    public void findPunctualAbsencesInterpreter_GivenOutOfRangeDates_ReturnsEmptyList() throws SQLException, BadStatusException {
-        List<Absence> result = daoAbsence.findPunctualAbsencesInterpreter(interpreterTest, "2020-01-01", "2020-01-31");
+    public void findPunctualAbsencesInterpreter_GivenInterpreterWithNoAbsences_ReturnsEmptyList() throws SQLException, BadStatusException {
+        Interpreter freshInterpreter = new Interpreter(
+                "freshLogin", "freshPassword", "FreshLastName", "FreshFirstName",
+                "0477111111", "fresh@mail.be", 38, address
+        );
+        daoInterpreter.create(freshInterpreter);
+
+        List<Absence> result = daoAbsence.findPunctualAbsencesInterpreter(freshInterpreter);
         assertTrue(result.isEmpty());
     }
 
