@@ -1,0 +1,53 @@
+/* Expanded card — subtle background + shadow to distinguish from the list */
+.request-card-body,
+.absence-card-body {
+    background-color: #fafafa;
+    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.06);
+    border-top: 2px solid #e0ddf5;
+}
+
+/* Highlight the active card header when expanded */
+.request-card:has(.request-card-body.expanded) .request-card-header,
+.absence-card:has(.absence-card-body.expanded) .absence-card-header {
+    background-color: #f0ecf8 !important;
+    border-left: 3px solid #593196;
+}
+
+/* Separator between recap and calendar */
+.request-card-body .border-end,
+.absence-card-body .border-end {
+    border-color: #e0ddf5 !important;
+}
+
+/* Add spacing and a light shadow between cards to visually separate them */
+.request-card,
+.absence-card {
+    margin-bottom: 4px;
+    border-radius: 6px !important;
+    overflow: hidden;
+}
+
+/* Closed card header — subtle background to distinguish from expanded zone */
+.request-card:not(:has(.request-card-body.expanded)) .request-card-header,
+.absence-card:not(:has(.absence-card-body.expanded)) .absence-card-header {
+    background-color: #ffffff;
+    transition: background-color 0.2s ease;
+}
+
+/* Hover effect on closed cards */
+.request-card:not(:has(.request-card-body.expanded)) .request-card-header:hover,
+.absence-card:not(:has(.absence-card-body.expanded)) .absence-card-header:hover {
+    background-color: #f8f7ff;
+}
+
+#searchBeneficiary,
+#searchInterpreter {
+    box-shadow: 0 2px 8px rgba(89, 49, 150, 0.12);
+    border-color: #e0ddf5;
+}
+
+#searchBeneficiary:focus,
+#searchInterpreter:focus {
+    box-shadow: 0 2px 12px rgba(89, 49, 150, 0.25);
+    border-color: #593196;
+}

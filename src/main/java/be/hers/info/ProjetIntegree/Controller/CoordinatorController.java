@@ -241,6 +241,7 @@ public class CoordinatorController {
         session.setAttribute("currentUser", coordinator);
         return "redirect:/interprete/profil?section=academics";
     }
+
     /**
      * Controller for the page "Mon profil" of the connected coordinator, section Academic Skill.
      * Deletes an academic skill from the connected coordinator.
@@ -273,18 +274,24 @@ public class CoordinatorController {
         return "redirect:/interprete/profil?section=academics";
     }
 
-
-
-     //Temporaire
+    // Temporaire
     @GetMapping("/validations")
-    public String validations(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
+    public String validations(HttpSession session, Model model) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("userName", coordinator.getFirstName() + " " + coordinator.getLastName());
         model.addAttribute("userRole", "COORDINATOR");
-        model.addAttribute("isAdmin", true);
+        model.addAttribute("isAdmin", coordinator.isAdmin());
+        model.addAttribute("pendingAppointments", new ArrayList<>());
+        model.addAttribute("beneficiaryList", new ArrayList<>());
+
         return "coordinatrice/validations";
     }
 
-
+    // Temporaire
     @GetMapping("/planning-gestion")
     public String planning(HttpSession session, Model model) {
         Coordinator coordinator = getCoordinatorFromSession(session);
@@ -717,7 +724,8 @@ public class CoordinatorController {
 
         return "redirect:/coordinatrice/gestion?tab=competences";
     }
-     /**
+
+    /**
      * This function create an establishment in DB using the data put in the form.
      *
      * @param dtoEstablishment is the DTOEstablishment the user is trying to add.
@@ -732,7 +740,7 @@ public class CoordinatorController {
         try {
             establishementService.createEstablishment(dtoEstablishment);
         } catch (SQLException e) {
-             //renvoyé la page d'erreur.
+            // renvoyé la page d'erreur.
         }
         return "redirect:/coordinatrice/gestion";
     }
@@ -748,11 +756,11 @@ public class CoordinatorController {
     @PostMapping("etablissements/updateEstablishment")
     public String updateEstablishment(@ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
                                       Model model) {
-       EstablishementService establishementService = new EstablishementService();
+        EstablishementService establishementService = new EstablishementService();
         try {
             establishementService.updateEstablishment(dtoEstablishment);
         } catch (SQLException e) {
-             //renvoyé la page d'erreur.
+            // renvoyé la page d'erreur.
         }
         return "redirect:/coordinatrice/gestion";
     }
@@ -804,7 +812,7 @@ public class CoordinatorController {
         return "coordinatrice/utilisateurs";
     }
 
-     //Temporaire
+    // Temporaire
     @GetMapping("/utilisateurs/{id}")
     public String utilisateurDetail(@PathVariable String id, Model model) {
         model.addAttribute("userName", "NOM Prenom");
