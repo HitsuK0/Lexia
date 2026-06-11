@@ -1,0 +1,386 @@
+<!--
+@author Wellinger Chloé
+@reviewer Nicolas Jean-François, Halet Louis
+-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+
+    <head th:replace="~{common/head :: head('Validations', '/css/coordinatrice/validations.css')}"></head>
+
+    <body>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='validations', userRole=${userRole}, userName=${userName}, breadcrumb='Validations', isAdmin=${isAdmin})}"></nav>
+
+        <div class="container-fluid px-4 py-3">
+
+            <div class="text-center mb-3">
+                <h1 class="fw-bold text-primary mb-0" id="pageTitle">Validations des demandes de rendez-vous</h1>
+                <p class="text-muted fst-italic small">Gérez les demandes en attente</p>
+            </div>
+
+            <ul class="nav nav-tabs mb-3" id="validationTabs">
+                <li class="nav-item">
+                    <button class="nav-link active" id="tab-beneficiaries" data-tab="beneficiaries">
+                        <i class="bi bi-person me-1"></i> Bénéficiaires
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-interpreters" data-tab="interpreters">
+                        <i class="bi bi-person-badge me-1"></i> Interprètes
+                    </button>
+                </li>
+            </ul>
+
+            <div id="panel-beneficiaries" class="tab-panel">
+
+                <div class="d-flex justify-content-center mb-3">
+                    <div class="position-relative" style="max-width: 400px; width: 100%;">
+                        <i class="bi bi-search position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+                        <input type="text" id="searchBeneficiary" class="form-control ps-5"
+                               placeholder="Rechercher un bénéficiaire..."/>
+                    </div>
+                </div>
+
+                <div class="d-none d-lg-grid px-3 py-2 text-muted small fw-semibold border-bottom"
+                     style="grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr 1fr 1.5rem; gap: 0 1rem;">
+                    <span>Bénéficiaire</span>
+                    <span>Date</span>
+                    <span>Heure</span>
+                    <span>Matière</span>
+                    <span>Statut</span>
+                    <span></span>
+                </div>
+
+                <div id="listBeneficiaries" class="d-flex flex-column">
+
+                    <!-- ===== HARDCODED TEST DATA ===== -->
+                    <div class="request-card card border shadow-sm"
+                         data-id="1"
+                         data-beneficiary="Dupont Jean"
+                         data-date="2026-06-12"
+                         data-date-display="12/06/2026"
+                         data-time="09:00 – 11:00"
+                         data-time-start="09:00"
+                         data-time-end="11:00"
+                         data-skill="Mathématiques"
+                         data-comp="Transcription"
+                         data-establishment="HERS"
+                         data-local="Local M5"
+                         data-description="Cours de rattrapage">
+
+                        <div class="request-card-header px-3 py-2 d-grid align-items-center"
+                             style="cursor:pointer; grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr 1fr 1.5rem; gap: 0 1rem;">
+                            <span class="fw-bold text-truncate">Dupont Jean</span>
+                            <span class="small text-muted">12/06/2026</span>
+                            <span class="small text-muted">09:00 – 11:00</span>
+                            <span class="small text-muted">Mathématiques</span>
+                            <span class="badge bg-warning text-dark" style="width:fit-content;">En attente</span>
+                            <i class="bi bi-chevron-down request-chevron text-muted"></i>
+                        </div>
+
+                        <div class="request-card-body d-none">
+                            <div class="row g-0">
+                                <div class="col-12 col-lg-5 p-3 border-end">
+                                    <div class="rounded p-3 mb-3 small" style="background-color: #f0ecf8;">
+                                        <h6 class="fw-bold text-primary mb-2">Récapitulatif</h6>
+                                        <div class="row row-cols-2 g-2">
+                                            <div class="col"><span class="text-muted">Bénéficiaire :</span> <strong>Dupont Jean</strong></div>
+                                            <div class="col"><span class="text-muted">Date :</span> <strong>12/06/2026</strong></div>
+                                            <div class="col"><span class="text-muted">Horaire :</span> <strong>09:00 – 11:00</strong></div>
+                                            <div class="col"><span class="text-muted">Matière :</span> <strong>Mathématiques</strong></div>
+                                            <div class="col"><span class="text-muted">Compétence :</span> <strong>Transcription</strong></div>
+                                            <div class="col"><span class="text-muted">Établissement :</span> <strong>HERS</strong></div>
+                                            <div class="col"><span class="text-muted">Local :</span> <strong>Local M5</strong></div>
+                                            <div class="col col-12"><span class="text-muted">Description :</span> <strong>Cours de rattrapage</strong></div>
+                                        </div>
+                                    </div>
+                                    <h6 class="fw-bold text-primary mb-2">Choisir un interprète</h6>
+                                    <div class="interpreters-loading text-center text-muted py-2">
+                                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                        Chargement...
+                                    </div>
+                                    <div class="interpreters-empty text-center text-muted py-2 d-none">
+                                        <i class="bi bi-exclamation-circle me-1"></i> Aucun interprète disponible.
+                                    </div>
+                                    <div class="interpreters-list d-none mb-2">
+                                        <table class="table table-hover table-sm">
+                                            <thead><tr><th></th><th>Nom</th><th>Métier</th><th>Académique</th></tr></thead>
+                                            <tbody class="interpreters-tbody"></tbody>
+                                        </table>
+                                    </div>
+                                    <div class="interpreters-error text-danger small mb-2 d-none">
+                                        Veuillez sélectionner un interprète.
+                                    </div>
+                                    <div class="d-flex justify-content-center gap-3 mt-3">
+                                        <button type="button" class="btn btn-danger btn-sm btn-refuse" data-id="1">
+                                            <i class="bi bi-x-lg me-1"></i> Refuser
+                                        </button>
+                                        <button type="button" class="btn btn-success btn-sm btn-accept" data-id="1">
+                                            <i class="bi bi-check-lg me-1"></i> Accepter
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-7 px-5 py-3">
+                                    <div class="card-calendar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="request-card card border shadow-sm"
+                         data-id="2"
+                         data-beneficiary="Martin Sophie"
+                         data-date="2026-06-13"
+                         data-date-display="13/06/2026"
+                         data-time="14:00 – 16:00"
+                         data-time-start="14:00"
+                         data-time-end="16:00"
+                         data-skill="Anglais"
+                         data-comp="Translittération"
+                         data-establishment="HEPL"
+                         data-local="Labo 3"
+                         data-description="">
+
+                        <div class="request-card-header px-3 py-2 d-grid align-items-center"
+                             style="cursor:pointer; grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr 1fr 1.5rem; gap: 0 1rem;">
+                            <span class="fw-bold text-truncate">Martin Sophie</span>
+                            <span class="small text-muted">13/06/2026</span>
+                            <span class="small text-muted">14:00 – 16:00</span>
+                            <span class="small text-muted">Anglais</span>
+                            <span class="badge bg-warning text-dark" style="width:fit-content;">En attente</span>
+                            <i class="bi bi-chevron-down request-chevron text-muted"></i>
+                        </div>
+
+                        <div class="request-card-body d-none">
+                            <div class="row g-0">
+                                <div class="col-12 col-lg-5 p-3 border-end">
+                                    <div class="rounded p-3 mb-3 small" style="background-color: #f0ecf8;">
+                                        <h6 class="fw-bold text-primary mb-2">Récapitulatif</h6>
+                                        <div class="row row-cols-2 g-2">
+                                            <div class="col"><span class="text-muted">Bénéficiaire :</span> <strong>Martin Sophie</strong></div>
+                                            <div class="col"><span class="text-muted">Date :</span> <strong>13/06/2026</strong></div>
+                                            <div class="col"><span class="text-muted">Horaire :</span> <strong>14:00 – 16:00</strong></div>
+                                            <div class="col"><span class="text-muted">Matière :</span> <strong>Anglais</strong></div>
+                                            <div class="col"><span class="text-muted">Compétence :</span> <strong>Translittération</strong></div>
+                                            <div class="col"><span class="text-muted">Établissement :</span> <strong>HEPL</strong></div>
+                                            <div class="col"><span class="text-muted">Local :</span> <strong>Labo 3</strong></div>
+                                        </div>
+                                    </div>
+                                    <h6 class="fw-bold text-primary mb-2">Choisir un interprète</h6>
+                                    <div class="interpreters-loading text-center text-muted py-2">
+                                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                        Chargement...
+                                    </div>
+                                    <div class="interpreters-empty text-center text-muted py-2 d-none">
+                                        <i class="bi bi-exclamation-circle me-1"></i> Aucun interprète disponible.
+                                    </div>
+                                    <div class="interpreters-list d-none mb-2">
+                                        <table class="table table-hover table-sm">
+                                            <thead><tr><th></th><th>Nom</th><th>Métier</th><th>Académique</th></tr></thead>
+                                            <tbody class="interpreters-tbody"></tbody>
+                                        </table>
+                                    </div>
+                                    <div class="interpreters-error text-danger small mb-2 d-none">
+                                        Veuillez sélectionner un interprète.
+                                    </div>
+                                    <div class="d-flex justify-content-center gap-3 mt-3">
+                                        <button type="button" class="btn btn-danger btn-sm btn-refuse" data-id="2">
+                                            <i class="bi bi-x-lg me-1"></i> Refuser
+                                        </button>
+                                        <button type="button" class="btn btn-success btn-sm btn-accept" data-id="2">
+                                            <i class="bi bi-check-lg me-1"></i> Accepter
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-7 px-5 py-3">
+                                    <div class="card-calendar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ===== END HARDCODED TEST DATA ===== -->
+
+                    <div id="emptyBeneficiaries" class="text-center text-muted py-5 d-none">
+                        <i class="bi bi-check-circle fs-3 d-block mb-2"></i>
+                        Aucune demande en attente.
+                    </div>
+                    <div id="emptySearchBeneficiary" class="text-center text-muted py-4 d-none">
+                        <i class="bi bi-search fs-3 d-block mb-2"></i>
+                        Aucun résultat pour cette recherche.
+                    </div>
+                </div>
+
+                <nav class="mt-3 d-flex justify-content-center" id="paginationNavBeneficiary">
+                    <ul class="pagination" id="paginationBeneficiary"></ul>
+                </nav>
+            </div>
+
+            <div id="panel-interpreters" class="tab-panel d-none">
+
+                <div class="d-flex justify-content-center mb-3">
+                    <div class="position-relative" style="max-width: 400px; width: 100%;">
+                        <i class="bi bi-search position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+                        <input type="text" id="searchInterpreter" class="form-control ps-5"
+                               placeholder="Rechercher un interprète..."/>
+                    </div>
+                </div>
+
+                <div class="d-none d-lg-grid px-3 py-2 text-muted small fw-semibold border-bottom"
+                     style="grid-template-columns: 2fr 2fr 1.5fr 1fr 1.5rem; gap: 0 1rem;">
+                    <span>Interprète</span>
+                    <span>Date</span>
+                    <span>Plage horaire</span>
+                    <span>Statut</span>
+                    <span></span>
+                </div>
+
+                <div id="listInterpreters" class="d-flex flex-column">
+
+                    <!-- ===== HARDCODED TEST DATA ===== -->
+                    <div class="absence-card card border shadow-sm"
+                         data-id="1"
+                         data-interpreter="Bernard Lucas"
+                         data-date-start="2026-06-14"
+                         data-date-end="2026-06-14"
+                         data-date-display="14/06/2026"
+                         data-time="10:00 – 12:00"
+                         data-time-start="10:00"
+                         data-time-end="12:00"
+                         data-full-day="false"
+                         data-reason="Rendez-vous médical"
+                         data-private="false">
+
+                        <div class="absence-card-header px-3 py-2 d-grid align-items-center"
+                             style="cursor:pointer; grid-template-columns: 2fr 2fr 1.5fr 1fr 1.5rem; gap: 0 1rem;">
+                            <span class="fw-bold text-truncate">Bernard Lucas</span>
+                            <span class="small text-muted">14/06/2026</span>
+                            <span class="small text-muted">10:00 – 12:00</span>
+                            <span class="badge bg-warning text-dark" style="width:fit-content;">En attente</span>
+                            <i class="bi bi-chevron-down absence-chevron text-muted"></i>
+                        </div>
+
+                        <div class="absence-card-body d-none">
+                            <div class="row g-0">
+                                <div class="col-12 col-lg-5 p-3 border-end">
+                                    <div class="rounded p-3 mb-3 small" style="background-color: #f0ecf8;">
+                                        <h6 class="fw-bold text-primary mb-2">Récapitulatif</h6>
+                                        <div class="row row-cols-2 g-2">
+                                            <div class="col"><span class="text-muted">Interprète :</span> <strong>Bernard Lucas</strong></div>
+                                            <div class="col"><span class="text-muted">Date :</span> <strong>14/06/2026</strong></div>
+                                            <div class="col"><span class="text-muted">Horaire :</span> <strong>10:00 – 12:00</strong></div>
+                                            <div class="col col-12"><span class="text-muted">Motif :</span> <strong>Rendez-vous médical</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center gap-3 mt-3">
+                                        <button type="button" class="btn btn-danger btn-sm btn-refuse-absence" data-id="1">
+                                            <i class="bi bi-x-lg me-1"></i> Refuser
+                                        </button>
+                                        <button type="button" class="btn btn-success btn-sm btn-accept-absence" data-id="1">
+                                            <i class="bi bi-check-lg me-1"></i> Accepter
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-7 px-5 py-3">
+                                    <div class="absence-calendar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="absence-card card border shadow-sm"
+                         data-id="2"
+                         data-interpreter="Rousseau Emma"
+                         data-date-start="2026-06-15"
+                         data-date-end="2026-06-16"
+                         data-date-display="15/06/2026 au 16/06/2026"
+                         data-time=""
+                         data-time-start=""
+                         data-time-end=""
+                         data-full-day="true"
+                         data-reason=""
+                         data-private="false">
+
+                        <div class="absence-card-header px-3 py-2 d-grid align-items-center"
+                             style="cursor:pointer; grid-template-columns: 2fr 2fr 1.5fr 1fr 1.5rem; gap: 0 1rem;">
+                            <span class="fw-bold text-truncate">Rousseau Emma</span>
+                            <span class="small text-muted">15/06 au 16/06/2026</span>
+                            <span class="small text-muted">Journée complète</span>
+                            <span class="badge bg-warning text-dark" style="width:fit-content;">En attente</span>
+                            <i class="bi bi-chevron-down absence-chevron text-muted"></i>
+                        </div>
+
+                        <div class="absence-card-body d-none">
+                            <div class="row g-0">
+                                <div class="col-12 col-lg-5 p-3 border-end">
+                                    <div class="rounded p-3 mb-3 small" style="background-color: #f0ecf8;">
+                                        <h6 class="fw-bold text-primary mb-2">Récapitulatif</h6>
+                                        <div class="row row-cols-2 g-2">
+                                            <div class="col"><span class="text-muted">Interprète :</span> <strong>Rousseau Emma</strong></div>
+                                            <div class="col"><span class="text-muted">Date :</span> <strong>15/06 au 16/06/2026</strong></div>
+                                            <div class="col col-12"><span class="text-muted">Horaire :</span> <strong>Journée complète</strong></div>
+                                            <div class="col col-12 fst-italic text-muted">Aucun motif renseigné.</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center gap-3 mt-3">
+                                        <button type="button" class="btn btn-danger btn-sm btn-refuse-absence" data-id="2">
+                                            <i class="bi bi-x-lg me-1"></i> Refuser
+                                        </button>
+                                        <button type="button" class="btn btn-success btn-sm btn-accept-absence" data-id="2">
+                                            <i class="bi bi-check-lg me-1"></i> Accepter
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-7 px-5 py-3">
+                                    <div class="absence-calendar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ===== END HARDCODED TEST DATA ===== -->
+
+                    <div id="emptyInterpreters" class="text-center text-muted py-5 d-none">
+                        <i class="bi bi-check-circle fs-3 d-block mb-2"></i>
+                        Aucune demande en attente.
+                    </div>
+                    <div id="emptySearchInterpreter" class="text-center text-muted py-4 d-none">
+                        <i class="bi bi-search fs-3 d-block mb-2"></i>
+                        Aucun résultat pour cette recherche.
+                    </div>
+                </div>
+
+                <nav class="mt-3 d-flex justify-content-center" id="paginationNavInterpreter">
+                    <ul class="pagination" id="paginationInterpreter"></ul>
+                </nav>
+            </div>
+
+        </div>
+
+        <div class="modal fade" id="modalRefuse" tabindex="-1" aria-labelledby="modalRefuseLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalRefuseLabel">Refuser la demande</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3 text-center">
+                        <i class="bi bi-exclamation-triangle text-danger fs-1 mb-3 d-block"></i>
+                        <p class="mb-1" id="refuseMessage">Êtes-vous sûr de vouloir refuser la demande de</p>
+                        <p class="fw-bold" id="refuseName"></p>
+                        <p class="text-muted small" id="refuseSubMessage"></p>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="btnConfirmRefuse">
+                            <i class="bi bi-x-lg me-1"></i> Confirmer le refus
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script th:src="@{/js/fullcalendar.min.js}"></script>
+        <script th:src="@{/js/coordinatrice/validations.js}"></script>
+
+        <div th:replace="~{common/footer :: footer}"></div>
+    </body>
+</html>
