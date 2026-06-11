@@ -223,8 +223,8 @@ public class CoordinatorController {
                             .anyMatch(s -> s.getNumAcademicSkill() == numSkill);
 
             if (!alreadyOwned) {
-                boolean res = profileService.addAcademicSkill(coordinator.getNumInterpreter(), numSkill);
-                if (res) {
+               boolean res = profileService.addAcademicSkill(coordinator.getNumInterpreter(), numSkill);
+               if (res) {
                     DAOAcademicSkill dao = new DAOAcademicSkill();
                     AcademicSkill a = dao.find(numSkill);
                     if (a != null) {
@@ -241,7 +241,6 @@ public class CoordinatorController {
         session.setAttribute("currentUser", coordinator);
         return "redirect:/interprete/profil?section=academics";
     }
-
     /**
      * Controller for the page "Mon profil" of the connected coordinator, section Academic Skill.
      * Deletes an academic skill from the connected coordinator.
@@ -276,7 +275,7 @@ public class CoordinatorController {
 
 
 
-    // Temporaire
+     //Temporaire
     @GetMapping("/validations")
     public String validations(Model model) {
         model.addAttribute("userName", "NOM Prenom");
@@ -314,8 +313,8 @@ public class CoordinatorController {
         String dateStart = start.substring(0,10);
         String dateEnd = end.substring(0,10);
         PlanningService planningService = new PlanningService();
-        List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndCoordinator(coordinator,dateStart,dateEnd);
-        List<Absence> absenceList = planningService.getListAbsenceWithDateAndCoordinator(coordinator,dateStart,dateEnd);
+        List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndInterpreter(coordinator.getNumInterpreter(),dateStart,dateEnd);
+        List<Absence> absenceList = planningService.getListAbsenceWithDateAndInterpreter(coordinator.getNumInterpreter(),dateStart,dateEnd);
 
         coordinator.setAppointmentsList(appointmentList);
         coordinator.setAbsences(absenceList);
@@ -326,113 +325,116 @@ public class CoordinatorController {
         List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
                 .toList();
         for( Appointment a : appointmentList){
-            Map<String, Object> event = new HashMap<>();
-            Map<String, Object> extendedProps = new HashMap<>();
-
-            String skills = a.getAcademicSkillsNeeded().stream()
-                    .map(s -> s.getDesignation())
-                    .collect(Collectors.joining(", "));
-            event.put("title", skills);
-
-            if(a.getTimeSlot() instanceof TimeSlotPunctual){
-                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
-                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-
-                switch (a.getStatus()){
-                    case "en attente":
-                        event.put("color","#f0ad4e");
-                        break;
-                    case "accepte":
-                        event.put("color","#81c784");
-                        break;
-                    case "refuse":
-                        event.put("color","#f28b82");
-                        break;
-                }
-            }else{
-                TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
-                int i = tsp.getDayNumber();
-                LocalDate ld = null;
-                for(LocalDate l : listDateBetweenStartEnd){
-                    if(l.getDayOfWeek().getValue() == i){
-                        ld = l;
-                        break;
-                    }
-                }
-                LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-                event.put("color","#b39ddb");
-            }
-
-            String professionalSkills = a.getProfessionalSkillsNeeded().stream()
-                    .map(s -> s.getDesignation())
-                    .collect(Collectors.joining(", "));
-
-            extendedProps.put("type","appointment");
-            extendedProps.put("status",a.getStatus());
-            extendedProps.put("professionalSkills", professionalSkills);
-            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,1) + ". " + a.getBeneficiary().getFirstName());
-            extendedProps.put("locals", a.getAppointmentLocals());
-            extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
-            extendedProps.put("description", a.getDescription());
-            event.put("extendedProps",extendedProps);
-            events.add(event);
-
+            events.add(buildEventAppointment(a,listDateBetweenStartEnd));
         }
         for(Absence a : absenceList){
-            Map<String, Object> event = new HashMap<>();
-            Map<String, Object> extendedProps = new HashMap<>();
-            event.put("title","Indisponibilité");
-
-            if(a.getTimeSlot() instanceof TimeSlotPunctual){
-                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
-                LocalDateTime ldt = LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
-                event.put("start",ldt);
-
-                if (!tsp.getStartDate().equals(tsp.getEndDate())) {
-                    LocalDateTime ldtEnd = LocalDateTime.of(tsp.getEndDate(), tsp.getStartTime())
-                            .plusSeconds(tsp.getDuration().toSecondOfDay());
-                    event.put("end", ldtEnd);
-                } else {
-                    event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-                }
-            }else{
-                TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
-                int i = tsp.getDayNumber();
-                LocalDate ld = null;
-                for(LocalDate l : listDateBetweenStartEnd){
-                    if(l.getDayOfWeek().getValue() == i){
-                        ld = l;
-                        break;
-                    }
-                }
-                if (ld == null) continue;
-                LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-            }
-
-            boolean isFullDay = false;
-            if (a.getTimeSlot() instanceof TimeSlotPunctual) {
-                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
-                isFullDay = tsp.getStartTime() != null
-                        && tsp.getStartTime().equals(java.time.LocalTime.MIDNIGHT)
-                        && tsp.getDuration() != null
-                        && tsp.getDuration().getHour() == 23;
-            }
-            event.put("color","#f0ad4e");
-            extendedProps.put("type","absence");
-            extendedProps.put("reason", a.getReason());
-            extendedProps.put("fullDay", isFullDay);
-            event.put("extendedProps",extendedProps);
-            events.add(event);
+            events.add(buildEventAbsence(a,listDateBetweenStartEnd));
         }
         return events;
     }
+    public Map<String, Object> buildEventAppointment(Appointment a,List<LocalDate> listDateBetweenStartEnd){
+        Map<String, Object> event = new HashMap<>();
+        Map<String, Object> extendedProps = new HashMap<>();
 
+        String skills = a.getAcademicSkillsNeeded().stream()
+                .map(s -> s.getDesignation())
+                .collect(Collectors.joining(", "));
+        event.put("title", skills);
+
+        if(a.getTimeSlot() instanceof TimeSlotPunctual){
+            TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
+            LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+            event.put("start",ldt);
+            event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+
+            switch (a.getStatus()){
+                case "en attente":
+                    event.put("color","#f0ad4e");
+                    break;
+                case "accepte":
+                    event.put("color","#81c784");
+                    break;
+                case "refuse":
+                    event.put("color","#f28b82");
+                    break;
+            }
+        }else{
+            TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
+            int i = tsp.getDayNumber();
+            LocalDate ld = null;
+            for(LocalDate l : listDateBetweenStartEnd){
+                if(l.getDayOfWeek().getValue() == i){
+                    ld = l;
+                    break;
+                }
+            }
+            LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
+            event.put("start",ldt);
+            event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+            event.put("color","#b39ddb");
+        }
+        String professionalSkills = a.getProfessionalSkillsNeeded().stream()
+                .map(s -> s.getDesignation())
+                .collect(Collectors.joining(", "));
+
+        extendedProps.put("type","appointment");
+        extendedProps.put("status",a.getStatus());
+        extendedProps.put("professionalSkills", professionalSkills);
+        extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,1) + ". " + a.getBeneficiary().getFirstName());
+        extendedProps.put("locals", a.getAppointmentLocals());
+        extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
+        extendedProps.put("description", a.getDescription());
+        event.put("extendedProps",extendedProps);
+        return event;
+    }
+    public Map<String, Object> buildEventAbsence(Absence a,List<LocalDate> listDateBetweenStartEnd){
+        Map<String, Object> event = new HashMap<>();
+        Map<String, Object> extendedProps = new HashMap<>();
+        event.put("title","Indisponibilité");
+
+        if(a.getTimeSlot() instanceof TimeSlotPunctual){
+            TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
+            LocalDateTime ldt = LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+            event.put("start",ldt);
+
+            if (!tsp.getStartDate().equals(tsp.getEndDate())) {
+                LocalDateTime ldtEnd = LocalDateTime.of(tsp.getEndDate(), tsp.getStartTime())
+                        .plusSeconds(tsp.getDuration().toSecondOfDay());
+                event.put("end", ldtEnd);
+            } else {
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+            }
+        }else{
+            TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
+            int i = tsp.getDayNumber();
+            LocalDate ld = null;
+            for(LocalDate l : listDateBetweenStartEnd){
+                if(l.getDayOfWeek().getValue() == i){
+                    ld = l;
+                    break;
+                }
+            }
+
+            LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
+            event.put("start",ldt);
+            event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+        }
+
+        boolean isFullDay = false;
+        if (a.getTimeSlot() instanceof TimeSlotPunctual) {
+            TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
+            isFullDay = tsp.getStartTime() != null
+                    && tsp.getStartTime().equals(java.time.LocalTime.MIDNIGHT)
+                    && tsp.getDuration() != null
+                    && tsp.getDuration().getHour() == 23;
+        }
+        event.put("color","#f0ad4e");
+        extendedProps.put("type","absence");
+        extendedProps.put("reason", a.getReason());
+        extendedProps.put("fullDay", isFullDay);
+        event.put("extendedProps",extendedProps);
+        return event;
+    }
     @GetMapping("/planning-gestion/interpreter")
     public String planningInterpreter(HttpSession session, Model model) {
         Coordinator coordinator = getCoordinatorFromSession(session);
@@ -452,13 +454,13 @@ public class CoordinatorController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        model.addAttribute("listeInterprete", interpreterList);
+        model.addAttribute("listInterpreter", interpreterList);
         model.addAttribute("DTOAbsence", new DTOAbsence());
 
         return "coordinatrice/planning-gestion/interpreter";
     }
 
-    @GetMapping(value = "/planning-gestion/events", produces="application/json")
+    @GetMapping(value = "/planning-gestion/interpreter/events", produces="application/json")
     @ResponseBody
     public List<Map<String,Object>> getEventsPlaningInterpreter(@RequestParam String start,
                                                                 @RequestParam String end, @RequestParam("num") int num, HttpSession session, Model model) {
@@ -466,12 +468,11 @@ public class CoordinatorController {
         if (coordinator == null) {
             return Collections.emptyList();
         }
-        // TODO : overload méthode findAllAppointmentToInterpreterAndDate() du DAO et optimiser pour tout les appel dans cette classe.
         String dateStart = start.substring(0,10);
         String dateEnd = end.substring(0,10);
         PlanningService planningService = new PlanningService();
-        List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndCoordinator(coordinator,dateStart,dateEnd);
-        List<Absence> absenceList = planningService.getListAbsenceWithDateAndCoordinator(coordinator,dateStart,dateEnd);
+        List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndInterpreter(num,dateStart,dateEnd);
+        List<Absence> absenceList = planningService.getListAbsenceWithDateAndInterpreter(num,dateStart,dateEnd);
 
         coordinator.setAppointmentsList(appointmentList);
         coordinator.setAbsences(absenceList);
@@ -481,113 +482,83 @@ public class CoordinatorController {
         List<Map<String,Object>> events = new ArrayList<>();
         List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
                 .toList();
+
         for( Appointment a : appointmentList){
-            Map<String, Object> event = new HashMap<>();
-            Map<String, Object> extendedProps = new HashMap<>();
-
-            String skills = a.getAcademicSkillsNeeded().stream()
-                    .map(s -> s.getDesignation())
-                    .collect(Collectors.joining(", "));
-            event.put("title", skills);
-
-            if(a.getTimeSlot() instanceof TimeSlotPunctual){
-                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
-                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-
-                switch (a.getStatus()){
-                    case "en attente":
-                        event.put("color","#f0ad4e");
-                        break;
-                    case "accepte":
-                        event.put("color","#81c784");
-                        break;
-                    case "refuse":
-                        event.put("color","#f28b82");
-                        break;
-                }
-            }else{
-                TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
-                int i = tsp.getDayNumber();
-                LocalDate ld = null;
-                for(LocalDate l : listDateBetweenStartEnd){
-                    if(l.getDayOfWeek().getValue() == i){
-                        ld = l;
-                        break;
-                    }
-                }
-                LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-                event.put("color","#b39ddb");
-            }
-
-            String professionalSkills = a.getProfessionalSkillsNeeded().stream()
-                    .map(s -> s.getDesignation())
-                    .collect(Collectors.joining(", "));
-
-            extendedProps.put("type","appointment");
-            extendedProps.put("status",a.getStatus());
-            extendedProps.put("professionalSkills", professionalSkills);
-            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,1) + ". " + a.getBeneficiary().getFirstName());
-            extendedProps.put("locals", a.getAppointmentLocals());
-            extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
-            extendedProps.put("description", a.getDescription());
-            event.put("extendedProps",extendedProps);
-            events.add(event);
-
+            events.add(buildEventAppointment(a,listDateBetweenStartEnd));
         }
         for(Absence a : absenceList){
-            Map<String, Object> event = new HashMap<>();
-            Map<String, Object> extendedProps = new HashMap<>();
-            event.put("title","Indisponibilité");
-
-            if(a.getTimeSlot() instanceof TimeSlotPunctual){
-                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
-                LocalDateTime ldt = LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
-                event.put("start",ldt);
-
-                if (!tsp.getStartDate().equals(tsp.getEndDate())) {
-                    LocalDateTime ldtEnd = LocalDateTime.of(tsp.getEndDate(), tsp.getStartTime())
-                            .plusSeconds(tsp.getDuration().toSecondOfDay());
-                    event.put("end", ldtEnd);
-                } else {
-                    event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-                }
-            }else{
-                TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
-                int i = tsp.getDayNumber();
-                LocalDate ld = null;
-                for(LocalDate l : listDateBetweenStartEnd){
-                    if(l.getDayOfWeek().getValue() == i){
-                        ld = l;
-                        break;
-                    }
-                }
-                if (ld == null) continue;
-                LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-            }
-
-            boolean isFullDay = false;
-            if (a.getTimeSlot() instanceof TimeSlotPunctual) {
-                TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
-                isFullDay = tsp.getStartTime() != null
-                        && tsp.getStartTime().equals(java.time.LocalTime.MIDNIGHT)
-                        && tsp.getDuration() != null
-                        && tsp.getDuration().getHour() == 23;
-            }
-            event.put("color","#f0ad4e");
-            extendedProps.put("type","absence");
-            extendedProps.put("reason", a.getReason());
-            extendedProps.put("fullDay", isFullDay);
-            event.put("extendedProps",extendedProps);
-            events.add(event);
+            events.add(buildEventAbsence(a,listDateBetweenStartEnd));
         }
         return events;
     }
+
+    /**
+     * Create a list of beneficiaries linked to the interpreter
+     * Redirects to login if no beneficiary is found in session.
+     * @param session the current HTTP session
+     * @param model   the Spring UI model
+     * @return Redirect to the "interprete/planning/beneficiaires" page
+     */
+    @GetMapping("/planning-gestion/beneficiaires")
+    public String planningBeneficiaires(HttpSession session, Model model) {
+
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+        HoraireBaseService service = new HoraireBaseService();
+        List<Beneficiary> beneficiaryList = new ArrayList<>();
+        try{
+            beneficiaryList = service.findAllBeneficiaries();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
+        session.setAttribute("beneficiaryList", beneficiaryList);
+        model.addAttribute("activeTab", "planning");
+
+        return "coordinatrice/planning-gestion/beneficiaires";
+    }
+
+    /**
+     * Search all Appointments within the Start and End time range linked to the beneficiary number passed in the URL.
+     * Format the information found in a list on the Map for FullCalendar
+     * Redirects to login if no Interpreter is found in session.
+     * @param start the start date of the schedule
+     * @param end the end date of the schedule
+     * @param session the current HTTP session
+     * @param model the Spring UI model
+     * @return a formatted map list for FullCalendar
+     */
+    @GetMapping(value = "/planning/beneficiaires/events", produces="application/json")
+    @ResponseBody
+    public List<Map<String,Object>> getEventsPlaningBeneficiary(@RequestParam String start,
+                                                                @RequestParam String end, @RequestParam("num") int num, HttpSession session, Model model) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return Collections.emptyList();
+        }
+
+        String dateStart = start.substring(0, 10);
+        String dateEnd = end.substring(0, 10);
+
+        PlanningService planningService = new PlanningService();
+        List<Appointment> appointmentList = planningService.getListAppointmentsToBeneficiaryAndDate(num, dateStart, dateEnd);
+
+        LocalDate ldStart = LocalDate.parse(dateStart);
+        LocalDate ldEnd = LocalDate.parse(dateEnd);
+
+        List<Map<String,Object>> events = new ArrayList<>();
+        List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
+                .toList();
+
+        for( Appointment a : appointmentList){
+            events.add(buildEventAppointment(a,listDateBetweenStartEnd));
+        }
+
+        return events;
+    }
+
     /**
      * This function load the page "gestion".
      * It adds all the data needed for the page to display (Skills, Referents and Establishments).
@@ -746,8 +717,7 @@ public class CoordinatorController {
 
         return "redirect:/coordinatrice/gestion?tab=competences";
     }
-
-    /**
+     /**
      * This function create an establishment in DB using the data put in the form.
      *
      * @param dtoEstablishment is the DTOEstablishment the user is trying to add.
@@ -762,7 +732,7 @@ public class CoordinatorController {
         try {
             establishementService.createEstablishment(dtoEstablishment);
         } catch (SQLException e) {
-            // renvoyé la page d'erreur.
+             //renvoyé la page d'erreur.
         }
         return "redirect:/coordinatrice/gestion";
     }
@@ -778,11 +748,11 @@ public class CoordinatorController {
     @PostMapping("etablissements/updateEstablishment")
     public String updateEstablishment(@ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
                                       Model model) {
-        EstablishementService establishementService = new EstablishementService();
+       EstablishementService establishementService = new EstablishementService();
         try {
             establishementService.updateEstablishment(dtoEstablishment);
         } catch (SQLException e) {
-            // renvoyé la page d'erreur.
+             //renvoyé la page d'erreur.
         }
         return "redirect:/coordinatrice/gestion";
     }
@@ -834,7 +804,7 @@ public class CoordinatorController {
         return "coordinatrice/utilisateurs";
     }
 
-    // Temporaire
+     //Temporaire
     @GetMapping("/utilisateurs/{id}")
     public String utilisateurDetail(@PathVariable String id, Model model) {
         model.addAttribute("userName", "NOM Prenom");
