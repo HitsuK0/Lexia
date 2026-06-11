@@ -156,7 +156,8 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Switches the active planning mode and updates the toolbar button styles.
        Resets the selected user and reloads the calendar accordingly.
        In interpreter or beneficiary mode, shows the search zone and loads
-       the corresponding user list for autocomplete and dropdown. */
+       the corresponding user list for autocomplete and dropdown.
+       Toolbar action buttons: coordinator → indispo only, beneficiary → RDV only, interpreter → none. */
     window.switchMode = function (mode) {
         currentMode = mode;
         selectedUserId = null;
@@ -165,6 +166,25 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('btnMyPlanning').className = mode === 'coordinator' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
         document.getElementById('btnInterpreterPlanning').className = mode === 'interpreter' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
         document.getElementById('btnBeneficiaryPlanning').className = mode === 'beneficiary' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
+
+        // Update toolbar action buttons visibility
+        const btnRdv = document.getElementById('btnAddRdv');
+        const btnIndispo = document.getElementById('btnAddIndispo');
+        const mobileBtn = document.getElementById('mobileBtn');
+
+        btnRdv.classList.add('d-none');
+        btnIndispo.classList.add('d-none');
+        btnIndispo.classList.remove('d-lg-block');
+        mobileBtn.innerHTML = '';
+
+        if (mode === 'coordinator') {
+            btnIndispo.classList.remove('d-none');
+            btnIndispo.classList.add('d-lg-block');
+            mobileBtn.innerHTML = `<button type="button" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalIndispo"><i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité</button>`;
+        } else if (mode === 'beneficiary') {
+            btnRdv.classList.remove('d-none');
+            mobileBtn.innerHTML = `<button type="button" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalRDV"><i class="bi bi-calendar-plus"></i> Ajouter un RDV</button>`;
+        }
 
         const searchZone = document.getElementById('zone-selection');
 
@@ -514,6 +534,91 @@ document.addEventListener('DOMContentLoaded', function () {
         generateHours('rdvEndHour', 8 * 60 + 5, 19 * 60);
 
         ['rdvDateStart', 'rdvDateEnd', 'rdvStartHour', 'rdvEndHour', 'rdvEstablishment', 'rdvLocal'].forEach(id => {
+            const el = document.getElementById(id);
+            el.classList.remove('is-invalid');
+            const fb = el.nextElementSibling;
+            if (fb && fb.classList.contains('invalid-feedback')) fb.remove();
+        });
+    });
+
+    /* Initializes the unavailability modal hour selects on page load. */
+    generateHours('indispoStartHour', 8 * 60, 18 * 60 + 55);
+    generateHours('indispoEndHour', 8 * 60 + 5, 19 * 60);
+
+    document.getElementById('indispoDateStart').min = today;
+    document.getElementById('indispoDateEnd').min = today;
+
+    /* Updates the minimum end date when the start date changes. */
+    document.getElementById('indispoDateStart').addEventListener('change', function () {
+        document.getElementById('indispoDateEnd').min = this.value;
+    });
+
+    /* Regenerates end hour options to always start after the selected start hour. */
+    document.getElementById('indispoStartHour').addEventListener('change', function () {
+        const [h, m] = this.value.split(':').map(Number);
+        generateHours('indispoEndHour', h * 60 + m + 5, 19 * 60);
+    });
+
+    /* Disables or re-enables the time selects when the full day checkbox is toggled. */
+    document.getElementById('indispoFullDay').addEventListener('change', function () {
+        document.getElementById('indispoStartHour').disabled = this.checked;
+        document.getElementById('indispoEndHour').disabled = this.checked;
+    });
+
+    /* Validates the unavailability form before submission. */
+    document.getElementById('btnSendIndispo').addEventListener('click', function () {
+        let valid = true;
+
+        const dateStart = document.getElementById('indispoDateStart');
+        const dateEnd = document.getElementById('indispoDateEnd');
+        const startHour = document.getElementById('indispoStartHour');
+        const endHour = document.getElementById('indispoEndHour');
+        const fullDay = document.getElementById('indispoFullDay').checked;
+
+        [dateStart, dateEnd, startHour, endHour].forEach(el => {
+            el.classList.remove('is-invalid');
+            const fb = el.nextElementSibling;
+            if (fb && fb.classList.contains('invalid-feedback')) fb.remove();
+        });
+
+        function displayIndispoError(input, message) {
+            input.classList.add('is-invalid');
+            const div = document.createElement('div');
+            div.classList.add('invalid-feedback');
+            div.style.display = 'block';
+            div.textContent = message;
+            input.insertAdjacentElement('afterend', div);
+            valid = false;
+        }
+
+        if (!dateStart.value) displayIndispoError(dateStart, 'La date de début est obligatoire.');
+        if (!dateEnd.value) displayIndispoError(dateEnd, 'La date de fin est obligatoire.');
+        if (dateStart.value && dateEnd.value && dateEnd.value < dateStart.value)
+            displayIndispoError(dateEnd, 'La date de fin doit être après la date de début.');
+        if (!fullDay) {
+            if (!startHour.value) displayIndispoError(startHour, 'L\'heure de début est obligatoire.');
+            if (!endHour.value) displayIndispoError(endHour, 'L\'heure de fin est obligatoire.');
+        }
+
+        if (valid) document.querySelector('#modalIndispo form').submit();
+    });
+
+    /* Resets all unavailability modal fields when the modal is closed. */
+    document.getElementById('modalIndispo').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('indispoDateStart').value = '';
+        document.getElementById('indispoDateEnd').value = '';
+        document.getElementById('indispoDateStart').min = today;
+        document.getElementById('indispoDateEnd').min = today;
+        document.getElementById('indispoFullDay').checked = false;
+        document.getElementById('indispoStartHour').disabled = false;
+        document.getElementById('indispoEndHour').disabled = false;
+        document.getElementById('indispoMotif').value = '';
+        document.getElementById('indispoMotifPrive').checked = false;
+
+        generateHours('indispoStartHour', 8 * 60, 18 * 60 + 55);
+        generateHours('indispoEndHour', 8 * 60 + 5, 19 * 60);
+
+        ['indispoDateStart', 'indispoDateEnd', 'indispoStartHour', 'indispoEndHour'].forEach(id => {
             const el = document.getElementById(id);
             el.classList.remove('is-invalid');
             const fb = el.nextElementSibling;

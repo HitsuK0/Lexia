@@ -291,6 +291,7 @@ public class CoordinatorController {
             return "redirect:/login";
         }
 
+        model.addAttribute("DTOAbsence", new DTOAbsence());
         model.addAttribute("userName", coordinator.getFirstName() + " " + coordinator.getLastName());
         model.addAttribute("userRole", "COORDINATOR");
         model.addAttribute("breadcrumb", "Planning");
