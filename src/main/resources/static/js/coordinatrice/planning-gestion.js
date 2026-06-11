@@ -208,7 +208,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
             loadUserList(mode);
         }
+
+        const legendLabel = document.getElementById('legendUnavailabilityLabel');
+        if (mode === 'beneficiary') {
+            legendLabel.textContent = 'Demande en attente';
+        } else {
+            legendLabel.textContent = 'Indisponibilité';
+        }
     };
+
+    document.getElementById('legendUnavailabilityLabel').textContent       = mode === 'beneficiary' ? 'Demande en attente' : 'Indisponibilité';
+    document.getElementById('legendUnavailabilityLabelMobile').textContent = mode === 'beneficiary' ? 'Demande en attente' : 'Indisponibilité';
 
     /* Fetches the list of interpreters or beneficiaries from the server,
        caches it locally, and populates both the search dropdown and the autocomplete. */
