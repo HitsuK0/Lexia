@@ -11,6 +11,7 @@ import be.hers.info.ProjetIntegree.DTO.*;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -515,8 +516,13 @@ public class CoordinatorController {
         }
         HoraireBaseService service = new HoraireBaseService();
         List<Beneficiary> beneficiaryList = new ArrayList<>();
+        AppointmentFormService serviceAppointment = new AppointmentFormService();
+        model.addAttribute("establishmentList", serviceAppointment.findAllEstablishments());
+        model.addAttribute("academicSkillList", serviceAppointment.findAllAcademicSkills());
+        model.addAttribute("professionalSkillList", serviceAppointment.findAllProfessionalSkills());
         try{
             beneficiaryList = service.findAllBeneficiaries();
+
         }catch(SQLException e){
             e.printStackTrace();
         }
@@ -537,7 +543,7 @@ public class CoordinatorController {
      * @param model the Spring UI model
      * @return a formatted map list for FullCalendar
      */
-    @GetMapping(value = "/planning/beneficiaires/events", produces="application/json")
+    @GetMapping(value = "/planning-gestion/beneficiaires/events", produces="application/json")
     @ResponseBody
     public List<Map<String,Object>> getEventsPlaningBeneficiary(@RequestParam String start,
                                                                 @RequestParam String end, @RequestParam("num") int num, HttpSession session, Model model) {
@@ -565,7 +571,149 @@ public class CoordinatorController {
 
         return events;
     }
+    /**
+     * Displays the list of punctual absences for the connected interpreter within a specific date range
+     * The method extracts the date from the start and end parameters and retrieves
+     * matching absences from the database
+     * @param model the UI model to hold the list of absences and the active tab status
+     * @return The view name "coordinatrice/indisponibilites", or a redirect to login if session is invalid
+     */
+    @GetMapping("/indisponibilites")
+    public String indisponibilites(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession();
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
 
+        try {
+            AbsenceService absenceService = new AbsenceService();
+
+            List<Absence> punctualAbsencesList = absenceService.getPunctualAbsencesInterpreter(coordinator);
+            model.addAttribute("punctualAbsencesList", punctualAbsencesList);
+        } catch (BadStatusException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        model.addAttribute("activeTab", "indisponibilites");
+        model.addAttribute("DTOAbsence", new DTOAbsence());
+        return "redirect:/interprete/indisponibilites";
+    }
+
+
+    /**
+     * Function called when the form is filled.
+     * Also redirect to the indsponibilites page.
+     * It create an Absence in the Database.
+     * @param dtoAbsence the dto to convert into a pojo
+     * @param model the UI model to hold the list of absences and the active tab status
+     * @param request    the current HTTP request used to access the session
+     * @return redirect the curent page.
+     */
+    @PostMapping("/indisponibilites")
+    public String createIndisponibilite(@ModelAttribute("DTOAbsence") DTOAbsence dtoAbsence, Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String pageReferer = request.getHeader("Referer");
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+        if(dtoAbsence.getStartDate() != null && dtoAbsence.getEndDate() != null
+                && (dtoAbsence.isFullDay() || (dtoAbsence.getStartTime() != null && dtoAbsence.getEndTime() != null))){
+            AbsenceService absenceService = new  AbsenceService();
+            try{
+                absenceService.createAbsenceValidate(dtoAbsence, coordinator.getNumInterpreter());
+            }
+            catch(SQLException sql){
+                // afficher la page d'erreur
+            }
+            catch(BadStatusException bse){
+                // afficher la page d'erreur
+            }
+        }
+
+        return "redirect:"+pageReferer;
+    }
+
+    /**
+     * Deletes a specific absence record based on its unique ID
+     * @param id the unique identifier of the absence to be deleted
+     * @param model the UI model to hold the list of absences and the active tab status
+     * @param request    the current HTTP request used to access the session
+     * @return A redirect to the absences list view after deletion
+     */
+    @PostMapping("/indisponibilites/delete")
+    public String deleteAbsence(@RequestParam int id,
+                                Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+        try {
+            AbsenceService absenceService = new AbsenceService();
+            absenceService.deleteAbsence(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/interprete/indisponibilites";
+    }
+
+    /**
+     * Updates the details of an existing absence
+     * The updated information is received as a model attribute and passed to the service
+     * @param updatedAbsence The absence object containing the modified data
+     * @param request    the current HTTP request used to access the session
+     * @return A redirect to the absences list view after the update is processed
+     */
+    @PostMapping("/indisponibilites/update")
+    public String updateAbsence(@ModelAttribute Absence updatedAbsence,
+                                HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AbsenceService absenceService = new AbsenceService();
+            absenceService.updateAbsence(updatedAbsence);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/interprete/indisponibilites";
+    }
+
+    /**
+     * Creates a new appointment from the RDV modal in the beneficiary planning page.
+     * Receives the appointment data as a JSON body sent by the JS fetch call.
+     * Returns "ok" if the appointment was successfully created, "error" otherwise.
+     *
+     * @param dtoAppointment the appointment data sent as JSON from the frontend
+     * @param session        the current HTTP session
+     * @return "ok" on success, "error" on failure
+     */
+    @PostMapping(value = "/planning-gestion/beneficiaires/rdv", consumes = "application/json")
+    @ResponseBody
+    public String createRDV(@RequestBody DTOAppointmentForm dtoAppointment, HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AppointmentFormService service = new AppointmentFormService();
+            boolean success = service.createAppointment(dtoAppointment);
+            return success ? "ok" : "error";
+        } catch (BadStatusException | SQLException | IllegalArgumentException e) {
+            e.printStackTrace();
+            return "error";
+        }
+    }
     /**
      * This function load the page "gestion".
      * It adds all the data needed for the page to display (Skills, Referents and Establishments).
