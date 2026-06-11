@@ -55,29 +55,52 @@ document.addEventListener('DOMContentLoaded', function () {
 
         /* Opens the add appointment modal when clicking on an empty time slot,
            pre-filling the start and end date fields and rounding the clicked hour.
-           Prevents opening for past dates. */
+           Prevents opening for past dates.
+           In coordinator/interpreter mode, opens the unavailability modal instead. */
         dateClick: function (info) {
             const today = new Date().toISOString().split('T')[0];
             const clickedDate = info.dateStr.split('T')[0];
 
             if (clickedDate < today) return;
 
-            document.getElementById('rdvDateStart').value = clickedDate;
-            document.getElementById('rdvDateEnd').value = clickedDate;
-            document.getElementById('rdvDateStart').min = today;
-            document.getElementById('rdvDateEnd').min = clickedDate;
+            if (currentMode === 'beneficiary') {
+                document.getElementById('rdvDateStart').value = clickedDate;
+                document.getElementById('rdvDateEnd').value = clickedDate;
+                document.getElementById('rdvDateStart').min = today;
+                document.getElementById('rdvDateEnd').min = clickedDate;
 
-            if (info.dateStr.includes('T')) {
-                const heureStr = info.dateStr.split('T')[1].substring(0, 5);
-                const [h, m] = heureStr.split(':').map(Number);
-                const minutesArrondies = m < 30 ? 0 : 30;
-                const totalMinutes = h * 60 + minutesArrondies;
+                if (info.dateStr.includes('T')) {
+                    const heureStr = info.dateStr.split('T')[1].substring(0, 5);
+                    const [h, m] = heureStr.split(':').map(Number);
+                    const minutesArrondies = m < 30 ? 0 : 30;
+                    const totalMinutes = h * 60 + minutesArrondies;
 
-                generateHours('rdvEndHour', totalMinutes + 30, 19 * 60);
-                document.getElementById('rdvStartHour').value = `${String(h).padStart(2, '0')}:${minutesArrondies === 0 ? '00' : '30'}`;
+                    generateHours('rdvEndHour', totalMinutes + 30, 19 * 60);
+                    document.getElementById('rdvStartHour').value = `${String(h).padStart(2, '0')}:${minutesArrondies === 0 ? '00' : '30'}`;
+                }
+
+                new bootstrap.Modal(document.getElementById('modalRDV')).show();
+            } else {
+                document.getElementById('indispoDateStart').value = clickedDate;
+                document.getElementById('indispoDateEnd').value   = clickedDate;
+                document.getElementById('indispoDateStart').min   = today;
+                document.getElementById('indispoDateEnd').min     = clickedDate;
+
+                generateHours('indispoStartHour', 8 * 60, 18 * 60 + 55);
+
+                if (info.dateStr.includes('T')) {
+                    const heureStr = info.dateStr.split('T')[1].substring(0, 5);
+                    const [h, m]   = heureStr.split(':').map(Number);
+                    const minutesArrondies = m < 30 ? 0 : 30;
+                    const totalMinutes     = h * 60 + minutesArrondies;
+
+                    generateHours('indispoEndHour', totalMinutes + 30, 19 * 60);
+                    document.getElementById('indispoStartHour').value =
+                        `${String(h).padStart(2, '0')}:${minutesArrondies === 0 ? '00' : '30'}`;
+                }
+
+                new bootstrap.Modal(document.getElementById('modalIndispo')).show();
             }
-
-            new bootstrap.Modal(document.getElementById('modalRDV')).show();
         },
 
         /* Opens the event detail modal on click, displaying the appointment.
@@ -156,8 +179,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Switches the active planning mode and updates the toolbar button styles.
        Resets the selected user and reloads the calendar accordingly.
        In interpreter or beneficiary mode, shows the search zone and loads
-       the corresponding user list for autocomplete and dropdown.
-       Toolbar action buttons: coordinator → indispo only, beneficiary → RDV only, interpreter → none. */
+       the corresponding user list for autocomplete and dropdown. */
     window.switchMode = function (mode) {
         currentMode = mode;
         selectedUserId = null;
@@ -166,25 +188,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('btnMyPlanning').className = mode === 'coordinator' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
         document.getElementById('btnInterpreterPlanning').className = mode === 'interpreter' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
         document.getElementById('btnBeneficiaryPlanning').className = mode === 'beneficiary' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
-
-        // Update toolbar action buttons visibility
-        const btnRdv = document.getElementById('btnAddRdv');
-        const btnIndispo = document.getElementById('btnAddIndispo');
-        const mobileBtn = document.getElementById('mobileBtn');
-
-        btnRdv.classList.add('d-none');
-        btnIndispo.classList.add('d-none');
-        btnIndispo.classList.remove('d-lg-block');
-        mobileBtn.innerHTML = '';
-
-        if (mode === 'coordinator') {
-            btnIndispo.classList.remove('d-none');
-            btnIndispo.classList.add('d-lg-block');
-            mobileBtn.innerHTML = `<button type="button" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalIndispo"><i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité</button>`;
-        } else if (mode === 'beneficiary') {
-            btnRdv.classList.remove('d-none');
-            mobileBtn.innerHTML = `<button type="button" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalRDV"><i class="bi bi-calendar-plus"></i> Ajouter un RDV</button>`;
-        }
 
         const searchZone = document.getElementById('zone-selection');
 
@@ -208,26 +211,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             loadUserList(mode);
         }
-
-        const legendLabel = document.getElementById('legendUnavailabilityLabel');
-        if (mode === 'beneficiary') {
-            legendLabel.textContent = 'Demande en attente';
-        } else {
-            legendLabel.textContent = 'Indisponibilité';
-        }
-
-        const title = document.getElementById('pageTitle');
-        if (mode === 'coordinator') {
-            title.textContent = 'Consulter votre planning';
-        } else {
-            title.textContent = selectedUserName
-                ? `Consulter le planning de ${selectedUserName}`
-                : mode === 'interpreter' ? 'Consulter le planning d\'un interprète' : 'Consulter le planning d\'un bénéficiaire';
-        }
     };
-
-    document.getElementById('legendUnavailabilityLabel').textContent       = mode === 'beneficiary' ? 'Demande en attente' : 'Indisponibilité';
-    document.getElementById('legendUnavailabilityLabelMobile').textContent = mode === 'beneficiary' ? 'Demande en attente' : 'Indisponibilité';
 
     /* Fetches the list of interpreters or beneficiaries from the server,
        caches it locally, and populates both the search dropdown and the autocomplete. */
@@ -334,8 +318,6 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedUserId = u.id;
         selectedUserName = u.name;
 
-        document.getElementById('pageTitle').textContent = `Consulter le planning de ${u.name}`;
-
         searchInput.value = '';
         suggestionsList.classList.add('d-none');
 
@@ -351,11 +333,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('btnResetSelection').addEventListener('click', function () {
         selectedUserId = null;
         selectedUserName = null;
-
-        document.getElementById('pageTitle').textContent = currentMode === 'interpreter'
-            ? 'Consulter le planning d\'un interprète'
-            : 'Consulter le planning d\'un bénéficiaire';
-
         document.getElementById('userDropdown').selectedIndex = 0;
         hideContextBanner();
         setCalendarVisible(false);
@@ -567,12 +544,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    /* Initializes the unavailability modal hour selects on page load. */
-    generateHours('indispoStartHour', 8 * 60, 18 * 60 + 55);
-    generateHours('indispoEndHour', 8 * 60 + 5, 19 * 60);
+    /* Generates hours when the button is clicked */
+    document.getElementById('btnAddIndispo').addEventListener('click', function () {
+        generateHours('indispoStartHour', 8 * 60, 18 * 60 + 55);
+        generateHours('indispoEndHour', 8 * 60 + 5, 19 * 60);
+    });
 
     document.getElementById('indispoDateStart').min = today;
-    document.getElementById('indispoDateEnd').min = today;
+    document.getElementById('indispoDateEnd').min   = today;
 
     /* Updates the minimum end date when the start date changes. */
     document.getElementById('indispoDateStart').addEventListener('change', function () {
@@ -588,7 +567,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Disables or re-enables the time selects when the full day checkbox is toggled. */
     document.getElementById('indispoFullDay').addEventListener('change', function () {
         document.getElementById('indispoStartHour').disabled = this.checked;
-        document.getElementById('indispoEndHour').disabled = this.checked;
+        document.getElementById('indispoEndHour').disabled   = this.checked;
     });
 
     /* Validates the unavailability form before submission. */
@@ -596,10 +575,10 @@ document.addEventListener('DOMContentLoaded', function () {
         let valid = true;
 
         const dateStart = document.getElementById('indispoDateStart');
-        const dateEnd = document.getElementById('indispoDateEnd');
+        const dateEnd   = document.getElementById('indispoDateEnd');
         const startHour = document.getElementById('indispoStartHour');
-        const endHour = document.getElementById('indispoEndHour');
-        const fullDay = document.getElementById('indispoFullDay').checked;
+        const endHour   = document.getElementById('indispoEndHour');
+        const fullDay   = document.getElementById('indispoFullDay').checked;
 
         [dateStart, dateEnd, startHour, endHour].forEach(el => {
             el.classList.remove('is-invalid');
@@ -618,12 +597,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (!dateStart.value) displayIndispoError(dateStart, 'La date de début est obligatoire.');
-        if (!dateEnd.value) displayIndispoError(dateEnd, 'La date de fin est obligatoire.');
+        if (!dateEnd.value)   displayIndispoError(dateEnd,   'La date de fin est obligatoire.');
         if (dateStart.value && dateEnd.value && dateEnd.value < dateStart.value)
             displayIndispoError(dateEnd, 'La date de fin doit être après la date de début.');
         if (!fullDay) {
             if (!startHour.value) displayIndispoError(startHour, 'L\'heure de début est obligatoire.');
-            if (!endHour.value) displayIndispoError(endHour, 'L\'heure de fin est obligatoire.');
+            if (!endHour.value)   displayIndispoError(endHour,   'L\'heure de fin est obligatoire.');
         }
 
         if (valid) document.querySelector('#modalIndispo form').submit();
@@ -631,18 +610,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* Resets all unavailability modal fields when the modal is closed. */
     document.getElementById('modalIndispo').addEventListener('hidden.bs.modal', function () {
-        document.getElementById('indispoDateStart').value = '';
-        document.getElementById('indispoDateEnd').value = '';
-        document.getElementById('indispoDateStart').min = today;
-        document.getElementById('indispoDateEnd').min = today;
-        document.getElementById('indispoFullDay').checked = false;
+        document.getElementById('indispoDateStart').value   = '';
+        document.getElementById('indispoDateEnd').value     = '';
+        document.getElementById('indispoDateStart').min     = today;
+        document.getElementById('indispoDateEnd').min       = today;
+        document.getElementById('indispoFullDay').checked   = false;
         document.getElementById('indispoStartHour').disabled = false;
-        document.getElementById('indispoEndHour').disabled = false;
-        document.getElementById('indispoMotif').value = '';
+        document.getElementById('indispoEndHour').disabled   = false;
+        document.getElementById('indispoMotif').value       = '';
         document.getElementById('indispoMotifPrive').checked = false;
-
-        generateHours('indispoStartHour', 8 * 60, 18 * 60 + 55);
-        generateHours('indispoEndHour', 8 * 60 + 5, 19 * 60);
 
         ['indispoDateStart', 'indispoDateEnd', 'indispoStartHour', 'indispoEndHour'].forEach(id => {
             const el = document.getElementById(id);
