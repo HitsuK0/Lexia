@@ -215,6 +215,15 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             legendLabel.textContent = 'Indisponibilité';
         }
+
+        const title = document.getElementById('pageTitle');
+        if (mode === 'coordinator') {
+            title.textContent = 'Consulter votre planning';
+        } else {
+            title.textContent = selectedUserName
+                ? `Consulter le planning de ${selectedUserName}`
+                : mode === 'interpreter' ? 'Consulter le planning d\'un interprète' : 'Consulter le planning d\'un bénéficiaire';
+        }
     };
 
     document.getElementById('legendUnavailabilityLabel').textContent       = mode === 'beneficiary' ? 'Demande en attente' : 'Indisponibilité';
@@ -325,6 +334,8 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedUserId = u.id;
         selectedUserName = u.name;
 
+        document.getElementById('pageTitle').textContent = `Consulter le planning de ${u.name}`;
+
         searchInput.value = '';
         suggestionsList.classList.add('d-none');
 
@@ -340,6 +351,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('btnResetSelection').addEventListener('click', function () {
         selectedUserId = null;
         selectedUserName = null;
+
+        document.getElementById('pageTitle').textContent = currentMode === 'interpreter'
+            ? 'Consulter le planning d\'un interprète'
+            : 'Consulter le planning d\'un bénéficiaire';
+
         document.getElementById('userDropdown').selectedIndex = 0;
         hideContextBanner();
         setCalendarVisible(false);
