@@ -272,14 +272,20 @@ public class CoordinatorController {
         return "redirect:/interprete/profil?section=academics";
     }
 
-
-
     // Temporaire
     @GetMapping("/validations")
-    public String validations(Model model) {
-        model.addAttribute("userName", "NOM Prenom");
+    public String validations(HttpSession session, Model model) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("userName", coordinator.getFirstName() + " " + coordinator.getLastName());
         model.addAttribute("userRole", "COORDINATOR");
-        model.addAttribute("isAdmin", true);
+        model.addAttribute("isAdmin", coordinator.isAdmin());
+        model.addAttribute("pendingAppointments", new ArrayList<>());
+        model.addAttribute("beneficiaryList", new ArrayList<>());
+
         return "coordinatrice/validations";
     }
 
