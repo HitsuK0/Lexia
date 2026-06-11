@@ -13,7 +13,7 @@
         <div class="container-fluid py-2 px-2 px-md-5">
 
             <div class="text-center mb-2">
-                <h1 class="fw-bold text-primary">Planning</h1>
+                <h1 class="fw-bold text-primary" id="pageTitle">Votre horaire de la semaine</h1>
             </div>
 
             <div id="planning-toolbar" class="mb-2 px-2 px-md-5">
@@ -41,28 +41,30 @@
                     </div>
 
                     <div class="d-none d-lg-flex gap-3 small text-muted position-absolute start-50 translate-middle-x">
-                        <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Indisponibilité</span>
+                        <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> <span id="legendUnavailabilityLabel">Indisponibilité</span></span>
                         <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
                         <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
                     </div>
 
                     <button type="button"
-                            class="btn btn-primary btn-sm d-none d-lg-block"
+                            class="btn btn-primary btn-sm d-none"
+                            id="btnAddRdv"
                             data-bs-toggle="modal"
                             data-bs-target="#modalRDV">
                         <i class="bi bi-calendar-plus"></i> Ajouter un RDV
                     </button>
 
-                </div>
-
-                <div class="d-lg-none mt-2">
                     <button type="button"
-                            class="btn btn-primary btn-sm w-100"
+                            class="btn btn-primary btn-sm d-none d-lg-block"
+                            id="btnAddIndispo"
                             data-bs-toggle="modal"
-                            data-bs-target="#modalRDV">
-                        <i class="bi bi-calendar-plus"></i> Ajouter un RDV
+                            data-bs-target="#modalIndispo">
+                        <i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité
                     </button>
+
                 </div>
+
+                <div class="d-lg-none mt-2" id="mobileBtn"></div>
             </div>
 
             <div id="zone-selection" class="mb-2 px-2 px-md-5 d-none">
@@ -84,10 +86,10 @@
                     </div>
 
                     <div id="contextBanner" class="d-none">
-                                <span class="badge bg-secondary fs-6 fw-normal">
-                                    <i class="bi bi-person-fill me-1"></i>
-                                    Planning de : <strong id="selectedUserName"></strong>
-                                </span>
+                                        <span class="badge bg-secondary fs-6 fw-normal">
+                                            <i class="bi bi-person-fill me-1"></i>
+                                            Planning de : <strong id="selectedUserName"></strong>
+                                        </span>
                         <button type="button"
                                 class="btn btn-link btn-sm text-muted p-0 ms-2"
                                 id="btnResetSelection"
@@ -106,6 +108,66 @@
 
             <div id="calendar"></div>
 
+        </div>
+
+        <div class="modal fade" id="modalIndispo" tabindex="-1" aria-labelledby="modalIndispoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalIndispoLabel">Déclarer une indisponibilité</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <form method="post" th:object="${DTOAbsence}" th:action="@{/coordinatrice/indisponibilites}">
+                        <div class="modal-body px-4 py-3">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Date début</label>
+                                    <input type="date" th:field="*{startDate}" id="indispoDateStart" class="form-control form-control-sm"/>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Date fin</label>
+                                    <input type="date" th:field="*{endDate}" id="indispoDateEnd" class="form-control form-control-sm"/>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Plage Horaire</label>
+                                <div class="d-flex gap-2">
+                                    <select id="indispoStartHour" name="startTime" class="form-select form-select-sm" size="5"></select>
+                                    <select id="indispoEndHour" name="endTime" class="form-select form-select-sm" size="5"></select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" th:field="*{fullDay}" type="checkbox" id="indispoFullDay"/>
+                                    <label class="form-check-label small" for="indispoFullDay">Journée complète</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Motif <span class="text-muted fw-normal">(facultatif)</span></label>
+                                <textarea th:field="*{reason}" id="indispoMotif" class="form-control form-control-sm" rows="3" placeholder="Texte ..."></textarea>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" th:field="*{privateReason}" type="checkbox" id="indispoMotifPrive"/>
+                                <label class="form-check-label small" for="indispoMotifPrive">Rendre le motif privé</label>
+                            </div>
+                            <div class="text-muted" style="font-size: 0.78rem; margin-left: 1.5rem;">
+                                Seule la coordinatrice pourra voir le motif
+                            </div>
+                        </div>
+
+                        <div class="modal-footer border-top justify-content-center gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="btnSendIndispo">Envoyez la demande</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <div class="modal fade" id="modalRDV" tabindex="-1" aria-labelledby="modalRDVLabel" aria-hidden="true">
@@ -266,7 +328,7 @@
         <script th:src="@{/js/coordinatrice/planning-gestion.js}"></script>
 
         <div class="d-flex d-lg-none gap-2 small text-muted flex-wrap justify-content-center mt-3 mb-2 px-3">
-            <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Indisponibilité</span>
+            <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> <span id="legendUnavailabilityLabelMobile">Indisponibilité</span></span>
             <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
             <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
         </div>
