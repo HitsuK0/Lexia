@@ -25,8 +25,10 @@ public class PlanningService {
         }
         return list;
     }
+
     /**
-     * Searches for all Appointments belonging to the interpreter as a parameter over a period defined by start and end.
+     * Searches for all Appointments belonging to the numInterpreter as a parameter over a period defined by start and end.
+     *
      * @param numInterpreter The numero of Interpreter linked to the appointment on the list
      * @param start the date retrieved via the URL
      * @param end the date retrieved via the URL
@@ -42,6 +44,7 @@ public class PlanningService {
         }
         return list;
     }
+
     /**
      * Searches for all Absences belonging to the interpreter as a parameter over a period defined by start and end.
      * @param numInterpreter The Coordinator linked to the appointment on the list
@@ -59,6 +62,7 @@ public class PlanningService {
         }
         return list;
     }
+
     /**
      * Searches for all Absences belonging to the interpreter as a parameter over a period defined by start and end.
      * @param inter The interpreter linked to the appointment on the list

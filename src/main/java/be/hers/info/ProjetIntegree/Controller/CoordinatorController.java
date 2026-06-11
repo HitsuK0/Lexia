@@ -292,7 +292,13 @@ public class CoordinatorController {
         return "coordinatrice/validations";
     }
 
-    // Temporaire
+    /** Controller for the pages named "planning-gestion"
+     * Displays the profile page for the connected Coordinator.
+     * Prepare an DTOAbsence for the button "Ajouter une Indisponibilitée"
+     * @param session the current HTTP session
+     * @param model the Spring UI model
+     * @return the view "/coordinatrice/planning-gestion", or a redirect to "/login"
+     */
     @GetMapping("/planning-gestion")
     public String planning(HttpSession session, Model model) {
         Coordinator coordinator = getCoordinatorFromSession(session);
@@ -306,9 +312,20 @@ public class CoordinatorController {
         model.addAttribute("isAdmin", coordinator.isAdmin());
         model.addAttribute("DTOAbsence", new DTOAbsence());
 
-        return "coordinatrice/planning-gestion";
+        return "redirect:/coordinatrice/planning-gestion";
     }
 
+    /**
+     * Search all Appointments within the Start and End for the Coordinator.
+     * Format the information found in a list on the Map for FullCalendar
+     * Redirects to login if no Coordinator is found in session.
+     *
+     * @param start the start date of the schedule
+     * @param end the end date of the schedule
+     * @param session the current HTTP session
+     * @param model the Spring UI model
+     * @return a formatted map list for FullCalendar
+     */
     @GetMapping(value = "/planning-gestion/events", produces="application/json")
     @ResponseBody
     public List<Map<String,Object>> getEventsPlaningCoordinator(@RequestParam String start,
@@ -340,6 +357,13 @@ public class CoordinatorController {
         }
         return events;
     }
+
+    /**
+     * Build an events for FullCalendar with the Appointment and the list of LocalDate choice between Start and End
+     * @param a the Appointment to transform
+     * @param listDateBetweenStartEnd list of LocalDate choice between Start and End
+     * @return a formatted map for FullCalendar
+     */
     public Map<String, Object> buildEventAppointment(Appointment a,List<LocalDate> listDateBetweenStartEnd){
         Map<String, Object> event = new HashMap<>();
         Map<String, Object> extendedProps = new HashMap<>();
@@ -395,6 +419,13 @@ public class CoordinatorController {
         event.put("extendedProps",extendedProps);
         return event;
     }
+
+    /**
+     * Build an events for FullCalendar with the Absence and the list of LocalDate choice between Start and End
+     * @param a the Absence to transform
+     * @param listDateBetweenStartEnd list of LocalDate choice between Start and End
+     * @return a formatted map for FullCalendar
+     */
     public Map<String, Object> buildEventAbsence(Absence a,List<LocalDate> listDateBetweenStartEnd){
         Map<String, Object> event = new HashMap<>();
         Map<String, Object> extendedProps = new HashMap<>();
@@ -443,6 +474,15 @@ public class CoordinatorController {
         event.put("extendedProps",extendedProps);
         return event;
     }
+
+    /**
+     * Controller for the pages named "planning-gestion/interpreter"
+     * Displays the profile page for the connected Coordinator.
+     *
+     * @param session the current HTTP session
+     * @param model the Spring UI model
+     * @return the view "/coordinatrice/planning-gestion/interpreter", or a redirect to "/login"
+     */
     @GetMapping("/planning-gestion/interpreter")
     public String planningInterpreter(HttpSession session, Model model) {
         Coordinator coordinator = getCoordinatorFromSession(session);
@@ -468,6 +508,17 @@ public class CoordinatorController {
         return "coordinatrice/planning-gestion/interpreter";
     }
 
+    /**
+     * Search all Appointments within the Start and End time range linked to the interpreter number passed in the URL.
+     * Format the information found in a list on the Map for FullCalendar
+     * Redirects to login if no Coordinator is found in session.
+     *
+     * @param start the start date of the schedule
+     * @param end the end date of the schedule
+     * @param session the current HTTP session
+     * @param model the Spring UI model
+     * @return a formatted map list for FullCalendar
+     */
     @GetMapping(value = "/planning-gestion/interpreter/events", produces="application/json")
     @ResponseBody
     public List<Map<String,Object>> getEventsPlaningInterpreter(@RequestParam String start,
@@ -501,11 +552,12 @@ public class CoordinatorController {
     }
 
     /**
-     * Create a list of beneficiaries linked to the interpreter
-     * Redirects to login if no beneficiary is found in session.
+     * Controller for the pages named "planning-gestion/beneficiaires"
+     * Displays the profile page for the connected Coordinator.
+     *
      * @param session the current HTTP session
-     * @param model   the Spring UI model
-     * @return Redirect to the "interprete/planning/beneficiaires" page
+     * @param model the Spring UI model
+     * @return the view "/coordinatrice/planning-gestion/beneficiaires", or a redirect to "/login"
      */
     @GetMapping("/planning-gestion/beneficiaires")
     public String planningBeneficiaires(HttpSession session, Model model) {
@@ -520,6 +572,8 @@ public class CoordinatorController {
         model.addAttribute("establishmentList", serviceAppointment.findAllEstablishments());
         model.addAttribute("academicSkillList", serviceAppointment.findAllAcademicSkills());
         model.addAttribute("professionalSkillList", serviceAppointment.findAllProfessionalSkills());
+        model.addAttribute("DTOAppointmentForm", new DTOAppointmentForm());
+
         try{
             beneficiaryList = service.findAllBeneficiaries();
 
@@ -536,7 +590,8 @@ public class CoordinatorController {
     /**
      * Search all Appointments within the Start and End time range linked to the beneficiary number passed in the URL.
      * Format the information found in a list on the Map for FullCalendar
-     * Redirects to login if no Interpreter is found in session.
+     * Redirects to login if no coordinator is found in session.
+     *
      * @param start the start date of the schedule
      * @param end the end date of the schedule
      * @param session the current HTTP session
@@ -575,6 +630,7 @@ public class CoordinatorController {
      * Displays the list of punctual absences for the connected interpreter within a specific date range
      * The method extracts the date from the start and end parameters and retrieves
      * matching absences from the database
+     *
      * @param model the UI model to hold the list of absences and the active tab status
      * @return The view name "coordinatrice/indisponibilites", or a redirect to login if session is invalid
      */
@@ -607,6 +663,7 @@ public class CoordinatorController {
      * Function called when the form is filled.
      * Also redirect to the indsponibilites page.
      * It create an Absence in the Database.
+     *
      * @param dtoAbsence the dto to convert into a pojo
      * @param model the UI model to hold the list of absences and the active tab status
      * @param request    the current HTTP request used to access the session
@@ -699,7 +756,7 @@ public class CoordinatorController {
      */
     @PostMapping(value = "/planning-gestion/beneficiaires/rdv", consumes = "application/json")
     @ResponseBody
-    public String createRDV(@RequestBody DTOAppointmentForm dtoAppointment, HttpSession session) {
+    public String createRDV(@ModelAttribute("DTOAppointmentForm") DTOAppointmentForm dtoAppointment, HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null) {
             return "redirect:/login";
