@@ -77,15 +77,15 @@ public class ReferrerTest {
     }
 
     /**
-     * Tests that the full constructor throws a {@link IllegalArgumentException} when refEstablishment is null.
+     * Tests that the full constructor accepts a null refEstablishment without throwing.
      * Given : a null refEstablishment
      * When  : a Referrer is created with null refEstablishment
-     * Then  : a IllegalArgumentException must be thrown
+     * Then  : no exception must be thrown and getRefEstablishment() returns null
      */
     @Test
-    void constructor_WithNullRefEstablishment_RaisesAIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Referrer(null, "JF@mail.be", "0477000000", "Nicolas", "JF"));
+    void constructor_WithNullRefEstablishment_DoesNotThrow() {
+        Referrer r = new Referrer(null, "JF@mail.be", "0477000000", "Nicolas", "JF");
+        assertNull(r.getRefEstablishment());
     }
 
     /**
@@ -252,14 +252,15 @@ public class ReferrerTest {
     }
 
     /**
-     * Tests that setRefEstablishment() throws an {@link IllegalArgumentException} when null is passed.
+     * Tests that setRefEstablishment() accepts null without throwing.
      * Given : a null value
      * When  : setRefEstablishment(null) is called
-     * Then  : an IllegalArgumentException must be thrown
+     * Then  : no exception must be thrown and getRefEstablishment() returns null
      */
     @Test
-    void setRefEstablishment_WithNull_RaisesAnException() {
-        assertThrows(IllegalArgumentException.class, () -> referrer.setRefEstablishment(null));
+    void setRefEstablishment_WithNull_SetsNullValue() {
+        referrer.setRefEstablishment(null);
+        assertNull(referrer.getRefEstablishment());
     }
 
     // toString //
