@@ -15,6 +15,28 @@ import java.util.List;
 public class ValidationService {
 
     /**
+     * Finds an Appointment by its numAppointment.
+     *
+     * @param numAppointment the id of the appointment to find
+     * @return the Appointment if found, null otherwise
+     * @throws SQLException if a database error occurs
+     */
+    public Appointment findAppointmentById(int numAppointment) throws SQLException {
+        return new DAOAppointment().find(numAppointment);
+    }
+
+    /**
+     * Finds an Absence by its numAbsence.
+     *
+     * @param numAbsence the id of the absence to find
+     * @return the Absence if found, null otherwise
+     * @throws SQLException if a database error occurs
+     */
+    public Absence findAbsenceById(int numAbsence) throws SQLException {
+        return new DAOAbsence().find(numAbsence);
+    }
+
+    /**
      * Returns all pending appointment requests (status = "en attente"), across all beneficiaries.
      * Used to populate the Bénéficiaires tab on the validations page.
      *
@@ -57,6 +79,8 @@ public class ValidationService {
         String date = tsp.getStartDate().toString();
         String dateEnd = tsp.getEndDate().toString();
 
+        int dayOfWeek = tsp.getStartDate().getDayOfWeek().getValue();
+
         DAOInterpreter daoInterpreter = new DAOInterpreter();
         List<Interpreter> allInterpreters = daoInterpreter.findAll();
         List<Interpreter> available = new ArrayList<>();
@@ -64,12 +88,20 @@ public class ValidationService {
         for (Interpreter interpreter : allInterpreters) {
             List<Appointment> conflicts = new DAOAppointment().findAllAppointmentToInterpreterAndDate(interpreter, date, dateEnd);
             List<Absence> absenceConflicts = new DAOAbsence().findPunctualAbsencesInterpreter(interpreter);
+            List<Absence> baseAbsenceConflicts = new DAOAbsence().findBaseAbsencesInterpreter(interpreter);
 
             boolean hasConflict = conflicts.stream().anyMatch(a -> {
                 if (!(a.getTimeSlot() instanceof TimeSlotPunctual))
                     return false;
                 TimeSlotPunctual other = (TimeSlotPunctual) a.getTimeSlot();
                 return !a.getStatus().equals("refuse") && overlaps(tsp, other);
+            });
+
+            boolean hasBaseConflict = conflicts.stream().anyMatch(a -> {
+                if (!(a.getTimeSlot() instanceof TimeSlotBase))
+                    return false;
+                TimeSlotBase other = (TimeSlotBase) a.getTimeSlot();
+                return other.getDayNumber() == dayOfWeek && overlapsBase(tsp, other);
             });
 
             boolean hasAbsenceConflict = absenceConflicts.stream().anyMatch(ab -> {
@@ -79,7 +111,14 @@ public class ValidationService {
                 return !ab.getStatus().equals("refuse") && overlaps(tsp, other);
             });
 
-            if (!hasConflict && !hasAbsenceConflict) {
+            boolean hasBaseAbsenceConflict = baseAbsenceConflicts.stream().anyMatch(ab -> {
+                if (!(ab.getTimeSlot() instanceof TimeSlotBase))
+                    return false;
+                TimeSlotBase other = (TimeSlotBase) ab.getTimeSlot();
+                return other.getDayNumber() == dayOfWeek && overlapsBase(tsp, other);
+            });
+
+            if (!hasConflict && !hasBaseConflict && !hasAbsenceConflict && !hasBaseAbsenceConflict) {
                 available.add(interpreter);
             }
         }
@@ -112,6 +151,22 @@ public class ValidationService {
         long bStart = b.getStartTime().toSecondOfDay();
         long bEnd = bStart + b.getDuration().toSecondOfDay();
         return aStart < bEnd && bStart < aEnd;
+    }
+
+    /**
+     * Checks whether a TimeSlotPunctual overlaps with a TimeSlotBase on the same day.
+     * Uses seconds of day for comparison.
+     *
+     * @param punctual the punctual time slot (the requested appointment)
+     * @param base     the recurring base time slot
+     * @return true if the two slots overlap in time, false otherwise
+     */
+    private boolean overlapsBase(TimeSlotPunctual punctual, TimeSlotBase base) {
+        long pStart = punctual.getStartTime().toSecondOfDay();
+        long pEnd = pStart + punctual.getDuration().toSecondOfDay();
+        long bStart = base.getStartTime().toSecondOfDay();
+        long bEnd = bStart + base.getDuration().toSecondOfDay();
+        return pStart < bEnd && bStart < pEnd;
     }
 
     /**

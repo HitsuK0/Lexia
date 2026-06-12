@@ -5,8 +5,6 @@ package be.hers.info.ProjetIntegree.Controller;
  * @reviewer Halet Louis, Wellinger Chloé
  */
 
-import be.hers.info.ProjetIntegree.DAO.DAOAbsence;
-import be.hers.info.ProjetIntegree.DAO.DAOAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.ValidationService;
 import jakarta.servlet.http.HttpSession;
@@ -89,8 +87,7 @@ public class ValidationController {
         try {
             ValidationService service = new ValidationService();
 
-            DAOAppointment dao = new DAOAppointment();
-            Appointment appointment = dao.find(numAppointment);
+            Appointment appointment = service.findAppointmentById(numAppointment);
             if (appointment == null) return Collections.emptyList();
 
             List<Interpreter> available = service.findAvailableInterpretersForAppointment(appointment);
@@ -136,8 +133,8 @@ public class ValidationController {
             return Collections.emptyList();
 
         try {
-            DAOAppointment dao = new DAOAppointment();
-            Appointment appointment = dao.find(numAppointment);
+            ValidationService service = new ValidationService();
+            Appointment appointment = service.findAppointmentById(numAppointment);
             if (appointment == null || !(appointment.getTimeSlot() instanceof TimeSlotPunctual))
                 return Collections.emptyList();
 
@@ -180,8 +177,8 @@ public class ValidationController {
             return Collections.emptyList();
 
         try {
-            DAOAbsence dao = new DAOAbsence();
-            Absence absence = dao.find(numAbsence);
+            ValidationService service = new ValidationService();
+            Absence absence = service.findAbsenceById(numAbsence);
             if (absence == null || !(absence.getTimeSlot() instanceof TimeSlotPunctual))
                 return Collections.emptyList();
 
