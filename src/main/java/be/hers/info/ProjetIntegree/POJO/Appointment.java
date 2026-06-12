@@ -51,7 +51,7 @@ public class Appointment {
      * @param timeSlot For every repetitive or non-repetitive Appointment
      * @param establishment The establishment, can be null
      * @throws IllegalArgumentException If beneficiary, academicSkillsNeeded, professionalSkillsNeeded, interpreters or timeSlot is null
-     *                                  If interpreters or professionalSkillsNeeded is empty
+     *                                  If professionalSkillsNeeded is empty
      */
     public Appointment(int numAppointment, String description, String status, Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters,
                        List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded, TimeSlot timeSlot, Establishment establishment) {
@@ -59,7 +59,7 @@ public class Appointment {
             throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes, la tranche horaire, les compétences académiques et les compétences professionnelles ne peuvent pas être null.");
         }
 
-        if(interpreters.isEmpty()|| professionalSkillsNeeded.isEmpty()) {
+        if(professionalSkillsNeeded.isEmpty()) {
             throw new IllegalArgumentException("[POJOAppointment] Les listes d'interprètes et de compétences professionnelles ne peuvent pas être vides.");
         }
 
@@ -116,7 +116,7 @@ public class Appointment {
      * @param timeSlot For every repetitive or non-repetitive Appointment
      * @param establishment The establishment, can be null
      * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters or timeSlot is null
-     *                                  If interpreters or professionalSkillsNeeded is empty
+     *                                  If professionalSkillsNeeded is empty
      */
     public Appointment(int numAppointment, String description, Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
             ,TimeSlot timeSlot, Establishment establishment) {
@@ -124,7 +124,7 @@ public class Appointment {
             throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes, la tranche horaire et les compétences professionnelles ne peuvent pas être null.");
         }
 
-        if(interpreters.isEmpty()|| professionalSkillsNeeded.isEmpty()) {
+        if(professionalSkillsNeeded.isEmpty()) {
             throw new IllegalArgumentException("[POJOAppointment] Les listes d'interprètes et de compétences professionnelles ne peuvent pas être vides.");
         }
 
@@ -154,7 +154,7 @@ public class Appointment {
      * @param timeSlot For every repetitive and non-repetitive Appointment
      * @param establishment The establishment, can be null
      * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters or timeSlot is null
-     *                                  If interpreters or professionalSkillsNeeded is empty
+     *                                  If professionalSkillsNeeded is empty
      */
     public Appointment(String description, Beneficiary beneficiary, List<String> appointmentLocals, List<Interpreter> interpreters, List<AcademicSkill> academicSkillsNeeded, List<ProfessionalSkill> professionalSkillsNeeded
             ,TimeSlot timeSlot, Establishment establishment) {
@@ -162,7 +162,7 @@ public class Appointment {
             throw new IllegalArgumentException("[POJOAppointment] Le bénéficiaire, les interprètes, la tranche horaire et les compétences professionnelles ne peuvent pas être null.");
         }
 
-        if(interpreters.isEmpty() || professionalSkillsNeeded.isEmpty()) {
+        if(professionalSkillsNeeded.isEmpty()) {
             throw new IllegalArgumentException("[POJOAppointment] Les listes d'interprètes et de compétences professionnelles ne peuvent pas être vides.");
         }
 
