@@ -20,14 +20,19 @@ import java.util.List;
  */
 public class AbsenceService {
 
+
     /**
      * It create an Absence in the database using the data in the absenceDTO given in param.
      * @param absenceDTO is the DTOAbsence used by spring to copy the data in the form.
+     * @param numInterpreter the numero of th interpreter
+     * @param status the status of the absence
+     * @throws BadStatusException if the status of the absence isn't correct
+     * @throws SQLException if a database access error occurs
      */
-    public void createAbsence(DTOAbsence absenceDTO, int numInterpreter) throws BadStatusException, SQLException {
+    public void createAbsence(DTOAbsence absenceDTO, int numInterpreter,String status) throws BadStatusException, SQLException {
         Absence absence = new Absence();
         absence.setReason(absenceDTO.getReason());
-        absence.setStatus("en attente");
+        absence.setStatus(status);
         absence.setPrivateReason(absenceDTO.isPrivateReason());
         TimeSlotPunctual timeSlotPunctual =  new TimeSlotPunctual();
         timeSlotPunctual.setStartDate(absenceDTO.getStartDate());
@@ -49,35 +54,7 @@ public class AbsenceService {
         DAOAbsence daoAbsence = new DAOAbsence();
         daoAbsence.create(absence, numInterpreter);
     }
-    /**
-     * It create an Absence in the database using the data in the absenceDTO given in param.
-     * @param absenceDTO is the DTOAbsence used by spring to copy the data in the form.
-     */
-    public void createAbsenceValidate(DTOAbsence absenceDTO, int numInterpreter) throws BadStatusException, SQLException {
-        Absence absence = new Absence();
-        absence.setReason(absenceDTO.getReason());
-        absence.setStatus("accepte");
-        absence.setPrivateReason(absenceDTO.isPrivateReason());
-        TimeSlotPunctual timeSlotPunctual =  new TimeSlotPunctual();
-        timeSlotPunctual.setStartDate(absenceDTO.getStartDate());
-        timeSlotPunctual.setEndDate(absenceDTO.getEndDate());
-        LocalTime duration;
-        if(absenceDTO.isFullDay()){
-            timeSlotPunctual.setStartTime(LocalTime.MIDNIGHT);
-            duration = LocalTime.of(23, 59, 59);
-        }
-        else{
-            timeSlotPunctual.setStartTime(absenceDTO.getStartTime());
-            Duration d = Duration.between(absenceDTO.getStartTime(), absenceDTO.getEndTime());
-            duration = LocalTime.MIDNIGHT.plus(d);
-        }
-        timeSlotPunctual.setDuration(duration);
-        DAOTimeSlotPunctual  daoTimeSlotPunctual = new DAOTimeSlotPunctual();
-        daoTimeSlotPunctual.create(timeSlotPunctual);
-        absence.setTimeSlot(timeSlotPunctual);
-        DAOAbsence daoAbsence = new DAOAbsence();
-        daoAbsence.create(absence, numInterpreter);
-    }
+
     /**
      * Deletes the absence identified by the given number
      * @param numAbsence the id of the absence to delete

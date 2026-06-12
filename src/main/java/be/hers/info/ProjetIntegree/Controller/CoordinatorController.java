@@ -312,7 +312,7 @@ public class CoordinatorController {
         model.addAttribute("isAdmin", coordinator.isAdmin());
         model.addAttribute("DTOAbsence", new DTOAbsence());
 
-        return "redirect:/coordinatrice/planning-gestion";
+        return "coordinatrice/planning-gestion";
     }
 
     /**
@@ -632,7 +632,7 @@ public class CoordinatorController {
      * matching absences from the database
      *
      * @param model the UI model to hold the list of absences and the active tab status
-     * @return The view name "coordinatrice/indisponibilites", or a redirect to login if session is invalid
+     * @return The view name "interprete/indisponibilites", or a redirect to login if session is invalid
      */
     @GetMapping("/indisponibilites")
     public String indisponibilites(HttpServletRequest request, Model model) {
@@ -681,7 +681,7 @@ public class CoordinatorController {
                 && (dtoAbsence.isFullDay() || (dtoAbsence.getStartTime() != null && dtoAbsence.getEndTime() != null))){
             AbsenceService absenceService = new  AbsenceService();
             try{
-                absenceService.createAbsenceValidate(dtoAbsence, coordinator.getNumInterpreter());
+                absenceService.createAbsence(dtoAbsence, coordinator.getNumInterpreter(),"accepte");
             }
             catch(SQLException sql){
                 // afficher la page d'erreur
@@ -756,7 +756,7 @@ public class CoordinatorController {
      */
     @PostMapping(value = "/planning-gestion/beneficiaires/rdv", consumes = "application/json")
     @ResponseBody
-    public String createRDV(@ModelAttribute("DTOAppointmentForm") DTOAppointmentForm dtoAppointment, HttpSession session) {
+    public String createRDV(@RequestBody DTOAppointmentForm dtoAppointment, HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null) {
             return "redirect:/login";
