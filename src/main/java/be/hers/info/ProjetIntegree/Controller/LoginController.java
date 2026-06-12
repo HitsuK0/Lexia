@@ -5,7 +5,7 @@ package be.hers.info.ProjetIntegree.Controller;
  * @reviewer
  */
 
-import be.hers.info.ProjetIntegree.DTO.LoginDTO;
+import be.hers.info.ProjetIntegree.DTO.DTOLogin;
 import be.hers.info.ProjetIntegree.POJO.Beneficiary;
 import be.hers.info.ProjetIntegree.POJO.Coordinator;
 import be.hers.info.ProjetIntegree.POJO.Interpreter;
@@ -30,7 +30,7 @@ public class LoginController {
      */
     @GetMapping("login")
     public String loginPage(Model model) {
-        model.addAttribute("LoginDTO", new LoginDTO());
+        model.addAttribute("LoginDTO", new DTOLogin());
 
         return "login";
     }
@@ -45,7 +45,7 @@ public class LoginController {
      *         "/login" if authentication fails
      */
     @PostMapping("/login")
-    public String login(@ModelAttribute("LoginDTO") LoginDTO loginDTO,
+    public String login(@ModelAttribute("LoginDTO") DTOLogin loginDTO,
                         HttpServletRequest request) {
 
         User user = null;

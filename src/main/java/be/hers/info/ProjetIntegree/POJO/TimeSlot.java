@@ -12,9 +12,6 @@ public abstract class TimeSlot {
     private LocalTime startTime;
     private LocalTime duration;
 
-    /* Travel time in minutes added to the end of a time slot to account for travel between appointments */
-    private static final int TRAVEL_TIME_MINUTES = 40;
-
     /**
      * Initialize a TimeSlot with no elements
      * The parameter numTimeSlot can only be initialized with setNumTimeSlot
@@ -78,14 +75,6 @@ public abstract class TimeSlot {
     public LocalTime getDuration() {
 
         return duration;
-    }
-
-    /**
-     * @return the minutes of travel time
-     */
-    public int getTravelTimeMinutes() {
-
-        return TRAVEL_TIME_MINUTES;
     }
 
     /**
