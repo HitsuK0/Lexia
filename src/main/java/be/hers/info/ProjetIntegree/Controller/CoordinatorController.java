@@ -1014,6 +1014,8 @@ public class CoordinatorController {
             e.printStackTrace();
         }
 
+        model.addAttribute("dtoAddUser", new DTOUserAdd());
+
         return "coordinatrice/utilisateurs";
     }
 
