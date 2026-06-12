@@ -11,6 +11,9 @@ target/
 # Java
 *.class
 
+# Logs
+logs/
+
 # macOS
 .DS_Store
 *.ipr.DS_Store
