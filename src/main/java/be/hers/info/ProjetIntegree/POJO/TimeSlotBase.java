@@ -72,11 +72,11 @@ public class TimeSlotBase extends TimeSlot {
     }
 
     /**
-     * @return the end time of the time slot with travel time added
+     * @return the end time of the time slot
      */
     private LocalTime getEndTimeWithTravel() {
 
-        return this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(this.getTravelTimeMinutes());
+        return this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay());
     }
 
     /**
@@ -109,7 +109,6 @@ public class TimeSlotBase extends TimeSlot {
 
     /**
      * Checks if this TimeSlotBase overlaps with a TimeSlotPunctual
-     * A travel time of 40 minutes is added to this TimeSlot's end time
      * If punctual's endDate is null, only the punctual's startDate day of week is compared to this dayNumber
      * If punctual's endDate is not null, all days between punctual's startDate and endDate are checked
      * @param punctual the TimeSlotPunctual to check overlap with
@@ -155,7 +154,6 @@ public class TimeSlotBase extends TimeSlot {
 
     /**
      * Checks if this TimeSlotBase overlaps with another TimeSlotBase
-     * A travel time of 40 minutes is added to this TimeSlot's end time
      * Two TimeSlotBase overlap if they have the same dayNumber and their times overlap
      * @param base the TimeSlotBase to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
