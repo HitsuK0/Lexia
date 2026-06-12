@@ -373,7 +373,7 @@ public class InterpreterController {
                 && (dtoAbsence.isFullDay() || (dtoAbsence.getStartTime() != null && dtoAbsence.getEndTime() != null))){
             AbsenceService absenceService = new  AbsenceService();
             try{
-                absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter());
+                absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter(),"en attente");
             }
             catch(SQLException sql){
                 // afficher la page d'erreur

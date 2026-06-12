@@ -583,7 +583,90 @@ public class DAOAppointment extends DAO<Appointment> {
         }
         return appointmentList;
     }
+    /**
+     * Searches for all Appointments linked to the interpreter as a parameter available in the start and end slots.
+     * @param numInterpreter the numero of interpreter who will be linked to the appointment sought
+     * @param start the date in YYYY-MM-DD format
+     * @param end the date in YYYY-MM-DD format
+     * @return The appointment list meets the constraints; an empty list is returned if no object is found.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<Appointment> findAllAppointmentToInterpreterAndDate(int numInterpreter, String start, String end)throws SQLException{
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<Appointment> appointmentList = new ArrayList<>();
+        String query = "SELECT ap.numAppointment, ap.description, ap.status, ap.local,ap.FKnumEstablishment,ap.FKTimeSlotBase,ap.FKTimeSlotPunctual,ap.FKnumBeneficiary " +
+                "FROM Appointment ap " +
+                "JOIN RDVInterpreter rdv ON rdv.numAppointment = ap.numAppointment " +
+                "LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = ap.FKTimeSlotBase " +
+                "LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = ap.FKTimeSlotPunctual " +
+                "JOIN Establishment e ON e.numEstablishment = ap.FKnumEstablishment " +
+                "JOIN Beneficiary b ON b.numBeneficiary = ap.FKnumBeneficiary " +
+                "WHERE rdv.numInterpreter = ? " +
+                "  AND ap.status <> 'en attente' " +
+                "  AND ( " +
+                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
+                "      OR " +
+                "      tsb.numTimeSlot IS NOT NULL" +
+                ")";
 
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numInterpreter);
+            prStat.setString(2, end);
+            prStat.setString(3, start);
+            resultSet = prStat.executeQuery();
+            DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+            DAOEstablishment daoEstablishment = new DAOEstablishment();
+            DAOReferrer daoReferrer = new DAOReferrer();
+            DAOAddress daoAddress = new DAOAddress();
+            Appointment a = new Appointment();
+            while(resultSet.next()){
+                String local = resultSet.getString("local");
+                List<String> listLocal = null;
+
+                if (local != null) {
+                    listLocal = Arrays.asList(local.split(","));
+                }
+
+                TimeSlot timeSlot = null;
+                int numAppointment = resultSet.getInt("numAppointment");
+
+                if(resultSet.getObject("FKTimeSlotBase") == null){
+                    DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+                    timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
+                }else{
+                    DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
+                    timeSlot = daoTimeSlotBase.find(resultSet.getInt("FKTimeSlotBase"));
+                }
+                Establishment e = daoEstablishment.find(resultSet.getInt("FKnumEstablishment"));
+                e.setEducationLevel(daoEstablishment.findListEducationLevel(resultSet.getInt("FKnumEstablishment")));
+                e.setReferrers(daoReferrer.findAllByEstablishment(resultSet.getInt("FKnumEstablishment")));
+                e.setAddresses(daoAddress.findAllByEstablishment(e.getNameBuilding()));
+
+                a = new Appointment(
+                        numAppointment,
+                        resultSet.getString("description"),
+                        daoBeneficiary.find(resultSet.getInt("FKnumBeneficiary")),
+                        listLocal,
+                        findListInterpreter(numAppointment),
+                        findListAcademicSkillRequire(numAppointment),
+                        findListProfessionalSkillRequire(numAppointment),
+                        timeSlot,
+                        e);
+                try {
+                    a.setStatus(resultSet.getString("status"));
+                } catch (BadStatusException ex) {
+
+                }
+                appointmentList.add(a);
+
+            }
+        }finally {
+            closeStatementAndResultSet(prStat, resultSet);
+        }
+        return appointmentList;
+    }
     /**
      * Create a list of Interpreters linked to the appointment.
      * @param numAppointment the appointment number
@@ -697,6 +780,55 @@ public class DAOAppointment extends DAO<Appointment> {
         try {
             prStat = connect.prepareStatement(query);
             prStat.setInt(1, i.getNumInterpreter());
+            prStat.setString(2, end);
+            prStat.setString(3, start);
+            resultSet = prStat.executeQuery();
+
+            TimeSlot timeSlot = null;
+            while(resultSet.next()){
+                if(resultSet.getObject("FKTimeSlotBase") != null) {
+                    DAOTimeSlotBase daoTimeSlotBase = new DAOTimeSlotBase();
+                    timeSlot = daoTimeSlotBase.find(resultSet.getInt("FKTimeSlotBase"));
+                } else {
+                    DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+                    timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
+                }
+                try{
+                    absenceList.add(new Absence(resultSet.getInt("numAbsence"), resultSet.getString("status"), timeSlot,
+                            resultSet.getString("reasons"), resultSet.getBoolean("privateReason")));
+                }catch (BadStatusException e){
+                }
+            }
+        }finally {
+            closeStatement(prStat);
+        }
+        return absenceList;
+    }
+    /**
+     * Searches for all absences related to the interpreter as a parameter available in the start and end slots.
+     * @param numInterpreter the numero of interpreter who will be linked to the appointment sought
+     * @param start the date in YYYY-MM-DD format
+     * @param end the date in YYYY-MM-DD format
+     * @return The Absence list meets the constraints; an empty list is returned if no object is found.
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public List<Absence> findAllAbsenceToInterpreterAndDate(int numInterpreter, String start, String end)throws SQLException{
+        PreparedStatement prStat = null;
+        ResultSet resultSet = null;
+        List<Absence> absenceList = new ArrayList<>();
+        String query = "SELECT ab.numAbsence, ab.status, ab.reasons, ab.privateReason,ab.FKTimeSlotBase,ab.FKTimeSlotPunctual,ab.FKnumInterpreter " +
+                "FROM Absence ab " +
+                "LEFT JOIN TimeSlotBase tsb ON tsb.numTimeSlot = ab.FKTimeSlotBase " +
+                "LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = ab.FKTimeSlotPunctual " +
+                "WHERE ab.FKnumInterpreter = ? " +
+                "  AND ( " +
+                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
+                "      OR " +
+                "      tsb.numTimeSlot IS NOT NULL)";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numInterpreter);
             prStat.setString(2, end);
             prStat.setString(3, start);
             resultSet = prStat.executeQuery();
