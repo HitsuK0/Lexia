@@ -95,59 +95,8 @@ function displayError(input, message) {
     input.insertAdjacentElement('afterend', div);
 }
 
-/* Fetches establishments from the server and fills #rdvEstablishment. */
-function loadEstablishments() {
-    fetch('/beneficiaire/planning/etablissements')
-        .then(r => r.json())
-        .then(data => {
-            const select = document.getElementById('rdvEstablishment');
-            data.forEach(e => {
-                const option = document.createElement('option');
-                option.value = e.numEstablishment;
-                option.textContent = e.name;
-                select.appendChild(option);
-            });
-        })
-        .catch(err => console.error('Error loading establishments:', err));
-}
-
-/* Fetches academic skills from the server and fills #rdvAcademicSkill. */
-function loadAcademicSkills() {
-    fetch('/beneficiaire/planning/academic-skills')
-        .then(r => r.json())
-        .then(data => {
-            const select = document.getElementById('rdvAcademicSkill');
-            data.forEach(s => {
-                const option = document.createElement('option');
-                option.value = s.numAcademicSkill;
-                option.textContent = s.designation;
-                select.appendChild(option);
-            });
-        })
-        .catch(err => console.error('Error loading academic skills:', err));
-}
-
-/* Fetches professional skills from the server and fills #rdvProfessionalSkill. */
-function loadProfessionalSkills() {
-    fetch('/beneficiaire/planning/professional-skills')
-        .then(r => r.json())
-        .then(data => {
-            const select = document.getElementById('rdvProfessionalSkill');
-            data.forEach(s => {
-                const option = document.createElement('option');
-                option.value = s.numProfessionalSkill;
-                option.textContent = s.designation;
-                select.appendChild(option);
-            });
-        })
-        .catch(err => console.error('Error loading professional skills:', err));
-}
-
 document.addEventListener('DOMContentLoaded', function () {
 
-    loadEstablishments();
-    loadAcademicSkills();
-    loadProfessionalSkills();
     generateHours('startHour', 8 * 60, 18 * 60 + 55);
     generateHours('endHour', 8 * 60 + 5, 19 * 60);
 
@@ -226,8 +175,47 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (!valid) return;
+        if (document.querySelector('.is-invalid')) return;
 
-        // TODO : connecter au bon endpoint une fois défini par le backend
+        const numAcademicSkillsNeeded = [Number(rdvAcademicSkill.value)];
+        const numProfessionalSkillsNeeded = [Number(rdvProfessionalSkill.value)];
+
+        let startTimeValue, endTimeValue;
+        if (fullDay) {
+            startTimeValue = '00:00';
+            endTimeValue = '23:59';
+        } else {
+            startTimeValue = startHour.value;
+            endTimeValue = endHour.value;
+        }
+
+        const body = {
+            numBeneficiary: Number(document.body.dataset.numBeneficiary),
+            appointmentLocals: [rdvLocal.value.trim()],
+            startDate: dateStart.value,
+            endDate: dateEnd.value,
+            startTime: startTimeValue,
+            endTime: endTimeValue,
+            numEstablishment: Number(rdvEstablishment.value),
+            numAcademicSkillsNeeded: numAcademicSkillsNeeded,
+            numProfessionalSkillsNeeded: numProfessionalSkillsNeeded
+        };
+
+        fetch('/beneficiaire/demandes/rdv', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        })
+            .then(r => r.text())
+            .then(result => {
+                if (result === 'ok') {
+                    window.location.reload();
+                } else {
+                    alert('Une erreur est survenue lors de la création de la demande.');
+                }
+            })
+            .catch(err => console.error('Error creating appointment:', err));
+
         bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
     });
 
