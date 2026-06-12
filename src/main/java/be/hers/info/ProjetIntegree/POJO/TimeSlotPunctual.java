@@ -174,7 +174,6 @@ public class TimeSlotPunctual extends TimeSlot {
 
     /**
      * Checks if this TimeSlotPunctual overlaps with another TimeSlotPunctual
-     * A travel time of 40 minutes is added to this TimeSlot's end time
      * Two TimeSlots overlap if their dates overlap and their times overlap
      * @param punctual the TimeSlotPunctual to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
@@ -206,7 +205,7 @@ public class TimeSlotPunctual extends TimeSlot {
         }
 
         if(!thisEnd.isBefore(punctual.getStartDate()) && !otherEnd.isBefore(this.startDate)) {
-            LocalTime thisTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(getTravelTimeMinutes());
+            LocalTime thisTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay());
             LocalTime otherTime = punctual.getStartTime().plusSeconds(punctual.getDuration().toSecondOfDay());
 
             if(!thisTime.isBefore((punctual.getStartTime())) && !otherTime.isBefore(this.getStartTime())) {
@@ -219,7 +218,6 @@ public class TimeSlotPunctual extends TimeSlot {
 
     /**
      * Checks if this TimeSlotPunctual overlaps with a TimeSlotBase
-     * A travel time of 40 minutes is added to this TimeSlot's end time
      * If endDate is null, only the startDate's day of week is compared to the TimeSlotBase's day
      * If endDate is not null, all days between startDate and endDate are checked
      * @param base the TimeSlotBase to check overlap with
@@ -239,7 +237,7 @@ public class TimeSlotPunctual extends TimeSlot {
 
         if (endDate == null) {
             if (this.startDate.getDayOfWeek().getValue() == base.getDayNumber()) {
-                LocalTime thisTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(getTravelTimeMinutes());
+                LocalTime thisTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay());
                 LocalTime otherTime = base.getStartTime().plusSeconds(base.getDuration().toSecondOfDay());
 
                 if (thisTime.isAfter(base.getStartTime()) && otherTime.isAfter(this.getStartTime())) {
@@ -250,7 +248,7 @@ public class TimeSlotPunctual extends TimeSlot {
             LocalDate current = this.startDate;
             while (!current.isAfter(this.endDate)) {
                 if (current.getDayOfWeek().getValue() == base.getDayNumber()) {
-                    LocalTime thisTotalTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay()).plusMinutes(getTravelTimeMinutes());
+                    LocalTime thisTotalTime = this.getStartTime().plusSeconds(this.getDuration().toSecondOfDay());
                     LocalTime otherTotalTime = base.getStartTime().plusSeconds(base.getDuration().toSecondOfDay());
 
                     if (thisTotalTime.isAfter(base.getStartTime()) && otherTotalTime.isAfter(this.getStartTime())) {
