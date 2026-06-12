@@ -8,7 +8,7 @@
 
     <head th:replace="~{common/head :: head('Mes Demandes', '/css/beneficiaire/demandes.css')}"></head>
 
-    <body>
+    <body th:attr="data-num-beneficiary=${numBeneficiary}">
         <nav th:replace="~{common/navbar :: navbar(activeTab='demandes', userRole=${userRole}, userName=${userName}, breadcrumb=null, isAdmin=${isAdmin})}"></nav>
 
         <div class="container-fluid px-5 py-4">
@@ -21,9 +21,9 @@
             <div class="d-flex justify-content-between align-items-center gap-2 mb-2 px-5">
                 <select id="statusFilter" class="form-select" style="max-width: 180px;">
                     <option value="">Tous les statuts</option>
-                    <option value="approved">Validé</option>
-                    <option value="refused">Refusé</option>
-                    <option value="pending">En Attente</option>
+                    <option value="accepte" th:selected="${status == 'accepte'}">Validé</option>
+                    <option value="refuse" th:selected="${status == 'refuse'}">Refusé</option>
+                    <option value="en attente" th:selected="${status == 'en attente'}">En Attente</option>
                 </select>
 
                 <ul class="pagination mb-0" id="paginationTop"></ul>
@@ -50,34 +50,43 @@
                         </tr>
                         </thead>
                         <tbody id="tableBody">
-                        <tr th:each="appointment : ${appointmentsList}"
-                            th:data-status="${appointment.status}">
-                            <td th:text="${appointment.dateDisplay}"></td>
-                            <td th:text="${appointment.timeDisplay}"></td>
-                            <td th:text="${appointment.academicSkillsDisplay}"></td>
-                            <td th:text="${appointment.professionalSkillsDisplay}"></td>
-                            <td th:text="${appointment.establishmentDisplay}"></td>
-                            <td th:text="${appointment.localsDisplay}"></td>
-                            <td th:text="${appointment.descriptionDisplay}"></td>
+                        <tr th:each="appointment : ${requests}"
+                            th:with="
+                                        slot=${appointment.timeSlot},
+                                        endTime=${slot.endTime},
+                                        isFullDay=${slot.startTime.hour == 0 and slot.startTime.minute == 0 and endTime.hour == 23 and endTime.minute == 59},
+                                        statusVal=${appointment.status}"
+                            th:data-status="${statusVal}">
+                            <td th:text="${#temporals.format(slot.startDate, 'dd/MM/yyyy')}"></td>
                             <td>
-                                <span th:if="${appointment.status == 'accepte'}" class="badge-statut valide">Validé</span>
-                                <span th:if="${appointment.status == 'refuse'}" class="badge-statut refuse">Refusé</span>
-                                <span th:if="${appointment.status == 'en attente'}" class="badge-statut attente">En Attente</span>
+                                <span th:if="${isFullDay}">Toute la journée</span>
+                                <span th:unless="${isFullDay}"
+                                      th:text="${#temporals.format(slot.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(endTime, 'HH:mm')}"></span>
+                            </td>
+                            <td th:text="${#strings.listJoin(appointment.academicSkillsNeeded.![designation], ', ')}"></td>
+                            <td th:text="${#strings.listJoin(appointment.professionalSkillsNeeded.![designation], ', ')}"></td>
+                            <td th:text="${appointment.establishment != null ? appointment.establishment.name : '-'}"></td>
+                            <td th:text="${#strings.listJoin(appointment.appointmentLocals, ', ')}"></td>
+                            <td th:text="${appointment.description}"></td>
+                            <td>
+                                <span th:if="${statusVal == 'accepte'}" class="badge-statut valide">Validé</span>
+                                <span th:if="${statusVal == 'refuse'}" class="badge-statut refuse">Refusé</span>
+                                <span th:if="${statusVal == 'en attente'}" class="badge-statut attente">En Attente</span>
                             </td>
                             <td>
-                                <button th:if="${appointment.status == 'en attente'}"
+                                <button th:if="${statusVal == 'en attente'}"
                                         class="btn btn-link p-0 text-danger" title="Supprimer"
                                         data-bs-toggle="modal" data-bs-target="#modalSuppression"
-                                        th:data-id="${appointment.numAppointment}">
+                                        th:attr="data-id=${appointment.numAppointment}">
                                     <i class="bi bi-trash3 fs-5"></i>
                                 </button>
-                                <button th:unless="${appointment.status == 'en attente'}"
+                                <button th:unless="${statusVal == 'en attente'}"
                                         class="btn btn-link p-0 text-muted" title="Suppression impossible" disabled>
                                     <i class="bi bi-trash3 fs-5"></i>
                                 </button>
                             </td>
                         </tr>
-                        <tr th:if="${#lists.isEmpty(appointmentsList)}">
+                        <tr th:if="${#lists.isEmpty(requests)}">
                             <td colspan="9" class="text-center text-muted fst-italic">Aucune demande trouvée.</td>
                         </tr>
                         </tbody>
@@ -131,6 +140,9 @@
                             <label class="form-label small fw-semibold">Matière</label>
                             <select id="rdvAcademicSkill" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez une matière</option>
+                                <option th:each="skill : ${academicSkillList}"
+                                        th:value="${skill.numAcademicSkill}"
+                                        th:text="${skill.designation}"></option>
                             </select>
                             <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une matière.</div>
                         </div>
@@ -139,6 +151,9 @@
                             <label class="form-label small fw-semibold">Compétence requise</label>
                             <select id="rdvProfessionalSkill" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez une compétence</option>
+                                <option th:each="skill : ${professionalSkillList}"
+                                        th:value="${skill.numProfessionalSkill}"
+                                        th:text="${skill.designation}"></option>
                             </select>
                             <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une compétence requise.</div>
                         </div>
@@ -147,6 +162,9 @@
                             <label class="form-label small fw-semibold">Établissement</label>
                             <select id="rdvEstablishment" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez un établissement</option>
+                                <option th:each="establishment : ${establishmentList}"
+                                        th:value="${establishment.numEstablishment}"
+                                        th:text="${establishment.name}"></option>
                             </select>
                         </div>
 
@@ -189,7 +207,7 @@
                     <div class="modal-footer border-top justify-content-center gap-2">
                         <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
                         <form method="post" th:action="@{/beneficiaire/demandes/delete}">
-                            <input type="hidden" id="deleteAppointmentId" name="id"/>
+                            <input type="hidden" id="deleteAppointmentId" name="numAppointment"/>
                             <button type="submit" class="btn btn-danger btn-sm">
                                 <i class="bi bi-trash3 me-1"></i> Supprimer
                             </button>
