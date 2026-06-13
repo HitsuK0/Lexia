@@ -1,6 +1,3 @@
-const allMetierSkills   = ['Transcription', 'Translittération', 'Translation'];
-const allAcademicSkills = ['Histoire', 'Mathématiques', 'Economie', 'Anglais', 'Sciences', 'Français', 'Géographie'];
-
 /* Allows you to check the email format before saving */
 function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -36,6 +33,11 @@ function toggleEdit(id, btn) {
         input.removeAttribute('readonly');
         input.focus();
         btn.style.color = '#593196';
+
+        /* Special case: editing the communication languages reveals checkboxes instead of free text. */
+        if (id === 'inputLangues') {
+            document.getElementById('langueCheckboxes').style.display = 'flex';
+        }
     } else {
         if (id === 'inputEmail' && !isValidEmail(input.value)) {
             input.classList.add('is-invalid');
@@ -52,6 +54,10 @@ function toggleEdit(id, btn) {
         input.classList.remove('is-invalid');
         input.setAttribute('readonly', true);
         btn.style.color = '';
+
+        if (id === 'inputLangues') {
+            document.getElementById('langueCheckboxes').style.display = 'none';
+        }
     }
 }
 
@@ -75,7 +81,8 @@ function savePassword() {
         confirmError.style.display = 'block';
         return;
     }
-    bootstrap.Modal.getInstance(document.getElementById('modalResetPassword')).hide();
+
+    document.getElementById('inputNewPassword').closest('form').submit();
 }
 
 /* Shows the floating save button when any field has been modified. */
@@ -83,83 +90,54 @@ function onFieldChanged() {
     document.getElementById('btnSauvegarder').style.display = 'block';
 }
 
-/* Returns the list of skills currently displayed in a badge container. */
-function getCurrentSkills(containerId) {
-    return Array.from(document.querySelectorAll(`#${containerId} .badge-skill`))
-        .map(b => b.childNodes[1]?.textContent?.trim() ?? '');
-}
-
-/* Rebuilds the options of a skill select based on skills not yet assigned. */
-function refreshSelectOptions(selectId, allSkills, containerId) {
-    const current = getCurrentSkills(containerId);
-    const select = document.getElementById(selectId);
-    const previousValue = select.value;
-    select.innerHTML = '<option value="" disabled selected>Ajouter...</option>';
-    allSkills.filter(s => !current.includes(s)).forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s;
-        opt.textContent = s;
-        select.appendChild(opt);
-    });
-    select.value = previousValue;
-}
-
-/* Adds a skill badge from the select into the badge container,
-then refreshes the select options. */
+/* Adds a skill badge from the select into the badge container.
+Only updates the visual state; persistence is not yet wired to the backend. */
 function addSkill(selectId, containerId) {
     const select = document.getElementById(selectId);
-    const value = select.value;
-    if (!value) return;
+    const option = select.options[select.selectedIndex];
+    if (!option || !option.value) return;
 
-    const allSkills = containerId === 'badgesMetiers' ? allMetierSkills : allAcademicSkills;
+    const id = option.value;
+    const designation = option.dataset.designation;
 
     const span = document.createElement('span');
     span.className = 'badge-skill';
-    span.innerHTML = `<i class="bi bi-check-lg"></i> ${value}
-        <button class="btn-badge-remove" onclick="removeSkill(this, '${containerId}', '${value}')" title="Retirer">
+    span.innerHTML = `<i class="bi bi-check-lg"></i> ${designation}
+        <button type="button" class="btn-badge-remove" onclick="removeSkill(this, '${containerId}', ${id})" title="Retirer">
             <i class="bi bi-x"></i>
         </button>`;
     document.getElementById(containerId).appendChild(span);
 
-    refreshSelectOptions(selectId, allSkills, containerId);
+    option.remove();
     select.value = '';
+    onFieldChanged();
 }
 
-/* Removes a skill badge from the container and adds it back to the select options. */
-function removeSkill(btn, containerId, skillName) {
+/* Removes a skill badge from the container.
+Only updates the visual state; persistence is not yet wired to the backend. */
+function removeSkill(btn, containerId, skillId) {
     btn.closest('.badge-skill').remove();
-    const selectId  = containerId === 'badgesMetiers' ? 'selectMetier' : 'selectAcademic';
-    const allSkills = containerId === 'badgesMetiers' ? allMetierSkills : allAcademicSkills;
-    refreshSelectOptions(selectId, allSkills, containerId);
+    onFieldChanged();
 }
 
 const originalRole = document.getElementById('roleSelectDetail').value;
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    /* Initializes the visibility of competences and interpreter reference sections
-    on page load based on the role loaded from the server. */
-    const isBeneficiary = document.getElementById('roleSelectDetail').value === 'BENEFICIARY';
-    document.getElementById('sectionCompetences').style.display   = isBeneficiary ? 'none'  : 'block';
-    document.getElementById('sectionInterpreteRef').style.display = isBeneficiary ? 'block' : 'none';
-
-    /* Shows or hides competences/interpreter sections based on selected role.
-    Also warns the coordinator that the user ID will be regenerated on save. */
+    /* Warns the coordinator that the user's login will be regenerated on save
+    if the selected role changes (only relevant for non-beneficiary users). */
     document.getElementById('roleSelectDetail').addEventListener('change', function () {
-        const isBenef    = this.value === 'BENEFICIARY';
         const roleChanged = this.value !== originalRole;
-
-        document.getElementById('sectionCompetences').style.display   = isBenef     ? 'none'  : 'block';
-        document.getElementById('sectionInterpreteRef').style.display = isBenef     ? 'block' : 'none';
-        document.getElementById('idRegenWarning').style.display        = roleChanged ? 'block' : 'none';
+        const warning = document.getElementById('idRegenWarning');
+        if (warning) warning.style.display = roleChanged ? 'block' : 'none';
     });
 
     /* Shows the save button as soon as any field value changes. */
-    document.querySelectorAll('input:not([type="radio"]), textarea, select').forEach(el => {
+    document.querySelectorAll('#formProfile input:not([type="radio"]), #formProfile textarea, #formProfile select').forEach(el => {
         el.addEventListener('input', onFieldChanged);
         el.addEventListener('change', onFieldChanged);
     });
-    document.querySelectorAll('input[type="radio"]').forEach(el => {
+    document.querySelectorAll('#formProfile input[type="radio"]').forEach(el => {
         el.addEventListener('change', onFieldChanged);
     });
 
@@ -240,11 +218,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     /* Automatically adds a skill badge when a skill is selected from the dropdown. */
-    document.getElementById('selectMetier').addEventListener('change', function () {
-        addSkill('selectMetier', 'badgesMetiers');
-    });
+    const selectMetier = document.getElementById('selectMetier');
+    if (selectMetier) {
+        selectMetier.addEventListener('change', function () {
+            addSkill('selectMetier', 'badgesMetiers');
+        });
+    }
 
-    document.getElementById('selectAcademic').addEventListener('change', function () {
-        addSkill('selectAcademic', 'badgesAcademics');
-    });
+    const selectAcademic = document.getElementById('selectAcademic');
+    if (selectAcademic) {
+        selectAcademic.addEventListener('change', function () {
+            addSkill('selectAcademic', 'badgesAcademics');
+        });
+    }
 });

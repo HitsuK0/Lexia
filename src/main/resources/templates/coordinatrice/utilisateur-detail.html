@@ -6,361 +6,373 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
-    <head th:replace="~{common/head :: head('Fiche Utilisateur', '/css/coordinatrice/utilisateur-detail.css')}"></head>
+<head th:replace="~{common/head :: head('Fiche Utilisateur', '/css/coordinatrice/utilisateur-detail.css')}"></head>
 
-    <body>
-        <nav th:replace="~{common/navbar :: navbar(activeTab='utilisateurs', userRole='COORDINATOR', userName=${userName}, breadcrumb='Gestion Utilisateurs', isAdmin=true)}"></nav>
+<body th:attr="data-user-id=${userRole == 'BENEFICIARY'} ? ${user.numBeneficiary} : ${user.numInterpreter}">
+<nav th:replace="~{common/navbar :: navbar(activeTab='utilisateurs', userRole='COORDINATOR', userName=${userName}, breadcrumb='Gestion Utilisateurs', isAdmin=true)}"></nav>
 
-        <div class="container-fluid px-5 py-4">
+<div class="container-fluid px-5 py-4">
 
-            <div class="d-flex align-items-center mb-4 gap-3">
-                <a th:href="@{/coordinatrice/utilisateurs}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left me-1"></i> Retour
-                </a>
-                <div class="flex-grow-1 text-center">
-                    <h1 class="fw-bold text-primary mb-0">Fiche Utilisateur</h1>
-                    <p class="text-muted fst-italic mb-0 small">Consultez et modifiez les informations de l'utilisateur</p>
-                </div>
-                <div style="width: 90px;"></div>
-            </div>
+    <div class="d-flex align-items-center mb-4 gap-3">
+        <a th:href="@{/coordinatrice/utilisateurs}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Retour
+        </a>
+        <div class="flex-grow-1 text-center">
+            <h1 class="fw-bold text-primary mb-0">Fiche Utilisateur</h1>
+            <p class="text-muted fst-italic mb-0 small">Consultez et modifiez les informations de l'utilisateur</p>
+        </div>
+        <div style="width: 90px;"></div>
+    </div>
 
-            <div class="detail-wrapper mx-auto">
+    <div class="detail-wrapper mx-auto">
 
-                <div class="d-flex align-items-center justify-content-between mb-4">
-                    <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="d-flex align-items-center gap-3">
                         <span th:class="${userRole == 'INTERPRETER'} ? 'badge-role interprete'
                               : (${userRole == 'BENEFICIARY'} ? 'badge-role beneficiaire'
                               : (${userRole == 'RESA'} ? 'badge-role resa'
                               : 'badge-role coordinatrice'))"
-                                      th:text="${userRole == 'INTERPRETER'} ? 'Interprète'
+                              th:text="${userRole == 'INTERPRETER'} ? 'Interprète'
                               : (${userRole == 'BENEFICIARY'} ? 'Bénéficiaire'
                               : (${userRole == 'RESA'} ? 'Résa' : 'Coordinatrice'))">
                         </span>
 
-                        <span class="badge-statut actif">
+                <span class="badge-statut actif">
                                 <i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i> Actif
                             </span>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-warning btn-sm"
+                        data-bs-toggle="modal" data-bs-target="#modalResetPassword">
+                    <i class="bi bi-key me-1"></i> Réinitialiser mot de passe
+                </button>
+                <button type="button" class="btn btn-outline-danger btn-sm"
+                        data-bs-toggle="modal" data-bs-target="#modalDesactiver">
+                    <i class="bi bi-slash-circle me-1"></i> Désactiver le compte
+                </button>
+            </div>
+        </div>
+
+        <form id="formProfile" method="post"
+              th:action="${userRole == 'BENEFICIARY'} ? @{/coordinatrice/utilisateurs/beneficiary/{id}(id=${user.numBeneficiary})} : @{/coordinatrice/utilisateurs/interpreter/{id}(id=${user.numInterpreter})}"
+              th:object="${profileDTO}">
+
+            <div class="detail-card mb-4">
+                <h6 class="section-title">Compte</h6>
+                <hr class="section-divider"/>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Identifiant</label>
+                        <input type="text" class="form-control form-control-sm" th:value="${user.login}" readonly id="inputIdentifiant" style="max-width:160px;"/>
+                        <div id="idRegenWarning" style="display:none; color:#e67700; font-size:0.8em; margin-top:4px;">
+                            <i class="bi bi-exclamation-triangle me-1"></i>
+                            L'identifiant sera régénéré automatiquement à la sauvegarde.
+                        </div>
                     </div>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-warning btn-sm"
-                                data-bs-toggle="modal" data-bs-target="#modalResetPassword">
-                            <i class="bi bi-key me-1"></i> Réinitialiser mot de passe
-                        </button>
-                        <button type="button" class="btn btn-outline-danger btn-sm"
-                                data-bs-toggle="modal" data-bs-target="#modalDesactiver">
-                            <i class="bi bi-slash-circle me-1"></i> Désactiver le compte
-                        </button>
+                    <div class="col-md-3" th:unless="${userRole == 'BENEFICIARY'}">
+                        <label class="form-label small fw-semibold">Rôle</label>
+                        <select class="form-select form-select-sm" id="roleSelectDetail" name="newRole" style="max-width:200px;">
+                            <option value="INTERPRETER"  th:selected="${userRole == 'INTERPRETER'}">Interprète</option>
+                            <option value="RESA"         th:selected="${userRole == 'RESA'}">Résa</option>
+                            <option value="COORDINATOR"  th:selected="${userRole == 'COORDINATOR'}">Coordinatrice</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3" th:if="${userRole == 'BENEFICIARY'}">
+                        <label class="form-label small fw-semibold">Rôle</label>
+                        <input type="text" class="form-control form-control-sm" value="Bénéficiaire" readonly style="max-width:200px;"/>
+                        <select class="form-select form-select-sm d-none" id="roleSelectDetail">
+                            <option value="BENEFICIARY" selected>Bénéficiaire</option>
+                        </select>
                     </div>
                 </div>
+            </div>
 
-                <div class="detail-card mb-4">
-                    <h6 class="section-title">Compte</h6>
-                    <hr class="section-divider"/>
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label small fw-semibold">Identifiant</label>
-                            <input type="text" class="form-control form-control-sm" value="IT01" readonly id="inputIdentifiant" style="max-width:160px;"/>
-                            <div id="idRegenWarning" style="display:none; color:#e67700; font-size:0.8em; margin-top:4px;">
-                                <i class="bi bi-exclamation-triangle me-1"></i>
-                                L'identifiant sera régénéré automatiquement à la sauvegarde.
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small fw-semibold">Rôle</label>
-                            <select class="form-select form-select-sm" id="roleSelectDetail" style="max-width:200px;">
-                                <option value="INTERPRETER"  th:selected="${userRole == 'INTERPRETER'}">Interprète</option>
-                                <option value="BENEFICIARY"  th:selected="${userRole == 'BENEFICIARY'}">Bénéficiaire</option>
-                                <option value="RESA"         th:selected="${userRole == 'RESA'}">Résa</option>
-                                <option value="COORDINATOR"  th:selected="${userRole == 'COORDINATOR'}">Coordinatrice</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+            <div class="detail-card mb-4">
+                <h6 class="section-title">Informations personnelles</h6>
+                <hr class="section-divider"/>
 
-                <div class="detail-card mb-4">
-                    <h6 class="section-title">Informations personnelles</h6>
-                    <hr class="section-divider"/>
-
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label class="form-label small fw-semibold">Nom</label>
-                            <div class="input-edit-group">
-                                <input type="text" class="form-control form-control-sm" value="Dupont" readonly id="inputNom"/>
-                                <button class="btn-edit" onclick="toggleEdit('inputNom', this)" title="Modifier">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small fw-semibold">Prénom</label>
-                            <div class="input-edit-group">
-                                <input type="text" class="form-control form-control-sm" value="Jean" readonly id="inputPrenom"/>
-                                <button class="btn-edit" onclick="toggleEdit('inputPrenom', this)" title="Modifier">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3" th:if="${userRole == 'INTERPRETER'}">
-                            <label class="form-label small fw-semibold">Heures prestées</label>
-                            <input type="number" class="form-control form-control-sm" readonly id="inputHeuresPrestees" placeholder="—"/>
-                        </div>
-
-                        <div class="col-md-3" th:if="${userRole == 'BENEFICIARY'}">
-                            <label class="form-label small fw-semibold">Quota d'heures</label>
-                            <div class="input-edit-group">
-                                <input type="number" class="form-control form-control-sm" readonly id="inputQuota" placeholder="—"/>
-                                <button class="btn-edit" onclick="toggleEdit('inputQuota', this)" title="Modifier">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col-md-3" th:if="${userRole == 'BENEFICIARY'}">
-                            <label class="form-label small fw-semibold">Niveau d'éducation</label>
-                            <div class="input-edit-group">
-                                <input type="number" class="form-control form-control-sm" readonly id="inputEducation" min="0" max="4" placeholder="0-4"/>
-                                <button class="btn-edit" onclick="toggleEdit('inputEducation', this)" title="Modifier">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3" th:if="${userRole == 'BENEFICIARY'}">
-                        <label class="form-label small fw-semibold">Langue(s) de communication</label>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Nom</label>
                         <div class="input-edit-group">
-                            <input type="text" class="form-control form-control-sm" readonly id="inputLangues" placeholder="—"/>
-                            <button class="btn-edit" onclick="toggleEdit('inputLangues', this)" title="Modifier">
+                            <input type="text" th:field="*{lastName}" class="form-control form-control-sm" th:value="${user.lastName}" readonly id="inputNom"/>
+                            <button type="button" class="btn-edit" onclick="toggleEdit('inputNom', this)" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Prénom</label>
+                        <div class="input-edit-group">
+                            <input type="text" th:field="*{firstName}" class="form-control form-control-sm" th:value="${user.firstName}" readonly id="inputPrenom"/>
+                            <button type="button" class="btn-edit" onclick="toggleEdit('inputPrenom', this)" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3" th:if="${userRole != 'BENEFICIARY'}">
+                        <label class="form-label small fw-semibold">Heures de travail / semaine</label>
+                        <div class="input-edit-group">
+                            <input type="number" th:field="*{weeklyWorkHours}" class="form-control form-control-sm" th:value="${user.weeklyWorkHours}" readonly id="inputHeuresPrestees"/>
+                            <button type="button" class="btn-edit" onclick="toggleEdit('inputHeuresPrestees', this)" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3" th:if="${userRole == 'BENEFICIARY'}">
+                        <label class="form-label small fw-semibold">Quota d'heures</label>
+                        <div class="input-edit-group">
+                            <input type="number" th:field="*{hourQuota}" class="form-control form-control-sm" th:value="${user.hourQuota}" readonly id="inputQuota"/>
+                            <button type="button" class="btn-edit" onclick="toggleEdit('inputQuota', this)" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-3" th:if="${userRole == 'BENEFICIARY'}">
+                        <label class="form-label small fw-semibold">Niveau d'éducation</label>
+                        <div class="input-edit-group">
+                            <input type="number" th:field="*{educationLevel}" class="form-control form-control-sm" th:value="${user.educationLevel}" readonly id="inputEducation" min="0" max="4" placeholder="0-4"/>
+                            <button type="button" class="btn-edit" onclick="toggleEdit('inputEducation', this)" title="Modifier">
                                 <i class="bi bi-pencil"></i>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="detail-card mb-4">
-                    <h6 class="section-title">Coordonnées</h6>
-                    <hr class="section-divider"/>
+                <div class="mb-3" th:if="${userRole == 'BENEFICIARY'}">
+                    <label class="form-label small fw-semibold">Langue(s) de communication</label>
+                    <div class="input-edit-group">
+                        <input type="text" class="form-control form-control-sm" th:value="${#strings.listJoin(user.communicationLanguage, ', ')}" readonly id="inputLangues" placeholder="—"/>
+                        <button type="button" class="btn-edit" onclick="toggleEdit('inputLangues', this)" title="Modifier">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </div>
+                    <div class="d-flex flex-wrap gap-3 mt-2" id="langueCheckboxes" style="display:none;">
+                        <div class="form-check" th:each="lang : ${ {'LSFB','francais_parle_complete','ecrit'} }">
+                            <input class="form-check-input lang-check" type="checkbox" th:field="*{communicationLanguage}" th:value="${lang}" th:id="'lang_' + ${lang}"/>
+                            <label class="form-check-label small" th:for="'lang_' + ${lang}" th:text="${lang}"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label small fw-semibold">Numéro de téléphone</label>
+            <div class="detail-card mb-4">
+                <h6 class="section-title">Coordonnées</h6>
+                <hr class="section-divider"/>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold">Numéro de téléphone</label>
+                        <div class="input-edit-group">
+                            <input type="text" th:field="*{phoneNumber}" class="form-control form-control-sm" th:value="${user.phoneNumber}" readonly id="inputTel"/>
+                            <button type="button" class="btn-edit" onclick="toggleEdit('inputTel', this)" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>
+                        <div id="phoneError" style="display:none; color:#dc3545; font-size:0.875em;">
+                            Numéro de téléphone invalide. (ex: 0476791845)
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label small fw-semibold">Adresse e-mail</label>
+                        <div class="input-edit-group">
+                            <input type="email" th:field="*{emailAddress}" class="form-control form-control-sm" th:value="${user.emailAddress}" readonly id="inputEmail"/>
+                            <button type="button" class="btn-edit" onclick="toggleEdit('inputEmail', this)" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>
+                        <div id="emailError" style="display:none; color:#dc3545; font-size:0.875em;">
+                            Adresse e-mail invalide. (ex: jean.dupont@gmail.com)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Adresse</label>
+                    <div class="row g-2">
+                        <div class="col-md-5">
+                            <label class="form-label" style="font-size:0.75rem; color:#888;">Rue et numéro</label>
                             <div class="input-edit-group">
-                                <input type="text" class="form-control form-control-sm" value="0476 80 31 15" readonly id="inputTel"/>
-                                <button class="btn-edit" onclick="toggleEdit('inputTel', this)" title="Modifier">
+                                <input type="text" th:field="*{postOfficeBox}" class="form-control form-control-sm" th:value="${user.address.postOfficeBox}" readonly id="inputRue"/>
+                                <button type="button" class="btn-edit" onclick="toggleEdit('inputRue', this)" title="Modifier">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                             </div>
-                            <div id="phoneError" style="display:none; color:#dc3545; font-size:0.875em;">
-                                Numéro de téléphone invalide. (ex: 0476791845)
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" style="font-size:0.75rem; color:#888;">Code postal</label>
+                            <div class="input-edit-group">
+                                <input type="text" th:field="*{postcode}" class="form-control form-control-sm" th:value="${user.address.postcode}" readonly id="inputCP"/>
+                                <button type="button" class="btn-edit" onclick="toggleEdit('inputCP', this)" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" style="font-size:0.75rem; color:#888;">Ville</label>
+                            <div class="input-edit-group">
+                                <input type="text" th:field="*{locality}" class="form-control form-control-sm" th:value="${user.address.locality}" readonly id="inputVille"/>
+                                <button type="button" class="btn-edit" onclick="toggleEdit('inputVille', this)" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="col-md-5">
-                            <label class="form-label small fw-semibold">Adresse e-mail</label>
+                            <label class="form-label" style="font-size:0.75rem; color:#888;">
+                                Lieu-dit <span class="text-muted fw-normal">(facultatif)</span>
+                            </label>
                             <div class="input-edit-group">
-                                <input type="email" class="form-control form-control-sm" value="dupontjean03@gmail.com" readonly id="inputEmail"/>
-                                <button class="btn-edit" onclick="toggleEdit('inputEmail', this)" title="Modifier">
+                                <input type="text" th:field="*{hamlet}" class="form-control form-control-sm" th:value="${user.address.hamlet}" readonly id="inputLieuDit"/>
+                                <button type="button" class="btn-edit" onclick="toggleEdit('inputLieuDit', this)" title="Modifier">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                             </div>
-                            <div id="emailError" style="display:none; color:#dc3545; font-size:0.875em;">
-                                Adresse e-mail invalide. (ex: jean.dupont@gmail.com)
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Adresse</label>
-                        <div class="row g-2">
-                            <div class="col-md-5">
-                                <label class="form-label" style="font-size:0.75rem; color:#888;">Rue et numéro</label>
-                                <div class="input-edit-group">
-                                    <input type="text" class="form-control form-control-sm" value="Rue de la victoire, 3" readonly id="inputRue"/>
-                                    <button class="btn-edit" onclick="toggleEdit('inputRue', this)" title="Modifier">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label" style="font-size:0.75rem; color:#888;">Code postal</label>
-                                <div class="input-edit-group">
-                                    <input type="text" class="form-control form-control-sm" value="1000" readonly id="inputCP"/>
-                                    <button class="btn-edit" onclick="toggleEdit('inputCP', this)" title="Modifier">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label" style="font-size:0.75rem; color:#888;">Ville</label>
-                                <div class="input-edit-group">
-                                    <input type="text" class="form-control form-control-sm" value="Bruxelles" readonly id="inputVille"/>
-                                    <button class="btn-edit" onclick="toggleEdit('inputVille', this)" title="Modifier">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <label class="form-label" style="font-size:0.75rem; color:#888;">
-                                    Lieu-dit <span class="text-muted fw-normal">(facultatif)</span>
-                                </label>
-                                <div class="input-edit-group">
-                                    <input type="text" class="form-control form-control-sm" value="" readonly id="inputLieuDit"/>
-                                    <button class="btn-edit" onclick="toggleEdit('inputLieuDit', this)" title="Modifier">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="detail-card mb-4" id="sectionCompetences" th:style="${userRole == 'BENEFICIARY'} ? 'display:none' : ''">
+            <div class="detail-card mb-4" id="sectionCompetences" th:style="${userRole == 'BENEFICIARY'} ? 'display:none' : ''">
                 <h6 class="section-title">Compétences</h6>
-                    <hr class="section-divider"/>
+                <hr class="section-divider"/>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label small fw-semibold">Compétences métiers</label>
-                            <div class="d-flex flex-wrap gap-2 mt-1 mb-2" id="badgesMetiers">
-                        <span class="badge-skill">
-                            <i class="bi bi-check-lg"></i> Transcription
-                            <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesMetiers', 'Transcription')" title="Retirer">
-                                <i class="bi bi-x"></i>
-                            </button>
-                        </span>
-                                <span class="badge-skill">
-                            <i class="bi bi-check-lg"></i> Translittération
-                            <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesMetiers', 'Translittération')" title="Retirer">
-                                <i class="bi bi-x"></i>
-                            </button>
-                        </span>
-                            </div>
-                            <div class="d-flex gap-2 align-items-center">
-                                <select class="form-select form-select-sm" id="selectMetier" style="max-width: 200px;">
-                                    <option value="" disabled selected>Ajouter...</option>
-                                    <option value="Translation">Translation</option>
-                                </select>
-                            </div>
+                <div class="row" th:if="${userRole != 'BENEFICIARY'}">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-semibold">Compétences métiers</label>
+                        <div class="d-flex flex-wrap gap-2 mt-1 mb-2" id="badgesMetiers">
+                                <span class="badge-skill" th:each="skill : ${professionalSkillListUser}">
+                                    <i class="bi bi-check-lg"></i> <span th:text="${skill.designation}"></span>
+                                    <button type="button" class="btn-badge-remove" th:onclick="'removeSkill(this, \'badgesMetiers\', ' + ${skill.numProfessionalSkill} + ')'" title="Retirer">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </span>
                         </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label small fw-semibold">Compétences académiques</label>
-                            <div class="d-flex flex-wrap gap-2 mt-1 mb-2" id="badgesAcademics">
-                        <span class="badge-skill">
-                            <i class="bi bi-check-lg"></i> Histoire
-                            <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesAcademics', 'Histoire')" title="Retirer">
-                                <i class="bi bi-x"></i>
-                            </button>
-                        </span>
-                                <span class="badge-skill">
-                            <i class="bi bi-check-lg"></i> Mathématiques
-                            <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesAcademics', 'Mathématiques')" title="Retirer">
-                                <i class="bi bi-x"></i>
-                            </button>
-                        </span>
-                                <span class="badge-skill">
-                            <i class="bi bi-check-lg"></i> Economie
-                            <button class="btn-badge-remove" onclick="removeSkill(this, 'badgesAcademics', 'Economie')" title="Retirer">
-                                <i class="bi bi-x"></i>
-                            </button>
-                        </span>
-                            </div>
-                            <div class="d-flex gap-2 align-items-center">
-                                <select class="form-select form-select-sm" id="selectAcademic" style="max-width: 200px;">
-                                    <option value="" disabled selected>Ajouter...</option>
-                                    <option value="Anglais">Anglais</option>
-                                    <option value="Sciences">Sciences</option>
-                                    <option value="Français">Français</option>
-                                    <option value="Géographie">Géographie</option>
-                                </select>
-                            </div>
+                        <div class="d-flex gap-2 align-items-center">
+                            <select class="form-select form-select-sm" id="selectMetier" style="max-width: 200px;">
+                                <option value="" disabled selected>Ajouter...</option>
+                                <option th:each="skill : ${allProfessionalSkills}"
+                                        th:value="${skill.numProfessionalSkill}"
+                                        th:text="${skill.designation}"
+                                        th:data-designation="${skill.designation}"></option>
+                            </select>
                         </div>
                     </div>
-                </div>
 
-                <div class="detail-card mb-4" id="sectionInterpreteRef" th:style="${userRole == 'BENEFICIARY'} ? '' : 'display:none'">
-                    <h6 class="section-title">Interprète référent</h6>
-                    <hr class="section-divider"/>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-semibold">Interprète assigné</label>
-                        <select class="form-select form-select-sm">
-                            <option value="">-- Aucun --</option>
-                            <option value="1" selected>BRASSEUR Frédéric</option>
-                            <option value="2">MARTIN Sophie</option>
-                            <option value="3">LEROY Thomas</option>
-                        </select>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-semibold">Compétences académiques</label>
+                        <div class="d-flex flex-wrap gap-2 mt-1 mb-2" id="badgesAcademics">
+                                <span class="badge-skill" th:each="skill : ${academicSkillListUser}">
+                                    <i class="bi bi-check-lg"></i> <span th:text="${skill.designation}"></span>
+                                    <button type="button" class="btn-badge-remove" th:onclick="'removeSkill(this, \'badgesAcademics\', ' + ${skill.numAcademicSkill} + ')'" title="Retirer">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </span>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center">
+                            <select class="form-select form-select-sm" id="selectAcademic" style="max-width: 200px;">
+                                <option value="" disabled selected>Ajouter...</option>
+                                <option th:each="skill : ${allAcademicSkills}"
+                                        th:value="${skill.numAcademicSkill}"
+                                        th:text="${skill.designation}"
+                                        th:data-designation="${skill.designation}"></option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="modal fade" id="modalResetPassword" tabindex="-1" aria-labelledby="modalResetPasswordLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalResetPasswordLabel">Réinitialiser le mot de passe</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body px-4 py-3">
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Nouveau mot de passe</label>
-                            <input type="password" class="form-control form-control-sm" id="inputNewPassword" placeholder="Nouveau mot de passe..."/>
-                            <div id="passwordCriteria" style="font-size:0.875em; margin-top:0.4rem;">
-                                <div id="crit-length"  class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 8 characters minimum</div>
-                                <div id="crit-upper"   class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 uppercase letter</div>
-                                <div id="crit-lower"   class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 lowercase letter</div>
-                                <div id="crit-number"  class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 number</div>
-                                <div id="crit-special" class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 special character (!@#$%...)</div>
-                            </div>
-                            <div id="passwordError" style="display:none; color:#dc3545; font-size:0.875em;"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Confirmer le mot de passe</label>
-                            <input type="password" class="form-control form-control-sm" id="inputConfirmPassword" placeholder="Confirmation..."/>
-                            <div id="confirmError" style="display:none; color:#dc3545; font-size:0.875em;">
-                                Les mots de passe ne correspondent pas.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm" onclick="savePassword()">
-                            <i class="bi bi-key me-1"></i> Réinitialiser
-                        </button>
-                    </div>
+            <div class="detail-card mb-4" id="sectionInterpreteRef" th:style="${userRole == 'BENEFICIARY'} ? '' : 'display:none'">
+                <h6 class="section-title">Interprète référent</h6>
+                <hr class="section-divider"/>
+                <div class="col-md-4" th:if="${userRole == 'BENEFICIARY'}">
+                    <label class="form-label small fw-semibold">Interprète assigné</label>
+                    <select class="form-select form-select-sm" name="numInterpreterReferent">
+                        <option value="" th:selected="${user.interpreter == null}">-- Aucun --</option>
+                        <option th:each="interpreter : ${interpreterList}"
+                                th:value="${interpreter.numInterpreter}"
+                                th:selected="${user.interpreter != null and user.interpreter.numInterpreter == interpreter.numInterpreter}"
+                                th:text="${interpreter.lastName} + ' ' + ${interpreter.firstName}"></option>
+                    </select>
                 </div>
             </div>
-        </div>
 
-        <div class="modal fade" id="modalDesactiver" tabindex="-1" aria-labelledby="modalDesactiverLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalDesactiverLabel">Désactiver le compte</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="modalResetPassword" tabindex="-1" aria-labelledby="modalResetPasswordLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold w-100 text-center" id="modalResetPasswordLabel">Réinitialiser le mot de passe</h5>
+                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post"
+                  th:action="${userRole == 'BENEFICIARY'} ? @{/coordinatrice/utilisateurs/beneficiary/{id}/password(id=${user.numBeneficiary})} : @{/coordinatrice/utilisateurs/interpreter/{id}/password(id=${user.numInterpreter})}"
+                  th:object="${passwordDTO}">
+                <div class="modal-body px-4 py-3">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Nouveau mot de passe</label>
+                        <input type="password" th:field="*{newPassword}" class="form-control form-control-sm" id="inputNewPassword" placeholder="Nouveau mot de passe..."/>
+                        <div id="passwordCriteria" style="font-size:0.875em; margin-top:0.4rem;">
+                            <div id="crit-length"  class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 8 characters minimum</div>
+                            <div id="crit-upper"   class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 uppercase letter</div>
+                            <div id="crit-lower"   class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 lowercase letter</div>
+                            <div id="crit-number"  class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 number</div>
+                            <div id="crit-special" class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 special character (!@#$%...)</div>
+                        </div>
+                        <div id="passwordError" style="display:none; color:#dc3545; font-size:0.875em;"></div>
                     </div>
-                    <div class="modal-body px-4 py-3 text-center">
-                        <i class="bi bi-exclamation-triangle text-warning fs-1 mb-3 d-block"></i>
-                        <p class="mb-1">Vous êtes sur le point de désactiver le compte de</p>
-                        <p class="fw-bold mb-3">DUPONT Jean</p>
-                        <p class="text-muted small">L'utilisateur ne pourra plus se connecter. Vous pourrez réactiver le compte à tout moment.</p>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-danger btn-sm">
-                            <i class="bi bi-slash-circle me-1"></i> Désactiver
-                        </button>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Confirmer le mot de passe</label>
+                        <input type="password" th:field="*{confirmPassword}" class="form-control form-control-sm" id="inputConfirmPassword" placeholder="Confirmation..."/>
+                        <div id="confirmError" style="display:none; color:#dc3545; font-size:0.875em;">
+                            Les mots de passe ne correspondent pas.
+                        </div>
                     </div>
                 </div>
+                <div class="modal-footer border-top justify-content-center gap-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="savePassword()">
+                        <i class="bi bi-key me-1"></i> Réinitialiser
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalDesactiver" tabindex="-1" aria-labelledby="modalDesactiverLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold w-100 text-center" id="modalDesactiverLabel">Désactiver le compte</h5>
+                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body px-4 py-3 text-center">
+                <i class="bi bi-exclamation-triangle text-warning fs-1 mb-3 d-block"></i>
+                <p class="mb-1">Vous êtes sur le point de désactiver le compte de</p>
+                <p class="fw-bold mb-3" th:text="${user.lastName} + ' ' + ${user.firstName}"></p>
+                <p class="text-muted small">L'utilisateur ne pourra plus se connecter. Vous pourrez réactiver le compte à tout moment.</p>
+            </div>
+            <div class="modal-footer border-top justify-content-center gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger btn-sm">
+                    <i class="bi bi-slash-circle me-1"></i> Désactiver
+                </button>
             </div>
         </div>
+    </div>
+</div>
 
-        <button id="btnSauvegarder" class="btn btn-primary btn-floating" style="display:none;"
-                onclick="sauvegarder()">
-            <i class="bi bi-floppy me-1"></i> Sauvegarder
-        </button>
+<button id="btnSauvegarder" type="submit" form="formProfile" class="btn btn-primary btn-floating" style="display:none;">
+    <i class="bi bi-floppy me-1"></i> Sauvegarder
+</button>
 
-        <div th:replace="~{common/footer :: footer}"></div>
+<div th:replace="~{common/footer :: footer}"></div>
 
-        <script th:src="@{/js/coordinatrice/utilisateur-detail.js}"></script>
-    </body>
+<script th:src="@{/js/coordinatrice/utilisateur-detail.js}"></script>
+</body>
 </html>
