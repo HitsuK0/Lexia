@@ -173,8 +173,8 @@ ALTER TABLE  Establishment ADD CONSTRAINT phoneNumberCheck CHECK(regexp_like(pho
 -- 0 <= education_level < 5 (0 = other, 1 = kindergarten, 2 = primary, 3 = secondary, 4 = higher education)
 ALTER TABLE Establishment ADD CONSTRAINT checkValueEducationLevelEstablishment CHECK (educationLevel >= 0 and educationLevel < 5);
 
--- The status can only be pending, accepted, rejected.
-ALTER TABLE  Appointment ADD CONSTRAINT checkStatusAppointment CHECK (lower(status) in ('en attente', 'accepte', 'refuse'));
+-- The status can only be pending, accepted, rejected or cancelled.
+ALTER TABLE  Appointment ADD CONSTRAINT checkStatusAppointment CHECK (lower(status) in ('en attente', 'accepte', 'refuse','annule'));
 -- The TimeSlot can only be an FKTimeSlotBase or FKTimeSlotPunctual
 ALTER TABLE Appointment ADD CONSTRAINT checkTimeSlot CHECK ((FKTimeSlotBase IS NULL AND FKTimeSlotPunctual IS NOT NULL) OR (FKTimeSlotBase IS NOT NULL AND FKTimeSlotPunctual IS NULL));
 

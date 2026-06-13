@@ -292,6 +292,7 @@ public class CoordinatorController {
      * Controller for the pages named "planning-gestion"
      * Displays the profile page for the connected Coordinator.
      * Prepare an DTOAbsence for the button "Ajouter une Indisponibilitée"
+     * Prepare the list of Interpreter, List of establishment, List of academicSkill, List of professionalSkill and DTOAppointmentForm.
      *
      * @param session the current HTTP session
      * @param model   the Spring UI model
@@ -308,7 +309,32 @@ public class CoordinatorController {
         model.addAttribute("userRole", "COORDINATOR");
         model.addAttribute("breadcrumb", "Planning");
         model.addAttribute("isAdmin", coordinator.isAdmin());
+        HoraireBaseService service = new HoraireBaseService();
+        List<Interpreter> interpreterList = new ArrayList<>();
+        try {
+            interpreterList = service.findAllInterpreters();
+            interpreterList.removeIf(i -> i.getNumInterpreter() == coordinator.getNumInterpreter());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        model.addAttribute("listInterpreter", interpreterList);
         model.addAttribute("DTOAbsence", new DTOAbsence());
+        List<Beneficiary> beneficiaryList = new ArrayList<>();
+        AppointmentFormService serviceAppointment = new AppointmentFormService();
+        model.addAttribute("establishmentList", serviceAppointment.findAllEstablishments());
+        model.addAttribute("academicSkillList", serviceAppointment.findAllAcademicSkills());
+        model.addAttribute("professionalSkillList", serviceAppointment.findAllProfessionalSkills());
+        model.addAttribute("DTOAppointmentForm", new DTOAppointmentForm());
+
+        try {
+            beneficiaryList = service.findAllBeneficiaries();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        session.setAttribute("beneficiaryList", beneficiaryList);
+        model.addAttribute("activeTab", "planning");
 
         return "coordinatrice/planning-gestion";
     }
@@ -388,6 +414,9 @@ public class CoordinatorController {
                 case "refuse":
                     event.put("color", "#f28b82");
                     break;
+                case "annule":
+                    event.put("color", "#f28b82");
+                    break;
             }
         } else {
             TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
@@ -409,6 +438,7 @@ public class CoordinatorController {
                 .collect(Collectors.joining(", "));
 
         extendedProps.put("type", "appointment");
+        extendedProps.put("numAppointment",a.getNumAppointment());
         extendedProps.put("status", a.getStatus());
         extendedProps.put("professionalSkills", professionalSkills);
         extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0, 1) + ". " + a.getBeneficiary().getFirstName());
@@ -419,6 +449,34 @@ public class CoordinatorController {
         return event;
     }
 
+    /**
+     * Pass the statut of the appointment on "annule"
+     * @param numAppointment the numAppointment
+     * @param session the current HTTP session
+     * @param model   the Spring UI model
+     * @return the view "/coordinatrice/planning-gestion", or a redirect to "/login"
+     */
+    @PostMapping("/planning-gestion/{numAppointment}/Annuler")
+    public String annulerRDV(@PathVariable int numAppointment,HttpSession session, Model model) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+        PlanningService p = new PlanningService();
+        p.changeStatusAppointment(numAppointment,"annule");
+        return "coordinatrice/planning-gestion";
+    }
+
+
+    @PostMapping("/planning-gestion/{numAppointment}/Modifier")
+    public String updateRDV(@PathVariable int numAppointment,HttpSession session, Model model) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+        // TODO
+        return "coordinatrice/planning-gestion";
+    }
     /**
      * Build an events for FullCalendar with the Absence and the list of LocalDate choice between Start and End
      *
@@ -478,6 +536,8 @@ public class CoordinatorController {
     /**
      * Controller for the pages named "planning-gestion/interpreter"
      * Displays the profile page for the connected Coordinator.
+     * Prepare an DTOAbsence for the button "Ajouter une Indisponibilitée"
+     * Prepare the list of Interpreter, List of establishment, List of academicSkill, List of professionalSkill and DTOAppointmentForm.
      *
      * @param session the current HTTP session
      * @param model   the Spring UI model
@@ -504,8 +564,24 @@ public class CoordinatorController {
         }
         model.addAttribute("listInterpreter", interpreterList);
         model.addAttribute("DTOAbsence", new DTOAbsence());
+        List<Beneficiary> beneficiaryList = new ArrayList<>();
+        AppointmentFormService serviceAppointment = new AppointmentFormService();
+        model.addAttribute("establishmentList", serviceAppointment.findAllEstablishments());
+        model.addAttribute("academicSkillList", serviceAppointment.findAllAcademicSkills());
+        model.addAttribute("professionalSkillList", serviceAppointment.findAllProfessionalSkills());
+        model.addAttribute("DTOAppointmentForm", new DTOAppointmentForm());
 
-        return "coordinatrice/planning-gestion/interpreter";
+        try {
+            beneficiaryList = service.findAllBeneficiaries();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        session.setAttribute("beneficiaryList", beneficiaryList);
+        model.addAttribute("activeTab", "planning");
+
+        return "coordinatrice/planning-gestion";
     }
 
     /**
@@ -554,6 +630,8 @@ public class CoordinatorController {
     /**
      * Controller for the pages named "planning-gestion/beneficiaires"
      * Displays the profile page for the connected Coordinator.
+     * Prepare an DTOAbsence for the button "Ajouter une Indisponibilitée"
+     * Prepare the list of Interpreter, List of establishment, List of academicSkill, List of professionalSkill and DTOAppointmentForm.
      *
      * @param session the current HTTP session
      * @param model   the Spring UI model
@@ -566,7 +644,20 @@ public class CoordinatorController {
         if (coordinator == null) {
             return "redirect:/login";
         }
+        model.addAttribute("userName", coordinator.getFirstName() + " " + coordinator.getLastName());
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("breadcrumb", "Planning");
+        model.addAttribute("isAdmin", coordinator.isAdmin());
         HoraireBaseService service = new HoraireBaseService();
+        List<Interpreter> interpreterList = new ArrayList<>();
+        try {
+            interpreterList = service.findAllInterpreters();
+            interpreterList.removeIf(i -> i.getNumInterpreter() == coordinator.getNumInterpreter());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        model.addAttribute("listInterpreter", interpreterList);
+        model.addAttribute("DTOAbsence", new DTOAbsence());
         List<Beneficiary> beneficiaryList = new ArrayList<>();
         AppointmentFormService serviceAppointment = new AppointmentFormService();
         model.addAttribute("establishmentList", serviceAppointment.findAllEstablishments());
@@ -584,7 +675,7 @@ public class CoordinatorController {
         session.setAttribute("beneficiaryList", beneficiaryList);
         model.addAttribute("activeTab", "planning");
 
-        return "coordinatrice/planning-gestion/beneficiaires";
+        return "coordinatrice/planning-gestion";
     }
 
     /**

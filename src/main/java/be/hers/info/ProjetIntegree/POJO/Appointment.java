@@ -394,7 +394,7 @@ public class Appointment {
     /**
      * @param status the status
      * @throws IllegalArgumentException if status is null
-     * @throws BadStatusException if status is different from 'accepte', 'refuse' or 'en attente'
+     * @throws BadStatusException if status is different from 'accepte', 'refuse','annule' or 'en attente'
      *                            if status is the same as the already set status
      *                            if the current status is not equals to 'en attente'
      */
@@ -407,7 +407,7 @@ public class Appointment {
             throw new BadStatusException("[POJOAppointment] Le status status est déja "+this.status);
         }
 
-        if(!(status.equals("accepte") || status.equals("refuse") || status.equals("en attente"))) {
+        if(!(status.equals("accepte") || status.equals("refuse") || status.equals("en attente") || status.equals("annule"))) {
             throw new BadStatusException("[POJOAppointment] "+status+ " n'est pas un status valide.");
         }
 
