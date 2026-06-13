@@ -7,6 +7,9 @@ import java.time.LocalTime;
  * DTOAbsence is a minimalist Absence used for the form in the web page.
  * The attribute are most the same than the Absence.
  * Sping use the setter to put the data in the attribute.
+ *
+ * @author Quentin Vanderheyden
+ * @reviewer Nicolas Jean-François
  */
 public class DTOAbsence {
 
@@ -19,24 +22,22 @@ public class DTOAbsence {
     private boolean privateReason;
     private boolean fullDay;
 
-
     /**
      * Instanciate a DTOAbsence without any param.
      */
     public DTOAbsence() {
-
     }
 
     /**
      *
-     * @param startDate the date when the Absence start.
-     * @param endDate the date when the Absence end.
-     * @param startTime the time when the Absence start.
-     * @param endTime the time when the Absence end.
-     * @param reason the reason of the Absence.
-     * @param status the status of the Absence ('en attente', 'accepte' or 'refuse')
+     * @param startDate     the date when the Absence start.
+     * @param endDate       the date when the Absence end.
+     * @param startTime     the time when the Absence start.
+     * @param endTime       the time when the Absence end.
+     * @param reason        the reason of the Absence.
+     * @param status        the status of the Absence ('en attente', 'accepte' or 'refuse')
      * @param privateReason true if the reason is private.
-     * @param fullDay true if the Absence is the fullDay.
+     * @param fullDay       true if the Absence is the fullDay.
      */
     public DTOAbsence(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, String reason, String status, boolean privateReason, boolean fullDay) {
         this.startDate = startDate;
@@ -52,9 +53,9 @@ public class DTOAbsence {
     /**
      *
      * @param startTime the time when the Absence start.
-     * @param endTime the time when the Absence end.
-     * @param reason the reason of the Absence.
-     * @param status the status of the Absence ('en attente', 'accepte' or 'refuse')
+     * @param endTime   the time when the Absence end.
+     * @param reason    the reason of the Absence.
+     * @param status    the status of the Absence ('en attente', 'accepte' or 'refuse')
      */
     public DTOAbsence(LocalTime startTime, LocalTime endTime, String reason, String status) {
         this.startTime = startTime;
@@ -65,9 +66,9 @@ public class DTOAbsence {
         this.privateReason = false;
     }
 
-
     /**
      * Set a startDate with a LocalDate.
+     *
      * @param startDate the date when the Absence start.
      */
     public void setStartDate(LocalDate startDate) {
@@ -76,6 +77,7 @@ public class DTOAbsence {
 
     /**
      * Set a endDate with a LocalDate.
+     *
      * @param endDate the date when the Absence end.
      */
     public void setEndDate(LocalDate endDate) {
@@ -84,6 +86,7 @@ public class DTOAbsence {
 
     /**
      * Set a time when the Absence start.
+     *
      * @param startTime the time when the Absence start.
      */
     public void setStartTime(LocalTime startTime) {
@@ -92,6 +95,7 @@ public class DTOAbsence {
 
     /**
      * Set a time when the Absence end.
+     *
      * @param endTime the time when the Absence end.
      */
     public void setEndTime(LocalTime endTime) {
@@ -100,6 +104,7 @@ public class DTOAbsence {
 
     /**
      * Set a reason for the Absence.
+     *
      * @param reason is the reason why the Absence exist.
      */
     public void setReason(String reason) {
@@ -108,6 +113,7 @@ public class DTOAbsence {
 
     /**
      * Set the status of the Absence. ('en attente', 'accepte' or 'refuse').
+     *
      * @param status in ('en attente', 'accepte' or 'refuse')
      */
     public void setStatus(String status) {
@@ -116,6 +122,7 @@ public class DTOAbsence {
 
     /**
      * Set if the reason is private or not.
+     *
      * @param privateReason true if the reason is private.
      */
     public void setPrivateReason(boolean privateReason) {
@@ -124,6 +131,7 @@ public class DTOAbsence {
 
     /**
      * Set if the Absence is a whole day or not.
+     *
      * @param fullDay true if the Absence is a whole day.
      */
     public void setFullDay(boolean fullDay) {
@@ -131,7 +139,6 @@ public class DTOAbsence {
     }
 
     /**
-     *
      * @return startDate, the date when the Absence start.
      */
     public LocalDate getStartDate() {
@@ -139,7 +146,6 @@ public class DTOAbsence {
     }
 
     /**
-     *
      * @return endDate, the date when the Absence end.
      */
     public LocalDate getEndDate() {
@@ -147,7 +153,6 @@ public class DTOAbsence {
     }
 
     /**
-     *
      * @return startTime, the time when the Absence start.
      */
     public LocalTime getStartTime() {
@@ -155,7 +160,6 @@ public class DTOAbsence {
     }
 
     /**
-     *
      * @return endTime, the time when the Absence end.
      */
     public LocalTime getEndTime() {
@@ -163,7 +167,6 @@ public class DTOAbsence {
     }
 
     /**
-     *
      * @return reason, the Reason why there is an Absence.
      */
     public String getReason() {
@@ -171,7 +174,6 @@ public class DTOAbsence {
     }
 
     /**
-     *
      * @return status, the Status of the Absence.
      */
     public String getStatus() {
@@ -179,7 +181,6 @@ public class DTOAbsence {
     }
 
     /**
-     *
      * @return privateReason, if the reason is private or not.
      */
     public boolean isPrivateReason() {
@@ -187,7 +188,6 @@ public class DTOAbsence {
     }
 
     /**
-     *
      * @return fullDay, define if the Absence is the fullDay of the dayStart or not.
      */
     public boolean isFullDay() {

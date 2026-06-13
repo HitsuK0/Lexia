@@ -32,21 +32,45 @@ public class DTOPasswordChange {
         this.confirmPassword = confirmPassword;
     }
 
-    /** @return the current password entered by the user */
-    public String getOldPassword() { return oldPassword; }
+    /**
+     * @return the current password entered by the user
+     */
+    public String getOldPassword() {
+        return oldPassword;
+    }
 
-    /** @param oldPassword the current password entered by the user */
-    public void setOldPassword(String oldPassword) { this.oldPassword = oldPassword; }
+    /**
+     * @param oldPassword the current password entered by the user
+     */
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
 
-    /** @return the new password chosen by the user */
-    public String getNewPassword() { return newPassword; }
+    /**
+     * @return the new password chosen by the user
+     */
+    public String getNewPassword() {
+        return newPassword;
+    }
 
-    /** @param newPassword the new password chosen by the user */
-    public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
+    /**
+     * @param newPassword the new password chosen by the user
+     */
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
 
-    /** @return the confirmation of the new password */
-    public String getConfirmPassword() { return confirmPassword; }
+    /**
+     * @return the confirmation of the new password
+     */
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
 
-    /** @param confirmPassword the confirmation of the new password */
-    public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
+    /**
+     * @param confirmPassword the confirmation of the new password
+     */
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
 }
