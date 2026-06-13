@@ -222,10 +222,14 @@ public class InterpreterController {
         if (interpreter == null) {
             return "redirect:/login";
         }
+        AppointmentFormService serviceAppointment = new AppointmentFormService();
         PlanningService planningService = new PlanningService();
         List<Beneficiary> beneficiaryList = planningService.getListBeneficiaryRefererInterpreter(interpreter.getNumInterpreter());
         session.setAttribute("beneficiaryList", beneficiaryList);
         model.addAttribute("activeTab", "planning");
+        model.addAttribute("establishmentList", serviceAppointment.findAllEstablishments());
+        model.addAttribute("academicSkillList", serviceAppointment.findAllAcademicSkills());
+        model.addAttribute("professionalSkillList", serviceAppointment.findAllProfessionalSkills());
 
         return "interprete/planning-beneficiaires";
     }
