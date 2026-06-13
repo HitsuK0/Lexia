@@ -23,13 +23,14 @@ public abstract class TimeSlot {
 
     /**
      * Initialize a TimeSlot with numTimeSlot, startTime and duration
+     *
      * @param numTimeSlot the id of the time slot
-     * @param startTime the start time of the time slot
-     * @param duration the duration
+     * @param startTime   the start time of the time slot
+     * @param duration    the duration
      * @throws IllegalArgumentException if startTime or duration is null
      */
     public TimeSlot(int numTimeSlot, LocalTime startTime, LocalTime duration) {
-        if(startTime == null || duration == null) {
+        if (startTime == null || duration == null) {
             throw new IllegalArgumentException("[POJOTimeSlot] L'heure de début et la durée ne peuvent pas être nulles");
         }
 
@@ -40,12 +41,13 @@ public abstract class TimeSlot {
 
     /**
      * Initialize a TimeSlot with startTime and duration
+     *
      * @param startTime the start time of the time slot
-     * @param duration the duration
+     * @param duration  the duration
      * @throws IllegalArgumentException if startTime or duration is null
      */
     public TimeSlot(LocalTime startTime, LocalTime duration) {
-        if(startTime == null || duration == null) {
+        if (startTime == null || duration == null) {
             throw new IllegalArgumentException("[POJOTimeSlot] L'heure de début et la durée ne peuvent pas être nulles");
         }
 
@@ -90,7 +92,7 @@ public abstract class TimeSlot {
      * @throws IllegalArgumentException if startTime is null
      */
     public void setStartTime(LocalTime startTime) {
-        if(startTime == null) {
+        if (startTime == null) {
             throw new IllegalArgumentException("[POJOTimeSlot] L'heure de début ne peut pas être nulle");
         }
 
@@ -102,7 +104,7 @@ public abstract class TimeSlot {
      * @throws IllegalArgumentException if duration is null
      */
     public void setDuration(LocalTime duration) {
-        if(duration == null) {
+        if (duration == null) {
             throw new IllegalArgumentException("[POJOTimeSlot] La durée ne peut pas être nulle");
         }
 
@@ -112,6 +114,7 @@ public abstract class TimeSlot {
     /**
      * Dispatches the overlap check to the correct overlapsWith method
      * based on the runtime type of the given TimeSlot
+     *
      * @param timeSlot the TimeSlot to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
      * @throws IllegalArgumentException if timeSlot is null
@@ -120,6 +123,7 @@ public abstract class TimeSlot {
 
     /**
      * Checks if this TimeSlot overlaps with a TimeSlotPunctual
+     *
      * @param timeSlotPunctual the TimeSlotPunctual to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
      * @throws IllegalArgumentException if timeSlotPunctual is null
@@ -128,6 +132,7 @@ public abstract class TimeSlot {
 
     /**
      * Checks if this TimeSlot overlaps with a TimeSlotBase
+     *
      * @param timeSlotBase the TimeSlotBase to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
      * @throws IllegalArgumentException if timeSlotBase is null
