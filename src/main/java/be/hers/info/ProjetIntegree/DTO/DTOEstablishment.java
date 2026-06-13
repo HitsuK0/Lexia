@@ -8,15 +8,13 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author Quentin Vanderheyden
- * @reviewer Nicolas Jean-Francois, Halet Louis
- */
-
-/**
  * DTO used for the page etablissements.html
  * A minimalist object of Establishment.
  * This object can be used for the display or the form.
  * if used for the form then
+ *
+ * @author Quentin Vanderheyden
+ * @reviewer Nicolas Jean-Francois, Halet Louis
  */
 public class DTOEstablishment {
 
@@ -33,19 +31,14 @@ public class DTOEstablishment {
     private String hamlet;
     private List<String> educationLevel;
     private List<DTOReferrer> dtoReferrersActual;
-
-
-    private List<Integer> listReferrerSelected;
     // a list with the num of the referrers to add.
+    private List<Integer> listReferrerSelected;
 
-
-    //Affichage :
     private String displayReferrer;
     // Used for a concatenation of the First name and the surname of all the Referrer
     // in the Establishment
     private String address;
     // Also used for a concatenation of the address.
-
 
     // Symbol used for the EducationLevel.
     private final String ZERO = "autre";
@@ -54,12 +47,10 @@ public class DTOEstablishment {
     private final String THREE = "secondaire";
     private final String FOUR = "supérieur";
 
-
     /**
      * Initialize a DTOEsablishment without any fields.
      */
     public DTOEstablishment() {
-
     }
 
     /**
@@ -68,9 +59,10 @@ public class DTOEstablishment {
      * (autre, maternelle, primaire, secondaire, supérieur) multiple data is possible
      * The name of the referrers are in uppercase (not the surname)
      * For the address, this function use only the first adress in the list of the Establishment.
+     *
      * @param etablissement is the Establishment using to initialize the this.
      */
-    public DTOEstablishment(Establishment etablissement){
+    public DTOEstablishment(Establishment etablissement) {
         this.numEstablishment = etablissement.getNumEstablishment();
         this.nameBuilding = etablissement.getNameBuilding();
         this.phoneNumberEstablishment = etablissement.getPhoneNumber();
@@ -95,20 +87,19 @@ public class DTOEstablishment {
         List<Referrer> referrersLst = etablissement.getReferrers();
         Iterator<Referrer> iterator = referrersLst.iterator();
         StringBuilder referrersSchool = new StringBuilder();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             Referrer referrer = iterator.next();
             dtoReferrersActual.add(new DTOReferrer(referrer));
             referrersSchool.append(referrer.getName().toUpperCase());
             referrersSchool.append(" ");
             referrersSchool.append(referrer.getSurname());
-            if(iterator.hasNext()){
+            if (iterator.hasNext()) {
                 referrersSchool.append(", ");
             }
         }
         this.displayReferrer = referrersSchool.toString();
         this.listReferrerSelected = new ArrayList<>();
     }
-
 
     /**
      * @return a String containing the locality, the postcode, the hamlet
@@ -118,7 +109,7 @@ public class DTOEstablishment {
         StringBuilder front = new StringBuilder();
         front.append(this.postOfficeBox);
         front.append(",<br>");
-        if(this.hamlet != null){
+        if (this.hamlet != null) {
             front.append(this.hamlet);
             front.append(" ");
         }
@@ -130,17 +121,16 @@ public class DTOEstablishment {
 
     /**
      * Get the num of the Establishment.
+     *
      * @return the num of the Establishment in a int.
      */
     public int getNumEstablishment() {
         return numEstablishment;
     }
 
-
-
-
     /**
      * Get a string representation of the referrers.
+     *
      * @return the displayReferrer.
      */
     public String getDisplayReferrer() {
@@ -149,6 +139,7 @@ public class DTOEstablishment {
 
     /**
      * Get the name of the Building
+     *
      * @return the name of the building in a String.
      */
     public String getNameBuilding() {
@@ -171,12 +162,12 @@ public class DTOEstablishment {
         return educationLevel;
     }
 
-
     /**
      * Get a list of eduaction level with the value in integer.
+     *
      * @return a list of Integer with the value of all the education level possible.
      */
-    public List<Integer> getEducationLevelInt(){
+    public List<Integer> getEducationLevelInt() {
         List<Integer> educationLevelInt = new ArrayList<>();
         for (String level : this.educationLevel) {
             switch (level) {
@@ -190,9 +181,9 @@ public class DTOEstablishment {
         return educationLevelInt;
     }
 
-
     /**
      * Get the num address of the establishmnent.
+     *
      * @return the numAddress.
      */
     public int getNumAddress() {
@@ -215,18 +206,18 @@ public class DTOEstablishment {
         return locality;
     }
 
-
     /**
      * Get the post code of the this.
+     *
      * @return the postcode.
      */
     public int getPostcode() {
         return postcode;
     }
 
-
     /**
      * Get the post office box.
+     *
      * @return postOfficeBox.
      */
     public String getPostOfficeBox() {
@@ -235,15 +226,16 @@ public class DTOEstablishment {
 
     /**
      * Get the hamlet of the current Establishment.
+     *
      * @return the hamlet
      */
     public String getHamlet() {
         return hamlet;
     }
 
-
     /**
      * This method return the phone Number of the Establishment
+     *
      * @return this.phoneNumberEstablishment
      */
     public String getPhoneNumberEstablishment() {
@@ -252,6 +244,7 @@ public class DTOEstablishment {
 
     /**
      * This method return the list of referrer who are linked to this Establishment
+     *
      * @return dtoReferrerActual.
      */
     public List<DTOReferrer> getDtoReferrersActual() {
@@ -260,15 +253,16 @@ public class DTOEstablishment {
 
     /**
      * Set the num of the Establishment with the given param.
+     *
      * @param numEstablishment is the new num of the Establishment.
      */
     public void setNumEstablishment(int numEstablishment) {
         this.numEstablishment = numEstablishment;
     }
 
-
     /**
      * Set the String for the displayReferrer.
+     *
      * @param displayReferrer is the new displayReferrer.
      */
     public void setDisplayReferrer(String displayReferrer) {
@@ -277,6 +271,7 @@ public class DTOEstablishment {
 
     /**
      * Set the new name of the building given in param.
+     *
      * @param nameBuilding the new name of the building
      */
     public void setNameBuilding(String nameBuilding) {
@@ -285,15 +280,16 @@ public class DTOEstablishment {
 
     /**
      * Set a new phoneNumber with the given param.
+     *
      * @param phoneNumber is the new phone number.
      */
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumberEstablishment = phoneNumber;
     }
 
-
     /**
      * Set the new education level of the Establishment with the given param.
+     *
      * @param educationLevel is the new educationLevel.
      */
     public void setEducationLevel(List<String> educationLevel) {
@@ -302,6 +298,7 @@ public class DTOEstablishment {
 
     /**
      * Set the new address with the given param.
+     *
      * @param address is the new address of this.
      */
     public void setAddress(String address) {
@@ -310,15 +307,16 @@ public class DTOEstablishment {
 
     /**
      * Set the new locality of the Establishment with the given param.
+     *
      * @param locality is the new locality of this.
      */
     public void setLocality(String locality) {
         this.locality = locality;
     }
 
-
     /**
      * Set the new post code for the this.
+     *
      * @param postcode is the new post code given in param.
      */
     public void setPostcode(int postcode) {
@@ -327,6 +325,7 @@ public class DTOEstablishment {
 
     /**
      * Set the post office box for the this.
+     *
      * @param postOfficeBox is the new post office box given in param.
      */
     public void setPostOfficeBox(String postOfficeBox) {
@@ -335,15 +334,16 @@ public class DTOEstablishment {
 
     /**
      * Set a new value for hamlet.
+     *
      * @param hamlet is the new value.
      */
     public void setHamlet(String hamlet) {
         this.hamlet = hamlet;
     }
 
-
     /**
      * Set a new id for the address.
+     *
      * @param numAddress is the new id.
      */
     public void setNumAddress(int numAddress) {
@@ -352,6 +352,7 @@ public class DTOEstablishment {
 
     /**
      * Set a new phone number for the Establishment.
+     *
      * @param phoneNumberEstablishment is the new phone number.
      */
     public void setPhoneNumberEstablishment(String phoneNumberEstablishment) {
@@ -360,6 +361,7 @@ public class DTOEstablishment {
 
     /**
      * Set the list dtoReferrersActual with new Referrers (DTO).
+     *
      * @param dtoReferrersActual are the new DTOReferrer of this Establishment.
      */
     public void setDtoReferrersActual(List<DTOReferrer> dtoReferrersActual) {
@@ -368,6 +370,7 @@ public class DTOEstablishment {
 
     /**
      * This method return a list of all the id of the referrer who work in this Establishment.
+     *
      * @return listReferrerSelected.
      */
     public List<Integer> getListReferrerSelected() {
@@ -377,6 +380,7 @@ public class DTOEstablishment {
     /**
      * Set a new listReferrerSelected with a list of integer
      * representing the id of the referrer who work in this Establishment.
+     *
      * @param listReferrerSelected is the list with all the id.
      */
     public void setListReferrerSelected(List<Integer> listReferrerSelected) {
