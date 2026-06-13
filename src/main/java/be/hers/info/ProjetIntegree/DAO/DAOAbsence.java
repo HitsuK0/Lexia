@@ -1,9 +1,11 @@
 package be.hers.info.ProjetIntegree.DAO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import be.hers.info.ProjetIntegree.POJO.*;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleTypes;
-import org.xml.sax.SAXException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,8 +15,8 @@ import java.util.List;
  * @author Vatafu Jean
  * @reviewer Nicolas Jean-François, Louis Halet
  */
-
 public class DAOAbsence extends DAO<Absence> {
+    private static final Logger logger = LoggerFactory.getLogger(DAOAbsence.class);
 
     /**
      * Searches for an Absence by its numAbsence.
@@ -54,7 +56,7 @@ public class DAOAbsence extends DAO<Absence> {
                         resultSet.getString("reasons"), resultSet.getBoolean("privateReason"));
             }
         } catch (BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Statut invalide pour l'absence {}", objectToSearchInDB, e);
         } finally {
             closeStatementAndResultSet(preparedStatement, resultSet);
         }
@@ -97,6 +99,7 @@ public class DAOAbsence extends DAO<Absence> {
                 absenceList.add(absence);
             }
         } catch (BadStatusException e) {
+            logger.error("Statut invalide lors du chargement de toutes les absences", e);
             e.printStackTrace();
         } finally {
             closeStatementAndResultSet(preparedStatement, resultSet);
