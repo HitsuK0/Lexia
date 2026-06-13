@@ -1,7 +1,7 @@
 package be.hers.info.ProjetIntegree.Services;
 
 /**
- * @authors Rosman Loïs
+ * @authors Rosman Loïs, Quentin Vanderheyden.
  * @reviewer Nicolas Jean-François
  */
 
@@ -150,10 +150,32 @@ public class AppointmentFormService {
         }
     }
 
-    public boolean updateAppointment(DTOAppointmentForm appointmentDTO, int numAppointment) throws SQLException {
+    /**
+     * This function is used to update an Appointment with new data.
+     * @param appointmentDTO represent an Appointment
+     * @param numAppointment is num of the Appointment, we are trying to update
+     * @return true if the update went well else false
+     * @throws SQLException if the database encounter an issue.
+     */
+    public boolean updateAppointment(DTOAppointmentForm appointmentDTO, int numAppointment) throws SQLException, BadStatusException {
         boolean isUpdated = false;
         Appointment updatedAppointment = new Appointment();
+        Appointment oldAppointment = new DAOAppointment().find(numAppointment);
+
+        DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+
+        TimeSlotPunctual newTimeSlotPunctual = daoTimeSlotPunctual.find(oldAppointment.getTimeSlot().getNumTimeSlot());
+        newTimeSlotPunctual.setStartTime(appointmentDTO.getStartTime());
+        newTimeSlotPunctual.setDuration(appointmentDTO.getEndTime());
+        newTimeSlotPunctual.setStartDate(appointmentDTO.getStartDate());
+        newTimeSlotPunctual.setEndDate(appointmentDTO.getEndDate());
+        daoTimeSlotPunctual.update(newTimeSlotPunctual);
+
+        updatedAppointment.setTimeSlot(newTimeSlotPunctual);
+
         updatedAppointment.setNumAppointment(numAppointment);
+        
+        updatedAppointment.setStatus("en attente");
 
         updatedAppointment.setAppointmentLocals(appointmentDTO.getAppointmentLocals());
 
@@ -163,22 +185,13 @@ public class AppointmentFormService {
             throw new IllegalArgumentException("Bénéficiaire introuvable");
         updatedAppointment.setBeneficiary(beneficiary);
 
-        TimeSlotPunctual newTimeSlotPunctual = new TimeSlotPunctual(
-                appointmentDTO.getStartTime(),
-                appointmentDTO.getEndTime(),
-                appointmentDTO.getStartDate(),
-                appointmentDTO.getEndDate()
-        );
-
-        DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
-        daoTimeSlotPunctual.create(newTimeSlotPunctual);
-        updatedAppointment.setTimeSlot(newTimeSlotPunctual);
-
         DAOEstablishment daoEstablishment = new DAOEstablishment();
         Establishment establishment = daoEstablishment.find(appointmentDTO.getNumEstablishment());
         if(establishment == null)
             throw new IllegalArgumentException("Etablissement introuvable");
         updatedAppointment.setEstablishment(establishment);
+
+
 
         DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
         List<AcademicSkill> listAcademicSkills = new ArrayList<>();
