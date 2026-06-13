@@ -465,7 +465,7 @@ public class CoordinatorController {
         }
         PlanningService p = new PlanningService();
         p.changeStatusAppointment(numAppointment,"annule");
-        return "coordinatrice/planning-gestion";
+        return "redirect:/coordinatrice/planning-gestion";
     }
 
 
