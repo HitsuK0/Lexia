@@ -55,7 +55,7 @@
                     </button>
 
                     <button type="button"
-                            class="btn btn-primary btn-sm d-none d-lg-block"
+                            class="btn btn-primary btn-sm"
                             id="btnAddIndispo"
                             data-bs-toggle="modal"
                             data-bs-target="#modalIndispo">
@@ -74,22 +74,11 @@
                         <option value="" disabled selected>-- Sélectionner --</option>
                     </select>
 
-                    <div class="position-relative" style="max-width: 250px;">
-                        <input type="text"
-                               id="userSearchInput"
-                               class="form-control form-control-sm"
-                               placeholder="Rechercher un nom..."
-                               autocomplete="off"/>
-                        <ul id="suggestionsList"
-                            class="list-group position-absolute z-3 w-100 d-none"
-                            style="top: 100%; left: 0;"></ul>
-                    </div>
-
                     <div id="contextBanner" class="d-none">
-                                        <span class="badge bg-secondary fs-6 fw-normal">
-                                            <i class="bi bi-person-fill me-1"></i>
-                                            Planning de : <strong id="selectedUserName"></strong>
-                                        </span>
+                                                <span class="badge bg-secondary fs-6 fw-normal">
+                                                    <i class="bi bi-person-fill me-1"></i>
+                                                    Planning de : <strong id="selectedUserName"></strong>
+                                                </span>
                         <button type="button"
                                 class="btn btn-link btn-sm text-muted p-0 ms-2"
                                 id="btnResetSelection"
@@ -217,37 +206,13 @@
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Matières</label>
                             <div id="rdvAcademicSkills" class="d-flex flex-wrap gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillMath" value="mathematiques"/>
-                                    <label class="form-check-label small" for="skillMath">Mathématiques</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillHist" value="histoire"/>
-                                    <label class="form-check-label small" for="skillHist">Histoire</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillEn" value="anglais"/>
-                                    <label class="form-check-label small" for="skillEn">Anglais</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillSci" value="sciences"/>
-                                    <label class="form-check-label small" for="skillSci">Sciences</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillGeo" value="geographie"/>
-                                    <label class="form-check-label small" for="skillGeo">Géographie</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillFr" value="francais"/>
-                                    <label class="form-check-label small" for="skillFr">Français</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillDroit" value="droit"/>
-                                    <label class="form-check-label small" for="skillDroit">Droit</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillEco" value="economie"/>
-                                    <label class="form-check-label small" for="skillEco">Économie</label>
+                                <div class="form-check" th:each="skill : ${academicSkillList}">
+                                    <input class="form-check-input skill-check" type="checkbox"
+                                           th:id="'skillAcad' + ${skill.numAcademicSkill}"
+                                           th:value="${skill.numAcademicSkill}"/>
+                                    <label class="form-check-label small"
+                                           th:for="'skillAcad' + ${skill.numAcademicSkill}"
+                                           th:text="${skill.designation}"></label>
                                 </div>
                             </div>
                             <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une matière.</div>
@@ -255,18 +220,14 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Compétences requises</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranscription" checked/>
-                                    <label class="form-check-label small" for="compTranscription">Transcription</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranslitteration" checked/>
-                                    <label class="form-check-label small" for="compTranslitteration">Translittération</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranslation" checked/>
-                                    <label class="form-check-label small" for="compTranslation">Translation</label>
+                            <div class="d-flex flex-wrap gap-3" id="rdvProfessionalSkills">
+                                <div class="form-check" th:each="skill : ${professionalSkillList}">
+                                    <input class="form-check-input comp-check" type="checkbox"
+                                           th:id="'compSkill' + ${skill.numProfessionalSkill}"
+                                           th:value="${skill.numProfessionalSkill}" checked/>
+                                    <label class="form-check-label small"
+                                           th:for="'compSkill' + ${skill.numProfessionalSkill}"
+                                           th:text="${skill.designation}"></label>
                                 </div>
                             </div>
                             <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une compétence requise.</div>
@@ -276,9 +237,9 @@
                             <label class="form-label small fw-semibold">Établissement</label>
                             <select id="rdvEstablishment" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez un établissement</option>
-                                <option value="hers">HERS</option>
-                                <option value="hepl">HEPL</option>
-                                <option value="hepn">HEPN</option>
+                                <option th:each="establishment : ${establishmentList}"
+                                        th:value="${establishment.numEstablishment}"
+                                        th:text="${establishment.name}"></option>
                             </select>
                         </div>
 
@@ -323,6 +284,34 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="modalConfirmCancel" tabindex="-1" aria-labelledby="modalConfirmCancelLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalConfirmCancelLabel">Annuler le rendez-vous</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3 text-center">
+                        <i class="bi bi-exclamation-triangle text-danger fs-1 mb-3 d-block"></i>
+                        <p class="mb-0">Êtes-vous sûr de vouloir annuler ce rendez-vous ?</p>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="btnConfirmCancelRdv">
+                            <i class="bi bi-x-circle me-1"></i> Confirmer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            const SERVER_INTERPRETERS = /*[[${listInterpreter}]]*/ [];
+            const SERVER_BENEFICIARIES = /*[[${listBeneficiary}]]*/ [];
+            /*]]>*/
+        </script>
 
         <script th:src="@{/js/fullcalendar.min.js}"></script>
         <script th:src="@{/js/coordinatrice/planning-gestion.js}"></script>
