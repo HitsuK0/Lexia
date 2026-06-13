@@ -1,8 +1,6 @@
 package be.hers.info.ProjetIntegree.DAO;
 
-
 import be.hers.info.ProjetIntegree.POJO.AcademicSkill;
-import be.hers.info.ProjetIntegree.POJO.ProfessionalSkill;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleTypes;
 
@@ -13,34 +11,35 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
 
-/// @author Vanderheyden Quentin
-/// @reviewer Nicolas Jean-Francois, Halet Louis
-
-public class DAOAcademicSkill extends DAO<AcademicSkill>{
+/**
+ * @author Vanderheyden Quentin
+ * @reviewer Nicolas Jean-François, Louis Halet
+ */
+public class DAOAcademicSkill extends DAO<AcademicSkill> {
 
     /**
      * Search for an AcademicSkill where objectToSearchInDB == numAcademicSkill.
+     *
      * @param objectToSearchInDB is the id of the AcademicSkill.
      * @return null if nothing was found, else an AcademicSkill.
      * @throws SQLException if an errors occurs during the database request.
      */
     @Override
-    public AcademicSkill find(int objectToSearchInDB) throws SQLException{
+    public AcademicSkill find(int objectToSearchInDB) throws SQLException {
         String query = "SELECT numAcademicSkill, designation " +
-                        "FROM AcademicSkill " +
-                        "WHERE numAcademicSkill = ?";
+                "FROM AcademicSkill " +
+                "WHERE numAcademicSkill = ?";
         AcademicSkill as = null;
         PreparedStatement prStat = null;
         ResultSet rs = null;
-        try{
+        try {
             prStat = connect.prepareStatement(query);
             prStat.setInt(1, objectToSearchInDB);
             rs = prStat.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 as = new AcademicSkill(rs.getInt("numAcademicSkill"), rs.getString("designation"));
             }
-        }
-        finally {
+        } finally {
             closeStatementAndResultSet(prStat, rs);
         }
         return as;
@@ -48,6 +47,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
 
     /**
      * Searches all the academic skills to the interpreter
+     *
      * @param numInterpreter the id of the interpreter we are looking for academic skills
      * @return a list containing all the academic skills to the interpreter
      * @throws SQLException In case of any SQL problems encountered with this method.
@@ -78,26 +78,26 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
 
     /**
      * Get all the AcademicSkill in the table AcademicSkill.
+     *
      * @return an empty list if there is no line in AcademicSkill (table),
      * else return a initialise list with all the AcademicSkill.
      * @throws SQLException if an errors occurs during the database request.
      */
     @Override
-    public List<AcademicSkill> findAll() throws SQLException{
+    public List<AcademicSkill> findAll() throws SQLException {
         String query = "SELECT numAcademicSkill, designation " +
-                        "FROM AcademicSkill";
+                "FROM AcademicSkill";
         List<AcademicSkill> list = new ArrayList<AcademicSkill>();
         PreparedStatement prStat = null;
         ResultSet rs = null;
         try {
             prStat = connect.prepareStatement(query);
             rs = prStat.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 AcademicSkill as = new AcademicSkill(rs.getInt("numAcademicSkill"), rs.getString("designation"));
                 list.add(as);
             }
-        }
-        finally {
+        } finally {
             closeStatementAndResultSet(prStat, rs);
         }
         return list;
@@ -105,6 +105,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
 
     /**
      * Insert an AcademicSkill in the table
+     *
      * @param objectToInsertInDB is the AcademicSkill to insert
      * @return true if the AcademicSkill were inserted, otherwise false.
      * @throws SQLException if an errors occurs in the database request
@@ -118,12 +119,12 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
 
         OraclePreparedStatement prStat = null;
         ResultSet rs = null;
-        try{
-            prStat = (OraclePreparedStatement)connect.prepareStatement(query);
+        try {
+            prStat = (OraclePreparedStatement) connect.prepareStatement(query);
             prStat.setString(1, objectToInsertInDB.getDesignation());
             prStat.registerReturnParameter(2, OracleTypes.INTEGER);
             int nbreLigne = prStat.executeUpdate();
-            if(nbreLigne > 0) {
+            if (nbreLigne > 0) {
                 rs = prStat.getReturnResultSet();
                 if (!rs.next()) {
                     throw new SQLException("[DAOAcademicSkill] Impossible de récupérer le numProfessionalSkill généré.");
@@ -131,8 +132,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
                 objectToInsertInDB.setNumAcademicSkill(rs.getInt(1));
                 isCreated = true;
             }
-        }
-        finally{
+        } finally {
             closeStatementAndResultSet(prStat, rs);
         }
         return isCreated;
@@ -140,6 +140,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
 
     /**
      * Update the line where objectToUpdate.getId() == numAcademicSkill.
+     *
      * @param objectToUpdateInDB is the object to update.
      * @return true if the line was updated, else false.
      * @throws SQLException if an errors occurs during the database request.
@@ -151,16 +152,15 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
                 "SET designation = ? " +
                 "WHERE numAcademicSkill = ?";
         PreparedStatement prStat = null;
-        try{
+        try {
             prStat = connect.prepareStatement(query);
             prStat.setString(1, objectToUpdateInDB.getDesignation());
             prStat.setInt(2, objectToUpdateInDB.getNumAcademicSkill());
             int nbreLigne = prStat.executeUpdate();
-            if(nbreLigne > 0){
+            if (nbreLigne > 0) {
                 isUpdated = true;
             }
-        }
-        finally{
+        } finally {
             closeStatement(prStat);
 
         }
@@ -169,6 +169,7 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
 
     /**
      * Delete the line in the table where the id is the same in objectToDeleteFormDB.
+     *
      * @param objectToDeleteFormDB is object to delete in the table.
      * @return true if the line was successfully deleted otherwise false.
      * @throws SQLException if an errors occurs during the database request.
@@ -183,11 +184,10 @@ public class DAOAcademicSkill extends DAO<AcademicSkill>{
             prStat = connect.prepareStatement(query);
             prStat.setInt(1, objectToDeleteFormDB.getNumAcademicSkill());
             int nbreLigne = prStat.executeUpdate();
-            if(nbreLigne > 0){
+            if (nbreLigne > 0) {
                 isDeleted = true;
             }
-        }
-        finally {
+        } finally {
             closeStatement(prStat);
         }
         return isDeleted;

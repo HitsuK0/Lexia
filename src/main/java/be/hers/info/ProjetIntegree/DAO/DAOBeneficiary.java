@@ -24,7 +24,8 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
      * Searches for a Beneficiary with its id
      * The Address is loaded via DAOAddress
      * The Interpreter of reference is loaded via DAOInterpreter
-     *  Appointments are not loaded
+     * Appointments are not loaded
+     *
      * @param objectToSearchInDB the id to search for
      * @return The Beneficiary if found, null otherwise
      * @throws SQLException In case of any SQL problems encountered with this method
@@ -33,7 +34,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
     public Beneficiary find(int objectToSearchInDB) throws SQLException {
         Beneficiary beneficiary = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet =  null;
+        ResultSet resultSet = null;
         String query = "SELECT numBeneficiary, login, password, firstName, lastName, phoneNumber, " +
                 "emailAddress, hourQuota, educationLevel, communicationLanguage, FKnumInterpreter, FKAddress " +
                 "FROM Beneficiary " +
@@ -47,13 +48,13 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             DAOInterpreter interpreterDAO = new DAOInterpreter();
             DAOAddress addressDAO = new DAOAddress();
 
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 Address address = addressDAO.find(resultSet.getInt("FKAddress"));
                 Interpreter interpreter = interpreterDAO.find(resultSet.getInt("FKnumInterpreter"));
 
                 String langStr = resultSet.getString("communicationLanguage");
                 List<String> languages = new ArrayList<>();
-                if(langStr != null && !langStr.isEmpty()) {
+                if (langStr != null && !langStr.isEmpty()) {
                     languages = Arrays.stream(langStr.split(",")).collect(Collectors.toList());
                 }
 
@@ -71,12 +72,13 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
 
     /**
      * Research all beneficiaries whose the referent is the interpreter whose the id is indicated
+     *
      * @param numInterpreter the interpreter's id which is the referent
      * @return a list containing at least one beneficiary if the DB containing at least one
-     *         an empty list if no beneficiary found
+     * an empty list if no beneficiary found
      * @throws SQLException In case of any SQL problems encountered with this method
      */
-    public List<DTOBeneficiaryFormAppointment> findWithInterpreter(int numInterpreter) throws SQLException{
+    public List<DTOBeneficiaryFormAppointment> findWithInterpreter(int numInterpreter) throws SQLException {
         List<DTOBeneficiaryFormAppointment> listBeneficiary = new ArrayList<>();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -89,7 +91,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             preparedStatement.setInt(1, numInterpreter);
             resultSet = preparedStatement.executeQuery();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 DTOBeneficiaryFormAppointment beneficiary = new DTOBeneficiaryFormAppointment(
                         resultSet.getInt("numBeneficiary"),
                         resultSet.getString("lastName"),
@@ -108,6 +110,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
      * For each Beneficiary, the Address is loaded via DAOAddress and the Interpreter
      * of reference is loaded via DAOInterpreter
      * Appointments are not loaded
+     *
      * @return A list containing all the Beneficiaries, an empty list if the table is empty
      * @throws SQLException In case of any SQL problems encountered with this method
      */
@@ -127,13 +130,13 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             DAOInterpreter interpreterDAO = new DAOInterpreter();
             DAOAddress addressDAO = new DAOAddress();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 Address address = addressDAO.find(resultSet.getInt("FKAddress"));
                 Interpreter interpreter = interpreterDAO.find(resultSet.getInt("FKnumInterpreter"));
 
                 String langStr = resultSet.getString("communicationLanguage");
                 List<String> languages = new ArrayList<>();
-                if(langStr != null && !langStr.isEmpty()) {
+                if (langStr != null && !langStr.isEmpty()) {
                     languages = Arrays.stream(langStr.split(",")).collect(Collectors.toList());
                 }
 
@@ -156,6 +159,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
      * For each Beneficiary, the Address is loaded via DAOAddress and the Interpreter
      * of reference is loaded via DAOInterpreter
      * Appointments are not loaded
+     *
      * @return A list containing all the Beneficiaries without his password, an empty list if the table is empty
      * @throws SQLException In case of any SQL problems encountered with this method
      */
@@ -164,13 +168,13 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         String query = "SELECT numBeneficiary, firstName, lastName, phoneNumber, emailAddress " +
-                       "FROM Beneficiary";
+                "FROM Beneficiary";
 
         try {
             preparedStatement = connect.prepareStatement(query);
             resultSet = preparedStatement.executeQuery();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 DTOUser beneficiary = new DTOUser(resultSet.getInt("numBeneficiary"),
                         resultSet.getString("lastName"), resultSet.getString("firstName"),
                         resultSet.getString("phoneNumber"), resultSet.getString("emailAddress"));
@@ -193,6 +197,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
      * Precondition: the reference Interpreter of the Beneficiary, if any, must already exist
      * Precondition: for each Appointment, the associated Establishment and TimeSlot must already exist
      * Precondition: for each Appointment, all Interpreters in its list must already exist
+     *
      * @param objectToInsertInDB the Beneficiary to insert, with its optional appointments
      * @return true if the Beneficiary was successfully inserted, false otherwise
      * @throws SQLException In case of any SQL constraints violations or connection issues
@@ -249,10 +254,10 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             preparedStatementBeneficiary.setInt(11, objectToInsertInDB.getAddress().getNumAddress());
             preparedStatementBeneficiary.registerReturnParameter(12, OracleTypes.INTEGER);
 
-            if(preparedStatementBeneficiary.executeUpdate() > 0) {
+            if (preparedStatementBeneficiary.executeUpdate() > 0) {
                 generateBeneficiaryID = preparedStatementBeneficiary.getReturnResultSet();
 
-                if(!generateBeneficiaryID.next()) {
+                if (!generateBeneficiaryID.next()) {
                     throw new SQLException("[DAOBeneficiary] Impossible de récupérer le numBeneficiary généré.");
                 }
 
@@ -330,6 +335,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
      * if the Beneficiary has no Interpreter of reference then it will be set to null
      * in the database
      * Precondition: the Beneficiary passed as a parameter cannot be null
+     *
      * @param objectToUpdateInDB the Beneficiary to update
      * @return true if the Beneficiary was successfully updated, false otherwise
      * @throws SQLException In case of any SQL problems encountered with this method
@@ -371,7 +377,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             preparedStatement.setInt(10, objectToUpdateInDB.getAddress().getNumAddress());
             preparedStatement.setInt(11, objectToUpdateInDB.getNumBeneficiary());
 
-            if(preparedStatement.executeUpdate() > 0) {
+            if (preparedStatement.executeUpdate() > 0) {
                 isUpdated = true;
             }
         } finally {
@@ -384,6 +390,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
      * Deletes the Beneficiary whose numBeneficiary matches the id
      * of the Beneficiary passed as a parameter
      * Precondition: the Beneficiary passed as a parameter cannot be null
+     *
      * @param objectToDeleteFormDB the Beneficiary to delete
      * @return true if the Beneficiary was successfully deleted, false otherwise
      * @throws SQLException In case of any SQL problems encountered with this method
@@ -398,7 +405,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             preparedStatement = connect.prepareStatement(query);
             preparedStatement.setInt(1, objectToDeleteFormDB.getNumBeneficiary());
 
-            if(preparedStatement.executeUpdate() > 0) {
+            if (preparedStatement.executeUpdate() > 0) {
                 isDeleted = true;
             }
         } finally {
@@ -411,6 +418,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
      * Updates the Beneficiary's password whose numBeneficiary matches the id
      * of the Beneficiary passed as a parameter
      * Precondition: the Beneficiary passed as a parameter cannot be null
+     *
      * @param objectToUpdatePassword the Beneficiary whose password needs to be updated
      * @return true if the Beneficiary's password was successfully updated, false otherwise
      * @throws SQLException In case of any SQL problems encountered with this method
@@ -425,7 +433,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             preparedStatement.setString(1, objectToUpdatePassword.getPassword());
             preparedStatement.setInt(2, objectToUpdatePassword.getNumBeneficiary());
 
-            if(preparedStatement.executeUpdate() > 0) {
+            if (preparedStatement.executeUpdate() > 0) {
                 passwordUpdated = true;
             }
         } finally {
@@ -437,7 +445,8 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
     /**
      * Authenticates a beneficiary using their login and password
      * Builds and returns the full Beneficiary object
-     * @param login the beneficiary's login
+     *
+     * @param login    the beneficiary's login
      * @param password the password, hashed in SQL before comparison
      * @return the authenticated Beneficiary, or null if no match is found
      * @throws SQLException if a database access error occurs
@@ -457,13 +466,13 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
 
             resultSet = preparedStatement.executeQuery();
 
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 DAOAddress daoAddress = new DAOAddress();
                 DAOInterpreter daoInterpreter = new DAOInterpreter();
 
                 String langStr = resultSet.getString("communicationLanguage");
                 List<String> languages = new ArrayList<>();
-                if(langStr != null && !langStr.isEmpty()) {
+                if (langStr != null && !langStr.isEmpty()) {
                     languages = Arrays.stream(langStr.split(",")).toList();
                 }
 
@@ -483,7 +492,8 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
 
     /**
      * Searches for a Beneficiary with the id of interpreter
-     *  Appointments are not loaded
+     * Appointments are not loaded
+     *
      * @param objectToSearchInDB the id to search for
      * @return The list of Beneficiary if found, an empty list otherwise
      * @throws SQLException In case of any SQL problems encountered with this method
@@ -493,15 +503,15 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         String query = "SELECT numBeneficiary, login, password, firstName, lastName, phoneNumber,emailAddress " +
-                "FROM Beneficiary "+
+                "FROM Beneficiary " +
                 "WHERE FKnumInterpreter = ?";
 
         try {
             preparedStatement = connect.prepareStatement(query);
-            preparedStatement.setInt(1,objectToSearchInDB);
+            preparedStatement.setInt(1, objectToSearchInDB);
             resultSet = preparedStatement.executeQuery();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
 
                 Beneficiary beneficiary = new Beneficiary(resultSet.getInt("numBeneficiary"), resultSet.getString("login"),
                         resultSet.getString("password"), resultSet.getString("lastName"),
@@ -517,6 +527,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
 
     /**
      * Return the number of beneficiaries in the beneficiary table
+     *
      * @return the number of beneficiaries in the beneficiary table
      * @throws SQLException In case of any SQL problems encountered with this method
      */
@@ -530,7 +541,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             preparedStatement = connect.prepareStatement(query);
             resultSet = preparedStatement.executeQuery();
 
-            if(resultSet.next())
+            if (resultSet.next())
                 numberBeneficiaries = resultSet.getInt(1);
         } finally {
             closeStatementAndResultSet(preparedStatement, resultSet);
