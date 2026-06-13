@@ -11,10 +11,14 @@ import java.time.LocalTime;
 public class TimeSlotBase extends TimeSlot {
     private int dayNumber;
 
-    /** Minimum day number (1 = Monday) */
+    /**
+     * Minimum day number (1 = Monday)
+     */
     private static final int MIN_DAY = 1;
 
-    /** Maximum day number (7 = Sunday) */
+    /**
+     * Maximum day number (7 = Sunday)
+     */
     private static final int MAX_DAY = 7;
 
     /**
@@ -28,17 +32,18 @@ public class TimeSlotBase extends TimeSlot {
 
     /**
      * Initialize a TimeSlotBase with startTime, duration and dayNumber
+     *
      * @param numTimeSlotBase the id of the time slot
-     * @param startTime the start time of the time slot
-     * @param duration the duration
-     * @param dayNumber the number of the day concerned
+     * @param startTime       the start time of the time slot
+     * @param duration        the duration
+     * @param dayNumber       the number of the day concerned
      * @throws IllegalArgumentException if startTime or duration is null
      *                                  if dayNumber is smaller than MIN_DAY or greater than MAX_DAY
      */
     public TimeSlotBase(int numTimeSlotBase, LocalTime startTime, LocalTime duration, int dayNumber) {
         super(numTimeSlotBase, startTime, duration);
 
-        if(dayNumber < MIN_DAY || dayNumber > MAX_DAY) {
+        if (dayNumber < MIN_DAY || dayNumber > MAX_DAY) {
             throw new IllegalArgumentException("[POJOTimeSlotBase] Le numéro du jour doit être compris entre " + MIN_DAY + " et " + MAX_DAY);
         }
 
@@ -47,8 +52,9 @@ public class TimeSlotBase extends TimeSlot {
 
     /**
      * Initialize a TimeSlotBase with startTime, duration and dayNumber
+     *
      * @param startTime the start time of the time slot
-     * @param duration the duration
+     * @param duration  the duration
      * @param dayNumber the number of the day concerned
      * @throws IllegalArgumentException if startTime or duration is null
      *                                  if dayNumber is smaller than MIN_DAY or greater than MAX_DAY
@@ -56,7 +62,7 @@ public class TimeSlotBase extends TimeSlot {
     public TimeSlotBase(LocalTime startTime, LocalTime duration, int dayNumber) {
         super(startTime, duration);
 
-        if(dayNumber < MIN_DAY || dayNumber > MAX_DAY) {
+        if (dayNumber < MIN_DAY || dayNumber > MAX_DAY) {
             throw new IllegalArgumentException("[POJOTimeSlotBase] Le numéro du jour doit être compris entre " + MIN_DAY + " et " + MAX_DAY);
         }
 
@@ -80,11 +86,11 @@ public class TimeSlotBase extends TimeSlot {
     }
 
     /**
-     * @param dayNumber  the day to set
+     * @param dayNumber the day to set
      * @throws IllegalArgumentException if dayNumber is smaller than MIN_DAY or greater than MAX_DAY
      */
     public void setDayNumber(int dayNumber) {
-        if(dayNumber < MIN_DAY || dayNumber > MAX_DAY) {
+        if (dayNumber < MIN_DAY || dayNumber > MAX_DAY) {
             throw new IllegalArgumentException("[POJOTimeSlotBase] Le numéro du jour doit être compris entre " + MIN_DAY + " et " + MAX_DAY);
         }
 
@@ -94,13 +100,14 @@ public class TimeSlotBase extends TimeSlot {
     /**
      * Dispatches the overlap check to the correct overlapsWith method
      * based on the runtime type of the given TimeSlot
+     *
      * @param timeSlot the TimeSlot to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
      * @throws IllegalArgumentException if timeSlot is null
      */
     @Override
     public boolean overlapsWith(TimeSlot timeSlot) {
-        if(timeSlot == null) {
+        if (timeSlot == null) {
             throw new IllegalArgumentException("[POJOTimeSlotBase] La tranche horaire ne peut pas être nulle");
         }
 
@@ -111,38 +118,39 @@ public class TimeSlotBase extends TimeSlot {
      * Checks if this TimeSlotBase overlaps with a TimeSlotPunctual
      * If punctual's endDate is null, only the punctual's startDate day of week is compared to this dayNumber
      * If punctual's endDate is not null, all days between punctual's startDate and endDate are checked
+     *
      * @param punctual the TimeSlotPunctual to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
      * @throws IllegalArgumentException if punctual is null
-     *                              if punctual's startDate is null
+     *                                  if punctual's startDate is null
      */
     @Override
     public boolean overlapsWith(TimeSlotPunctual punctual) {
-        if(punctual == null) {
+        if (punctual == null) {
             throw new IllegalArgumentException("[POJOTimeSlotBase] La tranche horaire ponctuelle ne peut pas être nulle");
         }
 
-        if(punctual.getStartDate() == null) {
+        if (punctual.getStartDate() == null) {
             throw new IllegalArgumentException("[POJOTimeSlotBase] La date de début de la tranche horaire ponctuelle ne peut pas être nulle");
         }
 
-        if(punctual.getEndDate() == null) {
-            if(punctual.getStartDate().getDayOfWeek().getValue() == this.dayNumber) {
+        if (punctual.getEndDate() == null) {
+            if (punctual.getStartDate().getDayOfWeek().getValue() == this.dayNumber) {
                 LocalTime thisTime = getEndTimeWithTravel();
                 LocalTime otherTime = punctual.getStartTime().plusSeconds(punctual.getDuration().toSecondOfDay());
 
-                if(!thisTime.isBefore(punctual.getStartTime()) && !otherTime.isBefore(this.getStartTime())) {
+                if (!thisTime.isBefore(punctual.getStartTime()) && !otherTime.isBefore(this.getStartTime())) {
                     return true;
                 }
             }
         } else {
             LocalDate current = punctual.getStartDate();
-            while(!current.isAfter(punctual.getEndDate())) {
-                if(current.getDayOfWeek().getValue() == this.dayNumber) {
+            while (!current.isAfter(punctual.getEndDate())) {
+                if (current.getDayOfWeek().getValue() == this.dayNumber) {
                     LocalTime thisTotalTime = getEndTimeWithTravel();
                     LocalTime otherTotalTime = punctual.getStartTime().plusSeconds(punctual.getDuration().toSecondOfDay());
 
-                    if(!thisTotalTime.isBefore(punctual.getStartTime()) && !otherTotalTime.isBefore(this.getStartTime())) {
+                    if (!thisTotalTime.isBefore(punctual.getStartTime()) && !otherTotalTime.isBefore(this.getStartTime())) {
                         return true;
                     }
                 }
@@ -155,24 +163,25 @@ public class TimeSlotBase extends TimeSlot {
     /**
      * Checks if this TimeSlotBase overlaps with another TimeSlotBase
      * Two TimeSlotBase overlap if they have the same dayNumber and their times overlap
+     *
      * @param base the TimeSlotBase to check overlap with
      * @return true if the two TimeSlots overlap, false otherwise
      * @throws IllegalArgumentException if base is null
      */
     @Override
     public boolean overlapsWith(TimeSlotBase base) {
-        if(base == null) {
+        if (base == null) {
             throw new IllegalArgumentException("[POJOTimeSlotBase] La tranche horaire répétitive ne peut pas être nulle");
         }
 
-        if(this.dayNumber != base.getDayNumber()) {
+        if (this.dayNumber != base.getDayNumber()) {
             return false;
         }
 
         LocalTime thisTime = getEndTimeWithTravel();
         LocalTime otherTime = base.getStartTime().plusSeconds(base.getDuration().toSecondOfDay());
 
-        if(!thisTime.isBefore(base.getStartTime()) && !otherTime.isBefore(this.getStartTime())) {
+        if (!thisTime.isBefore(base.getStartTime()) && !otherTime.isBefore(this.getStartTime())) {
             return true;
         }
 

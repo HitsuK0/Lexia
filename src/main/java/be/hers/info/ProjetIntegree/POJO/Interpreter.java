@@ -11,7 +11,7 @@ import org.mindrot.jbcrypt.BCrypt;
  * @reviewer Nicolas Jean-François, Halet Louis
  */
 
-public class Interpreter extends User{
+public class Interpreter extends User {
     private int numInterpreter;
     private int weeklyWorkHours;
     private List<Absence> absences;
@@ -35,12 +35,13 @@ public class Interpreter extends User{
 
     /**
      * Create an interpreter without his numInterpreter
+     *
      * @param dtoUserAdd The interpreter to add
-     * @param address The address of the user
+     * @param address    The address of the user
      * @throws IllegalArgumentException if weeklyWorkHours is negative
      *                                  if address is null
      */
-    public Interpreter(DTOUserAdd dtoUserAdd, Address address){
+    public Interpreter(DTOUserAdd dtoUserAdd, Address address) {
         super("", dtoUserAdd.getPassword(), dtoUserAdd.getLastName(), dtoUserAdd.getFirstName(), dtoUserAdd.getPhoneNumber(),
                 dtoUserAdd.getEmailAddress(), address);
 
@@ -57,13 +58,14 @@ public class Interpreter extends User{
 
     /**
      * Construct an interpreter with several attributes without id
-     * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s password
-     * @param lastName the last name of the interpreter
-     * @param firstName the first name of the interpreter
-     * @param phoneNumber the phone number of the interpreter
-     * @param emailAddress the email address of the interpreter
-     * @param address the address of the interpreter
+     *
+     * @param login           the login so that the interpreter can log in
+     * @param password        the interpreter’s password
+     * @param lastName        the last name of the interpreter
+     * @param firstName       the first name of the interpreter
+     * @param phoneNumber     the phone number of the interpreter
+     * @param emailAddress    the email address of the interpreter
+     * @param address         the address of the interpreter
      * @param weeklyWorkHours the number of hours worked over the week
      * @throws IllegalArgumentException if weeklyWorkHours is negative
      *                                  if address is null
@@ -86,14 +88,15 @@ public class Interpreter extends User{
 
     /**
      * Construct an interpreter with several attributes with id
-     * @param numInterpreter the id of the interpreter
-     * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s password
-     * @param lastName the last name of the interpreter
-     * @param firstName the first name of the interpreter
-     * @param phoneNumber the phone number of the interpreter
-     * @param emailAddress the email address of the interpreter
-     * @param address the address of the interpreter
+     *
+     * @param numInterpreter  the id of the interpreter
+     * @param login           the login so that the interpreter can log in
+     * @param password        the interpreter’s password
+     * @param lastName        the last name of the interpreter
+     * @param firstName       the first name of the interpreter
+     * @param phoneNumber     the phone number of the interpreter
+     * @param emailAddress    the email address of the interpreter
+     * @param address         the address of the interpreter
      * @param weeklyWorkHours the number of hours worked over the week
      * @throws IllegalArgumentException if weeklyWorkHours is negative
      *                                  if address is null
@@ -117,19 +120,20 @@ public class Interpreter extends User{
 
     /**
      * Construct an interpreter with all attributes without id
-     * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s password
-     * @param lastName the last name of the interpreter
-     * @param firstName the first name of the interpreter
-     * @param phoneNumber the phone number of the interpreter
-     * @param emailAddress the email address of the interpreter
-     * @param address the address of the interpreter
-     * @param weeklyWorkHours the number of hours worked over the week
-     * @param absences the absence's list of the interpreter
-     * @param appointmentsList the appointment's list of the interpreter
+     *
+     * @param login                  the login so that the interpreter can log in
+     * @param password               the interpreter’s password
+     * @param lastName               the last name of the interpreter
+     * @param firstName              the first name of the interpreter
+     * @param phoneNumber            the phone number of the interpreter
+     * @param emailAddress           the email address of the interpreter
+     * @param address                the address of the interpreter
+     * @param weeklyWorkHours        the number of hours worked over the week
+     * @param absences               the absence's list of the interpreter
+     * @param appointmentsList       the appointment's list of the interpreter
      * @param professionalSkillsList the professional skill's of the interpreter
-     * @param academicSkillsList the academic skill's of the interpreter
-     * @param beneficiariesList the beneficiaries's list of the interpreter
+     * @param academicSkillsList     the academic skill's of the interpreter
+     * @param beneficiariesList      the beneficiaries's list of the interpreter
      * @throws IllegalArgumentException if weeklyWorkHours is negative
      *                                  if address is null
      *                                  if password is null or empty
@@ -153,20 +157,21 @@ public class Interpreter extends User{
 
     /**
      * Construct an interpreter with all attributes with id
-     * @param numInterpreter the id of the interpreter
-     * @param login the login so that the interpreter can log in
-     * @param password the interpreter’s password
-     * @param lastName the last name of the interpreter
-     * @param firstName the first name of the interpreter
-     * @param phoneNumber the phone number of the interpreter
-     * @param emailAddress the email address of the interpreter
-     * @param address the address of the interpreter
-     * @param weeklyWorkHours the number of hours worked over the week
-     * @param absences the absence's list of the interpreter
-     * @param appointmentsList the appointment's list of the interpreter
+     *
+     * @param numInterpreter         the id of the interpreter
+     * @param login                  the login so that the interpreter can log in
+     * @param password               the interpreter’s password
+     * @param lastName               the last name of the interpreter
+     * @param firstName              the first name of the interpreter
+     * @param phoneNumber            the phone number of the interpreter
+     * @param emailAddress           the email address of the interpreter
+     * @param address                the address of the interpreter
+     * @param weeklyWorkHours        the number of hours worked over the week
+     * @param absences               the absence's list of the interpreter
+     * @param appointmentsList       the appointment's list of the interpreter
      * @param professionalSkillsList the professional skill's of the interpreter
-     * @param academicSkillsList the academic skill's of the interpreter
-     * @param beneficiariesList the beneficiaries's list of the interpreter
+     * @param academicSkillsList     the academic skill's of the interpreter
+     * @param beneficiariesList      the beneficiaries's list of the interpreter
      * @throws IllegalArgumentException if weeklyWorkHours is negative
      *                                  if address is null
      *                                  if password is null or empty
@@ -241,6 +246,7 @@ public class Interpreter extends User{
 
     /**
      * Set the id for the interpreter
+     *
      * @param numInterpreter The id to set
      */
     public void setNumInterpreter(int numInterpreter) {
@@ -249,6 +255,7 @@ public class Interpreter extends User{
 
     /**
      * Set the number of hours worked this week
+     *
      * @param weeklyWorkHours The number of hours worked this week
      */
     public void setWeeklyWorkHours(int weeklyWorkHours) {
@@ -259,6 +266,7 @@ public class Interpreter extends User{
 
     /**
      * Set the absence's list for the interpreter
+     *
      * @param absences The list to set
      */
     public void setAbsences(List<Absence> absences) {
@@ -267,6 +275,7 @@ public class Interpreter extends User{
 
     /**
      * Set the professional skill's list for the interpreter
+     *
      * @param professionalSkillsList The list to set
      */
     public void setProfessionalSkillsList(List<ProfessionalSkill> professionalSkillsList) {
@@ -275,6 +284,7 @@ public class Interpreter extends User{
 
     /**
      * Set the appointment's list for the interpreter
+     *
      * @param appointmentsList The list to set
      */
     public void setAppointmentsList(List<Appointment> appointmentsList) {
@@ -283,6 +293,7 @@ public class Interpreter extends User{
 
     /**
      * Set the academic skill's list for the interpreter
+     *
      * @param academicSkillsList The list to set
      */
     public void setAcademicSkillsList(List<AcademicSkill> academicSkillsList) {
@@ -290,7 +301,8 @@ public class Interpreter extends User{
     }
 
     /**
-     *  Set the beneficiaries's list for the interpreter
+     * Set the beneficiaries's list for the interpreter
+     *
      * @param beneficiariesList The list to set
      */
     public void setBeneficiariesList(List<Beneficiary> beneficiariesList) {
@@ -299,8 +311,8 @@ public class Interpreter extends User{
 
     /**
      * @return a String containing the interpreter id, login, password, last name, first name, phone number, email address,
-     *         address, weekly work hours, list of absences, list of professional skill, list of appointment,
-     *         list of academic skill and list of beneficiaries
+     * address, weekly work hours, list of absences, list of professional skill, list of appointment,
+     * list of academic skill and list of beneficiaries
      */
     @Override
     public String toString() {
