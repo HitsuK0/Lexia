@@ -28,7 +28,6 @@ public class AppointmentFormService {
      * @throws IllegalArgumentException If an element contained in an appointment isn't found
      */
     public boolean createAppointment(DTOAppointmentForm appointmentDTO) throws BadStatusException, SQLException {
-        boolean estCree = false;
         Appointment newAppointment = new Appointment();
 
         newAppointment.setAppointmentLocals(appointmentDTO.getAppointmentLocals());
@@ -38,17 +37,6 @@ public class AppointmentFormService {
         if(beneficiary == null)
             throw new IllegalArgumentException("Bénéficiaire introuvable");
         newAppointment.setBeneficiary(beneficiary);
-
-        TimeSlotPunctual newTimeSlotPunctual = new TimeSlotPunctual(
-                appointmentDTO.getStartTime(),
-                appointmentDTO.getEndTime(),
-                appointmentDTO.getStartDate(),
-                appointmentDTO.getEndDate()
-        );
-
-        DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
-        daoTimeSlotPunctual.create(newTimeSlotPunctual);
-        newAppointment.setTimeSlot(newTimeSlotPunctual);
 
         DAOEstablishment daoEstablishment = new DAOEstablishment();
         Establishment establishment = daoEstablishment.find(appointmentDTO.getNumEstablishment());
@@ -76,11 +64,19 @@ public class AppointmentFormService {
         }
         newAppointment.setProfessionalSkillsNeeded(listProfessionalSkills);
 
-        DAOAppointment daoAppointment = new DAOAppointment();
-        if(daoAppointment.create(newAppointment))
-            estCree = true;
+        TimeSlotPunctual newTimeSlotPunctual = new TimeSlotPunctual(
+                appointmentDTO.getStartTime(),
+                appointmentDTO.getEndTime(),
+                appointmentDTO.getStartDate(),
+                appointmentDTO.getEndDate()
+        );
 
-        return estCree;
+        DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+        daoTimeSlotPunctual.create(newTimeSlotPunctual);
+        newAppointment.setTimeSlot(newTimeSlotPunctual);
+
+        DAOAppointment daoAppointment = new DAOAppointment();
+        return daoAppointment.create(newAppointment);
     }
 
     /**

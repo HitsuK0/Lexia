@@ -2,6 +2,7 @@ package be.hers.info.ProjetIntegree.DTO;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +32,8 @@ public class DTOAppointmentForm {
      * Creates an empty DTOAppointment
      */
     public DTOAppointmentForm() {
+        numAcademicSkillsNeeded = new ArrayList<>();
+        numProfessionalSkillsNeeded = new ArrayList<>();
     }
 
     /**
@@ -118,11 +121,14 @@ public class DTOAppointmentForm {
 
     /**
      * Initialize the list of academic skills identifiers
-     *
+     * If this list in parameter is null. An empty list is initialize
      * @param numAcademicSkillsNeeded the list of academic skills identifiers related to the appointment
      */
     public void setNumAcademicSkillsNeeded(List<Integer> numAcademicSkillsNeeded) {
-        this.numAcademicSkillsNeeded = numAcademicSkillsNeeded;
+        if (numAcademicSkillsNeeded == null)
+            this.numAcademicSkillsNeeded = new ArrayList<>();
+        else
+            this.numAcademicSkillsNeeded = numAcademicSkillsNeeded;
     }
 
     /**
@@ -134,11 +140,14 @@ public class DTOAppointmentForm {
 
     /**
      * Initialize the list of professional skills identifiers
-     *
+     * If this list in parameter is null. An empty list is initialize
      * @param numProfessionalSkillsNeeded the list of professional skills identifiers related to the appointment
      */
     public void setNumProfessionalSkillsNeeded(List<Integer> numProfessionalSkillsNeeded) {
-        this.numProfessionalSkillsNeeded = numProfessionalSkillsNeeded;
+        if (numAcademicSkillsNeeded == null)
+            this.numProfessionalSkillsNeeded = new ArrayList<>();
+        else
+            this.numProfessionalSkillsNeeded = numProfessionalSkillsNeeded;
     }
 
     /**
