@@ -6,164 +6,173 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
-    <head th:replace="~{common/head :: head('Mes Bénéficiaires', '/css/interprete/planning.css')}"></head>
+<head th:replace="~{common/head :: head('Mes Bénéficiaires', '/css/interprete/planning.css')}"></head>
 
-    <body>
-        <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole=${userRole}, userName=${userName}, breadcrumb=null, isAdmin=${isAdmin})}"></nav>
+<body>
+<nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole=${userRole}, userName=${userName}, breadcrumb=null, isAdmin=${isAdmin})}"></nav>
 
-        <div class="container-fluid py-2 px-5">
+<div class="container-fluid py-2 px-5">
 
-            <div class="text-center mb-2">
-                <h1 class="fw-bold text-primary">Planning de vos bénéficiaires</h1>
-            </div>
+    <div class="text-center mb-2">
+        <h1 class="fw-bold text-primary">Planning de vos bénéficiaires</h1>
+    </div>
 
-            <div class="d-flex align-items-center mb-2 px-5" style="position: relative;">
+    <div class="d-flex align-items-center mb-2 px-5" style="position: relative;">
 
-                <div class="btn-group">
-                    <a th:href="@{/interprete/planning}" class="btn btn-outline-primary btn-sm">Mon Planning</a>
-                    <a th:href="@{/interprete/planning/beneficiaires}" class="btn btn-primary btn-sm">Mes Bénéficiaires</a>
-                </div>
+        <div class="btn-group">
+            <a th:href="@{/interprete/planning}" class="btn btn-outline-primary btn-sm">Mon Planning</a>
+            <a th:href="@{/interprete/planning/beneficiaires}" class="btn btn-primary btn-sm">Mes Bénéficiaires</a>
+        </div>
 
-                <div class="d-flex gap-3 small text-muted" style="position: absolute; left: 50%; transform: translateX(-50%);">
-                    <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-hourglass-split" style="font-size:0.7rem;"></i>&nbsp;</span> Demande en attente</span>
-                    <span><span class="badge" style="background-color:#81c784;">&nbsp;<i class="bi bi-check-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Accepté</span>
-                    <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Refusé</span>
-                    <span><span class="badge" style="background-color:#b39ddb;">&nbsp;</span> Horaire de base</span>
-                </div>
+        <div class="d-flex gap-3 small text-muted" style="position: absolute; left: 50%; transform: translateX(-50%);">
+            <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-hourglass-split" style="font-size:0.7rem;"></i>&nbsp;</span> Demande en attente</span>
+            <span><span class="badge" style="background-color:#81c784;">&nbsp;<i class="bi bi-check-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Accepté</span>
+            <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Refusé</span>
+            <span><span class="badge" style="background-color:#b39ddb;">&nbsp;</span> Horaire de base</span>
+        </div>
 
-                <div class="d-flex align-items-center gap-2 ms-auto">
-                    <div class="dropdown">
-                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
-                                id="dropdownBeneficiaire" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="d-flex align-items-center gap-2 ms-auto">
+            <div class="dropdown">
+                <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
+                        id="dropdownBeneficiaire" data-bs-toggle="dropdown" aria-expanded="false">
                                     <span id="beneficiaireSelectionne"
                                           th:text="${#lists.isEmpty(session.beneficiaryList)} ? 'Aucun bénéficiaire' : ${session.beneficiaryList[0].lastName + ' ' + session.beneficiaryList[0].firstName}">
                                         Bénéficiaire
                                     </span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownBeneficiaire">
-                            <li th:each="benef : ${session.beneficiaryList}">
-                                <a class="dropdown-item dropdown-beneficiary" href="#"
-                                   th:data-num="${benef.numBeneficiary}"
-                                   th:data-nom="${benef.lastName + ' ' + benef.firstName}"
-                                   th:text="${benef.lastName + ' ' + benef.firstName}">
-                                </a>
-                            </li>
-                            <li th:if="${#lists.isEmpty(session.beneficiaryList)}">
-                                <span class="dropdown-item text-muted">Aucun bénéficiaire lié</span>
-                            </li>
-                        </ul>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownBeneficiaire">
+                    <li th:each="benef : ${session.beneficiaryList}">
+                        <a class="dropdown-item dropdown-beneficiary" href="#"
+                           th:data-num="${benef.numBeneficiary}"
+                           th:data-nom="${benef.lastName + ' ' + benef.firstName}"
+                           th:text="${benef.lastName + ' ' + benef.firstName}">
+                        </a>
+                    </li>
+                    <li th:if="${#lists.isEmpty(session.beneficiaryList)}">
+                        <span class="dropdown-item text-muted">Aucun bénéficiaire lié</span>
+                    </li>
+                </ul>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm"
+                    data-bs-toggle="modal" data-bs-target="#modalRDV">
+                <i class="bi bi-plus-circle"></i> Demander un RDV
+            </button>
+        </div>
+
+    </div>
+
+    <div id="calendar"></div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const beneficiariesList = /*[[${session.beneficiaryList}]]*/ [];
+    /*]]>*/
+</script>
+
+<div class="modal fade" id="modalRDV" tabindex="-1" aria-labelledby="modalRDVLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold w-100 text-center" id="modalRDVLabel">Demander un Rendez-vous</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body px-4 py-3">
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Bénéficiaires</label>
+                    <select id="rdvBeneficiary" class="form-select form-select-sm">
+                        <option value="" disabled selected>Choisissez un bénéficiaire</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Date</label>
+                    <input type="date" id="rdvDate" class="form-control form-control-sm"/>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Plage Horaire</label>
+                    <div class="d-flex gap-2">
+                        <select id="rdvHourStart" class="form-select form-select-sm" size="5"></select>
+                        <select id="rdvHourEnd" class="form-select form-select-sm" size="5"></select>
                     </div>
-                    <button type="button" class="btn btn-outline-primary btn-sm"
-                            data-bs-toggle="modal" data-bs-target="#modalRDV">
-                        <i class="bi bi-plus-circle"></i> Demander un RDV
-                    </button>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Matière</label>
+                    <select id="rdvAcademicSkill" class="form-select form-select-sm">
+                        <option value="" disabled selected>Choisissez une matière</option>
+                        <option th:each="skill : ${academicSkillList}"
+                                th:value="${skill.numAcademicSkill}"
+                                th:text="${skill.designation}"></option>
+                    </select>
+                    <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une matière.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Compétence requise</label>
+                    <select id="rdvProfessionalSkill" class="form-select form-select-sm">
+                        <option value="" disabled selected>Choisissez une compétence</option>
+                        <option th:each="skill : ${professionalSkillList}"
+                                th:value="${skill.numProfessionalSkill}"
+                                th:text="${skill.designation}"></option>
+                    </select>
+                    <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une compétence requise.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Établissement</label>
+                    <select id="rdvEstablishment" class="form-select form-select-sm">
+                        <option value="" disabled selected>Choisissez un établissement</option>
+                        <option th:each="establishment : ${establishmentList}"
+                                th:value="${establishment.numEstablishment}"
+                                th:text="${establishment.name}"></option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Local </label>
+                    <input type="text" id="rdvLocal" class="form-control form-control-sm" placeholder="Ex: Local M5, Labo 2..."/>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Description <span class="text-muted fw-normal">(facultatif)</span></label>
+                    <textarea id="rdvDescription" class="form-control form-control-sm" rows="2" placeholder="Texte..."></textarea>
                 </div>
 
             </div>
 
-            <div id="calendar"></div>
+            <div class="modal-footer border-top justify-content-center gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary btn-sm px-4" id="btnSendRDV">Envoyez la demande</button>
+            </div>
+
         </div>
+    </div>
+</div>
 
-        <script th:inline="javascript">
-            /*<![CDATA[*/
-            const beneficiariesList = /*[[${session.beneficiaryList}]]*/ [];
-            /*]]>*/
-        </script>
-
-        <div class="modal fade" id="modalRDV" tabindex="-1" aria-labelledby="modalRDVLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalRDVLabel">Demander un Rendez-vous</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body px-4 py-3">
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Bénéficiaires</label>
-                            <select id="rdvBeneficiary" class="form-select form-select-sm">
-                                <option value="" disabled selected>Choisissez un bénéficiaire</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Date</label>
-                            <input type="date" id="rdvDate" class="form-control form-control-sm"/>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Plage Horaire</label>
-                            <div class="d-flex gap-2">
-                                <select id="rdvHourStart" class="form-select form-select-sm" size="5"></select>
-                                <select id="rdvHourEnd" class="form-select form-select-sm" size="5"></select>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Matière</label>
-                            <select id="rdvAcademicSkill" class="form-select form-select-sm">
-                                <option value="" disabled selected>Choisissez une matière</option>
-                            </select>
-                            <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une matière.</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Compétence requise</label>
-                            <select id="rdvProfessionalSkill" class="form-select form-select-sm">
-                                <option value="" disabled selected>Choisissez une compétence</option>
-                            </select>
-                            <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une compétence requise.</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Établissement</label>
-                            <select id="rdvEstablishment" class="form-select form-select-sm">
-                                <option value="" disabled selected>Choisissez un établissement</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Local </label>
-                            <input type="text" id="rdvLocal" class="form-control form-control-sm" placeholder="Ex: Local M5, Labo 2..."/>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Description <span class="text-muted fw-normal">(facultatif)</span></label>
-                            <textarea id="rdvDescription" class="form-control form-control-sm" rows="2" placeholder="Texte..."></textarea>
-                        </div>
-
-                    </div>
-
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm px-4" id="btnSendRDV">Envoyez la demande</button>
-                    </div>
-
-                </div>
+<div class="modal fade" id="modalEvent" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="modalEventTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalEventBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
             </div>
         </div>
+    </div>
+</div>
 
-        <div class="modal fade" id="modalEvent" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title fw-bold" id="modalEventTitle"></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body" id="modalEventBody"></div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+<script th:src="@{/js/fullcalendar.min.js}"></script>
 
-        <script th:src="@{/js/fullcalendar.min.js}"></script>
+<script th:src="@{/js/interprete/planningBeneficiaires.js}"></script>
 
-        <script th:src="@{/js/interprete/planningBeneficiaires.js}"></script>
-
-        <div th:replace="~{common/footer :: footer}"></div>
-    </body>
+<div th:replace="~{common/footer :: footer}"></div>
+</body>
 </html>
