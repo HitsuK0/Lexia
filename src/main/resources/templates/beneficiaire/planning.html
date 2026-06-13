@@ -6,45 +6,52 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
-    <head th:replace="~{common/head :: head('Mon Planning', '/css/interprete/planning.css')}"></head>
+    <head th:replace="~{common/head :: head('Mon Planning', '/css/beneficiaire/planning.css')}"></head>
 
-    <body>
+    <body th:attr="data-num-beneficiary=${numBeneficiary}">
         <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole=${userRole}, userName=${userName}, breadcrumb=null, isAdmin=${isAdmin})}"></nav>
 
-        <div class="container-fluid py-2 px-5">
+        <div class="container-fluid py-2 px-2 px-md-5">
 
             <div class="text-center mb-2">
                 <h1 class="fw-bold text-primary">Votre horaire de la semaine</h1>
             </div>
 
-            <div class="position-relative text-center mb-3 px-5">
-                <div class="d-flex justify-content-center gap-3 small text-muted">
-                    <span><span class="badge" style="background-color:#81c784;">&nbsp;<i class="bi bi-check-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Demande Acceptée</span>
-                    <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-clock" style="font-size:0.7rem;"></i>&nbsp;</span> Demande en attente</span>
-                    <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Demande Refusée/Annulée</span>
-                    <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de Base</span>
-                </div>
-                <div class="position-absolute top-0 end-0 px-5">
-                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalRDV">
+            <div id="planning-toolbar" class="mb-2 px-2 px-md-5">
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <div class="d-none d-lg-flex gap-3 small text-muted">
+                        <span><span class="badge" style="background-color:#81c784;">&nbsp;<i class="bi bi-check-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Demande Acceptée</span>
+                        <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-clock" style="font-size:0.7rem;"></i>&nbsp;</span> Demande en attente</span>
+                        <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Demande Refusée/Annulée</span>
+                        <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de Base</span>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-sm d-none d-lg-block"
+                            data-bs-toggle="modal" data-bs-target="#modalRDV">
                         <i class="bi bi-plus-lg me-1"></i> Demander un RDV
                     </button>
                 </div>
+
+                <div class="d-lg-none mt-2">
+                    <button type="button" class="btn btn-primary btn-sm w-100"
+                            data-bs-toggle="modal" data-bs-target="#modalRDV">
+                        <i class="bi bi-plus-lg me-1"></i> Demander un RDV
+                    </button>
+                </div>
+
             </div>
 
-            <div class="px-5">
-                <div id="calendar"></div>
-            </div>
+            <div id="calendar"></div>
         </div>
 
         <div class="modal fade" id="modalRDV" tabindex="-1" aria-labelledby="modalRDVLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-
                     <div class="modal-header border-bottom">
                         <h5 class="modal-title fw-bold w-100 text-center" id="modalRDVLabel">Demander un rendez-vous</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close position-absolute end-0 me-3"
+                                data-bs-dismiss="modal"></button>
                     </div>
-
                     <div class="modal-body px-4 py-3">
 
                         <div class="row mb-3">
@@ -74,70 +81,34 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small fw-semibold">Matières</label>
-                            <div id="rdvAcademicSkills" class="d-flex flex-wrap gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillMath" value="mathematiques"/>
-                                    <label class="form-check-label small" for="skillMath">Mathématiques</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillHist" value="histoire"/>
-                                    <label class="form-check-label small" for="skillHist">Histoire</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillEn" value="anglais"/>
-                                    <label class="form-check-label small" for="skillEn">Anglais</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillSci" value="sciences"/>
-                                    <label class="form-check-label small" for="skillSci">Sciences</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillGeo" value="geographie"/>
-                                    <label class="form-check-label small" for="skillGeo">Géographie</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillFr" value="francais"/>
-                                    <label class="form-check-label small" for="skillFr">Français</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillDroit" value="droit"/>
-                                    <label class="form-check-label small" for="skillDroit">Droit</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input skill-check" type="checkbox" id="skillEco" value="economie"/>
-                                    <label class="form-check-label small" for="skillEco">Économie</label>
-                                </div>
-                            </div>
-                            <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une matière.</div>
+                            <label class="form-label small fw-semibold">Matière</label>
+                            <select id="rdvAcademicSkill" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une matière</option>
+                                <option th:each="skill : ${academicSkillList}"
+                                        th:value="${skill.numAcademicSkill}"
+                                        th:text="${skill.designation}"></option>
+                            </select>
+                            <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une matière.</div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small fw-semibold">Compétences requises</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranscription" checked/>
-                                    <label class="form-check-label small" for="compTranscription">Transcription</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranslitteration" checked/>
-                                    <label class="form-check-label small" for="compTranslitteration">Translittération</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="compTranslation" checked/>
-                                    <label class="form-check-label small" for="compTranslation">Translation</label>
-                                </div>
-                            </div>
-                            <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une compétence requise.</div>
+                            <label class="form-label small fw-semibold">Compétence requise</label>
+                            <select id="rdvProfessionalSkill" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez une compétence</option>
+                                <option th:each="skill : ${professionalSkillList}"
+                                        th:value="${skill.numProfessionalSkill}"
+                                        th:text="${skill.designation}"></option>
+                            </select>
+                            <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une compétence requise.</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Établissement</label>
                             <select id="rdvEstablishment" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez un établissement</option>
-                                <option value="hers">HERS</option>
-                                <option value="hepl">HEPL</option>
-                                <option value="hepn">HEPN</option>
+                                <option th:each="establishment : ${establishmentList}"
+                                        th:value="${establishment.numEstablishment}"
+                                        th:text="${establishment.name}"></option>
                             </select>
                         </div>
 
@@ -152,259 +123,40 @@
                         </div>
 
                     </div>
-
                     <div class="modal-footer border-top justify-content-center gap-2">
                         <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm" id="btnSend">Envoyer la demande</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnSend">
+                            <i class="bi bi-send me-1"></i> Envoyer la demande
+                        </button>
                     </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="modal fade" id="modalEvent" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="modalEventTitle"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="modalEventBody"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <script th:src="@{/js/fullcalendar.min.js}"></script>
+        <script th:src="@{/js/beneficiaire/planning.js}"></script>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-
-                const events = [
-                    {
-                        title: 'Mathématiques\nTranscription\nMr.Houchard\nLocal M5',
-                        start: '2026-03-02T08:30:00',
-                        end: '2026-03-02T10:30:00',
-                        color: '#b39ddb'
-                    },
-                    {
-                        title: 'Anglais\nTranslittération\nMme.Gloes\nLocal A2',
-                        start: '2026-03-02T11:00:00',
-                        end: '2026-03-02T13:00:00',
-                        color: '#f28b82'
-                    },
-                    {
-                        title: 'Histoire\nTranscription\nMr.brasseur\nLocal n°15',
-                        start: '2026-03-04T10:00:00',
-                        end: '2026-03-04T11:00:00',
-                        color: '#81c784'
-                    },
-                    {
-                        title: 'Géographie\nTranscription\nMr.Brasseur\nLocal n°15',
-                        start: '2026-03-05T11:00:00',
-                        end: '2026-03-05T12:30:00',
-                        color: '#f0ad4e'
-                    },
-                    {
-                        title: 'Sciences\nTranslittération\nMme.Hendrix\nLabo Scientifique N°2',
-                        start: '2026-03-04T14:30:00',
-                        end: '2026-03-04T16:00:00',
-                        color: '#f0ad4e'
-                    }
-                ];
-
-                const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-                    locale: 'fr',
-                    initialView: 'timeGridWeek',
-                    headerToolbar: {
-                        left: 'prev',
-                        center: 'title',
-                        right: 'next'
-                    },
-                    slotMinTime: '08:00:00',
-                    slotMaxTime: '19:00:00',
-                    allDaySlot: false,
-
-                    /* Function that allows you to click on a blank range and this opens the associated modal */
-                    dateClick: function (info) {
-                        const today = new Date().toISOString().split('T')[0];
-                        const clickedDate = info.dateStr.split('T')[0];
-
-                        if (clickedDate < today) return;
-
-                        document.getElementById('dateStart').value = clickedDate;
-                        document.getElementById('dateEnd').value = clickedDate;
-                        document.getElementById('dateStart').min = today;
-                        document.getElementById('dateEnd').min = clickedDate;
-
-                        if (info.dateStr.includes('T')) {
-                            const heureStr = info.dateStr.split('T')[1].substring(0, 5);
-                            const [h, m] = heureStr.split(':').map(Number);
-                            const minutesArrondies = m < 30 ? 0 : 30;
-                            const totalMinutes = h * 60 + minutesArrondies;
-
-                            generateHours('endHour', totalMinutes + 30, 19 * 60);
-                            document.getElementById('startHour').value =
-                                `${String(h).padStart(2, '0')}:${minutesArrondies === 0 ? '00' : '30'}`;
-                        }
-
-                        const modal = new bootstrap.Modal(document.getElementById('modalRDV'));
-                        modal.show();
-                    },
-
-                    height: 'calc(100vh - 170px)',
-                    events: events,
-
-                    /* Allows you to set the icon according to the status of the appointment */
-                    eventContent: function (arg) {
-                        const lines = arg.event.title.split('\n');
-                        const color = arg.event.backgroundColor;
-
-                        const isRefuse  = color === '#f28b82';
-                        const isAttente = color === '#f0ad4e';
-                        const isAccepte = color === '#81c784';
-
-                        const icone = isRefuse
-                            ? '<i class="bi bi-x-circle" style="float:right; font-size:0.85rem;"></i>'
-                            : isAttente
-                                ? '<i class="bi bi-clock" style="float:right; font-size:0.85rem;"></i>'
-                                : isAccepte
-                                    ? '<i class="bi bi-check-circle" style="float:right; font-size:0.85rem;"></i>'
-                                    : '';
-
-                        const html = lines.map((l, i) =>
-                            `<div class="${i === 0 ? 'fw-bold' : 'small'}">${l}</div>`
-                        ).join('');
-
-                        return {html: `<div class="p-1">${icone}${html}</div>`};
-                    }
-                });
-
-                calendar.render();
-
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('dateStart').min = today;
-                document.getElementById('dateEnd').min = today;
-
-                function generateHours(selectId, start, end) {
-                    const select = document.getElementById(selectId);
-                    select.innerHTML = '<option value="" disabled selected>-- Heure --</option>';
-                    for (let t = start; t <= end; t += 5) {
-                        const hh = String(Math.floor(t / 60)).padStart(2, '0');
-                        const mm = String(t % 60).padStart(2, '0');
-                        const option = document.createElement('option');
-                        option.value = `${hh}:${mm}`;
-                        option.textContent = `${hh}:${mm}`;
-                        select.appendChild(option);
-                    }
-                }
-
-                generateHours('startHour', 8 * 60, 18 * 60 + 55);
-                generateHours('endHour', 8 * 60 + 5, 19 * 60);
-
-                document.getElementById('startHour').addEventListener('change', function () {
-                    const [h, m] = this.value.split(':').map(Number);
-                    generateHours('endHour', h * 60 + m + 5, 19 * 60);
-                });
-
-                document.getElementById('dateStart').addEventListener('change', function () {
-                    document.getElementById('dateEnd').min = this.value;
-                    /* Reset dateEnd if it's now before dateStart */
-                    if (document.getElementById('dateEnd').value < this.value) {
-                        document.getElementById('dateEnd').value = this.value;
-                    }
-                });
-
-                document.getElementById('fullDay').addEventListener('change', function () {
-                    document.getElementById('startHour').disabled = this.checked;
-                    document.getElementById('endHour').disabled = this.checked;
-                });
-
-                document.getElementById('btnSend').addEventListener('click', function () {
-                    let valid = true;
-
-                    const dateStart  = document.getElementById('dateStart');
-                    const dateEnd    = document.getElementById('dateEnd');
-                    const startHour  = document.getElementById('startHour');
-                    const endHour    = document.getElementById('endHour');
-                    const fullDay    = document.getElementById('fullDay').checked;
-                    const rdvEstablishment = document.getElementById('rdvEstablishment');
-                    const rdvLocal   = document.getElementById('rdvLocal');
-                    const selectedSkills = document.querySelectorAll('.skill-check:checked');
-                    const skillsError = document.getElementById('rdvAcademicSkillsError');
-                    const atLeastOneComp = Array.from(document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')).some(cb => cb.checked);
-                    const compsError = document.getElementById('rdvCompsError');
-
-                    [dateStart, dateEnd, startHour, endHour, rdvEstablishment, rdvLocal].forEach(el => {
-                        el.classList.remove('is-invalid');
-                        const feedback = el.nextElementSibling;
-                        if (feedback && feedback.classList.contains('invalid-feedback')) feedback.remove();
-                    });
-                    skillsError.style.display = 'none';
-                    compsError.style.display = 'none';
-
-                    function displayError(input, message) {
-                        input.classList.add('is-invalid');
-                        const div = document.createElement('div');
-                        div.classList.add('invalid-feedback');
-                        div.textContent = message;
-                        input.insertAdjacentElement('afterend', div);
-                        valid = false;
-                    }
-
-                    if (!dateStart.value) displayError(dateStart, 'La date de début est obligatoire.');
-                    if (!dateEnd.value) displayError(dateEnd, 'La date de fin est obligatoire.');
-                    if (dateStart.value && dateEnd.value && dateEnd.value < dateStart.value) {
-                        displayError(dateEnd, 'La date de fin doit être après la date de début.');
-                    }
-                    if (selectedSkills.length === 0) {
-                        skillsError.style.display = 'block';
-                        valid = false;
-                    }
-                    if (!atLeastOneComp) {
-                        compsError.style.display = 'block';
-                        valid = false;
-                    }
-                    if (!rdvEstablishment.value) displayError(rdvEstablishment, 'L\'établissement est obligatoire.');
-                    if (!rdvLocal.value.trim()) displayError(rdvLocal, 'Le local est obligatoire.');
-                    if (!fullDay) {
-                        if (!startHour.value) displayError(startHour, 'L\'heure de début est obligatoire.');
-                        if (!endHour.value) displayError(endHour, 'L\'heure de fin est obligatoire.');
-                    }
-
-                    if (!valid) return;
-
-                    bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
-                });
-
-                /* Hides the academic skills error message as soon as at least one is checked */
-                document.querySelectorAll('.skill-check').forEach(cb => {
-                    cb.addEventListener('change', function () {
-                        if (document.querySelectorAll('.skill-check:checked').length > 0) {
-                            document.getElementById('rdvAcademicSkillsError').style.display = 'none';
-                        }
-                    });
-                });
-
-                /* Resets all RDV modal fields when it is closed */
-                document.getElementById('modalRDV').addEventListener('hidden.bs.modal', function () {
-                    document.getElementById('dateStart').value = '';
-                    document.getElementById('dateEnd').value = '';
-                    document.getElementById('dateStart').min = new Date().toISOString().split('T')[0];
-                    document.getElementById('dateEnd').min = new Date().toISOString().split('T')[0];
-                    document.getElementById('rdvLocal').value = '';
-                    document.getElementById('rdvDescription').value = '';
-                    document.getElementById('rdvAcademicSkillsError').style.display = 'none';
-                    document.getElementById('rdvCompsError').style.display = 'none';
-                    document.getElementById('fullDay').checked = false;
-                    document.getElementById('startHour').disabled = false;
-                    document.getElementById('endHour').disabled = false;
-
-                    document.querySelectorAll('.skill-check').forEach(cb => cb.checked = false);
-                    document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')
-                        .forEach(cb => cb.checked = true);
-
-                    document.getElementById('rdvEstablishment').selectedIndex = 0;
-
-                    generateHours('startHour', 8 * 60, 18 * 60 + 55);
-                    generateHours('endHour', 8 * 60 + 5, 19 * 60);
-
-                    ['dateStart', 'dateEnd', 'startHour', 'endHour', 'rdvEstablishment', 'rdvLocal'].forEach(id => {
-                        const el = document.getElementById(id);
-                        el.classList.remove('is-invalid');
-                        const fb = el.nextElementSibling;
-                        if (fb && fb.classList.contains('invalid-feedback')) fb.remove();
-                    });
-                });
-            });
-        </script>
+        <div class="d-flex d-lg-none gap-2 small text-muted flex-wrap justify-content-center mt-3 mb-2 px-3">
+            <span><span class="badge" style="background-color:#81c784;">&nbsp;<i class="bi bi-check-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Acceptée</span>
+            <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-clock" style="font-size:0.7rem;"></i>&nbsp;</span> En attente</span>
+            <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Refusée</span>
+            <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
+        </div>
 
         <div th:replace="~{common/footer :: footer}"></div>
     </body>

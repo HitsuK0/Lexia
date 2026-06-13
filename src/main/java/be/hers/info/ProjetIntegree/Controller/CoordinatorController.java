@@ -334,6 +334,7 @@ public class CoordinatorController {
         }
 
         session.setAttribute("beneficiaryList", beneficiaryList);
+        model.addAttribute("listBeneficiary", beneficiaryList);
         model.addAttribute("activeTab", "planning");
 
         return "coordinatrice/planning-gestion";
@@ -579,6 +580,7 @@ public class CoordinatorController {
         }
 
         session.setAttribute("beneficiaryList", beneficiaryList);
+        model.addAttribute("listBeneficiary", beneficiaryList);
         model.addAttribute("activeTab", "planning");
 
         return "coordinatrice/planning-gestion";
@@ -673,6 +675,7 @@ public class CoordinatorController {
         }
 
         session.setAttribute("beneficiaryList", beneficiaryList);
+        model.addAttribute("listBeneficiary", beneficiaryList);
         model.addAttribute("activeTab", "planning");
 
         return "coordinatrice/planning-gestion";
