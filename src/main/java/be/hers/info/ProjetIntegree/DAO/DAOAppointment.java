@@ -1,14 +1,15 @@
 package be.hers.info.ProjetIntegree.DAO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import be.hers.info.ProjetIntegree.POJO.*;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleTypes;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
  * @reviewer Nicolas Jean-Francois
  */
 public class DAOAppointment extends DAO<Appointment> {
+    private static final Logger logger = LoggerFactory.getLogger(DAOAppointment.class);
 
     /**
      * Precondition :
@@ -582,7 +584,7 @@ public class DAOAppointment extends DAO<Appointment> {
                 try {
                     a.setStatus(resultSet.getString("status"));
                 } catch (BadStatusException ex) {
-
+                    logger.error("Statut invalide pour le RDV {}", numAppointment, ex);
                 }
                 appointmentList.add(a);
 
@@ -668,7 +670,7 @@ public class DAOAppointment extends DAO<Appointment> {
                 try {
                     a.setStatus(resultSet.getString("status"));
                 } catch (BadStatusException ex) {
-
+                    logger.error("Statut invalide pour le RDV {}", numAppointment, ex);
                 }
                 appointmentList.add(a);
 
@@ -814,6 +816,7 @@ public class DAOAppointment extends DAO<Appointment> {
                     absenceList.add(new Absence(resultSet.getInt("numAbsence"), resultSet.getString("status"), timeSlot,
                             resultSet.getString("reasons"), resultSet.getBoolean("privateReason")));
                 } catch (BadStatusException e) {
+                    logger.error("Statut invalide pour une absence de l'interprète {}", i.getNumInterpreter(), e);
                 }
             }
         } finally {
@@ -865,6 +868,7 @@ public class DAOAppointment extends DAO<Appointment> {
                     absenceList.add(new Absence(resultSet.getInt("numAbsence"), resultSet.getString("status"), timeSlot,
                             resultSet.getString("reasons"), resultSet.getBoolean("privateReason")));
                 } catch (BadStatusException e) {
+                    logger.error("Statut invalide pour une absence de l'interprète {}", numInterpreter, e);
                 }
             }
         } finally {
@@ -917,7 +921,7 @@ public class DAOAppointment extends DAO<Appointment> {
                 int numAppointment = resultSet.getInt("numAppointment");
 
                 listLocal = null;
-                String local =  resultSet.getString("local");
+                String local = resultSet.getString("local");
                 if (local != null)
                     listLocal = Arrays.asList(local.split(","));
 
