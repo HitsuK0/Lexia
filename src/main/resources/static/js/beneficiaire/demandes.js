@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function () {
             numProfessionalSkillsNeeded: numProfessionalSkillsNeeded
         };
 
-        fetch('/beneficiaire/demandes/rdv', {
+        fetch('/demandes/rdv', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
