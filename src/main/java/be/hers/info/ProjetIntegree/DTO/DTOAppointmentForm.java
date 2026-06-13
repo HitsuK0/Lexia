@@ -12,6 +12,7 @@ import java.util.List;
  */
 
 public class DTOAppointmentForm {
+
     private List<String> appointmentLocals;
 
     // Each field allows the identification of its own object. This is the form binding.
@@ -34,15 +35,16 @@ public class DTOAppointmentForm {
 
     /**
      * Creates a fully initialised DTOAppointment
-     * @param appointmentLocals the list of appointment locals
-     * @param numBeneficiary the id of the beneficiary related to the appointment
-     * @param numEstablishment the id of the establishment related to the appointment
-     * @param numAcademicSkillsNeeded the list of academic skills identifiers related to the appointment
+     *
+     * @param appointmentLocals           the list of appointment locals
+     * @param numBeneficiary              the id of the beneficiary related to the appointment
+     * @param numEstablishment            the id of the establishment related to the appointment
+     * @param numAcademicSkillsNeeded     the list of academic skills identifiers related to the appointment
      * @param numProfessionalSkillsNeeded the list of professional skills identifiers related to the appointment
-     * @param startDate the date start of the time slot
-     * @param endDate the date end of the time slot
-     * @param startTime the start time of the time slot
-     * @param endTime the end time of the time slot
+     * @param startDate                   the date start of the time slot
+     * @param endDate                     the date end of the time slot
+     * @param startTime                   the start time of the time slot
+     * @param endTime                     the end time of the time slot
      */
     public DTOAppointmentForm(List<String> appointmentLocals, int numBeneficiary,
                               int numEstablishment, List<Integer> numAcademicSkillsNeeded,
@@ -68,6 +70,7 @@ public class DTOAppointmentForm {
 
     /**
      * Initialize the list of appointment locals
+     *
      * @param appointmentLocals the list of appointment locals
      */
     public void setAppointmentLocals(List<String> appointmentLocals) {
@@ -83,6 +86,7 @@ public class DTOAppointmentForm {
 
     /**
      * Initialize the id of the beneficiary
+     *
      * @param numBeneficiary the id of the beneficiary related to the appointment
      */
     public void setNumBeneficiary(int numBeneficiary) {
@@ -98,6 +102,7 @@ public class DTOAppointmentForm {
 
     /**
      * Initialize the id of the establishment
+     *
      * @param numEstablishment the id of the establishment related to the appointment
      */
     public void setNumEstablishment(int numEstablishment) {
@@ -113,6 +118,7 @@ public class DTOAppointmentForm {
 
     /**
      * Initialize the list of academic skills identifiers
+     *
      * @param numAcademicSkillsNeeded the list of academic skills identifiers related to the appointment
      */
     public void setNumAcademicSkillsNeeded(List<Integer> numAcademicSkillsNeeded) {
@@ -128,6 +134,7 @@ public class DTOAppointmentForm {
 
     /**
      * Initialize the list of professional skills identifiers
+     *
      * @param numProfessionalSkillsNeeded the list of professional skills identifiers related to the appointment
      */
     public void setNumProfessionalSkillsNeeded(List<Integer> numProfessionalSkillsNeeded) {
@@ -143,6 +150,7 @@ public class DTOAppointmentForm {
 
     /**
      * Initialize the date start of the time slot
+     *
      * @param startDate the date start of the time slot
      */
     public void setStartDate(LocalDate startDate) {
@@ -158,6 +166,7 @@ public class DTOAppointmentForm {
 
     /**
      * Initialize the date end of the time slot
+     *
      * @param endDate the date end of the time slot
      */
     public void setEndDate(LocalDate endDate) {
@@ -173,6 +182,7 @@ public class DTOAppointmentForm {
 
     /**
      * Initialize the start time of the time slot
+     *
      * @param startTime the start time of the time slot
      */
     public void setStartTime(LocalTime startTime) {
@@ -188,6 +198,7 @@ public class DTOAppointmentForm {
 
     /**
      * Initialize the end time of the time slot
+     *
      * @param endTime the end time of the time slot
      */
     public void setEndTime(LocalTime endTime) {
