@@ -30,6 +30,8 @@ function renderPagination(totalPages) {
         const pagination = document.getElementById(id);
         pagination.innerHTML = '';
 
+        if (totalPages <= 1) return;
+
         const prevLi = document.createElement('li');
         prevLi.className = 'page-item';
         prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-arrow-left"></i> Précédent</a>`;
@@ -57,7 +59,7 @@ function renderPagination(totalPages) {
         const nextLi = document.createElement('li');
         nextLi.className = 'page-item';
         nextLi.innerHTML = `<a class="page-link" href="#">Suivant <i class="bi bi-arrow-right"></i></a>`;
-        if (currentPage === totalPages || totalPages <= 1) {
+        if (currentPage === totalPages) {
             nextLi.style.display = 'none';
         } else {
             nextLi.addEventListener('click', function (e) {
