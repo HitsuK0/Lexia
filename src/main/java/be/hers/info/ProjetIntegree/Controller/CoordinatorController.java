@@ -1070,7 +1070,4 @@ public class CoordinatorController {
         }
         return "coordinatrice/accueil";
     }
-
-
-
 }
