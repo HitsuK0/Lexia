@@ -120,6 +120,16 @@ public class UserDetailService {
     }
 
     /**
+     * Updates the Beneficiary in the database.
+     *
+     * @param beneficiary the beneficiary to update
+     * @throws SQLException if a database error occurs
+     */
+    public void updateBeneficiary(Beneficiary beneficiary) throws SQLException {
+        new DAOBeneficiary().update(beneficiary);
+    }
+
+    /**
      * Updates the login and personal data of the given interpreter in the database.
      *
      * @param interpreter the interpreter to update
