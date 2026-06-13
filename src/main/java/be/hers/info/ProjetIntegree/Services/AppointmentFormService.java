@@ -149,5 +149,62 @@ public class AppointmentFormService {
             return null;
         }
     }
+
+    public boolean updateAppointment(DTOAppointmentForm appointmentDTO, int numAppointment) throws SQLException {
+        boolean isUpdated = false;
+        Appointment updatedAppointment = new Appointment();
+        updatedAppointment.setNumAppointment(numAppointment);
+
+        updatedAppointment.setAppointmentLocals(appointmentDTO.getAppointmentLocals());
+
+        DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+        Beneficiary beneficiary = daoBeneficiary.find(appointmentDTO.getNumBeneficiary());
+        if(beneficiary == null)
+            throw new IllegalArgumentException("Bénéficiaire introuvable");
+        updatedAppointment.setBeneficiary(beneficiary);
+
+        TimeSlotPunctual newTimeSlotPunctual = new TimeSlotPunctual(
+                appointmentDTO.getStartTime(),
+                appointmentDTO.getEndTime(),
+                appointmentDTO.getStartDate(),
+                appointmentDTO.getEndDate()
+        );
+
+        DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+        daoTimeSlotPunctual.create(newTimeSlotPunctual);
+        updatedAppointment.setTimeSlot(newTimeSlotPunctual);
+
+        DAOEstablishment daoEstablishment = new DAOEstablishment();
+        Establishment establishment = daoEstablishment.find(appointmentDTO.getNumEstablishment());
+        if(establishment == null)
+            throw new IllegalArgumentException("Etablissement introuvable");
+        updatedAppointment.setEstablishment(establishment);
+
+        DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
+        List<AcademicSkill> listAcademicSkills = new ArrayList<>();
+        for(int num : appointmentDTO.getNumAcademicSkillsNeeded()){
+            AcademicSkill academicSkillFound = daoAcademicSkill.find(num);
+            if(academicSkillFound == null)
+                throw new IllegalArgumentException("Compétence académique introuvable");
+            listAcademicSkills.add(academicSkillFound);
+        }
+        updatedAppointment.setAcademicSkillsNeeded(listAcademicSkills);
+
+        DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
+        List<ProfessionalSkill> listProfessionalSkills = new ArrayList<>();
+        for(int num : appointmentDTO.getNumProfessionalSkillsNeeded()){
+            ProfessionalSkill professionalSkillFound = daoProfessionalSkill.find(num);
+            if(professionalSkillFound == null)
+                throw new IllegalArgumentException("Compétence professionnelle introuvable");
+            listProfessionalSkills.add(professionalSkillFound);
+        }
+        updatedAppointment.setProfessionalSkillsNeeded(listProfessionalSkills);
+
+        DAOAppointment daoAppointment = new DAOAppointment();
+        if(daoAppointment.update(updatedAppointment))
+            isUpdated = true;
+
+        return isUpdated;
+    }
 }
 

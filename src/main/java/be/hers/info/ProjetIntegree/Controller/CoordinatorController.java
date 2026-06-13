@@ -469,12 +469,18 @@ public class CoordinatorController {
 
 
     @PostMapping("/planning-gestion/{numAppointment}/Modifier")
-    public String updateRDV(@PathVariable int numAppointment,HttpSession session, Model model) {
+    public String updateRDV(@RequestBody DTOAppointmentForm dtoAppointment, @PathVariable int numAppointment,HttpSession session, Model model) {
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null) {
             return "redirect:/login";
         }
-        // TODO
+        try {
+            AppointmentFormService service = new AppointmentFormService();
+            service.updateAppointment(dtoAppointment, numAppointment);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            // renvoyé page d'erreur.
+        }
         return "coordinatrice/planning-gestion";
     }
     /**
