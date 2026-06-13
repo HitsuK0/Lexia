@@ -123,6 +123,39 @@ public class UserDetailController {
     }
 
     /**
+     * Assigns (or changes) the referent Interpreter of a Beneficiary.
+     * Loads the Beneficiary by its id, loads the Interpreter selected by the coordinator,
+     * sets it as the Beneficiary's referent.
+     * Redirects to login if no coordinator is found in session.
+     *
+     * @param id the numBeneficiary of the beneficiary whose referent interpreter is assigned
+     * @param idInterpreter the numInterpreter of the interpreter selected as referent
+     * @param session the current HTTP session
+     * @return a redirect to the beneficiary detail page after saving
+     *         a redirect to "/coordinatrice/utilisateurs" if the beneficiary does not exist
+     *         a redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/beneficiary/{id}/referenceInterpreter")
+    public String beneficiaryReferenceInterpreter(@PathVariable int id,
+                                                  @RequestParam("interpreterId") int idInterpreter,
+                                                  HttpSession session) {
+        if(getCoordinatorFromSession(session) == null) return "redirect:/login";
+
+        try {
+            Beneficiary beneficiary = new UserDetailService().findBeneficiaryById(id);
+            if (beneficiary == null) return "redirect:/coordinatrice/utilisateurs";
+
+            beneficiary.setInterpreter(new UserDetailService().findInterpreterById(idInterpreter));
+            new UserDetailService().updateBeneficiary(beneficiary);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/coordinatrice/utilisateurs/beneficiary/" + id;
+    }
+
+    /**
      * Saves the profile changes for an Interpreter, Resa or Coordinator submitted by the coordinator.
      * Reuses InterpreterProfileService.saveProfile() to update personal data and address.
      * Redirects to login if no coordinator is found in session.
