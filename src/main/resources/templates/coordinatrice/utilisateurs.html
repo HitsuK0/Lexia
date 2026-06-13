@@ -20,9 +20,9 @@
             <div class="d-flex justify-content-between align-items-center mb-2 px-5">
                 <div class="d-flex gap-2" style="max-width: 590px;">
                     <div class="input-group">
-                        <span class="input-group-text border-end-0">
-                            <i class="bi bi-search text-muted"></i>
-                        </span>
+                                <span class="input-group-text border-end-0">
+                                    <i class="bi bi-search text-muted"></i>
+                                </span>
                         <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Rechercher un utilisateur..."/>
                     </div>
                     <select id="roleFilter" class="form-select" style="max-width: 160px; min-width: 160px;">
@@ -45,61 +45,54 @@
                         <tr>
                             <th>Nom et Prénom</th>
                             <th>Rôle</th>
-                            <th>Date Création</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr data-role="resa">
-                        <td>DUBOIS Lucie</td>
+                        <tbody id="tableBody">
+                        <tr th:each="user : ${resas}" data-role="resa">
+                            <td th:text="${user.lastName} + ' ' + ${user.firstName}"></td>
                             <td><span class="badge-role resa">Résa</span></td>
-                            <td>05 Juillet 2020</td>
+                            <td th:text="${user.emailAddress}"></td>
+                            <td th:text="${user.phoneNumber}"></td>
                             <td>
-                                <a th:href="@{/coordinatrice/utilisateurs/1}" class="btn btn-link p-0 text-dark me-2" title="Modifier">
+                                <a th:href="@{/coordinatrice/utilisateurs/interpreter/{id}(id=${user.numUser})}" class="btn btn-link p-0 text-dark me-2" title="Modifier">
                                     <i class="bi bi-pencil-square fs-5"></i>
                                 </a>
-                                <button class="btn btn-link p-0 text-danger" data-bs-toggle="modal" data-bs-target="#modalSuppression" title="Supprimer">
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
                             </td>
                         </tr>
-                        <tr data-role="interprete">
-                        <td>BRASSEUR Frédéric</td>
+                        <tr th:each="user : ${interpreters}" data-role="interprete">
+                            <td th:text="${user.lastName} + ' ' + ${user.firstName}"></td>
                             <td><span class="badge-role interprete">Interprète</span></td>
-                            <td>05 Juillet 2020</td>
+                            <td th:text="${user.emailAddress}"></td>
+                            <td th:text="${user.phoneNumber}"></td>
                             <td>
-                                <a th:href="@{/coordinatrice/utilisateurs/2}" class="btn btn-link p-0 text-dark me-2" title="Modifier">
+                                <a th:href="@{/coordinatrice/utilisateurs/interpreter/{id}(id=${user.numUser})}" class="btn btn-link p-0 text-dark me-2" title="Modifier">
                                     <i class="bi bi-pencil-square fs-5"></i>
                                 </a>
-                                <button class="btn btn-link p-0 text-danger" data-bs-toggle="modal" data-bs-target="#modalSuppression" title="Supprimer">
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
                             </td>
                         </tr>
-                        <tr data-role="beneficiaire">
-                        <td>TOMASI Charles</td>
+                        <tr th:each="user : ${beneficiaries}" data-role="beneficiaire">
+                            <td th:text="${user.lastName} + ' ' + ${user.firstName}"></td>
                             <td><span class="badge-role beneficiaire">Bénéficiaire</span></td>
-                            <td>05 Juillet 2020</td>
+                            <td th:text="${user.emailAddress}"></td>
+                            <td th:text="${user.phoneNumber}"></td>
                             <td>
-                                <a th:href="@{/coordinatrice/utilisateurs/3}" class="btn btn-link p-0 text-dark me-2" title="Modifier">
+                                <a th:href="@{/coordinatrice/utilisateurs/beneficiary/{id}(id=${user.numUser})}" class="btn btn-link p-0 text-dark me-2" title="Modifier">
                                     <i class="bi bi-pencil-square fs-5"></i>
                                 </a>
-                                <button class="btn btn-link p-0 text-danger" data-bs-toggle="modal" data-bs-target="#modalSuppression" title="Supprimer">
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
                             </td>
                         </tr>
-                        <tr data-role="coordinatrice">
-                        <td>DELOGNE Elena</td>
+                        <tr th:each="user : ${coordinators}" data-role="coordinatrice">
+                            <td th:text="${user.lastName} + ' ' + ${user.firstName}"></td>
                             <td><span class="badge-role coordinatrice">Coordinatrice</span></td>
-                            <td>05 Juillet 2020</td>
+                            <td th:text="${user.emailAddress}"></td>
+                            <td th:text="${user.phoneNumber}"></td>
                             <td>
-                                <a th:href="@{/coordinatrice/utilisateurs/4}" class="btn btn-link p-0 text-dark me-2" title="Modifier">
+                                <a th:href="@{/coordinatrice/utilisateurs/interpreter/{id}(id=${user.numUser})}" class="btn btn-link p-0 text-dark me-2" title="Modifier">
                                     <i class="bi bi-pencil-square fs-5"></i>
                                 </a>
-                                <button class="btn btn-link p-0 text-danger" data-bs-toggle="modal" data-bs-target="#modalSuppression" title="Supprimer">
-                                    <i class="bi bi-trash3 fs-5"></i>
-                                </button>
                             </td>
                         </tr>
                         </tbody>
@@ -108,20 +101,7 @@
             </div>
 
             <nav class="mt-4 d-flex justify-content-center" aria-label="Pagination utilisateurs">
-                <ul class="pagination">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#"><i class="bi bi-arrow-left"></i> Previous</a>
-                    </li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-                    <li class="page-item"><a class="page-link" href="#">9</a></li>
-                    <li class="page-item"><a class="page-link" href="#">10</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next <i class="bi bi-arrow-right"></i></a>
-                    </li>
-                </ul>
+                <ul class="pagination" id="pagination"></ul>
             </nav>
 
             <hr class="my-4"/>
@@ -129,34 +109,34 @@
                 <div class="col-md-2">
                     <div class="stat-card text-center p-3">
                         <i class="bi bi-people fs-3 text-muted mb-2 d-block"></i>
-                        <div class="fw-bold fs-4">77</div>
+                        <div class="fw-bold fs-4" th:text="${numberUsers}">77</div>
                         <div class="text-muted small">Utilisateurs Total</div>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="stat-card text-center p-3">
                         <i class="bi bi-person fs-3 text-muted mb-2 d-block"></i>
-                        <div class="fw-bold fs-4">25</div>
+                        <div class="fw-bold fs-4" th:text="${numberInterpreters}">25</div>
                         <div class="text-muted small">Interprètes</div>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="stat-card text-center p-3">
                         <i class="bi bi-person fs-3 text-muted mb-2 d-block"></i>
-                        <div class="fw-bold fs-4">50</div>
+                        <div class="fw-bold fs-4" th:text="${numberBeneficiaries}">50</div>
                         <div class="text-muted small">Bénéficiaires</div>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="stat-card text-center p-3">
                         <i class="bi bi-person fs-3 text-muted mb-2 d-block"></i>
-                        <div class="fw-bold fs-4">2</div>
+                        <div class="fw-bold fs-4" th:text="${numberResas}">2</div>
                         <div class="text-muted small">Resas</div>
                     </div>
                 </div>
             </div>
 
-        </div>
+</div>
 
         <div class="modal fade" id="modalAjout" tabindex="-1" aria-labelledby="modalAjoutLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -165,168 +145,115 @@
                         <h5 class="modal-title fw-bold w-100 text-center" id="modalAjoutLabel">Ajouter un utilisateur</h5>
                         <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="modal-body px-4 py-3">
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label class="form-label small fw-semibold">Nom</label>
-                                <input type="text" class="form-control form-control-sm" placeholder="Ex : DUBOIS"/>
+                    <form method="post" th:action="@{/coordinatrice/utilisateurs/addUser}" th:object="${dtoAddUser}">
+                        <div class="modal-body px-4 py-3">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Nom</label>
+                                    <input type="text" th:field="*{lastName}" class="form-control form-control-sm" placeholder="Ex : DUBOIS"/>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Prénom</label>
+                                    <input type="text" th:field="*{firstName}" class="form-control form-control-sm" placeholder="Ex : Lucie"/>
+                                </div>
                             </div>
-                            <div class="col">
-                                <label class="form-label small fw-semibold">Prénom</label>
-                                <input type="text" class="form-control form-control-sm" placeholder="Ex : Lucie"/>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Email</label>
+                                <input type="email" th:field="*{emailAddress}" class="form-control form-control-sm" placeholder="Ex : lucie.dubois@mail.com"/>
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Email</label>
-                            <input type="email" class="form-control form-control-sm" placeholder="Ex : lucie.dubois@mail.com"/>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Mot de passe</label>
-                            <input type="password" id="passwordInput" class="form-control form-control-sm" placeholder="Mot de passe..."/>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Rôle</label>
-                            <select id="roleSelect" class="form-select form-select-sm">
-                                <option value="" disabled selected>-- Choisir un rôle --</option>
-                                <option value="INTERPRETER">Interprète</option>
-                                <option value="BENEFICIARY">Bénéficiaire</option>
-                                <option value="RESA">Résa</option>
-                                <option value="COORDINATOR">Coordinatrice</option>
-                            </select>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Téléphone</label>
+                                <input type="text" th:field="*{phoneNumber}" class="form-control form-control-sm" placeholder="Ex : 0470123456"/>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Mot de passe</label>
+                                <input type="password" th:field="*{password}" id="passwordInput" class="form-control form-control-sm" placeholder="Mot de passe..."/>
+                            </div>
 
-                        <div id="interpreteField" class="mb-3" style="display: none;">
-                            <label class="form-label small fw-semibold">
-                                Interprète référent
-                                <span class="text-muted fw-normal">(facultatif)</span>
-                            </label>
-                            <select class="form-select form-select-sm">
-                                <option value="" selected>-- Aucun --</option>
-                                <option value="1">BRASSEUR Frédéric</option>
-                                <option value="2">MARTIN Sophie</option>
-                                <option value="3">LEROY Thomas</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm">
-                            <i class="bi bi-plus-lg me-1"></i> Ajouter
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="modalEdition" tabindex="-1" aria-labelledby="modalEditionLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalEditionLabel">Modifier l'utilisateur</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body px-4 py-3">
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label class="form-label small fw-semibold">Nom</label>
-                                <input type="text" class="form-control form-control-sm" value="DUBOIS"/>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Code postal</label>
+                                    <input type="number" th:field="*{postcode}" class="form-control form-control-sm" placeholder="Ex : 5000"/>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Boîte postale <span class="text-muted fw-normal">(facultatif)</span></label>
+                                    <input type="text" th:field="*{postOfficeBox}" class="form-control form-control-sm" placeholder="Ex : 12"/>
+                                </div>
                             </div>
-                            <div class="col">
-                                <label class="form-label small fw-semibold">Prénom</label>
-                                <input type="text" class="form-control form-control-sm" value="Lucie"/>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Localité</label>
+                                    <input type="text" th:field="*{locality}" class="form-control form-control-sm" placeholder="Ex : Namur"/>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Hameau <span class="text-muted fw-normal">(facultatif)</span></label>
+                                    <input type="text" th:field="*{hamlet}" class="form-control form-control-sm" placeholder="Ex : Champion"/>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Rôle</label>
+                                <select id="roleSelect" name="role" class="form-select form-select-sm">
+                                    <option value="" disabled selected>-- Choisir un rôle --</option>
+                                    <option value="2">Interprète</option>
+                                    <option value="3">Bénéficiaire</option>
+                                    <option value="1">Résa</option>
+                                    <option value="4">Coordinatrice</option>
+                                </select>
+                            </div>
+
+                            <div id="interpreteWorkField" class="mb-3" style="display: none;">
+                                <label class="form-label small fw-semibold">Heures de travail hebdomadaires</label>
+                                <input type="number" th:field="*{weeklyWorkHours}" class="form-control form-control-sm" placeholder="Ex : 38"/>
+                            </div>
+
+                            <div id="beneficiaryFields" style="display: none;">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Quota d'heures</label>
+                                    <input type="number" th:field="*{hourQuota}" class="form-control form-control-sm" placeholder="Ex : 10"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Niveau d'études</label>
+                                    <input type="number" th:field="*{educationLevel}" class="form-control form-control-sm" placeholder="Ex : 1"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Langue(s) de communication</label>
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" th:field="*{communicationLanguage}" value="LSFB" id="langLsfb"/>
+                                            <label class="form-check-label small" for="langLsfb">LSFB</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" th:field="*{communicationLanguage}" value="francais_parle_complete" id="langFpc"/>
+                                            <label class="form-check-label small" for="langFpc">Français parlé complété</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" th:field="*{communicationLanguage}" value="ecrit" id="langEcrit"/>
+                                            <label class="form-check-label small" for="langEcrit">Écrit</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="resaCoordinatorWorkField" class="mb-3" style="display: none;">
+                                <label class="form-label small fw-semibold">Heures de travail hebdomadaires</label>
+                                <input type="number" th:field="*{weeklyWorkHours}" class="form-control form-control-sm" placeholder="Ex : 38"/>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Email</label>
-                            <input type="email" class="form-control form-control-sm" value="lucie.dubois@mail.com"/>
+                        <div class="modal-footer border-top justify-content-center gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-lg me-1"></i> Ajouter
+                            </button>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Rôle</label>
-                            <select class="form-select form-select-sm">
-                                <option value="INTERPRETER">Interprète</option>
-                                <option value="BENEFICIARY">Bénéficiaire</option>
-                                <option value="RESA" selected>Résa</option>
-                                <option value="COORDINATOR">Coordinatrice</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary btn-sm">
-                            <i class="bi bi-floppy me-1"></i> Enregistrer
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="modalSuppression" tabindex="-1" aria-labelledby="modalSuppressionLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header border-bottom">
-                        <h5 class="modal-title fw-bold w-100 text-center" id="modalSuppressionLabel">Confirmer la suppression</h5>
-                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body px-4 py-3 text-center">
-                        <i class="bi bi-exclamation-triangle text-danger fs-1 mb-3 d-block"></i>
-                        <p class="mb-1">Vous êtes sur le point de supprimer l'utilisateur</p>
-                        <p class="fw-bold mb-3">DUBOIS Lucie</p>
-                        <p class="text-muted small">Cette action est irréversible.</p>
-                    </div>
-                    <div class="modal-footer border-top justify-content-center gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash3 me-1"></i> Supprimer
-                        </button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
 
         <div th:replace="~{common/footer :: footer}"></div>
 
-        <script>
-            /**
-             * Filters the users table based on the search input and the role filter.
-             * Searches on the full name column (case-insensitive).
-             * Filters by role using the data-role attribute on each row.
-             */
-            document.addEventListener('DOMContentLoaded', function () {
-
-                const searchInput = document.getElementById('searchInput');
-                const roleFilter = document.getElementById('roleFilter');
-                const tableRows = document.querySelectorAll('.table-utilisateurs tbody tr');
-
-                function filterTable() {
-                    const searchValue = searchInput.value.toLowerCase().trim();
-                    const roleValue = roleFilter.value.toLowerCase();
-
-                    tableRows.forEach(function (row) {
-                        const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
-                        const role = row.getAttribute('data-role').toLowerCase();
-
-                        const matchesSearch = name.includes(searchValue);
-                        const matchesRole = roleValue === '' || role === roleValue;
-
-                        row.style.display = matchesSearch && matchesRole ? '' : 'none';
-                    });
-                }
-
-                searchInput.addEventListener('input', filterTable);
-                roleFilter.addEventListener('change', filterTable);
-
-                /**
-                 * Shows or hides the interpreter reference field
-                 * based on the selected role in the add user modal.
-                 */
-                const roleSelect = document.getElementById('roleSelect');
-                const interpreteField = document.getElementById('interpreteField');
-
-                roleSelect.addEventListener('change', function () {
-                    interpreteField.style.display = this.value === 'BENEFICIARY' ? 'block' : 'none';
-                });
-            });
-        </script>
-
+        <script th:src="@{/js/coordinatrice/utilisateurs.js}"></script>
+        
     </body>
 </html>

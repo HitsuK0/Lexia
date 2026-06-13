@@ -1,12 +1,21 @@
 package be.hers.info.ProjetIntegree.DAO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * @author Louis Halet
+ * @reviewer Nicolas Jean-François
+ */
 public abstract class DAO<T> {
+    private static final Logger logger = LoggerFactory.getLogger(DAO.class);
+
     /**
      * the connection to the database.
      */
@@ -14,28 +23,30 @@ public abstract class DAO<T> {
 
     /**
      * Close the PreparedStatement given in param.
+     *
      * @param statement is the statement to close.
      */
-    public void closeStatement(PreparedStatement statement){
-        if(statement != null){
-            try{
+    public void closeStatement(PreparedStatement statement) {
+        if (statement != null) {
+            try {
                 statement.close();
-            }catch(SQLException e){
-                e.printStackTrace();
+            } catch (SQLException e) {
+                logger.error("Erreur lors de la fermeture du PreparedStatement", e);
             }
         }
     }
 
     /**
      * Close the ResultSet and the PrepareStatement given in param.
+     *
      * @param resultSet is the ResutlSet to close.
      */
-    public void closeStatementAndResultSet(PreparedStatement pr, ResultSet resultSet){
-        if(resultSet != null){
-            try{
+    public void closeStatementAndResultSet(PreparedStatement pr, ResultSet resultSet) {
+        if (resultSet != null) {
+            try {
                 resultSet.close();
-            }catch(SQLException e){
-                e.printStackTrace();
+            } catch (SQLException e) {
+                logger.error("Erreur lors de la fermeture du ResultSet", e);
             }
         }
         closeStatement(pr);
@@ -43,6 +54,7 @@ public abstract class DAO<T> {
 
     /**
      * Searches for the object whose identifier matches the String passed as a parameter.
+     *
      * @param objectToSearchInDB the identifier of the object to search for in the table.
      * @return The object whose identifier matches the String passed as a parameter. null if there is no object matching the String passed as a parameter.
      * @throws SQLException In case of any SQL problems encountered with this method.
@@ -51,6 +63,7 @@ public abstract class DAO<T> {
 
     /**
      * Create a list containing all the objects in the table.
+     *
      * @return a list containing all the objects in the table or an empty list if the table is empty.
      * @throws SQLException In case of any SQL problems encountered with this method.
      */
@@ -59,6 +72,7 @@ public abstract class DAO<T> {
     /**
      * Precondition: the object passed as a parameter cannot be null.
      * Adds the object passed as a parameter to the table.
+     *
      * @param objectToInsertInDB the object to be inserted into the table.
      * @return true if the object was successfully inserted, false otherwise.
      * @throws SQLException In case of any SQL problems encountered with this method.
@@ -68,6 +82,7 @@ public abstract class DAO<T> {
     /**
      * Precondition: the object passed as a parameter cannot be null.
      * Updates all object fields in the table (except its identifier) ​​that correspond to the object identifier passed as a parameter.
+     *
      * @param objectToUpdateInDB the object containing the identifier and the fields to be updated in the table.
      * @return true if the object has been successfully updated, false otherwise.
      * @throws SQLException In case of any SQL problems encountered with this method.
@@ -77,6 +92,7 @@ public abstract class DAO<T> {
     /**
      * Precondition: the object passed as a parameter cannot be null.
      * Deletes the object where its identifier matches the identifier of the object passed as a parameter.
+     *
      * @param objectToDeleteFormDB the object to be deleted from the table.
      * @return true if the object was successfully deleted, false otherwise.
      * @throws SQLException In case of any SQL problems encountered with this method.

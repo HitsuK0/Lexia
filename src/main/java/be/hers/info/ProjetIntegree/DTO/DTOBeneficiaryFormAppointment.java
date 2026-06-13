@@ -8,15 +8,17 @@ package be.hers.info.ProjetIntegree.DTO;
  */
 
 public class DTOBeneficiaryFormAppointment {
+
     private int numBeneficiary;
     private String lastName;
     private String firstName;
 
     /**
      * Initialize a beneficiary with numBeneficiary, login, lastName, firstName
+     *
      * @param numBeneficiary the id of the beneficiary
-     * @param lastName the last name of the beneficiary
-     * @param firstName the first name of the beneficiary
+     * @param lastName       the last name of the beneficiary
+     * @param firstName      the first name of the beneficiary
      */
     public DTOBeneficiaryFormAppointment(int numBeneficiary, String lastName, String firstName) {
         this.numBeneficiary = numBeneficiary;
@@ -33,6 +35,7 @@ public class DTOBeneficiaryFormAppointment {
 
     /**
      * Initialize the id of the beneficiary
+     *
      * @param numBeneficiary the id of the beneficiary
      */
     public void setNumBeneficiary(int numBeneficiary) {
@@ -48,6 +51,7 @@ public class DTOBeneficiaryFormAppointment {
 
     /**
      * Initialize the last name of the beneficiary
+     *
      * @param lastName the last name of the beneficiary
      */
     public void setLastName(String lastName) {
@@ -63,6 +67,7 @@ public class DTOBeneficiaryFormAppointment {
 
     /**
      * Initialize the first name of the beneficiary
+     *
      * @param firstName the first name of the beneficiary
      */
     public void setFirstName(String firstName) {

@@ -8,13 +8,15 @@ package be.hers.info.ProjetIntegree.DTO;
  */
 
 public class DTOEstablishmentFormAppointment {
+
     private int numEstablishment;
     private String name;
 
     /**
      * Initialize an establishment with his id and his name
+     *
      * @param numEstablishment the id of the establishment
-     * @param name the name of the establishment
+     * @param name             the name of the establishment
      */
     public DTOEstablishmentFormAppointment(int numEstablishment, String name) {
         this.name = name;
@@ -30,6 +32,7 @@ public class DTOEstablishmentFormAppointment {
 
     /**
      * Initialize the id of the establishment
+     *
      * @param numEstablishment the id of the establishment
      */
     public void setNumEstablishment(int numEstablishment) {
@@ -45,6 +48,7 @@ public class DTOEstablishmentFormAppointment {
 
     /**
      * Initialize the name of the establishment
+     *
      * @param name the name of the establishment
      */
     public void setName(String name) {
