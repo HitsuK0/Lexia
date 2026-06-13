@@ -113,4 +113,22 @@ public class PlanningService {
         }
         return list;
     }
+    /**
+     * Update the status of Appointment
+     * @param numAppointment The numAppointment
+     * @param Status The status to update
+     */
+    public void changeStatusAppointment(int numAppointment, String Status){
+        DAOAppointment daoAppointment = new DAOAppointment();
+        try{
+            Appointment a = daoAppointment.find(numAppointment);
+            if(a != null) {
+                a.setStatus(Status);
+                daoAppointment.update(a);
+            }
+
+        }catch(SQLException | BadStatusException e){
+            e.printStackTrace();
+        }
+    }
 }

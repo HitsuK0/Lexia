@@ -122,6 +122,9 @@ public class InterpreterController {
                     case "refuse":
                         event.put("color","#f28b82");
                         break;
+                    case "annule":
+                        event.put("color", "#f28b82");
+                        break;
                 }
             }else{
                 TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
@@ -282,6 +285,9 @@ public class InterpreterController {
                         event.put("color","#81c784");
                         break;
                     case "refuse":
+                        event.put("color","#f28b82");
+                        break;
+                    case "annule":
                         event.put("color","#f28b82");
                         break;
                 }
