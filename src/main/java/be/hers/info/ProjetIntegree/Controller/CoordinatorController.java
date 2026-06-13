@@ -1019,23 +1019,6 @@ public class CoordinatorController {
         return "coordinatrice/utilisateurs";
     }
 
-    // Temporaire
-    @GetMapping("/utilisateurs/{id}")
-    public String utilisateurDetail(@PathVariable String id, Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("isAdmin", true);
-
-        switch (id) {
-            case "1" -> model.addAttribute("userRole", "RESA");
-            case "2" -> model.addAttribute("userRole", "INTERPRETER");
-            case "3" -> model.addAttribute("userRole", "BENEFICIARY");
-            case "4" -> model.addAttribute("userRole", "COORDINATOR");
-            default -> model.addAttribute("userRole", "INTERPRETER");
-        }
-
-        return "coordinatrice/utilisateur-detail";
-    }
-
     /**
      * Create a new coordinator, interpreter or beneficiary in the database using the datas submitted from the form
      * @param session the current HTTP session
