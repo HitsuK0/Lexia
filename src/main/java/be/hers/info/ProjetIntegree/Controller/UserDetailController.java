@@ -216,6 +216,159 @@ public class UserDetailController {
         return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;
     }
 
+    /** Adds a ProfessionalSkill to an Interpreter, Resa or Coordinator.
+     * Loads the interpreter to verify it exists, then checks the skills it already owns
+     * to avoid inserting a duplicate
+     * Redirects to login if no coordinator is found in session
+     *
+     * @param id the numInterpreter of the interpreter receiving the skill
+     * @param idSkill the numProfessionalSkill of the skill to add
+     * @param session the current HTTP session
+     * @return a redirect to the interpreter detail page after the operation
+     *         a redirect to "/coordinatrice/utilisateurs" if the interpreter does not exist
+     *         or a redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/interpreter/{id}/addProfessionalSkill")
+    public String addProfessionalSkill(@PathVariable int id,
+                                       @RequestParam("skillId") int idSkill,
+                                       HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            UserDetailService userDetailService = new UserDetailService();
+
+            Interpreter interpreter = userDetailService.findInterpreterById(id);
+            if (interpreter == null) return "redirect:/coordinatrice/utilisateurs";
+
+            List<ProfessionalSkill> ownedSkills = userDetailService.getProfessionalSkillsOfInterpreter(id);
+            boolean alreadyOwned = ownedSkills.stream()
+                    .anyMatch(s -> s.getNumProfessionalSkill() == idSkill);
+
+            if (!alreadyOwned) {
+                new InterpreterProfileService().addProfessionalSkill(interpreter.getNumInterpreter(), idSkill);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;
+    }
+
+    /**
+     * Removes a ProfessionalSkill from an Interpreter, Resa or Coordinator
+     * Loads the interpreter to verify it exists, then deletes the link between the interpreter
+     * and the skill in ProfessionalSkillInterpreter
+     * Redirects to login if no coordinator is found in session
+     *
+     * @param id the numInterpreter of the interpreter losing the skill
+     * @param idSkill the numProfessionalSkill of the skill to remove
+     * @param session the current HTTP session
+     * @return a redirect to the interpreter detail page after the operation
+     *         a redirect to "/coordinatrice/utilisateurs" if the interpreter does not exist
+     *         or a redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/interpreter/{id}/deleteProfessionalSkill")
+    public String deleteProfessionalSkill(@PathVariable int id,
+                                          @RequestParam("skillId") int idSkill,
+                                          HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            Interpreter interpreter = new UserDetailService().findInterpreterById(id);
+            if (interpreter == null) return "redirect:/coordinatrice/utilisateurs";
+
+            new InterpreterProfileService().deleteProfessionalSkill(interpreter.getNumInterpreter(), idSkill);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;
+    }
+
+    /**
+     * Adds an AcademicSkill to an Interpreter, Resa or Coordinator
+     * Loads the interpreter to verify it exists, then checks the skills it already owns
+     * to avoid inserting a duplicate
+     * Redirects to login if no coordinator is found in session
+     *
+     * @param id the numInterpreter of the interpreter receiving the skill
+     * @param idSkill the numAcademicSkill of the skill to add
+     * @param session the current HTTP session
+     * @return a redirect to the interpreter detail page after the operation
+     *         a redirect to "/coordinatrice/utilisateurs" if the interpreter does not exist
+     *         or a redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/interpreter/{id}/addAcademicSkill")
+    public String addAcademicSkill(@PathVariable int id,
+                                   @RequestParam("skillId") int idSkill,
+                                   HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            UserDetailService userDetailService = new UserDetailService();
+
+            Interpreter interpreter = userDetailService.findInterpreterById(id);
+            if (interpreter == null) return "redirect:/coordinatrice/utilisateurs";
+
+            List<AcademicSkill> ownedSkills = userDetailService.getAcademicSkillsOfInterpreter(id);
+            boolean alreadyOwned = ownedSkills.stream()
+                    .anyMatch(s -> s.getNumAcademicSkill() == idSkill);
+
+            if (!alreadyOwned) {
+                new InterpreterProfileService().addAcademicSkill(interpreter.getNumInterpreter(), idSkill);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;
+    }
+
+    /**
+     * Removes an AcademicSkill from an Interpreter, Resa or Coordinator
+     * Loads the interpreter to verify it exists, then deletes the link between the interpreter
+     * and the skill in AcademicSkillInterpreter
+     * Redirects to login if no coordinator is found in session
+     *
+     * @param id the numInterpreter of the interpreter losing the skill
+     * @param idSkill the numAcademicSkill of the skill to remove
+     * @param session the current HTTP session
+     * @return a redirect to the interpreter detail page after the operation
+     *         a redirect to "/coordinatrice/utilisateurs" if the interpreter does not exist
+     *         or a redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/interpreter/{id}/deleteAcademicSkill")
+    public String deleteAcademicSkill(@PathVariable int id,
+                                      @RequestParam("skillId") int idSkill,
+                                      HttpSession session) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            Interpreter interpreter = new UserDetailService().findInterpreterById(id);
+            if (interpreter == null) return "redirect:/coordinatrice/utilisateurs";
+
+            new InterpreterProfileService().deleteAcademicSkill(interpreter.getNumInterpreter(), idSkill);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;
+    }
+
     /**
      * Resets the password of a Beneficiary.
      * The new password is stored as-is — the DB trigger will hash it on UPDATE.
