@@ -15,12 +15,12 @@ public class Absence {
     /**
      * Create an Absence with all attribute
      *
-     * @param numAbsence the numero of the absence
-     * @param status the status of the absence (it can only be among these values: 'en attente', 'accepte' or 'refuse')
-     * @param timeSlot the time slot of absence
-     * @param reason the reason of absence, can be null
+     * @param numAbsence    the numero of the absence
+     * @param status        the status of the absence (it can only be among these values: 'en attente', 'accepte' or 'refuse')
+     * @param timeSlot      the time slot of absence
+     * @param reason        the reason of absence, can be null
      * @param privateReason the privateReason of absence, defines if the reason is private or not
-     * @throws BadStatusException If the absence status is not among these values: 'en attente', 'accepte' or 'refuse'
+     * @throws BadStatusException       If the absence status is not among these values: 'en attente', 'accepte' or 'refuse'
      * @throws IllegalArgumentException if timeSlot is null
      */
     public Absence(int numAbsence, String status, TimeSlot timeSlot, String reason, boolean privateReason) throws BadStatusException {
@@ -32,7 +32,7 @@ public class Absence {
         this.status = status;
         this.timeSlot = timeSlot;
 
-        if(reason == null) {
+        if (reason == null) {
             this.reason = "";
         } else {
             this.reason = reason;
@@ -44,9 +44,9 @@ public class Absence {
     /**
      * Create an Absence without his numAbsence, no reason and privateReason is false
      *
-     * @param status the status of the absence (it can only be among these values: 'en attente', 'accepte' or 'refuse')
+     * @param status   the status of the absence (it can only be among these values: 'en attente', 'accepte' or 'refuse')
      * @param timeSlot the time slot of absence
-     * @throws BadStatusException   If the absence status is not among these values: 'en attente', 'accepte' or 'refuse'
+     * @throws BadStatusException       If the absence status is not among these values: 'en attente', 'accepte' or 'refuse'
      * @throws IllegalArgumentException if timeSlot is null
      */
     public Absence(String status, TimeSlot timeSlot) throws BadStatusException {
@@ -98,7 +98,7 @@ public class Absence {
      * @param reason the reason of absence
      */
     public void setReason(String reason) {
-        if(reason == null) {
+        if (reason == null) {
             this.reason = "";
         } else {
             this.reason = reason;
@@ -177,6 +177,7 @@ public class Absence {
             throw new IllegalArgumentException("[POJOAbsence] Le numéro de l'absence ne peut pas être négatif");
         this.numAbsence = numAbsence;
     }
+
     /**
      *
      * @return a string that contains all attribute of an absence
@@ -188,19 +189,19 @@ public class Absence {
         sb.append("\nNumAbsence: ").append(this.numAbsence);
         sb.append("\nStatus de l'absence: ").append(this.status);
 
-        if(this.reason == null || this.reason.isEmpty()) {
+        if (this.reason == null || this.reason.isEmpty()) {
             sb.append("\nRaison de l'absence: Non renseignée");
         } else {
             sb.append("\nRaison de l'absence: ").append(this.reason);
         }
 
-        if(this.privateReason) {
+        if (this.privateReason) {
             sb.append("\nRaison privée: Oui");
         } else {
             sb.append("\nRaison privée: Non");
         }
 
-        if(this.timeSlot == null) {
+        if (this.timeSlot == null) {
             sb.append("\nTranche horaire: Non renseigné");
         } else {
             sb.append("\nTranche horaire: ").append(this.timeSlot.toString());

@@ -25,6 +25,7 @@ public class ProfessionalSkill {
 
     /**
      * Constructs a ProfessionalSkill with several attributs without ID
+     *
      * @param designation The skill of the professional skill
      */
     public ProfessionalSkill(String designation) {
@@ -33,8 +34,9 @@ public class ProfessionalSkill {
 
     /**
      * Constructs a ProfessionalSkill with several attributs and ID
+     *
      * @param numProfessionalSkill The ID of the professional skill
-     * @param designation The skill of the professional skill
+     * @param designation          The skill of the professional skill
      * @throws IllegalArgumentException if numProfessionalSkill is negative
      */
     public ProfessionalSkill(int numProfessionalSkill, String designation) {
@@ -44,8 +46,10 @@ public class ProfessionalSkill {
         this.numProfessionalSkill = numProfessionalSkill;
         this.designation = designation;
     }
+
     /**
      * Returns the designation of this professional skill.
+     *
      * @return the designation string
      */
     public String getDesignation() {
@@ -54,6 +58,7 @@ public class ProfessionalSkill {
 
     /**
      * Set the skill's designation
+     *
      * @param designation The new designation to set
      */
     public void setDesignation(String designation) {
@@ -63,15 +68,16 @@ public class ProfessionalSkill {
     /**
      * @return The ID of this professional skill
      */
-    public int getNumProfessionalSkill(){
+    public int getNumProfessionalSkill() {
         return numProfessionalSkill;
     }
 
     /**
      * Set the identifiant for the professional skill
+     *
      * @param numProfessionalSkill The new identifiant to set
      */
-    public void setNumProfessionalSkill(int numProfessionalSkill){
+    public void setNumProfessionalSkill(int numProfessionalSkill) {
         if (numProfessionalSkill < 0)
             throw new IllegalArgumentException("[POJOProfessionalSkill] L'identifiant de la compétence métier ne peut pas être négatif");
 
@@ -90,11 +96,12 @@ public class ProfessionalSkill {
 
     /**
      * Compare the object obj with this
+     *
      * @param obj the object to be compared
      * @return true if the object is equal to this, false otherwise
      */
     public boolean equals(ProfessionalSkill obj) {
-        if(obj == null) return false;
+        if (obj == null) return false;
         else if (this == obj) return true;
         else return this.numProfessionalSkill == obj.numProfessionalSkill;
     }
