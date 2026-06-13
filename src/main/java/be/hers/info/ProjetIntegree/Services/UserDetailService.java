@@ -140,6 +140,16 @@ public class UserDetailService {
     }
 
     /**
+     * Updates the Beneficiary in the database.
+     *
+     * @param beneficiary the beneficiary to update
+     * @throws SQLException if a database error occurs
+     */
+    public void updateBeneficiary(Beneficiary beneficiary) throws SQLException {
+        new DAOBeneficiary().update(beneficiary);
+    }
+
+    /**
      * Inserts a new Coordinator row in the database.
      *
      * @param coordinator the coordinator to create

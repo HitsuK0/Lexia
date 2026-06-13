@@ -30,7 +30,6 @@ public class CoordinatorController {
     /**
      * Retrieves the connected coordinator from the session.
      * Returns null if no user is connected or if the connected user is not a Coordinator.
-     *
      * @param session the current HTTP session
      * @return the connected Coordinator, or null if not found
      */
@@ -43,12 +42,10 @@ public class CoordinatorController {
         return null;
     }
 
-    /**
-     * Controller for the pages named "Mon profil"
+    /** Controller for the pages named "Mon profil"
      * Displays the profile page for the connected Coordinator.
-     *
      * @param session the current HTTP session
-     * @param model   the Spring UI model
+     * @param model the Spring UI model
      * @return the view "/interprete/profil", or a redirect to "/login"
      */
     @GetMapping("/profil")
@@ -68,14 +65,12 @@ public class CoordinatorController {
         return "interprete/profil";
     }
 
-    /**
-     * Controller for the page "Mon profil" of the connected coordinator.
+    /** Controller for the page "Mon profil" of the connected coordinator.
      * Handles the submission of the profile edit form.
      * Saves the modified personal data.
      * The login and password are NOT modified here.
-     *
      * @param profileDTO the profile form data submitted by the user
-     * @param session    the current HTTP session
+     * @param session the current HTTP session
      * @return a redirect to "/interprete/profil" after saving, or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil")
@@ -96,15 +91,13 @@ public class CoordinatorController {
         return "redirect:/interprete/profil";
     }
 
-    /**
-     * Controller for the page "Mon profil" of the connected coordinator.
+    /** Controller for the page "Mon profil" of the connected coordinator.
      * Handles the submission of the password change modal.
-     *
      * @param passwordDTO the password change form data submitted by the user
-     * @param session     the current HTTP session
+     * @param session the current HTTP session
      * @return a redirect to "/interprete/profil" after the operation,
-     * with "?passwordError=true" appended if passwords do not match,
-     * or a redirect to "/login" if the session is invalid
+     *         with "?passwordError=true" appended if passwords do not match,
+     *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/password")
     public String changePassword(@ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpSession session) {
@@ -126,16 +119,14 @@ public class CoordinatorController {
         return "redirect:/interprete/profil";
     }
 
-    /**
-     * Controller for the page "Mon profil" of the connected coordinator.
+    /** Controller for the page "Mon profil" of the connected coordinator.
      * Adds a professional skill to the connected coordinator.
      * Checks first if the coordinator already owns the skill to avoid a unique constraint
      * violation in the database on double form submission.
-     *
      * @param profileDTO the profile form data submitted by the user
-     * @param session    the current HTTP session
+     * @param session the current HTTP session
      * @return a redirect to "/interprete/profil?section=metiers" after adding,
-     * or a redirect to "/login" if the session is invalid
+     *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/addProfessionalSkill")
     public String addProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
@@ -174,15 +165,13 @@ public class CoordinatorController {
         return "redirect:/interprete/profil?section=metiers";
     }
 
-    /**
-     * Controller for the page "Mon profil" of the connected coordinator, section Professional Skill.
+    /** Controller for the page "Mon profil" of the connected coordinator, section Professional Skill.
      * Deletes a professional skill from the connected coordinator.
      * Removes the skill from the coordinator's session list by matching its ID directly.
-     *
      * @param profileDTO the profile form data submitted by the user.
-     * @param session    the current HTTP session
+     * @param session the current HTTP session
      * @return a redirect to "/interprete/profil?section=metiers" after deleting,
-     * or a redirect to "/login" if the session is invalid
+     *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/deleteProfessionalSkill")
     public String deleteProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
@@ -213,11 +202,10 @@ public class CoordinatorController {
      * Adds an academic skill to the connected coordinator.
      * Checks first if the coordinator already owns the skill to avoid a unique constraint
      * violation in the database on double form submission.
-     *
      * @param profileDTO the profile form data submitted by the user.
-     * @param session    the current HTTP session
+     * @param session the current HTTP session
      * @return a redirect to "/interprete/profil?section=academics" after adding,
-     * or a redirect to "/login" if the session is invalid
+     *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/addAcademicSkill")
     public String addAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
@@ -236,8 +224,8 @@ public class CoordinatorController {
                             .anyMatch(s -> s.getNumAcademicSkill() == numSkill);
 
             if (!alreadyOwned) {
-                boolean res = profileService.addAcademicSkill(coordinator.getNumInterpreter(), numSkill);
-                if (res) {
+               boolean res = profileService.addAcademicSkill(coordinator.getNumInterpreter(), numSkill);
+               if (res) {
                     DAOAcademicSkill dao = new DAOAcademicSkill();
                     AcademicSkill a = dao.find(numSkill);
                     if (a != null) {
@@ -258,11 +246,10 @@ public class CoordinatorController {
     /**
      * Controller for the page "Mon profil" of the connected coordinator, section Academic Skill.
      * Deletes an academic skill from the connected coordinator.
-     *
      * @param profileDTO the profile form data submitted by the user.
-     * @param session    the current HTTP session
+     * @param session the current HTTP session
      * @return a redirect to "/interprete/profil?section=academics" after deleting,
-     * or a redirect to "/login" if the session is invalid
+     *         or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/deleteAcademicSkill")
     public String deleteAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
@@ -288,14 +275,28 @@ public class CoordinatorController {
         return "redirect:/interprete/profil?section=academics";
     }
 
-    /**
-     * Controller for the pages named "planning-gestion"
+    // Temporaire
+    @GetMapping("/validations")
+    public String validations(HttpSession session, Model model) {
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("userName", coordinator.getFirstName() + " " + coordinator.getLastName());
+        model.addAttribute("userRole", "COORDINATOR");
+        model.addAttribute("isAdmin", coordinator.isAdmin());
+        model.addAttribute("pendingAppointments", new ArrayList<>());
+        model.addAttribute("beneficiaryList", new ArrayList<>());
+
+        return "coordinatrice/validations";
+    }
+
+    /** Controller for the pages named "planning-gestion"
      * Displays the profile page for the connected Coordinator.
      * Prepare an DTOAbsence for the button "Ajouter une Indisponibilitée"
-     * Prepare the list of Interpreter, List of establishment, List of academicSkill, List of professionalSkill and DTOAppointmentForm.
-     *
      * @param session the current HTTP session
-     * @param model   the Spring UI model
+     * @param model the Spring UI model
      * @return the view "/coordinatrice/planning-gestion", or a redirect to "/login"
      */
     @GetMapping("/planning-gestion")
@@ -309,32 +310,7 @@ public class CoordinatorController {
         model.addAttribute("userRole", "COORDINATOR");
         model.addAttribute("breadcrumb", "Planning");
         model.addAttribute("isAdmin", coordinator.isAdmin());
-        HoraireBaseService service = new HoraireBaseService();
-        List<Interpreter> interpreterList = new ArrayList<>();
-        try {
-            interpreterList = service.findAllInterpreters();
-            interpreterList.removeIf(i -> i.getNumInterpreter() == coordinator.getNumInterpreter());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        model.addAttribute("listInterpreter", interpreterList);
         model.addAttribute("DTOAbsence", new DTOAbsence());
-        List<Beneficiary> beneficiaryList = new ArrayList<>();
-        AppointmentFormService serviceAppointment = new AppointmentFormService();
-        model.addAttribute("establishmentList", serviceAppointment.findAllEstablishments());
-        model.addAttribute("academicSkillList", serviceAppointment.findAllAcademicSkills());
-        model.addAttribute("professionalSkillList", serviceAppointment.findAllProfessionalSkills());
-        model.addAttribute("DTOAppointmentForm", new DTOAppointmentForm());
-
-        try {
-            beneficiaryList = service.findAllBeneficiaries();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        session.setAttribute("beneficiaryList", beneficiaryList);
-        model.addAttribute("activeTab", "planning");
 
         return "coordinatrice/planning-gestion";
     }
@@ -344,52 +320,51 @@ public class CoordinatorController {
      * Format the information found in a list on the Map for FullCalendar
      * Redirects to login if no Coordinator is found in session.
      *
-     * @param start   the start date of the schedule
-     * @param end     the end date of the schedule
+     * @param start the start date of the schedule
+     * @param end the end date of the schedule
      * @param session the current HTTP session
-     * @param model   the Spring UI model
+     * @param model the Spring UI model
      * @return a formatted map list for FullCalendar
      */
-    @GetMapping(value = "/planning-gestion/events", produces = "application/json")
+    @GetMapping(value = "/planning-gestion/events", produces="application/json")
     @ResponseBody
-    public List<Map<String, Object>> getEventsPlaningCoordinator(@RequestParam String start,
-                                                                 @RequestParam String end, HttpSession session, Model model) {
+    public List<Map<String,Object>> getEventsPlaningCoordinator(@RequestParam String start,
+                                                                @RequestParam String end, HttpSession session, Model model) {
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null) {
             return Collections.emptyList();
         }
 
-        String dateStart = start.substring(0, 10);
-        String dateEnd = end.substring(0, 10);
+        String dateStart = start.substring(0,10);
+        String dateEnd = end.substring(0,10);
         PlanningService planningService = new PlanningService();
-        List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndInterpreter(coordinator.getNumInterpreter(), dateStart, dateEnd);
-        List<Absence> absenceList = planningService.getListAbsenceWithDateAndInterpreter(coordinator.getNumInterpreter(), dateStart, dateEnd);
+        List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndInterpreter(coordinator.getNumInterpreter(),dateStart,dateEnd);
+        List<Absence> absenceList = planningService.getListAbsenceWithDateAndInterpreter(coordinator.getNumInterpreter(),dateStart,dateEnd);
 
         coordinator.setAppointmentsList(appointmentList);
         coordinator.setAbsences(absenceList);
         LocalDate ldStart = LocalDate.parse(dateStart);
         LocalDate ldEnd = LocalDate.parse(dateEnd);
 
-        List<Map<String, Object>> events = new ArrayList<>();
+        List<Map<String,Object>> events = new ArrayList<>();
         List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
                 .toList();
-        for (Appointment a : appointmentList) {
-            events.add(buildEventAppointment(a, listDateBetweenStartEnd));
+        for( Appointment a : appointmentList){
+            events.add(buildEventAppointment(a,listDateBetweenStartEnd));
         }
-        for (Absence a : absenceList) {
-            events.add(buildEventAbsence(a, listDateBetweenStartEnd));
+        for(Absence a : absenceList){
+            events.add(buildEventAbsence(a,listDateBetweenStartEnd));
         }
         return events;
     }
 
     /**
      * Build an events for FullCalendar with the Appointment and the list of LocalDate choice between Start and End
-     *
-     * @param a                       the Appointment to transform
+     * @param a the Appointment to transform
      * @param listDateBetweenStartEnd list of LocalDate choice between Start and End
      * @return a formatted map for FullCalendar
      */
-    public Map<String, Object> buildEventAppointment(Appointment a, List<LocalDate> listDateBetweenStartEnd) {
+    public Map<String, Object> buildEventAppointment(Appointment a,List<LocalDate> listDateBetweenStartEnd){
         Map<String, Object> event = new HashMap<>();
         Map<String, Object> extendedProps = new HashMap<>();
 
@@ -398,123 +373,90 @@ public class CoordinatorController {
                 .collect(Collectors.joining(", "));
         event.put("title", skills);
 
-        if (a.getTimeSlot() instanceof TimeSlotPunctual) {
+        if(a.getTimeSlot() instanceof TimeSlotPunctual){
             TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
-            LocalDateTime ldt = LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
-            event.put("start", ldt);
-            event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+            LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+            event.put("start",ldt);
+            event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
 
-            switch (a.getStatus()) {
+            switch (a.getStatus()){
                 case "en attente":
-                    event.put("color", "#f0ad4e");
+                    event.put("color","#f0ad4e");
                     break;
                 case "accepte":
-                    event.put("color", "#81c784");
+                    event.put("color","#81c784");
                     break;
                 case "refuse":
-                    event.put("color", "#f28b82");
-                    break;
-                case "annule":
-                    event.put("color", "#f28b82");
+                    event.put("color","#f28b82");
                     break;
             }
-        } else {
+        }else{
             TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
             int i = tsp.getDayNumber();
             LocalDate ld = null;
-            for (LocalDate l : listDateBetweenStartEnd) {
-                if (l.getDayOfWeek().getValue() == i) {
+            for(LocalDate l : listDateBetweenStartEnd){
+                if(l.getDayOfWeek().getValue() == i){
                     ld = l;
                     break;
                 }
             }
             LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
-            event.put("start", ldt);
-            event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-            event.put("color", "#b39ddb");
+            event.put("start",ldt);
+            event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+            event.put("color","#b39ddb");
         }
         String professionalSkills = a.getProfessionalSkillsNeeded().stream()
                 .map(s -> s.getDesignation())
                 .collect(Collectors.joining(", "));
 
-        extendedProps.put("type", "appointment");
-        extendedProps.put("numAppointment",a.getNumAppointment());
-        extendedProps.put("status", a.getStatus());
+        extendedProps.put("type","appointment");
+        extendedProps.put("status",a.getStatus());
         extendedProps.put("professionalSkills", professionalSkills);
-        extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0, 1) + ". " + a.getBeneficiary().getFirstName());
+        extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,1) + ". " + a.getBeneficiary().getFirstName());
         extendedProps.put("locals", a.getAppointmentLocals());
-        extendedProps.put("establishment", a.getEstablishment().getNameBuilding());
+        extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
         extendedProps.put("description", a.getDescription());
-        event.put("extendedProps", extendedProps);
+        event.put("extendedProps",extendedProps);
         return event;
     }
 
     /**
-     * Pass the statut of the appointment on "annule"
-     * @param numAppointment the numAppointment
-     * @param session the current HTTP session
-     * @param model   the Spring UI model
-     * @return the view "/coordinatrice/planning-gestion", or a redirect to "/login"
-     */
-    @PostMapping("/planning-gestion/{numAppointment}/Annuler")
-    public String annulerRDV(@PathVariable int numAppointment,HttpSession session, Model model) {
-        Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null) {
-            return "redirect:/login";
-        }
-        PlanningService p = new PlanningService();
-        p.changeStatusAppointment(numAppointment,"annule");
-        return "coordinatrice/planning-gestion";
-    }
-
-
-    @PostMapping("/planning-gestion/{numAppointment}/Modifier")
-    public String updateRDV(@PathVariable int numAppointment,HttpSession session, Model model) {
-        Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null) {
-            return "redirect:/login";
-        }
-        // TODO
-        return "coordinatrice/planning-gestion";
-    }
-    /**
      * Build an events for FullCalendar with the Absence and the list of LocalDate choice between Start and End
-     *
-     * @param a                       the Absence to transform
+     * @param a the Absence to transform
      * @param listDateBetweenStartEnd list of LocalDate choice between Start and End
      * @return a formatted map for FullCalendar
      */
-    public Map<String, Object> buildEventAbsence(Absence a, List<LocalDate> listDateBetweenStartEnd) {
+    public Map<String, Object> buildEventAbsence(Absence a,List<LocalDate> listDateBetweenStartEnd){
         Map<String, Object> event = new HashMap<>();
         Map<String, Object> extendedProps = new HashMap<>();
-        event.put("title", "Indisponibilité");
+        event.put("title","Indisponibilité");
 
-        if (a.getTimeSlot() instanceof TimeSlotPunctual) {
+        if(a.getTimeSlot() instanceof TimeSlotPunctual){
             TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
             LocalDateTime ldt = LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
-            event.put("start", ldt);
+            event.put("start",ldt);
 
             if (!tsp.getStartDate().equals(tsp.getEndDate())) {
                 LocalDateTime ldtEnd = LocalDateTime.of(tsp.getEndDate(), tsp.getStartTime())
                         .plusSeconds(tsp.getDuration().toSecondOfDay());
                 event.put("end", ldtEnd);
             } else {
-                event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
             }
-        } else {
+        }else{
             TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
             int i = tsp.getDayNumber();
             LocalDate ld = null;
-            for (LocalDate l : listDateBetweenStartEnd) {
-                if (l.getDayOfWeek().getValue() == i) {
+            for(LocalDate l : listDateBetweenStartEnd){
+                if(l.getDayOfWeek().getValue() == i){
                     ld = l;
                     break;
                 }
             }
 
             LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
-            event.put("start", ldt);
-            event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+            event.put("start",ldt);
+            event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
         }
 
         boolean isFullDay = false;
@@ -525,22 +467,20 @@ public class CoordinatorController {
                     && tsp.getDuration() != null
                     && tsp.getDuration().getHour() == 23;
         }
-        event.put("color", "#f0ad4e");
-        extendedProps.put("type", "absence");
+        event.put("color","#f0ad4e");
+        extendedProps.put("type","absence");
         extendedProps.put("reason", a.getReason());
         extendedProps.put("fullDay", isFullDay);
-        event.put("extendedProps", extendedProps);
+        event.put("extendedProps",extendedProps);
         return event;
     }
 
     /**
      * Controller for the pages named "planning-gestion/interpreter"
      * Displays the profile page for the connected Coordinator.
-     * Prepare an DTOAbsence for the button "Ajouter une Indisponibilitée"
-     * Prepare the list of Interpreter, List of establishment, List of academicSkill, List of professionalSkill and DTOAppointmentForm.
      *
      * @param session the current HTTP session
-     * @param model   the Spring UI model
+     * @param model the Spring UI model
      * @return the view "/coordinatrice/planning-gestion/interpreter", or a redirect to "/login"
      */
     @GetMapping("/planning-gestion/interpreter")
@@ -556,7 +496,7 @@ public class CoordinatorController {
         model.addAttribute("isAdmin", coordinator.isAdmin());
         HoraireBaseService service = new HoraireBaseService();
         List<Interpreter> interpreterList = new ArrayList<>();
-        try {
+        try{
             interpreterList = service.findAllInterpreters();
             interpreterList.removeIf(i -> i.getNumInterpreter() == coordinator.getNumInterpreter());
         } catch (SQLException e) {
@@ -564,24 +504,8 @@ public class CoordinatorController {
         }
         model.addAttribute("listInterpreter", interpreterList);
         model.addAttribute("DTOAbsence", new DTOAbsence());
-        List<Beneficiary> beneficiaryList = new ArrayList<>();
-        AppointmentFormService serviceAppointment = new AppointmentFormService();
-        model.addAttribute("establishmentList", serviceAppointment.findAllEstablishments());
-        model.addAttribute("academicSkillList", serviceAppointment.findAllAcademicSkills());
-        model.addAttribute("professionalSkillList", serviceAppointment.findAllProfessionalSkills());
-        model.addAttribute("DTOAppointmentForm", new DTOAppointmentForm());
 
-        try {
-            beneficiaryList = service.findAllBeneficiaries();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        session.setAttribute("beneficiaryList", beneficiaryList);
-        model.addAttribute("activeTab", "planning");
-
-        return "coordinatrice/planning-gestion";
+        return "coordinatrice/planning-gestion/interpreter";
     }
 
     /**
@@ -589,40 +513,40 @@ public class CoordinatorController {
      * Format the information found in a list on the Map for FullCalendar
      * Redirects to login if no Coordinator is found in session.
      *
-     * @param start   the start date of the schedule
-     * @param end     the end date of the schedule
+     * @param start the start date of the schedule
+     * @param end the end date of the schedule
      * @param session the current HTTP session
-     * @param model   the Spring UI model
+     * @param model the Spring UI model
      * @return a formatted map list for FullCalendar
      */
-    @GetMapping(value = "/planning-gestion/interpreter/events", produces = "application/json")
+    @GetMapping(value = "/planning-gestion/interpreter/events", produces="application/json")
     @ResponseBody
-    public List<Map<String, Object>> getEventsPlaningInterpreter(@RequestParam String start,
-                                                                 @RequestParam String end, @RequestParam("num") int num, HttpSession session, Model model) {
+    public List<Map<String,Object>> getEventsPlaningInterpreter(@RequestParam String start,
+                                                                @RequestParam String end, @RequestParam("num") int num, HttpSession session, Model model) {
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null) {
             return Collections.emptyList();
         }
-        String dateStart = start.substring(0, 10);
-        String dateEnd = end.substring(0, 10);
+        String dateStart = start.substring(0,10);
+        String dateEnd = end.substring(0,10);
         PlanningService planningService = new PlanningService();
-        List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndInterpreter(num, dateStart, dateEnd);
-        List<Absence> absenceList = planningService.getListAbsenceWithDateAndInterpreter(num, dateStart, dateEnd);
+        List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndInterpreter(num,dateStart,dateEnd);
+        List<Absence> absenceList = planningService.getListAbsenceWithDateAndInterpreter(num,dateStart,dateEnd);
 
         coordinator.setAppointmentsList(appointmentList);
         coordinator.setAbsences(absenceList);
         LocalDate ldStart = LocalDate.parse(dateStart);
         LocalDate ldEnd = LocalDate.parse(dateEnd);
 
-        List<Map<String, Object>> events = new ArrayList<>();
+        List<Map<String,Object>> events = new ArrayList<>();
         List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
                 .toList();
 
-        for (Appointment a : appointmentList) {
-            events.add(buildEventAppointment(a, listDateBetweenStartEnd));
+        for( Appointment a : appointmentList){
+            events.add(buildEventAppointment(a,listDateBetweenStartEnd));
         }
-        for (Absence a : absenceList) {
-            events.add(buildEventAbsence(a, listDateBetweenStartEnd));
+        for(Absence a : absenceList){
+            events.add(buildEventAbsence(a,listDateBetweenStartEnd));
         }
         return events;
     }
@@ -630,11 +554,9 @@ public class CoordinatorController {
     /**
      * Controller for the pages named "planning-gestion/beneficiaires"
      * Displays the profile page for the connected Coordinator.
-     * Prepare an DTOAbsence for the button "Ajouter une Indisponibilitée"
-     * Prepare the list of Interpreter, List of establishment, List of academicSkill, List of professionalSkill and DTOAppointmentForm.
      *
      * @param session the current HTTP session
-     * @param model   the Spring UI model
+     * @param model the Spring UI model
      * @return the view "/coordinatrice/planning-gestion/beneficiaires", or a redirect to "/login"
      */
     @GetMapping("/planning-gestion/beneficiaires")
@@ -644,20 +566,7 @@ public class CoordinatorController {
         if (coordinator == null) {
             return "redirect:/login";
         }
-        model.addAttribute("userName", coordinator.getFirstName() + " " + coordinator.getLastName());
-        model.addAttribute("userRole", "COORDINATOR");
-        model.addAttribute("breadcrumb", "Planning");
-        model.addAttribute("isAdmin", coordinator.isAdmin());
         HoraireBaseService service = new HoraireBaseService();
-        List<Interpreter> interpreterList = new ArrayList<>();
-        try {
-            interpreterList = service.findAllInterpreters();
-            interpreterList.removeIf(i -> i.getNumInterpreter() == coordinator.getNumInterpreter());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        model.addAttribute("listInterpreter", interpreterList);
-        model.addAttribute("DTOAbsence", new DTOAbsence());
         List<Beneficiary> beneficiaryList = new ArrayList<>();
         AppointmentFormService serviceAppointment = new AppointmentFormService();
         model.addAttribute("establishmentList", serviceAppointment.findAllEstablishments());
@@ -665,17 +574,17 @@ public class CoordinatorController {
         model.addAttribute("professionalSkillList", serviceAppointment.findAllProfessionalSkills());
         model.addAttribute("DTOAppointmentForm", new DTOAppointmentForm());
 
-        try {
+        try{
             beneficiaryList = service.findAllBeneficiaries();
 
-        } catch (SQLException e) {
+        }catch(SQLException e){
             e.printStackTrace();
         }
 
         session.setAttribute("beneficiaryList", beneficiaryList);
         model.addAttribute("activeTab", "planning");
 
-        return "coordinatrice/planning-gestion";
+        return "coordinatrice/planning-gestion/beneficiaires";
     }
 
     /**
@@ -683,16 +592,16 @@ public class CoordinatorController {
      * Format the information found in a list on the Map for FullCalendar
      * Redirects to login if no coordinator is found in session.
      *
-     * @param start   the start date of the schedule
-     * @param end     the end date of the schedule
+     * @param start the start date of the schedule
+     * @param end the end date of the schedule
      * @param session the current HTTP session
-     * @param model   the Spring UI model
+     * @param model the Spring UI model
      * @return a formatted map list for FullCalendar
      */
-    @GetMapping(value = "/planning-gestion/beneficiaires/events", produces = "application/json")
+    @GetMapping(value = "/planning-gestion/beneficiaires/events", produces="application/json")
     @ResponseBody
-    public List<Map<String, Object>> getEventsPlaningBeneficiary(@RequestParam String start,
-                                                                 @RequestParam String end, @RequestParam("num") int num, HttpSession session, Model model) {
+    public List<Map<String,Object>> getEventsPlaningBeneficiary(@RequestParam String start,
+                                                                @RequestParam String end, @RequestParam("num") int num, HttpSession session, Model model) {
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null) {
             return Collections.emptyList();
@@ -707,17 +616,16 @@ public class CoordinatorController {
         LocalDate ldStart = LocalDate.parse(dateStart);
         LocalDate ldEnd = LocalDate.parse(dateEnd);
 
-        List<Map<String, Object>> events = new ArrayList<>();
+        List<Map<String,Object>> events = new ArrayList<>();
         List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
                 .toList();
 
-        for (Appointment a : appointmentList) {
-            events.add(buildEventAppointment(a, listDateBetweenStartEnd));
+        for( Appointment a : appointmentList){
+            events.add(buildEventAppointment(a,listDateBetweenStartEnd));
         }
 
         return events;
     }
-
     /**
      * Displays the list of punctual absences for the connected interpreter within a specific date range
      * The method extracts the date from the start and end parameters and retrieves
@@ -757,7 +665,7 @@ public class CoordinatorController {
      * It create an Absence in the Database.
      *
      * @param dtoAbsence the dto to convert into a pojo
-     * @param model      the UI model to hold the list of absences and the active tab status
+     * @param model the UI model to hold the list of absences and the active tab status
      * @param request    the current HTTP request used to access the session
      * @return redirect the curent page.
      */
@@ -769,27 +677,28 @@ public class CoordinatorController {
         if (coordinator == null) {
             return "redirect:/login";
         }
-        if (dtoAbsence.getStartDate() != null && dtoAbsence.getEndDate() != null
-                && (dtoAbsence.isFullDay() || (dtoAbsence.getStartTime() != null && dtoAbsence.getEndTime() != null))) {
-            AbsenceService absenceService = new AbsenceService();
-            try {
-                absenceService.createAbsence(dtoAbsence, coordinator.getNumInterpreter(), "accepte");
-            } catch (SQLException sql) {
+        if(dtoAbsence.getStartDate() != null && dtoAbsence.getEndDate() != null
+                && (dtoAbsence.isFullDay() || (dtoAbsence.getStartTime() != null && dtoAbsence.getEndTime() != null))){
+            AbsenceService absenceService = new  AbsenceService();
+            try{
+                absenceService.createAbsence(dtoAbsence, coordinator.getNumInterpreter(),"accepte");
+            }
+            catch(SQLException sql){
                 // afficher la page d'erreur
-            } catch (BadStatusException bse) {
+            }
+            catch(BadStatusException bse){
                 // afficher la page d'erreur
             }
         }
 
-        return "redirect:" + pageReferer;
+        return "redirect:"+pageReferer;
     }
 
     /**
      * Deletes a specific absence record based on its unique ID
-     *
-     * @param id      the unique identifier of the absence to be deleted
-     * @param model   the UI model to hold the list of absences and the active tab status
-     * @param request the current HTTP request used to access the session
+     * @param id the unique identifier of the absence to be deleted
+     * @param model the UI model to hold the list of absences and the active tab status
+     * @param request    the current HTTP request used to access the session
      * @return A redirect to the absences list view after deletion
      */
     @PostMapping("/indisponibilites/delete")
@@ -813,9 +722,8 @@ public class CoordinatorController {
     /**
      * Updates the details of an existing absence
      * The updated information is received as a model attribute and passed to the service
-     *
      * @param updatedAbsence The absence object containing the modified data
-     * @param request        the current HTTP request used to access the session
+     * @param request    the current HTTP request used to access the session
      * @return A redirect to the absences list view after the update is processed
      */
     @PostMapping("/indisponibilites/update")
@@ -863,14 +771,13 @@ public class CoordinatorController {
             return "error";
         }
     }
-
     /**
      * This function load the page "gestion".
      * It adds all the data needed for the page to display (Skills, Referents and Establishments).
      * If no user of Coordinator object was found in the session or if the Coordinator in the session
      * is not an admin, it redirects the user to the '/login' page
      *
-     * @param model   used by Spring to add all the data in the page
+     * @param model used by Spring to add all the data in the page
      * @param session the current HTTP session
      * @return the page displayed for the Coordinator admin user
      */
@@ -891,7 +798,7 @@ public class CoordinatorController {
             model.addAttribute("etablissementList", new EstablishementService().getAllFullEstablishments());
             model.addAttribute("professionalSkillList", new SkillService().getAllProfessionalSkills());
             model.addAttribute("academicSkillList", new SkillService().getAllAcademicSkills());
-        } catch (SQLException e) {
+        } catch(SQLException e) {
             e.printStackTrace();
         }
 
@@ -901,20 +808,19 @@ public class CoordinatorController {
         return "coordinatrice/gestion";
     }
 
-    /**
-     * Creates a new Referrer in the database using the data submitted from the form.
+    /** Creates a new Referrer in the database using the data submitted from the form.
      * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
      * the user is redirected to the '/login' page
      *
      * @param dtoReferrer the DTOReferrer containing the data of the Referrer to create
-     * @param session     the current HTTP session
+     * @param session the current HTTP session
      * @return a redirection to the "/coordinatrice/gestion" page
      */
     @PostMapping("/etablissements/addReferrer")
     public String attributeReferrer(
-            @ModelAttribute("DTOReferrer") DTOReferrer dtoReferrer, HttpSession session) {
+                            @ModelAttribute("DTOReferrer") DTOReferrer dtoReferrer, HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null || !coordinator.isAdmin()) {
+        if(coordinator == null || !coordinator.isAdmin()) {
             return "redirect:/login";
         }
 
@@ -926,19 +832,18 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/gestion?tab=referents";
     }
 
-    /**
-     * Updates an existing Referrer in the database with the data submitted from the form.
+    /** Updates an existing Referrer in the database with the data submitted from the form.
      * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
      * the user is redirected to the '/login' page
      *
      * @param dtoReferrer the DTOReferrer containing the updated data of the Referrer
-     * @param session     the current HTTP session
+     * @param session the current HTTP session
      * @return a redirection to the "/coordinatrice/gestion" page
      */
     @PostMapping("/etablissements/updateReferrer")
     public String referrerUpdate(DTOReferrer dtoReferrer, HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null || !coordinator.isAdmin()) {
+        if(coordinator == null || !coordinator.isAdmin()) {
             return "redirect:/login";
         }
 
@@ -951,19 +856,18 @@ public class CoordinatorController {
         return "redirect:/coordinatrice/gestion?tab=referents";
     }
 
-    /**
-     * Deletes a Referrer from the database using the id contained in the DTOReferrer submitted
+    /** Deletes a Referrer from the database using the id contained in the DTOReferrer submitted
      * from the form. If no user of Coordinator type is found in the session or if the Coordinator
      * is not an admin, the user is redirected to the '/login' page
      *
      * @param dtoReferrer the DTOReferrer containing the id of the Referrer to delete
-     * @param session     the current HTTP session
+     * @param session the current HTTP session
      * @return a redirection to the "/coordinatrice/gestion" page
      */
     @PostMapping("/etablissements/deleteReferrer")
     public String referrerDelete(DTOReferrer dtoReferrer, HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null || !coordinator.isAdmin()) {
+        if(coordinator == null || !coordinator.isAdmin()) {
             return "redirect:/login";
         }
 
@@ -981,14 +885,14 @@ public class CoordinatorController {
      * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
      * the user is redirected to the '/login' page
      *
-     * @param session     the current HTTP session
+     * @param session the current HTTP session
      * @param designation the designation of the AcademicSkill to create
      * @return a redirection to the "/coordinatrice/gestion" page
      */
     @PostMapping("/etablissements/addAcademicSkill")
     public String academicSkillAdd(HttpSession session, @RequestParam("designation") String designation) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null || !coordinator.isAdmin()) {
+        if(coordinator == null || !coordinator.isAdmin()) {
             return "redirect:/login";
         }
 
@@ -1006,14 +910,14 @@ public class CoordinatorController {
      * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
      * the user is redirected to the '/login' page
      *
-     * @param session     the current HTTP session
+     * @param session the current HTTP session
      * @param designation the designation of the ProfessionalSkill to create
      * @return a redirection to the "/coordinatrice/gestion" page
      */
     @PostMapping("/etablissements/addProfessionalSkill")
     public String professionalSkillAdd(HttpSession session, @RequestParam("designation") String designation) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null || !coordinator.isAdmin()) {
+        if(coordinator == null || !coordinator.isAdmin()) {
             return "redirect:/login";
         }
 
@@ -1069,8 +973,7 @@ public class CoordinatorController {
     /**
      * Retrieve all users along with the number of users, the number of interpreters,
      * the number of resas and the number of beneficiaries
-     *
-     * @param model   is param used by Spring to add all the data in the page.
+     * @param model is param used by Spring to add all the data in the page.
      * @param session the current HTTP session
      * @return a redirection to the "coordinatrice/utilisateurs" page if the user is a coordinator connected.
      * Otherwise, return a redirection to the "/login" page
@@ -1081,7 +984,7 @@ public class CoordinatorController {
         if (coordinator == null)
             return "redirect:/login";
 
-        try {
+        try{
             CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
             List<DTOUser> beneficiaries = coordinatorUsersService.findAllBeneficiary();
             model.addAttribute("beneficiaries", beneficiaries);
@@ -1106,7 +1009,8 @@ public class CoordinatorController {
 
             int numberUsers = numberBeneficiaries + numberInterpreters;
             model.addAttribute("numberUsers", numberUsers);
-        } catch (SQLException e) {
+        }
+        catch(SQLException e){
             e.printStackTrace();
         }
 
@@ -1115,39 +1019,21 @@ public class CoordinatorController {
         return "coordinatrice/utilisateurs";
     }
 
-    // Temporaire
-    @GetMapping("/utilisateurs/{id}")
-    public String utilisateurDetail(@PathVariable String id, Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("isAdmin", true);
-
-        switch (id) {
-            case "1" -> model.addAttribute("userRole", "RESA");
-            case "2" -> model.addAttribute("userRole", "INTERPRETER");
-            case "3" -> model.addAttribute("userRole", "BENEFICIARY");
-            case "4" -> model.addAttribute("userRole", "COORDINATOR");
-            default -> model.addAttribute("userRole", "INTERPRETER");
-        }
-
-        return "coordinatrice/utilisateur-detail";
-    }
-
     /**
      * Create a new coordinator, interpreter or beneficiary in the database using the datas submitted from the form
-     *
      * @param session the current HTTP session
      * @return a redirection to the "coordinatrice/utilisateurs" page if the user is a coordinator connected.
-     * Otherwise, return a redirection to the "/login" page
+     *         Otherwise, return a redirection to the "/login" page
      */
     @PostMapping("utilisateurs/addUser")
     public String addUser(HttpSession session, @ModelAttribute DTOUserAdd dtoAddUser,
-                          @RequestParam String role, Model model) {
+                          @RequestParam String role, Model model){
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null)
             return "redirect:/login";
 
         CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
-        try {
+        try{
             String result = "";
             switch (role) {
                 case "1" -> result = coordinatorUsersService.addResaCoordinator(dtoAddUser, false);
@@ -1159,10 +1045,12 @@ public class CoordinatorController {
             model.addAttribute("message", result);
 
             return "redirect:/coordinatrice/utilisateurs";
-        } catch (SQLException e) {
+        }
+        catch(SQLException e) {
             e.printStackTrace();
             return "redirect:/coordinatrice/utilisateurs";
-        } catch (IllegalArgumentException e) {
+        }
+        catch(IllegalArgumentException e){
             e.printStackTrace();
             return "redirect:/coordinatrice/utilisateurs";
         }
@@ -1171,18 +1059,15 @@ public class CoordinatorController {
     /**
      * If the coordinator exists, the user will be redirected to the home page.
      * Otherwise, if it is null, the user will be redirected to the login page.
-     *
-     * @param session session the current HTTP session
-     * @return The HTML path to the home page if a coordinator is logged in, else redirects to /login.
+     *  @param session session the current HTTP session
+     *  @return The HTML path to the home page if a coordinator is logged in, else redirects to /login.
      */
     @GetMapping("/accueil")
     public String accueil(HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null) {
+        if(coordinator == null) {
             return "redirect:/login";
         }
         return "coordinatrice/accueil";
     }
-
-
 }
