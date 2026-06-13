@@ -6,322 +6,322 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
-<head th:replace="~{common/head :: head('Planning - Coordinatrice', '/css/coordinatrice/planning-gestion.css')}"></head>
+    <head th:replace="~{common/head :: head('Planning - Coordinatrice', '/css/coordinatrice/planning-gestion.css')}"></head>
 
-<body>
-<nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole=${userRole}, userName=${userName}, breadcrumb='Planning Gestion', isAdmin=${isAdmin})}"></nav>
-<div class="container-fluid py-2 px-2 px-md-5">
-
-    <div class="text-center mb-2">
-        <h1 class="fw-bold text-primary" id="pageTitle">Votre horaire de la semaine</h1>
-    </div>
-
-    <div id="planning-toolbar" class="mb-2 px-2 px-md-5">
-        <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap position-relative">
-
-            <div class="btn-group">
-                <button type="button"
-                        class="btn btn-primary btn-sm"
-                        id="btnMyPlanning"
-                        onclick="switchMode('coordinator')">
-                    Mon Planning
-                </button>
-                <button type="button"
-                        class="btn btn-outline-primary btn-sm"
-                        id="btnInterpreterPlanning"
-                        onclick="switchMode('interpreter')">
-                    Interprètes
-                </button>
-                <button type="button"
-                        class="btn btn-outline-primary btn-sm"
-                        id="btnBeneficiaryPlanning"
-                        onclick="switchMode('beneficiary')">
-                    Bénéficiaires
-                </button>
+    <body>
+        <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole=${userRole}, userName=${userName}, breadcrumb='Planning Gestion', isAdmin=${isAdmin})}"></nav>
+        <div class="container-fluid py-2 px-2 px-md-5">
+        
+            <div class="text-center mb-2">
+                <h1 class="fw-bold text-primary" id="pageTitle">Votre horaire de la semaine</h1>
             </div>
 
-            <div class="d-none d-lg-flex gap-3 small text-muted position-absolute start-50 translate-middle-x">
-                <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> <span id="legendUnavailabilityLabel">Indisponibilité</span></span>
-                <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
-                <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
-            </div>
+            <div id="planning-toolbar" class="mb-2 px-2 px-md-5">
+                <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap position-relative">
 
-            <button type="button"
-                    class="btn btn-primary btn-sm d-none"
-                    id="btnAddRdv"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalRDV">
-                <i class="bi bi-calendar-plus"></i> Ajouter un RDV
-            </button>
-
-            <button type="button"
-                    class="btn btn-primary btn-sm"
-                    id="btnAddIndispo"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalIndispo">
-                <i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité
-            </button>
-
-        </div>
-
-        <div class="d-lg-none mt-2" id="mobileBtn"></div>
-    </div>
-
-    <div id="zone-selection" class="mb-2 px-2 px-md-5 d-none">
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-
-            <select id="userDropdown" class="form-select form-select-sm" style="max-width: 250px;">
-                <option value="" disabled selected>-- Sélectionner --</option>
-            </select>
-
-            <div id="contextBanner" class="d-none">
-                                        <span class="badge bg-secondary fs-6 fw-normal">
-                                            <i class="bi bi-person-fill me-1"></i>
-                                            Planning de : <strong id="selectedUserName"></strong>
-                                        </span>
-                <button type="button"
-                        class="btn btn-link btn-sm text-muted p-0 ms-2"
-                        id="btnResetSelection"
-                        title="Changer de personne">
-                    <i class="bi bi-x-circle"></i>
-                </button>
-            </div>
-
-        </div>
-
-        <div id="emptySelectionMessage" class="text-center text-muted py-4 mt-2">
-            <i class="bi bi-search fs-4 d-block mb-1"></i>
-            Recherchez un(e) <span id="userTypeLabel"></span> pour afficher son planning.
-        </div>
-    </div>
-
-    <div id="calendar"></div>
-
-</div>
-
-<div class="modal fade" id="modalIndispo" tabindex="-1" aria-labelledby="modalIndispoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-header border-bottom">
-                <h5 class="modal-title fw-bold w-100 text-center" id="modalIndispoLabel">Déclarer une indisponibilité</h5>
-                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-            </div>
-
-            <form method="post" th:object="${DTOAbsence}" th:action="@{/coordinatrice/indisponibilites}">
-                <div class="modal-body px-4 py-3">
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label class="form-label small fw-semibold">Date début</label>
-                            <input type="date" th:field="*{startDate}" id="indispoDateStart" class="form-control form-control-sm"/>
-                        </div>
-                        <div class="col">
-                            <label class="form-label small fw-semibold">Date fin</label>
-                            <input type="date" th:field="*{endDate}" id="indispoDateEnd" class="form-control form-control-sm"/>
-                        </div>
+                    <div class="btn-group">
+                        <button type="button"
+                                class="btn btn-primary btn-sm"
+                                id="btnMyPlanning"
+                                onclick="switchMode('coordinator')">
+                            Mon Planning
+                        </button>
+                        <button type="button"
+                                class="btn btn-outline-primary btn-sm"
+                                id="btnInterpreterPlanning"
+                                onclick="switchMode('interpreter')">
+                            Interprètes
+                        </button>
+                        <button type="button"
+                                class="btn btn-outline-primary btn-sm"
+                                id="btnBeneficiaryPlanning"
+                                onclick="switchMode('beneficiary')">
+                            Bénéficiaires
+                        </button>
                     </div>
 
-                    <div class="mb-2">
-                        <label class="form-label small fw-semibold">Plage Horaire</label>
-                        <div class="d-flex gap-2">
-                            <select id="indispoStartHour" name="startTime" class="form-select form-select-sm" size="5"></select>
-                            <select id="indispoEndHour" name="endTime" class="form-select form-select-sm" size="5"></select>
-                        </div>
+                    <div class="d-none d-lg-flex gap-3 small text-muted position-absolute start-50 translate-middle-x">
+                        <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> <span id="legendUnavailabilityLabel">Indisponibilité</span></span>
+                        <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
+                        <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
                     </div>
 
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" th:field="*{fullDay}" type="checkbox" id="indispoFullDay"/>
-                            <label class="form-check-label small" for="indispoFullDay">Journée complète</label>
-                        </div>
-                    </div>
+                    <button type="button"
+                            class="btn btn-primary btn-sm d-none"
+                            id="btnAddRdv"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalRDV">
+                        <i class="bi bi-calendar-plus"></i> Ajouter un RDV
+                    </button>
 
-                    <div class="mb-2">
-                        <label class="form-label small fw-semibold">Motif <span class="text-muted fw-normal">(facultatif)</span></label>
-                        <textarea th:field="*{reason}" id="indispoMotif" class="form-control form-control-sm" rows="3" placeholder="Texte ..."></textarea>
-                    </div>
+                    <button type="button"
+                            class="btn btn-primary btn-sm"
+                            id="btnAddIndispo"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalIndispo">
+                        <i class="bi bi-calendar-plus"></i> Déclarer une indisponibilité
+                    </button>
 
-                    <div class="form-check">
-                        <input class="form-check-input" th:field="*{privateReason}" type="checkbox" id="indispoMotifPrive"/>
-                        <label class="form-check-label small" for="indispoMotifPrive">Rendre le motif privé</label>
-                    </div>
-                    <div class="text-muted" style="font-size: 0.78rem; margin-left: 1.5rem;">
-                        Seule la coordinatrice pourra voir le motif
-                    </div>
                 </div>
 
-                <div class="modal-footer border-top justify-content-center gap-2">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                    <button type="button" class="btn btn-primary btn-sm" id="btnSendIndispo">Envoyez la demande</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalRDV" tabindex="-1" aria-labelledby="modalRDVLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-header border-bottom">
-                <h5 class="modal-title fw-bold w-100 text-center" id="modalRDVLabel">Ajouter un rendez-vous</h5>
-                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                <div class="d-lg-none mt-2" id="mobileBtn"></div>
             </div>
 
-            <div class="modal-body px-4 py-3">
+            <div id="zone-selection" class="mb-2 px-2 px-md-5 d-none">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
 
-                <div class="mb-3">
-                    <label class="form-label small fw-semibold" id="rdvUserLabel">Bénéficiaire</label>
-                    <select id="rdvUserSelect" class="form-select form-select-sm">
+                    <select id="userDropdown" class="form-select form-select-sm" style="max-width: 250px;">
                         <option value="" disabled selected>-- Sélectionner --</option>
                     </select>
+
+                    <div id="contextBanner" class="d-none">
+                                                <span class="badge bg-secondary fs-6 fw-normal">
+                                                    <i class="bi bi-person-fill me-1"></i>
+                                                    Planning de : <strong id="selectedUserName"></strong>
+                                                </span>
+                        <button type="button"
+                                class="btn btn-link btn-sm text-muted p-0 ms-2"
+                                id="btnResetSelection"
+                                title="Changer de personne">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
+
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col">
-                        <label class="form-label small fw-semibold">Date début</label>
-                        <input type="date" id="rdvDateStart" class="form-control form-control-sm"/>
-                    </div>
-                    <div class="col">
-                        <label class="form-label small fw-semibold">Date fin</label>
-                        <input type="date" id="rdvDateEnd" class="form-control form-control-sm"/>
-                    </div>
+                <div id="emptySelectionMessage" class="text-center text-muted py-4 mt-2">
+                    <i class="bi bi-search fs-4 d-block mb-1"></i>
+                    Recherchez un(e) <span id="userTypeLabel"></span> pour afficher son planning.
                 </div>
+            </div>
 
-                <div class="mb-2">
-                    <label class="form-label small fw-semibold">Plage Horaire</label>
-                    <div class="d-flex gap-2">
-                        <select id="rdvStartHour" class="form-select form-select-sm" size="5"></select>
-                        <select id="rdvEndHour" class="form-select form-select-sm" size="5"></select>
+            <div id="calendar"></div>
+
+        </div>
+
+        <div class="modal fade" id="modalIndispo" tabindex="-1" aria-labelledby="modalIndispoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalIndispoLabel">Déclarer une indisponibilité</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="rdvFullDay"/>
-                        <label class="form-check-label small" for="rdvFullDay">Journée complète</label>
-                    </div>
-                </div>
+                    <form method="post" th:object="${DTOAbsence}" th:action="@{/coordinatrice/indisponibilites}">
+                        <div class="modal-body px-4 py-3">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Date début</label>
+                                    <input type="date" th:field="*{startDate}" id="indispoDateStart" class="form-control form-control-sm"/>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label small fw-semibold">Date fin</label>
+                                    <input type="date" th:field="*{endDate}" id="indispoDateEnd" class="form-control form-control-sm"/>
+                                </div>
+                            </div>
 
-                <div class="mb-3">
-                    <label class="form-label small fw-semibold">Matières</label>
-                    <div id="rdvAcademicSkills" class="d-flex flex-wrap gap-3">
-                        <div class="form-check" th:each="skill : ${academicSkillList}">
-                            <input class="form-check-input skill-check" type="checkbox"
-                                   th:id="'skillAcad' + ${skill.numAcademicSkill}"
-                                   th:value="${skill.numAcademicSkill}"/>
-                            <label class="form-check-label small"
-                                   th:for="'skillAcad' + ${skill.numAcademicSkill}"
-                                   th:text="${skill.designation}"></label>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Plage Horaire</label>
+                                <div class="d-flex gap-2">
+                                    <select id="indispoStartHour" name="startTime" class="form-select form-select-sm" size="5"></select>
+                                    <select id="indispoEndHour" name="endTime" class="form-select form-select-sm" size="5"></select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" th:field="*{fullDay}" type="checkbox" id="indispoFullDay"/>
+                                    <label class="form-check-label small" for="indispoFullDay">Journée complète</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">Motif <span class="text-muted fw-normal">(facultatif)</span></label>
+                                <textarea th:field="*{reason}" id="indispoMotif" class="form-control form-control-sm" rows="3" placeholder="Texte ..."></textarea>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" th:field="*{privateReason}" type="checkbox" id="indispoMotifPrive"/>
+                                <label class="form-check-label small" for="indispoMotifPrive">Rendre le motif privé</label>
+                            </div>
+                            <div class="text-muted" style="font-size: 0.78rem; margin-left: 1.5rem;">
+                                Seule la coordinatrice pourra voir le motif
+                            </div>
                         </div>
-                    </div>
-                    <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une matière.</div>
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label small fw-semibold">Compétences requises</label>
-                    <div class="d-flex flex-wrap gap-3" id="rdvProfessionalSkills">
-                        <div class="form-check" th:each="skill : ${professionalSkillList}">
-                            <input class="form-check-input comp-check" type="checkbox"
-                                   th:id="'compSkill' + ${skill.numProfessionalSkill}"
-                                   th:value="${skill.numProfessionalSkill}" checked/>
-                            <label class="form-check-label small"
-                                   th:for="'compSkill' + ${skill.numProfessionalSkill}"
-                                   th:text="${skill.designation}"></label>
+                        <div class="modal-footer border-top justify-content-center gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="btnSendIndispo">Envoyez la demande</button>
                         </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalRDV" tabindex="-1" aria-labelledby="modalRDVLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalRDVLabel">Ajouter un rendez-vous</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                     </div>
-                    <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une compétence requise.</div>
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label small fw-semibold">Établissement</label>
-                    <select id="rdvEstablishment" class="form-select form-select-sm">
-                        <option value="" disabled selected>Choisissez un établissement</option>
-                        <option th:each="establishment : ${establishmentList}"
-                                th:value="${establishment.numEstablishment}"
-                                th:text="${establishment.name}"></option>
-                    </select>
-                </div>
+                    <div class="modal-body px-4 py-3">
 
-                <div class="mb-3">
-                    <label class="form-label small fw-semibold">Local</label>
-                    <input type="text" id="rdvLocal" class="form-control form-control-sm" placeholder="Ex: Local M5, Labo 2..."/>
-                </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold" id="rdvUserLabel">Bénéficiaire</label>
+                            <select id="rdvUserSelect" class="form-select form-select-sm">
+                                <option value="" disabled selected>-- Sélectionner --</option>
+                            </select>
+                        </div>
 
-                <div class="mb-3">
-                    <label class="form-label small fw-semibold">Description <span class="text-muted fw-normal">(facultatif)</span></label>
-                    <textarea id="rdvDescription" class="form-control form-control-sm" rows="2" placeholder="Texte..."></textarea>
-                </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Date début</label>
+                                <input type="date" id="rdvDateStart" class="form-control form-control-sm"/>
+                            </div>
+                            <div class="col">
+                                <label class="form-label small fw-semibold">Date fin</label>
+                                <input type="date" id="rdvDateEnd" class="form-control form-control-sm"/>
+                            </div>
+                        </div>
 
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Plage Horaire</label>
+                            <div class="d-flex gap-2">
+                                <select id="rdvStartHour" class="form-select form-select-sm" size="5"></select>
+                                <select id="rdvEndHour" class="form-select form-select-sm" size="5"></select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rdvFullDay"/>
+                                <label class="form-check-label small" for="rdvFullDay">Journée complète</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Matières</label>
+                            <div id="rdvAcademicSkills" class="d-flex flex-wrap gap-3">
+                                <div class="form-check" th:each="skill : ${academicSkillList}">
+                                    <input class="form-check-input skill-check" type="checkbox"
+                                           th:id="'skillAcad' + ${skill.numAcademicSkill}"
+                                           th:value="${skill.numAcademicSkill}"/>
+                                    <label class="form-check-label small"
+                                           th:for="'skillAcad' + ${skill.numAcademicSkill}"
+                                           th:text="${skill.designation}"></label>
+                                </div>
+                            </div>
+                            <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une matière.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Compétences requises</label>
+                            <div class="d-flex flex-wrap gap-3" id="rdvProfessionalSkills">
+                                <div class="form-check" th:each="skill : ${professionalSkillList}">
+                                    <input class="form-check-input comp-check" type="checkbox"
+                                           th:id="'compSkill' + ${skill.numProfessionalSkill}"
+                                           th:value="${skill.numProfessionalSkill}" checked/>
+                                    <label class="form-check-label small"
+                                           th:for="'compSkill' + ${skill.numProfessionalSkill}"
+                                           th:text="${skill.designation}"></label>
+                                </div>
+                            </div>
+                            <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner au moins une compétence requise.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Établissement</label>
+                            <select id="rdvEstablishment" class="form-select form-select-sm">
+                                <option value="" disabled selected>Choisissez un établissement</option>
+                                <option th:each="establishment : ${establishmentList}"
+                                        th:value="${establishment.numEstablishment}"
+                                        th:text="${establishment.name}"></option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Local</label>
+                            <input type="text" id="rdvLocal" class="form-control form-control-sm" placeholder="Ex: Local M5, Labo 2..."/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Description <span class="text-muted fw-normal">(facultatif)</span></label>
+                            <textarea id="rdvDescription" class="form-control form-control-sm" rows="2" placeholder="Texte..."></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnSendRDV">Ajouter le RDV</button>
+                    </div>
+
+                </div>
             </div>
-
-            <div class="modal-footer border-top justify-content-center gap-2">
-                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-primary btn-sm" id="btnSendRDV">Ajouter le RDV</button>
-            </div>
-
         </div>
-    </div>
-</div>
 
-<div class="modal fade" id="modalEvent" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="modalEventTitle"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="modalEventBody"></div>
-            <div class="modal-footer gap-2">
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
-                <button type="button" class="btn btn-primary btn-sm d-none" id="btnEditEvent">
-                    <i class="bi bi-pencil"></i> Modifier
-                </button>
-                <button type="button" class="btn btn-danger btn-sm d-none" id="btnCancelEvent">
-                    <i class="bi bi-x-circle"></i> Annuler le RDV
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalConfirmCancel" tabindex="-1" aria-labelledby="modalConfirmCancelLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header border-bottom">
-                <h5 class="modal-title fw-bold w-100 text-center" id="modalConfirmCancelLabel">Annuler le rendez-vous</h5>
-                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body px-4 py-3 text-center">
-                <i class="bi bi-exclamation-triangle text-danger fs-1 mb-3 d-block"></i>
-                <p class="mb-0">Êtes-vous sûr de vouloir annuler ce rendez-vous ?</p>
-            </div>
-            <div class="modal-footer border-top justify-content-center gap-2">
-                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-danger btn-sm" id="btnConfirmCancelRdv">
-                    <i class="bi bi-x-circle me-1"></i> Confirmer
-                </button>
+        <div class="modal fade" id="modalEvent" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="modalEventTitle"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="modalEventBody"></div>
+                    <div class="modal-footer gap-2">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-primary btn-sm d-none" id="btnEditEvent">
+                            <i class="bi bi-pencil"></i> Modifier
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm d-none" id="btnCancelEvent">
+                            <i class="bi bi-x-circle"></i> Annuler le RDV
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    const SERVER_INTERPRETERS = /*[[${listInterpreter}]]*/ [];
-    const SERVER_BENEFICIARIES = /*[[${listBeneficiary}]]*/ [];
-    /*]]>*/
-</script>
+        <div class="modal fade" id="modalConfirmCancel" tabindex="-1" aria-labelledby="modalConfirmCancelLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title fw-bold w-100 text-center" id="modalConfirmCancelLabel">Annuler le rendez-vous</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3 text-center">
+                        <i class="bi bi-exclamation-triangle text-danger fs-1 mb-3 d-block"></i>
+                        <p class="mb-0">Êtes-vous sûr de vouloir annuler ce rendez-vous ?</p>
+                    </div>
+                    <div class="modal-footer border-top justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="btnConfirmCancelRdv">
+                            <i class="bi bi-x-circle me-1"></i> Confirmer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<script th:src="@{/js/fullcalendar.min.js}"></script>
-<script th:src="@{/js/coordinatrice/planning-gestion.js}"></script>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            const SERVER_INTERPRETERS = /*[[${listInterpreter}]]*/ [];
+            const SERVER_BENEFICIARIES = /*[[${listBeneficiary}]]*/ [];
+            /*]]>*/
+        </script>
 
-<div class="d-flex d-lg-none gap-2 small text-muted flex-wrap justify-content-center mt-3 mb-2 px-3">
-    <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> <span id="legendUnavailabilityLabelMobile">Indisponibilité</span></span>
-    <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
-    <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
-</div>
+        <script th:src="@{/js/fullcalendar.min.js}"></script>
+        <script th:src="@{/js/coordinatrice/planning-gestion.js}"></script>
 
-<div th:replace="~{common/footer :: footer}"></div>
-</body>
+        <div class="d-flex d-lg-none gap-2 small text-muted flex-wrap justify-content-center mt-3 mb-2 px-3">
+            <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> <span id="legendUnavailabilityLabelMobile">Indisponibilité</span></span>
+            <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
+            <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
+        </div>
+
+        <div th:replace="~{common/footer :: footer}"></div>
+    </body>
 </html>
