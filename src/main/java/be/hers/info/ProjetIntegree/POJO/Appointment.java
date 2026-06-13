@@ -454,7 +454,7 @@ public class Appointment {
             throw new BadStatusException("[POJOAppointment] " + status + " n'est pas un status valide.");
         }
 
-        if (!this.status.equals("en attente")) {
+        if (!this.status.equals("en attente") && !this.status.equals("accepte")) {
             throw new BadStatusException("[POJOAppointment] Le status ne peut plus être modifié.");
         }
 
