@@ -177,7 +177,7 @@ public class AppointmentFormService {
 
         updatedAppointment.setStatus("en attente");
         updatedAppointment.setBeneficiary(new Beneficiary());
-        
+
         updatedAppointment.setAppointmentLocals(appointmentDTO.getAppointmentLocals());
 
         DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
@@ -209,6 +209,7 @@ public class AppointmentFormService {
         updatedAppointment.setProfessionalSkillsNeeded(listProfessionalSkills);
 
         DAOAppointment daoAppointment = new DAOAppointment();
+        daoAppointment.deleteInRDVInterpreter(updatedAppointment);
         if(daoAppointment.update(updatedAppointment))
             isUpdated = true;
 

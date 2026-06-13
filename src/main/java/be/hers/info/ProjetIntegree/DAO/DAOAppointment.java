@@ -443,6 +443,38 @@ public class DAOAppointment extends DAO<Appointment> {
         return isDeleted;
     }
 
+
+    /**
+     * This function delete every line of RDVInterpreter where the num of objectToDeleteFormDB
+     * is used.
+     *
+     * @param objectToDeleteFormDB the object to delete from the database
+     * @return true if the line of the table is successfully deleted, false otherwise
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public boolean deleteInRDVInterpreter(Appointment objectToDeleteFormDB) throws SQLException {
+
+        boolean isDeleted = false;
+        PreparedStatement prStat = null;
+
+        String query = "DELETE FROM RDVInterpreter " +
+                "WHERE numAppointment = ?";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, objectToDeleteFormDB.getNumAppointment());
+
+            int nbLinesDelete = prStat.executeUpdate();
+            if (nbLinesDelete > 0) {
+                isDeleted = true;
+            }
+        } finally {
+            closeStatement(prStat);
+        }
+
+        return isDeleted;
+    }
+
     /**
      * Updates all Appointment fields in the table (except its numInterpreter and his list)
      * Precondition :
