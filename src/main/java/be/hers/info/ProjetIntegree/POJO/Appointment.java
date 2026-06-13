@@ -49,7 +49,7 @@ public class Appointment {
      * @param academicSkillsNeeded List of academic skills needed, can be null
      * @param professionalSkillsNeeded List of professional skills needed
      * @param timeSlot For every repetitive or non-repetitive Appointment
-     * @param establishment The establishment, can be null
+     * @param establishment The establishment of the Appointement
      * @throws IllegalArgumentException If beneficiary, academicSkillsNeeded, professionalSkillsNeeded, interpreters or timeSlot is null
      *                                  If professionalSkillsNeeded is empty
      */
@@ -85,7 +85,7 @@ public class Appointment {
      * @param appointmentLocals List of local(s) where the Appointment will take place
      * @param beneficiary The Beneficiary concerned
      * @param timeSlot For every repetitive or non-repetitive Appointment
-     * @param establishment The establishment, can be null
+     * @param establishment The establishment of the Appointement
      */
     public Appointment(int numAppointment, String description, String status, List<String> appointmentLocals, Beneficiary beneficiary, TimeSlot timeSlot,
                        Establishment establishment) {
@@ -114,7 +114,7 @@ public class Appointment {
      * @param academicSkillsNeeded List of academic skills needed, can be null
      * @param professionalSkillsNeeded List of professional skills needed
      * @param timeSlot For every repetitive or non-repetitive Appointment
-     * @param establishment The establishment, can be null
+     * @param establishment The establishment of the Appointement
      * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters or timeSlot is null
      *                                  If professionalSkillsNeeded is empty
      */
@@ -187,7 +187,7 @@ public class Appointment {
      * @param academicSkillsNeeded List of academic skills needed, can be null
      * @param professionalSkillsNeeded List of professional skills needed
      * @param timeSlot For every repetitive and non-repetitive Appointment
-     * @param establishment The establishment, can be null
+     * @param establishment The establishment of the Appointement
      * @throws IllegalArgumentException If beneficiary, professionalSkillsNeeded, interpreters or timeSlot is null
      *                                  If professionalSkillsNeeded is empty
      */
