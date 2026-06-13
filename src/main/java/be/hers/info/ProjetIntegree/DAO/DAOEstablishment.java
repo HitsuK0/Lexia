@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DAOEstablishment extends DAO<Establishment>{
-
-
     /**
      * This function find all the data of all the Establishment.
      * This function make a List<Address> of size 1.

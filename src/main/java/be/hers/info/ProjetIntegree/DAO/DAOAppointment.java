@@ -887,10 +887,12 @@ public class DAOAppointment extends DAO<Appointment> {
         PreparedStatement prStat = null;
         ResultSet resultSet = null;
         List<Appointment> appointmentList = new ArrayList<>();
+        List<String> listLocal = null;
+        Establishment establishment = null;
 
         boolean filterByStatus = status != null && !status.isEmpty();
 
-        String query = "SELECT numAppointment, status, FKTimeSlotPunctual " +
+        String query = "SELECT numAppointment, description, status, local, FKNumEstablishment, FKTimeSlotPunctual " +
                 "FROM Appointment " +
                 "WHERE FKnumBeneficiary = ? " +
                 "AND FKTimeSlotPunctual IS NOT NULL";
@@ -908,19 +910,32 @@ public class DAOAppointment extends DAO<Appointment> {
 
             resultSet = prStat.executeQuery();
 
+            DAOEstablishment daoEstablishment = new DAOEstablishment();
             DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
 
             while (resultSet.next()) {
                 int numAppointment = resultSet.getInt("numAppointment");
 
+                listLocal = null;
+                String local =  resultSet.getString("local");
+                if (local != null)
+                    listLocal = Arrays.asList(local.split(","));
+
+                int fkEstablishment = resultSet.getInt("FKNumEstablishment");
+                if (!resultSet.wasNull())
+                    establishment = daoEstablishment.find(fkEstablishment);
+
                 TimeSlot timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
 
                 Appointment appointment = new Appointment(
                         numAppointment,
+                        resultSet.getString("description"),
                         resultSet.getString("status"),
+                        listLocal,
+                        timeSlot,
+                        establishment,
                         findListAcademicSkillRequire(numAppointment),
-                        findListProfessionalSkillRequire(numAppointment),
-                        timeSlot
+                        findListProfessionalSkillRequire(numAppointment)
                 );
                 appointmentList.add(appointment);
             }
