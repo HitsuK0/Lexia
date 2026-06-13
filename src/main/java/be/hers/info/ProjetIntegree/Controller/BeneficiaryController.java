@@ -168,7 +168,7 @@ public class BeneficiaryController {
      * @param session        the current HTTP session
      * @return "ok" on success, "error" on failure
      */
-    @PostMapping(value = "/beneficiaire/planning/rdv", consumes = "application/json")
+    @PostMapping(value = "/planning/rdv", consumes = "application/json")
     @ResponseBody
     public String createRDVPlanning(@RequestBody DTOAppointmentForm dtoAppointment, HttpSession session) {
         Beneficiary beneficiary = getBeneficiaryFromSession(session);
@@ -195,7 +195,7 @@ public class BeneficiaryController {
      * @param session        the current HTTP session
      * @return "ok" on success, "error" on failure
      */
-    @PostMapping(value = "/beneficiaire/demandes/rdv", consumes = "application/json")
+    @PostMapping(value = "/demandes/rdv", consumes = "application/json")
     @ResponseBody
     public String createRDVDemandes(@RequestBody DTOAppointmentForm dtoAppointment, HttpSession session) {
         Beneficiary beneficiary = getBeneficiaryFromSession(session);
@@ -241,6 +241,7 @@ public class BeneficiaryController {
         model.addAttribute("requests", appointmentList);
         model.addAttribute("status", status);
         model.addAttribute("activeTab", "demandes");
+        model.addAttribute("numBeneficiary", beneficiary.getNumBeneficiary());
         return "beneficiaire/demandes";
     }
 
