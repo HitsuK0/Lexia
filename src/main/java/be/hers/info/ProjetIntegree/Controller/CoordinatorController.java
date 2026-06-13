@@ -477,7 +477,7 @@ public class CoordinatorController {
         try {
             AppointmentFormService service = new AppointmentFormService();
             service.updateAppointment(dtoAppointment, numAppointment);
-        } catch (SQLException ex) {
+        } catch (SQLException | IllegalArgumentException ex) {
             ex.printStackTrace();
             // renvoyé page d'erreur.
         }
