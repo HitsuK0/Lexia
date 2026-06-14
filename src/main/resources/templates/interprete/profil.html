@@ -18,11 +18,6 @@
                 <p class="text-muted fst-italic">Gérez vos informations personnelles et vos compétences</p>
             </div>
 
-            <!-- Erreur mot de passe renvoyée par le controller via ?passwordError=true -->
-            <div th:if="${param.passwordError}" class="alert alert-danger text-center mx-auto" style="max-width:600px;">
-                Les mots de passe ne correspondent pas ou le mot de passe actuel est incorrect.
-            </div>
-
             <div class="profil-wrapper mx-auto">
                 <div class="row g-0">
 
@@ -284,6 +279,9 @@
                     <form id="formPassword" method="post"
                           th:action="@{/interprete/profil/password}" th:object="${passwordDTO}">
                         <div class="modal-body px-4">
+                            <div th:if="${param.passwordError}" class="alert alert-danger text-center mb-3">
+                                Les mots de passe ne correspondent pas ou le mot de passe actuel est incorrect.
+                            </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Ancien mot de passe</label>
                                 <input type="password" class="form-control form-control-sm"

@@ -101,6 +101,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const urlParams = new URLSearchParams(window.location.search);
     const sectionParam = urlParams.get('section');
+
+    if (urlParams.get('passwordError')) {
+        new bootstrap.Modal(document.getElementById('modalPassword')).show();
+    }
+
     if (sectionParam) {
         document.querySelectorAll('.profil-section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
