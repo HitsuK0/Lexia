@@ -105,7 +105,7 @@ public class BeneficiaryProfileService {
      * @param beneficiary the currently connected beneficiary
      * @param dto         the password change form data
      * @return true if the password was successfully changed,
-     *         false if newPassword and confirmPassword do not match
+     * false if newPassword and confirmPassword do not match
      * @throws SQLException if a database error occurs during the update
      */
     public boolean changePassword(Beneficiary beneficiary, DTOPasswordChange dto) throws SQLException {
@@ -115,7 +115,7 @@ public class BeneficiaryProfileService {
 
         DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
 
-        if(!(daoBeneficiary.checkOldPassword(beneficiary.getNumBeneficiary(), dto.getOldPassword()))) {
+        if (!(daoBeneficiary.checkOldPassword(beneficiary.getNumBeneficiary(), dto.getOldPassword()))) {
             return false;
         }
 

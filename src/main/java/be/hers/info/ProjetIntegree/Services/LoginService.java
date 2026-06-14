@@ -3,34 +3,43 @@ package be.hers.info.ProjetIntegree.Services;
 import be.hers.info.ProjetIntegree.DAO.DAOBeneficiary;
 import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
 import be.hers.info.ProjetIntegree.POJO.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 
+/**
+ * @author Vatafu Jean
+ * @reviewer Nicolas Jean-Francois
+ */
 public class LoginService {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoginService.class);
 
     /**
      * Authenticates a user from their login and password. The first character of
      * the login determines the user's role
      * If the login is null, empty, or has an unknown prefix, null is returned
-     * @param login the user's login
+     *
+     * @param login    the user's login
      * @param password the user's password
      * @return the authenticated User, or null if authentication fails
      */
     public User getAuthentification(String login, String password) {
         User user = null;
-        if(login != null && !login.isEmpty()) {
+        if (login != null && !login.isEmpty()) {
             char roleLetter = login.charAt(0);
 
             try {
-                if(roleLetter == 'B') {
+                if (roleLetter == 'B') {
                     DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
                     user = daoBeneficiary.getBeneficiaryAuthentification(login, password);
-                } else if(roleLetter == 'C' || roleLetter == 'I') {
+                } else if (roleLetter == 'C' || roleLetter == 'I') {
                     DAOInterpreter daoInterpreter = new DAOInterpreter();
                     user = daoInterpreter.getInterpreterAuthentification(login, password);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error("Erreur lors de l'authentification pour le login {}", login, e);
             }
         }
         return user;

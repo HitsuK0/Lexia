@@ -1,15 +1,12 @@
 package be.hers.info.ProjetIntegree.Services;
 
-/**
- * @authors Rosman Loïs, Quentin Vanderheyden.
- * @reviewer Nicolas Jean-François
- */
-
 import be.hers.info.ProjetIntegree.DAO.*;
 import be.hers.info.ProjetIntegree.DTO.DTOAppointmentForm;
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
 import be.hers.info.ProjetIntegree.DTO.DTOEstablishmentFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.time.LocalTime;
@@ -18,14 +15,21 @@ import java.util.List;
 
 /**
  * Service link to the form used to ask an appointment
+ *
+ * @author Rosman Loïs, Quentin Vanderheyden.
+ * @reviewer Nicolas Jean-François
  */
 public class AppointmentFormService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AppointmentFormService.class);
+
     /**
      * It creates an appointment in the database using the data in the DTOAppointment given in param.
+     *
      * @param appointmentDTO the appointmentDTO used to retrieve the data in the form.
      * @return true if the appointment is created successfully. Otherwise, return false
-     * @throws BadStatusException If an bad status error occurs with this method.
-     * @throws SQLException If an SQL error occurs with this method.
+     * @throws BadStatusException       If an bad status error occurs with this method.
+     * @throws SQLException             If an SQL error occurs with this method.
      * @throws IllegalArgumentException If an element contained in an appointment isn't found
      */
     public boolean createAppointment(DTOAppointmentForm appointmentDTO) throws BadStatusException, SQLException {
@@ -35,21 +39,21 @@ public class AppointmentFormService {
 
         DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
         Beneficiary beneficiary = daoBeneficiary.find(appointmentDTO.getNumBeneficiary());
-        if(beneficiary == null)
+        if (beneficiary == null)
             throw new IllegalArgumentException("Bénéficiaire introuvable");
         newAppointment.setBeneficiary(beneficiary);
 
         DAOEstablishment daoEstablishment = new DAOEstablishment();
         Establishment establishment = daoEstablishment.find(appointmentDTO.getNumEstablishment());
-        if(establishment == null)
+        if (establishment == null)
             throw new IllegalArgumentException("Etablissement introuvable");
         newAppointment.setEstablishment(establishment);
 
         DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
         List<AcademicSkill> listAcademicSkills = new ArrayList<>();
-        for(int num : appointmentDTO.getNumAcademicSkillsNeeded()){
+        for (int num : appointmentDTO.getNumAcademicSkillsNeeded()) {
             AcademicSkill academicSkillFound = daoAcademicSkill.find(num);
-            if(academicSkillFound == null)
+            if (academicSkillFound == null)
                 throw new IllegalArgumentException("Compétence académique introuvable");
             listAcademicSkills.add(academicSkillFound);
         }
@@ -57,9 +61,9 @@ public class AppointmentFormService {
 
         DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
         List<ProfessionalSkill> listProfessionalSkills = new ArrayList<>();
-        for(int num : appointmentDTO.getNumProfessionalSkillsNeeded()){
+        for (int num : appointmentDTO.getNumProfessionalSkillsNeeded()) {
             ProfessionalSkill professionalSkillFound = daoProfessionalSkill.find(num);
-            if(professionalSkillFound == null)
+            if (professionalSkillFound == null)
                 throw new IllegalArgumentException("Compétence professionnelle introuvable");
             listProfessionalSkills.add(professionalSkillFound);
         }
@@ -88,18 +92,19 @@ public class AppointmentFormService {
 
     /**
      * Search for all beneficiaries whose the referent is the interpreter whose the id is indicated
+     *
      * @param numInterpreter the interpreter's id which is the referent
      * @return a list containing at least one beneficiary if the DB containing at least one
-     *         an empty list if no beneficiary found
-     *         null if SQLException is thrown
+     * an empty list if no beneficiary found
+     * null if SQLException is thrown
      * @throws SQLException If an SQL error occurs with this method.
      */
-    public List<DTOBeneficiaryFormAppointment> findHisBeneficiaries(int numInterpreter){
-        try{
+    public List<DTOBeneficiaryFormAppointment> findHisBeneficiaries(int numInterpreter) {
+        try {
             DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
             return daoBeneficiary.findWithInterpreter(numInterpreter);
-        }
-        catch(SQLException sqle){
+        } catch (SQLException sqle) {
+            logger.error("Erreur lors de la recherche des bénéficiaires pour l'interprète {}", numInterpreter, sqle);
             return null;
         }
     }
@@ -107,54 +112,58 @@ public class AppointmentFormService {
     /**
      * Search for all the establishments in the DB and stores them in
      * a list containing DTOEstablishmentFormAppointment objects
+     *
      * @return a list containing all the establishments
-     *         an empty list if no establishment found
-     *         null if an SQLException is thrown
+     * an empty list if no establishment found
+     * null if an SQLException is thrown
      */
-    public List<DTOEstablishmentFormAppointment> findAllEstablishments(){
-        try{
+    public List<DTOEstablishmentFormAppointment> findAllEstablishments() {
+        try {
             DAOEstablishment daoEstablishment = new DAOEstablishment();
             return daoEstablishment.findAllDTOFormAppointment();
-        }
-        catch(SQLException sqle){
+        } catch (SQLException sqle) {
+            logger.error("Erreur lors de la recherche des établissements", sqle);
             return null;
         }
     }
 
     /**
      * Search all academic skills in the DB
+     *
      * @return a list containing all academic skills in the DB
-     *         an empty list if no academic skill found
-     *         null if an SQLException is thrown
+     * an empty list if no academic skill found
+     * null if an SQLException is thrown
      */
-    public List<AcademicSkill> findAllAcademicSkills(){
-        try{
+    public List<AcademicSkill> findAllAcademicSkills() {
+        try {
             DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
             return daoAcademicSkill.findAll();
-        }
-        catch(SQLException sqle){
+        } catch (SQLException sqle) {
+            logger.error("Erreur lors de la recherche des compétences académiques", sqle);
             return null;
         }
     }
 
     /**
      * Search all professional skills in the DB
+     *
      * @return a list containing all professional skills in the DB
-     *         an empty list if no professional skill found
-     *         null if an SQLException is thrown
+     * an empty list if no professional skill found
+     * null if an SQLException is thrown
      */
-    public List<ProfessionalSkill> findAllProfessionalSkills(){
-        try{
+    public List<ProfessionalSkill> findAllProfessionalSkills() {
+        try {
             DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
             return daoProfessionalSkill.findAll();
-        }
-        catch(SQLException sqle){
+        } catch (SQLException sqle) {
+            logger.error("Erreur lors de la recherche des compétences métier", sqle);
             return null;
         }
     }
 
     /**
      * This function is used to update an Appointment with new data.
+     *
      * @param appointmentDTO represent an Appointment
      * @param numAppointment is num of the Appointment, we are trying to update
      * @return true if the update went well else false
@@ -185,12 +194,12 @@ public class AppointmentFormService {
 
         DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
         Beneficiary beneficiary = daoBeneficiary.find(appointmentDTO.getNumBeneficiary());
-        if(beneficiary != null)
+        if (beneficiary != null)
             updatedAppointment.setBeneficiary(beneficiary);
 
         DAOEstablishment daoEstablishment = new DAOEstablishment();
         Establishment establishment = daoEstablishment.find(appointmentDTO.getNumEstablishment());
-        if(establishment != null)
+        if (establishment != null)
             updatedAppointment.setEstablishment(establishment);
 
         DAOAppointment daoAppointment = new DAOAppointment();
@@ -199,17 +208,17 @@ public class AppointmentFormService {
 
         DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
         List<AcademicSkill> listAcademicSkills = new ArrayList<>();
-        for(int num : appointmentDTO.getNumAcademicSkillsNeeded()){
+        for (int num : appointmentDTO.getNumAcademicSkillsNeeded()) {
             AcademicSkill academicSkillFound = daoAcademicSkill.find(num);
-            if(academicSkillFound != null) {
+            if (academicSkillFound != null) {
                 listAcademicSkills.add(academicSkillFound);
-                if(!academicSkillListBD.contains(academicSkillFound)){
+                if (!academicSkillListBD.contains(academicSkillFound)) {
                     daoAppointment.addAcademicSkillAtAppointment(numAppointment, academicSkillFound.getNumAcademicSkill());
                 }
             }
         }
         academicSkillListBD = academicSkillListBD.stream().filter(x -> listAcademicSkills.contains(x) == false).toList();
-        for(AcademicSkill academicSkill : academicSkillListBD){
+        for (AcademicSkill academicSkill : academicSkillListBD) {
             daoAppointment.deleteAcademicSkillAtAppointment(numAppointment, academicSkill.getNumAcademicSkill());
         }
 
@@ -219,27 +228,26 @@ public class AppointmentFormService {
 
         DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
         List<ProfessionalSkill> listProfessionalSkills = new ArrayList<>();
-        for(int num : appointmentDTO.getNumProfessionalSkillsNeeded()){
+        for (int num : appointmentDTO.getNumProfessionalSkillsNeeded()) {
             ProfessionalSkill professionalSkillFound = daoProfessionalSkill.find(num);
 
-            if(professionalSkillFound != null) {
+            if (professionalSkillFound != null) {
                 listProfessionalSkills.add(professionalSkillFound);
-                if(!professionalSkillListBD.contains(professionalSkillFound)){
+                if (!professionalSkillListBD.contains(professionalSkillFound)) {
                     daoAppointment.addProfessionalSkillAtAppointment(numAppointment, professionalSkillFound.getNumProfessionalSkill());
                 }
             }
         }
         professionalSkillListBD = professionalSkillListBD.stream().filter(x -> listProfessionalSkills.contains(x) == false).toList();
-        for(ProfessionalSkill professionalSkill : professionalSkillListBD){
+        for (ProfessionalSkill professionalSkill : professionalSkillListBD) {
             daoAppointment.deleteProfessionalSkillAtAppointment(numAppointment, professionalSkill.getNumProfessionalSkill());
         }
         updatedAppointment.setProfessionalSkillsNeeded(listProfessionalSkills);
 
         daoAppointment.deleteInRDVInterpreter(updatedAppointment);
-        if(daoAppointment.update(updatedAppointment))
+        if (daoAppointment.update(updatedAppointment))
             isUpdated = true;
 
         return isUpdated;
     }
 }
-

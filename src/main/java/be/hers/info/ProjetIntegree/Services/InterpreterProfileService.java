@@ -5,6 +5,8 @@ import be.hers.info.ProjetIntegree.DTO.DTOInterpreterProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
 import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Interpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 
@@ -12,14 +14,17 @@ import java.sql.SQLException;
  * @author Halet Louis
  * @reviewer Nicolas Jean-Francois, Wellinger Chloé
  */
-
 public class InterpreterProfileService {
+
+    private static final Logger logger = LoggerFactory.getLogger(InterpreterProfileService.class);
+
     /**
      * Builds a {@link DTOInterpreterProfile} from the connected interpreter.
      * Flattens the nested Address object into individual fields so the Thymeleaf form can bind them directly.
      * If the interpreter has no address yet (first login), the address fields in the DTO will be left empty so the form displays blank fields to fill in.
      * Initialize the AcademicSkillList and ProfessionalSkillList with all the academic and professional skills present in the database.
      * Initialize the AcademicSkillListInterpreter and ProfessionalSkillListInterpreter with all the academic and professional skills related to the interpreter.
+     *
      * @param interpreter the currently connected interpreter, must not be null
      * @return a DTOInterpreterProfile populated with the interpreter's current data
      */
@@ -44,18 +49,18 @@ public class InterpreterProfileService {
         DAOInterpreter daoInterpreter = new DAOInterpreter();
         DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
         DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
-        try{
+        try {
             dto.setProfessionalSkillListInterpreter(daoInterpreter.getProfessionalSkill(interpreter.getNumInterpreter()));
             dto.setAcademicSkillListInterpreter(daoInterpreter.getAcademicSkill(interpreter.getNumInterpreter()));
             dto.setProfessionalSkillList(daoProfessionalSkill.findAll());
             dto.setAcademicSkillList(daoAcademicSkill.findAll());
 
-        }catch (SQLException e){
-            e.printStackTrace();
+        } catch (SQLException e) {
+            logger.error("Erreur lors du chargement des compétences pour l'interprète {}", interpreter.getNumInterpreter(), e);
         }
-
         return dto;
     }
+
     /**
      * Saves the profile changes submitted by the interpreter.
      * Updates the editable fields of the interpreter and its Address in the database.
@@ -97,6 +102,7 @@ public class InterpreterProfileService {
         DAOInterpreter daoInterpreter = new DAOInterpreter();
         daoInterpreter.update(interpreter);
     }
+
     /**
      * Changes the password of the connected interpreter.
      * Verifies that newPassword and confirmPassword match before applying the change.
@@ -105,7 +111,7 @@ public class InterpreterProfileService {
      * @param interpreter the currently connected interpreter
      * @param dto         the password change form data
      * @return true if the password was successfully changed,
-     *         false if newPassword and confirmPassword do not match
+     * false if newPassword and confirmPassword do not match
      * @throws SQLException if a database error occurs during the update
      */
     public boolean changePassword(Interpreter interpreter, DTOPasswordChange dto) throws SQLException {
@@ -115,7 +121,7 @@ public class InterpreterProfileService {
 
         DAOInterpreter daoInterpreter = new DAOInterpreter();
 
-        if(!(daoInterpreter.checkOldPassword(interpreter.getNumInterpreter(), dto.getOldPassword()))) {
+        if (!(daoInterpreter.checkOldPassword(interpreter.getNumInterpreter(), dto.getOldPassword()))) {
             return false;
         }
 
@@ -128,46 +134,53 @@ public class InterpreterProfileService {
     /**
      *
      * Adds the professional skill designated by its number to the interpreter in question
-     * @param numInterpreter the interpreter's ID
+     *
+     * @param numInterpreter       the interpreter's ID
      * @param numProfessionalSkill the ID of the professional skill
      * @return true if the addition was successful, false otherwise
      * @throws SQLException if a database error occurs during the add
      */
     public boolean addProfessionalSkill(int numInterpreter, int numProfessionalSkill) throws SQLException {
         DAOInterpreter daoInterpreter = new DAOInterpreter();
-        return  daoInterpreter.addProfessionalSkillToInterpreter(numInterpreter,numProfessionalSkill);
+        return daoInterpreter.addProfessionalSkillToInterpreter(numInterpreter, numProfessionalSkill);
     }
+
     /**
      * Delete the professional skill designated by its number to the interpreter in question
-     * @param numInterpreter the interpreter's ID
+     *
+     * @param numInterpreter       the interpreter's ID
      * @param numProfessionalSkill the ID of the professional skill
      * @return true if the deletion was successful, false otherwise
      * @throws SQLException if a database error occurs during the deleting
      */
     public boolean deleteProfessionalSkill(int numInterpreter, int numProfessionalSkill) throws SQLException {
         DAOInterpreter daoInterpreter = new DAOInterpreter();
-        return daoInterpreter.deleteProfessionalSkillToInterpreter(numInterpreter,numProfessionalSkill);
+        return daoInterpreter.deleteProfessionalSkillToInterpreter(numInterpreter, numProfessionalSkill);
     }
+
     /**
      * Add the academic skill designated by its number to the relevant interpreter
-     * @param numInterpreter the interpreter's ID
+     *
+     * @param numInterpreter   the interpreter's ID
      * @param numAcademicSkill the ID of the academic skill
      * @return true if the addition was successful, false otherwise
      * @throws SQLException if a database error occurs during the add
      */
     public boolean addAcademicSkill(int numInterpreter, int numAcademicSkill) throws SQLException {
         DAOInterpreter daoInterpreter = new DAOInterpreter();
-        return daoInterpreter.addAcademicSkillToInterpreter(numInterpreter,numAcademicSkill);
+        return daoInterpreter.addAcademicSkillToInterpreter(numInterpreter, numAcademicSkill);
     }
+
     /**
      * Removes the academic skill designated by its number from the interpreter in question.
-     * @param numInterpreter the interpreter's ID
+     *
+     * @param numInterpreter   the interpreter's ID
      * @param numAcademicSkill the ID of the academic skill
      * @return true if the deletion was successful, false otherwise
      * @throws SQLException if a database error occurs during the deleting
      */
     public boolean deleteAcademicSkill(int numInterpreter, int numAcademicSkill) throws SQLException {
         DAOInterpreter daoInterpreter = new DAOInterpreter();
-        return daoInterpreter.deleteAcademicSkillToInterpreter(numInterpreter,numAcademicSkill);
+        return daoInterpreter.deleteAcademicSkillToInterpreter(numInterpreter, numAcademicSkill);
     }
 }
