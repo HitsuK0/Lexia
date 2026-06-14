@@ -10,6 +10,8 @@ import be.hers.info.ProjetIntegree.Services.BeneficiaryProfileService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,8 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/beneficiaire")
 public class BeneficiaryController {
+
+    private static final Logger logger = LoggerFactory.getLogger(BeneficiaryController.class);
 
     /**
      * Retrieves the connected beneficiary from the session.
@@ -46,7 +50,8 @@ public class BeneficiaryController {
         return null;
     }
 
-    /** Controller for the pages named "Mon planning"
+    /**
+     * Controller for the pages named "Mon planning"
      * Displays the weekly calendar page for the connected beneficiary.
      * Pass on model the establishmentList, the academicSkillList and the professionalSkillList
      * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
@@ -72,35 +77,36 @@ public class BeneficiaryController {
         model.addAttribute("activeTab", "planning");
         return "beneficiaire/planning";
     }
+
     /**
      * Search all Appointments within the Start and End time range linked to the connected beneficiary.
      * Format the information found in a list on the Map for FullCalendar
-     * @param start the start date of the schedule
-     * @param end the end date of the schedule
+     *
+     * @param start   the start date of the schedule
+     * @param end     the end date of the schedule
      * @param session the current HTTP session
-     * @param model the Spring UI model
+     * @param model   the Spring UI model
      * @return a formatted map list for FullCalendar
      */
-    @GetMapping(value = "/planning/events", produces="application/json")
+    @GetMapping(value = "/planning/events", produces = "application/json")
     @ResponseBody
-    public List<Map<String,Object>> getEventsPlaningBeneficiary(@RequestParam String start,
-                                                                @RequestParam String end, HttpSession session, Model model) {
+    public List<Map<String, Object>> getEventsPlaningBeneficiary(@RequestParam String start,
+                                                                 @RequestParam String end, HttpSession session, Model model) {
         Beneficiary beneficiary = getBeneficiaryFromSession(session);
         if (beneficiary == null) {
             return Collections.emptyList();
         }
-        String dateStart = start.substring(0,10);
-        String dateEnd = end.substring(0,10);
+        String dateStart = start.substring(0, 10);
+        String dateEnd = end.substring(0, 10);
         PlanningService planningService = new PlanningService();
         List<Appointment> appointmentList = planningService.getListAppointmentsToBeneficiaryAndDate(beneficiary.getNumBeneficiary(), dateStart, dateEnd);
-        System.out.println(appointmentList);
         LocalDate ldStart = LocalDate.parse(dateStart);
         LocalDate ldEnd = LocalDate.parse(dateEnd);
 
-        List<Map<String,Object>> events = new ArrayList<>();
+        List<Map<String, Object>> events = new ArrayList<>();
         List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
                 .toList();
-        for( Appointment a : appointmentList){
+        for (Appointment a : appointmentList) {
             Map<String, Object> event = new HashMap<>();
             Map<String, Object> extendedProps = new HashMap<>();
 
@@ -109,58 +115,58 @@ public class BeneficiaryController {
                     .collect(Collectors.joining(", "));
             event.put("title", skills);
 
-            if(a.getTimeSlot() instanceof TimeSlotPunctual){
+            if (a.getTimeSlot() instanceof TimeSlotPunctual) {
                 TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
-                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                LocalDateTime ldt = LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+                event.put("start", ldt);
+                event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
 
-                switch (a.getStatus()){
+                switch (a.getStatus()) {
                     case "en attente":
-                        event.put("color","#f0ad4e");
+                        event.put("color", "#f0ad4e");
                         break;
                     case "accepte":
-                        event.put("color","#81c784");
+                        event.put("color", "#81c784");
                         break;
                     case "refuse":
-                        event.put("color","#f28b82");
+                        event.put("color", "#f28b82");
                         break;
                 }
-            }else{
+            } else {
                 TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
                 int i = tsp.getDayNumber();
                 LocalDate ld = null;
-                for(LocalDate l : listDateBetweenStartEnd){
-                    if(l.getDayOfWeek().getValue() == i){
+                for (LocalDate l : listDateBetweenStartEnd) {
+                    if (l.getDayOfWeek().getValue() == i) {
                         ld = l;
                         break;
                     }
                 }
                 if (ld == null) continue;
                 LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-                event.put("color","#b39ddb");
+                event.put("start", ldt);
+                event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                event.put("color", "#b39ddb");
             }
 
             String professionalSkills = a.getProfessionalSkillsNeeded().stream()
                     .map(s -> s.getDesignation())
                     .collect(Collectors.joining(", "));
 
-            extendedProps.put("type","appointment");
-            extendedProps.put("status",a.getStatus());
+            extendedProps.put("type", "appointment");
+            extendedProps.put("status", a.getStatus());
             extendedProps.put("professionalSkills", professionalSkills);
-            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,1) + ". " + a.getBeneficiary().getFirstName());
+            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0, 1) + ". " + a.getBeneficiary().getFirstName());
             extendedProps.put("locals", a.getAppointmentLocals());
-            extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
+            extendedProps.put("establishment", a.getEstablishment().getNameBuilding());
             extendedProps.put("description", a.getDescription());
-            event.put("extendedProps",extendedProps);
+            event.put("extendedProps", extendedProps);
             events.add(event);
 
         }
         return events;
-
     }
+
     /**
      * Creates a new appointment from the RDV modal in the beneficiary planning page.
      * Receives the appointment data as a JSON body sent by the JS fetch call.
@@ -183,7 +189,7 @@ public class BeneficiaryController {
             boolean success = service.createAppointment(dtoAppointment);
             return success ? "ok" : "error";
         } catch (BadStatusException | SQLException | IllegalArgumentException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la création du RDV planning pour le bénéficiaire {}", beneficiary.getNumBeneficiary(), e);
             return "error";
         }
     }
@@ -210,12 +216,13 @@ public class BeneficiaryController {
             boolean success = service.createAppointment(dtoAppointment);
             return success ? "ok" : "error";
         } catch (BadStatusException | SQLException | IllegalArgumentException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la création du RDV demandes pour le bénéficiaire {}", beneficiary.getNumBeneficiary(), e);
             return "error";
         }
     }
 
-    /** Controller for the pages named "Mes demandes"
+    /**
+     * Controller for the pages named "Mes demandes"
      * Displays the list of appointment requests for the connected beneficiary.
      * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
      * Redirects to login if no beneficiary is found in session.
@@ -247,20 +254,21 @@ public class BeneficiaryController {
         return "beneficiaire/demandes";
     }
 
-    /** Controller for the trash icon button on the "Mes demandes" page.
+    /**
+     * Controller for the trash icon button on the "Mes demandes" page.
      * Deletes the appointment request identified by numAppointment.
      * Reads the beneficiary directly from the session.
      * Redirects to login if no beneficiary is found in session.
      *
      * @param numAppointment the id of the appointment request to delete
-     * @param session the current HTTP session
+     * @param session        the current HTTP session
      * @return a redirect to "/beneficiaire/demandes" after the deletion attempt,
-     *         a redirect to "/login" if the session is invalid
+     * a redirect to "/login" if the session is invalid
      */
     @PostMapping("/demandes/delete")
     public String deleteRDV(@RequestParam int numAppointment, HttpSession session) {
         Beneficiary beneficiary = getBeneficiaryFromSession(session);
-        if(beneficiary == null) {
+        if (beneficiary == null) {
             return "redirect:/login";
         }
 
@@ -268,11 +276,13 @@ public class BeneficiaryController {
             AppointmentService appointmentService = new AppointmentService();
             appointmentService.deleteAppointmentRequest(numAppointment);
         } catch (SQLException | BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la suppression du RDV {}", numAppointment, e);
         }
         return "redirect:/beneficiaire/demandes";
     }
-    /** Controller for the pages named "Mon profil"
+
+    /**
+     * Controller for the pages named "Mon profil"
      * Displays the profile page for the connected beneficiary.
      * Reads the beneficiary directly from the session to avoid Spring injecting an empty POJO when no user is connected.
      * Builds a {@link DTOBeneficiaryProfile} from the connected beneficiary and adds it to the model so the Thymeleaf form can bind its fields.
@@ -300,7 +310,8 @@ public class BeneficiaryController {
         return "beneficiaire/profil";
     }
 
-    /** Controller for the pages named "Mon profil"
+    /**
+     * Controller for the pages named "Mon profil"
      * Handles the submission of the profile edit form.
      * Saves the modified personal data (lastName, firstName, phoneNumber, emailAddress, address) of the connected beneficiary.
      * The login and password are NOT modified here.
@@ -324,13 +335,14 @@ public class BeneficiaryController {
             profileService.saveProfile(beneficiary, profileDTO);
             session.setAttribute("currentUser", beneficiary);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la sauvegarde du profil bénéficiaire {}", beneficiary.getNumBeneficiary(), e);
         }
 
         return "redirect:/beneficiaire/profil";
     }
 
-    /** Controller for the pages named "Mon profil"
+    /**
+     * Controller for the pages named "Mon profil"
      * Handles the submission of the password change modal.
      * Verifies that newPassword and confirmPassword match, then updates the password in the database.
      * The DB trigger will hash the new password automatically on UPDATE.
@@ -341,8 +353,8 @@ public class BeneficiaryController {
      * @param passwordDTO the password change form data submitted by the user
      * @param request     the current HTTP request used to access the session
      * @return a redirect to "/beneficiaire/profil" after the operation,
-     *         with "?passwordError=true" appended if passwords do not match,
-     *         or a redirect to "/login" if the session is invalid
+     * with "?passwordError=true" appended if passwords do not match,
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/password")
     public String changePassword(@ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpServletRequest request) {
@@ -359,7 +371,7 @@ public class BeneficiaryController {
                 return "redirect:/beneficiaire/profil?passwordError=true";
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du changement de mot de passe bénéficiaire {}", beneficiary.getNumBeneficiary(), e);
         }
 
         return "redirect:/beneficiaire/profil";

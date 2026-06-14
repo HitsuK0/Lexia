@@ -1,15 +1,12 @@
 package be.hers.info.ProjetIntegree.Controller;
 
-/**
- * @author Nicolas Jean-François
- * @reviewer Halet Louis, Wellinger Chloé
- */
-
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.AppointmentFormService;
 import be.hers.info.ProjetIntegree.Services.HoraireBaseService;
 import be.hers.info.ProjetIntegree.Services.SkillService;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +18,15 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author Nicolas Jean-François
+ * @reviewer Halet Louis, Wellinger Chloé
+ */
 @Controller
 @RequestMapping("/coordinatrice/horaire-base")
 public class HoraireBaseController {
+
+    private static final Logger logger = LoggerFactory.getLogger(HoraireBaseController.class);
 
     /**
      * Retrieves the connected coordinator from the session.
@@ -141,7 +144,7 @@ public class HoraireBaseController {
      * Redirects to login if no coordinator is found in session.
      *
      * @param session the current HTTP session
-     * @param model the Spring UI model
+     * @param model   the Spring UI model
      * @return the view "coordinatrice/horaire-base", or a redirect to "/login"
      */
     @GetMapping
@@ -163,7 +166,7 @@ public class HoraireBaseController {
             model.addAttribute("establishmentList", appointmentFormService.findAllEstablishments());
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement de la page horaire de base", e);
         }
 
         return "coordinatrice/horaire-base";
@@ -175,7 +178,7 @@ public class HoraireBaseController {
      * Events are placed on the current week's days using the TimeSlotBase dayNumber.
      * Redirects to an empty list if no coordinator is found in session.
      *
-     * @param id the numInterpreter of the interpreter whose schedule is requested
+     * @param id      the numInterpreter of the interpreter whose schedule is requested
      * @param session the current HTTP session
      * @return a list of FullCalendar event maps, or an empty list if the session is invalid
      */
@@ -206,7 +209,7 @@ public class HoraireBaseController {
             }
 
         } catch (SQLException | BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement des événements pour l'interprète {}", id, e);
         }
 
         return events;
@@ -217,7 +220,7 @@ public class HoraireBaseController {
      * Events are placed on the current week's days using the TimeSlotBase dayNumber.
      * Redirects to an empty list if no coordinator is found in session.
      *
-     * @param id the numBeneficiary of the beneficiary whose schedule is requested
+     * @param id      the numBeneficiary of the beneficiary whose schedule is requested
      * @param session the current HTTP session
      * @return a list of FullCalendar event maps, or an empty list if the session is invalid
      */
@@ -237,7 +240,7 @@ public class HoraireBaseController {
                     events.add(event);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement des événements pour le bénéficiaire {}", id, e);
         }
 
         return events;
@@ -250,7 +253,7 @@ public class HoraireBaseController {
      * Then the rest alphabetically.
      * Redirects to an empty list if no coordinator is found in session.
      *
-     * @param id the numBeneficiary of the beneficiary
+     * @param id      the numBeneficiary of the beneficiary
      * @param session the current HTTP session
      * @return a list of maps with "numInterpreter" and "label", or an empty list
      */
@@ -270,7 +273,7 @@ public class HoraireBaseController {
             return service.getSuggestedInterpreters(beneficiary, allInterpreters);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement des interprètes suggérés pour le bénéficiaire {}", id, e);
             return Collections.emptyList();
         }
     }
@@ -282,23 +285,23 @@ public class HoraireBaseController {
      * All CRUD operations are delegated to HoraireBaseService.
      * Redirects to login if no coordinator is found in session.
      *
-     * @param id the numInterpreter of the interpreter
-     * @param dayNumber the day of the week (1=Monday ... 7=Sunday)
-     * @param startTime the start time as "HH:mm"
-     * @param endTime the end time as "HH:mm"
-     * @param isAbsence true if this is a recurring unavailability, false for an appointment
-     * @param numBeneficiary the numBeneficiary (ignored if isAbsence is true)
+     * @param id               the numInterpreter of the interpreter
+     * @param dayNumber        the day of the week (1=Monday ... 7=Sunday)
+     * @param startTime        the start time as "HH:mm"
+     * @param endTime          the end time as "HH:mm"
+     * @param isAbsence        true if this is a recurring unavailability, false for an appointment
+     * @param numBeneficiary   the numBeneficiary (ignored if isAbsence is true)
      * @param numEstablishment the numEstablishment (ignored if isAbsence is true)
-     * @param local the local (room), may be null
-     * @param description the description (optional, ignored if isAbsence is true)
-     * @param session the current HTTP session
+     * @param local            the local (room), may be null
+     * @param description      the description (optional, ignored if isAbsence is true)
+     * @param session          the current HTTP session
      * @return "ok" on success, "error" on failure, or "unauthorized" if session is invalid
      */
     @PostMapping(value = "/interprete/{id}", produces = "application/json")
     @ResponseBody
-    public String createInterpreterSlot( @PathVariable int id, @RequestParam int dayNumber, @RequestParam String startTime, @RequestParam String endTime,
-            @RequestParam(defaultValue = "false") boolean isAbsence, @RequestParam(required = false) Integer numBeneficiary, @RequestParam(required = false) Integer numEstablishment,
-            @RequestParam(required = false) String local, @RequestParam(required = false) String description, HttpSession session) {
+    public String createInterpreterSlot(@PathVariable int id, @RequestParam int dayNumber, @RequestParam String startTime, @RequestParam String endTime,
+                                        @RequestParam(defaultValue = "false") boolean isAbsence, @RequestParam(required = false) Integer numBeneficiary, @RequestParam(required = false) Integer numEstablishment,
+                                        @RequestParam(required = false) String local, @RequestParam(required = false) String description, HttpSession session) {
 
         if (getCoordinatorFromSession(session) == null)
             return "unauthorized";
@@ -313,11 +316,11 @@ public class HoraireBaseController {
             } else {
                 if (numBeneficiary == null || numEstablishment == null)
                     return "error";
-                return service.createBaseAppointmentForInterpreter( id, numBeneficiary, numEstablishment,
+                return service.createBaseAppointmentForInterpreter(id, numBeneficiary, numEstablishment,
                         dayNumber, start, end, local, description) ? "ok" : "error";
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la création du créneau pour l'interprète {}", id, e);
             return "error";
         }
     }
@@ -328,24 +331,24 @@ public class HoraireBaseController {
      * All CRUD operations are delegated to HoraireBaseService.
      * Redirects to login if no coordinator is found in session.
      *
-     * @param id the numBeneficiary of the beneficiary
-     * @param dayNumber the day of the week (1=Monday ... 7=Sunday)
-     * @param startTime the start time as "HH:mm"
-     * @param endTime the end time as "HH:mm"
-     * @param numInterpreter the numInterpreter to assign
-     * @param numEstablishment the numEstablishment
-     * @param numAcademicSkill the numAcademicSkill required
+     * @param id                   the numBeneficiary of the beneficiary
+     * @param dayNumber            the day of the week (1=Monday ... 7=Sunday)
+     * @param startTime            the start time as "HH:mm"
+     * @param endTime              the end time as "HH:mm"
+     * @param numInterpreter       the numInterpreter to assign
+     * @param numEstablishment     the numEstablishment
+     * @param numAcademicSkill     the numAcademicSkill required
      * @param numProfessionalSkill the numProfessionalSkill required
-     * @param local the local (room)
-     * @param description the description (optional)
-     * @param session the current HTTP session
+     * @param local                the local (room)
+     * @param description          the description (optional)
+     * @param session              the current HTTP session
      * @return "ok" on success, "error" on failure, or "unauthorized" if session is invalid
      */
     @PostMapping(value = "/beneficiaire/{id}", produces = "application/json")
     @ResponseBody
-    public String createBeneficiarySlot( @PathVariable int id, @RequestParam int dayNumber, @RequestParam String startTime,
-            @RequestParam String endTime, @RequestParam int numInterpreter, @RequestParam int numEstablishment, @RequestParam int numAcademicSkill,
-            @RequestParam int numProfessionalSkill, @RequestParam String local, @RequestParam(required = false) String description, HttpSession session) {
+    public String createBeneficiarySlot(@PathVariable int id, @RequestParam int dayNumber, @RequestParam String startTime,
+                                        @RequestParam String endTime, @RequestParam int numInterpreter, @RequestParam int numEstablishment, @RequestParam int numAcademicSkill,
+                                        @RequestParam int numProfessionalSkill, @RequestParam String local, @RequestParam(required = false) String description, HttpSession session) {
 
         if (getCoordinatorFromSession(session) == null)
             return "unauthorized";
@@ -359,7 +362,7 @@ public class HoraireBaseController {
                     numAcademicSkill, numProfessionalSkill, dayNumber, start, end, local, description) ? "ok" : "error";
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la création du créneau pour le bénéficiaire {}", id, e);
             return "error";
         }
     }
@@ -372,16 +375,16 @@ public class HoraireBaseController {
      * Redirects to login if no coordinator is found in session.
      *
      * @param numTimeSlot the numTimeSlot of the TimeSlotBase to update
-     * @param dayNumber the new day number (1=Monday ... 7=Sunday)
-     * @param startTime the new start time as "HH:mm"
-     * @param endTime the new end time as "HH:mm"
-     * @param session the current HTTP session
+     * @param dayNumber   the new day number (1=Monday ... 7=Sunday)
+     * @param startTime   the new start time as "HH:mm"
+     * @param endTime     the new end time as "HH:mm"
+     * @param session     the current HTTP session
      * @return "ok" on success, "error" on failure, or "unauthorized" if session is invalid
      */
     @PostMapping(value = "/update", produces = "application/json")
     @ResponseBody
-    public String updateSlot( @RequestParam int numTimeSlot, @RequestParam int dayNumber, @RequestParam String startTime,
-            @RequestParam String endTime, HttpSession session) {
+    public String updateSlot(@RequestParam int numTimeSlot, @RequestParam int dayNumber, @RequestParam String startTime,
+                             @RequestParam String endTime, HttpSession session) {
 
         if (getCoordinatorFromSession(session) == null)
             return "unauthorized";
@@ -390,7 +393,7 @@ public class HoraireBaseController {
             HoraireBaseService service = new HoraireBaseService();
             return service.updateSlot(numTimeSlot, dayNumber, LocalTime.parse(startTime), LocalTime.parse(endTime)) ? "ok" : "error";
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la mise à jour du créneau {}", numTimeSlot, e);
             return "error";
         }
     }
@@ -402,12 +405,12 @@ public class HoraireBaseController {
      * Redirects to login if no coordinator is found in session.
      *
      * @param numTimeSlot the numTimeSlot of the TimeSlotBase to delete
-     * @param session the current HTTP session
+     * @param session     the current HTTP session
      * @return "ok" on success, "error" on failure, or "unauthorized" if session is invalid
      */
     @PostMapping(value = "/delete", produces = "application/json")
     @ResponseBody
-    public String deleteSlot( @RequestParam int numTimeSlot, HttpSession session) {
+    public String deleteSlot(@RequestParam int numTimeSlot, HttpSession session) {
 
         if (getCoordinatorFromSession(session) == null)
             return "unauthorized";
@@ -416,7 +419,7 @@ public class HoraireBaseController {
             HoraireBaseService service = new HoraireBaseService();
             return service.deleteSlot(numTimeSlot) ? "ok" : "error";
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la suppression du créneau {}", numTimeSlot, e);
             return "error";
         }
     }
