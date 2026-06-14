@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('editStartDate').value = btn.dataset.startDate;
         document.getElementById('editEndDate').value = btn.dataset.endDate;
         document.getElementById('editReason').value = btn.dataset.reason || '';
+        document.getElementById('editReasonPrivate').checked = btn.dataset.privateReason === 'true';
         document.getElementById('editAbsenceId').value = btn.dataset.absenceId;
 
         const allDay = btn.dataset.allDay === 'true';
