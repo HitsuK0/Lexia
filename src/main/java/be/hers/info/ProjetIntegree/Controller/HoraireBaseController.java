@@ -86,6 +86,7 @@ public class HoraireBaseController {
         event.put("color", "#b39ddb");
 
         extendedProps.put("type", "appointment");
+        extendedProps.put("numTimeSlot", tsb.getNumTimeSlot());
         extendedProps.put("dayNumber", tsb.getDayNumber());
         extendedProps.put("startTime", tsb.getStartTime().toString());
         extendedProps.put("endTime", end.toLocalTime().toString());
