@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class LoginController {
@@ -29,8 +30,11 @@ public class LoginController {
      * @return the view name "login"
      */
     @GetMapping("login")
-    public String loginPage(Model model) {
+    public String loginPage(Model model,
+                            @RequestParam(value = "error", required = false)
+                            String error) {
         model.addAttribute("LoginDTO", new DTOLogin());
+        if(error != null) model.addAttribute("error", error);
 
         return "login";
     }
@@ -53,7 +57,7 @@ public class LoginController {
         user = loginService.getAuthentification(loginDTO.getLogin(), loginDTO.getPassword());
 
         if(user == null) {
-            return "redirect:/login";
+            return "redirect:/login?error";
         }
 
         HttpSession session = request.getSession();
@@ -70,7 +74,7 @@ public class LoginController {
             return "redirect:/beneficiaire/planning";
         }
 
-        return "redirect:/login";
+        return "redirect:/login?error";
     }
 }
 
