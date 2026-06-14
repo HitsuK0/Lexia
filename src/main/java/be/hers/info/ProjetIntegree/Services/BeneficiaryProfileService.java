@@ -115,7 +115,7 @@ public class BeneficiaryProfileService {
 
         DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
 
-        if(!(daoBeneficiary.checkOldPassword(beneficiary.getNumBeneficiary(), dto.getConfirmPassword()))) {
+        if(!(daoBeneficiary.checkOldPassword(beneficiary.getNumBeneficiary(), dto.getOldPassword()))) {
             return false;
         }
 

@@ -549,6 +549,15 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         return numberBeneficiaries;
     }
 
+    /** Checks whether the given plaintext password matches the stored password of the beneficiary.
+     * The password is hashed in SQL via STANDARD_HASH (SHA256) before comparison
+     * Used to verify a beneficiary's current password before allowing a password change
+     *
+     * @param numBeneficiary the id of the beneficiary whose password is checked
+     * @param passwordToCheck the plaintext password to verify against the stored hash
+     * @return true if the password matches the one stored for this beneficiary, false otherwise
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
     public boolean checkOldPassword(int numBeneficiary, String passwordToCheck) throws SQLException {
         boolean samePassword = false;
 
