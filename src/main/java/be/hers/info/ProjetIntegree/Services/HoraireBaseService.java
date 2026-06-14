@@ -1,19 +1,22 @@
 package be.hers.info.ProjetIntegree.Services;
 
-/**
- * @author Nicolas Jean-François
- * @reviewer Halet Louis, Wellinger Chloé
- */
-
 import be.hers.info.ProjetIntegree.DAO.*;
 import be.hers.info.ProjetIntegree.POJO.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author Nicolas Jean-François
+ * @reviewer Halet Louis, Wellinger Chloé
+ */
 public class HoraireBaseService {
+
+    private static final Logger logger = LoggerFactory.getLogger(HoraireBaseService.class);
 
     /**
      * Finds an Interpreter by its numInterpreter.
@@ -53,7 +56,7 @@ public class HoraireBaseService {
      * @return the list of all Beneficiary
      * @throws SQLException if a database error occurs
      */
-    public List<Beneficiary> findAllBeneficiaries() throws SQLException{
+    public List<Beneficiary> findAllBeneficiaries() throws SQLException {
         return new DAOBeneficiary().findAll();
     }
 
@@ -78,7 +81,7 @@ public class HoraireBaseService {
      *
      * @param interpreter the interpreter whose base absences are requested
      * @return a list of Absences with a TimeSlotBase, or an empty list if none found
-     * @throws SQLException if a database error occurs
+     * @throws SQLException       if a database error occurs
      * @throws BadStatusException if an absence status is invalid
      */
     public List<Absence> getBaseAbsencesForInterpreter(Interpreter interpreter) throws SQLException, BadStatusException {
@@ -110,7 +113,7 @@ public class HoraireBaseService {
      * - The rest are sorted alphabetically by last name.
      * Note: since Interpreter has no explicit language field, the address locality is used as a best-effort proxy.
      *
-     * @param beneficiary the beneficiary for whom the interpreter list is built
+     * @param beneficiary     the beneficiary for whom the interpreter list is built
      * @param allInterpreters the full list of interpreters to sort
      * @return a list of maps, each containing "numInterpreter" and "label"
      */
@@ -166,9 +169,9 @@ public class HoraireBaseService {
      * The absence status is set to "accepte" since it is created by the coordinator.
      *
      * @param numInterpreter the id of the interpreter
-     * @param dayNumber the day of the week (1=Monday ... 7=Sunday)
-     * @param startTime the start time
-     * @param endTime the end time (used to compute duration)
+     * @param dayNumber      the day of the week (1=Monday ... 7=Sunday)
+     * @param startTime      the start time
+     * @param endTime        the end time (used to compute duration)
      * @return true if the absence was successfully created, false otherwise
      * @throws SQLException if a database error occurs
      */
@@ -185,7 +188,7 @@ public class HoraireBaseService {
         try {
             absence.setStatus("accepte");
         } catch (BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Statut invalide lors de la création de l'absence de base pour l'interprète {}", numInterpreter, e);
             return false;
         }
         absence.setPrivateReason(false);
@@ -199,14 +202,14 @@ public class HoraireBaseService {
      * First inserts the TimeSlotBase, then creates the Appointment linked to the interpreter, beneficiary and establishment.
      * The appointment status is set to "accepte" since it is created by the coordinator.
      *
-     * @param numInterpreter the id of the interpreter to assign
-     * @param numBeneficiary the id of the beneficiary
+     * @param numInterpreter   the id of the interpreter to assign
+     * @param numBeneficiary   the id of the beneficiary
      * @param numEstablishment the id of the establishment
-     * @param dayNumber the day of the week (1=Monday ... 7=Sunday)
-     * @param startTime the start time
-     * @param endTime the end time (used to compute duration)
-     * @param local the local (room), may be null
-     * @param description the description, may be null
+     * @param dayNumber        the day of the week (1=Monday ... 7=Sunday)
+     * @param startTime        the start time
+     * @param endTime          the end time (used to compute duration)
+     * @param local            the local (room), may be null
+     * @param description      the description, may be null
      * @return true if the appointment was successfully created, false otherwise
      * @throws SQLException if a database error occurs
      */
@@ -233,7 +236,7 @@ public class HoraireBaseService {
         try {
             appointment.setStatus("accepte");
         } catch (BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Statut invalide lors de la création du RDV de base pour l'interprète {}", numInterpreter, e);
             return false;
         }
         appointment.setAppointmentLocals(locals);
@@ -253,16 +256,16 @@ public class HoraireBaseService {
      * interpreter, establishment, academic skill and professional skill.
      * The appointment status is set to "accepte" since it is created by the coordinator.
      *
-     * @param numBeneficiary the id of the beneficiary
-     * @param numInterpreter the id of the interpreter to assign
-     * @param numEstablishment the id of the establishment
-     * @param numAcademicSkill the id of the required academic skill
+     * @param numBeneficiary       the id of the beneficiary
+     * @param numInterpreter       the id of the interpreter to assign
+     * @param numEstablishment     the id of the establishment
+     * @param numAcademicSkill     the id of the required academic skill
      * @param numProfessionalSkill the id of the required professional skill
-     * @param dayNumber the day of the week (1=Monday ... 7=Sunday)
-     * @param startTime the start time
-     * @param endTime the end time (used to compute duration)
-     * @param local the local (room)
-     * @param description the description, may be null
+     * @param dayNumber            the day of the week (1=Monday ... 7=Sunday)
+     * @param startTime            the start time
+     * @param endTime              the end time (used to compute duration)
+     * @param local                the local (room)
+     * @param description          the description, may be null
      * @return true if the appointment was successfully created, false otherwise
      * @throws SQLException if a database error occurs
      */
@@ -291,7 +294,7 @@ public class HoraireBaseService {
         try {
             appointment.setStatus("accepte");
         } catch (BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Statut invalide lors de la création du RDV de base pour le bénéficiaire {}", numBeneficiary, e);
             return false;
         }
         appointment.setAppointmentLocals(locals);
@@ -310,9 +313,9 @@ public class HoraireBaseService {
      * The duration is recomputed from endTime - startTime.
      *
      * @param numTimeSlot the id of the TimeSlotBase to update
-     * @param dayNumber the new day number (1=Monday ... 7=Sunday)
-     * @param startTime the new start time
-     * @param endTime the new end time
+     * @param dayNumber   the new day number (1=Monday ... 7=Sunday)
+     * @param startTime   the new start time
+     * @param endTime     the new end time
      * @return true if the update was successful, false otherwise
      * @throws SQLException if a database error occurs
      */
