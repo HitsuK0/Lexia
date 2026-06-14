@@ -113,9 +113,13 @@ public class InterpreterProfileService {
             return false;
         }
 
-        interpreter.setPassword(dto.getNewPassword());
-
         DAOInterpreter daoInterpreter = new DAOInterpreter();
+
+        if(!(daoInterpreter.checkOldPassword(interpreter.getNumInterpreter(), dto.getOldPassword()))) {
+            return false;
+        }
+
+        interpreter.setPassword(dto.getNewPassword());
         daoInterpreter.updatePassword(interpreter);
 
         return true;

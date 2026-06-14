@@ -10,6 +10,7 @@ import be.hers.info.ProjetIntegree.POJO.TimeSlotPunctual;
 
 import java.sql.SQLException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,11 @@ public class AbsenceService {
      * @throws BadStatusException if the status of the absence isn't correct
      * @throws SQLException       if a database access error occurs
      */
-    public void createAbsence(DTOAbsence absenceDTO, int numInterpreter, String status) throws BadStatusException, SQLException {
+    public void createAbsence(DTOAbsence absenceDTO, int numInterpreter,String status) throws BadStatusException, SQLException {
+        if(absenceDTO.getStartDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("[AbsenceService] La date de l'absence ne peut pas etre dans le passe.");
+        }
+
         Absence absence = new Absence();
         absence.setReason(absenceDTO.getReason());
         absence.setStatus(status);
