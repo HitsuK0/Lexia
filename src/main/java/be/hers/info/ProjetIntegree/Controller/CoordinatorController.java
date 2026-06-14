@@ -469,14 +469,28 @@ public class CoordinatorController {
     }
 
 
+    /**
+     * This functions is used to update an Appointment.
+     * @param dtoAppointment is the Appointment to update.
+     * @param numAppointment is the num of the Appointment to update.
+     * @param session is the actual session.
+     * @param model is the Model for spring.
+     * @return the page
+     */
     @PostMapping("/planning-gestion/{numAppointment}/Modifier")
-    public String updateRDV(@PathVariable int numAppointment,HttpSession session, Model model) {
+    public String updateRDV(@RequestBody DTOAppointmentForm dtoAppointment, @PathVariable int numAppointment,HttpSession session, Model model) {
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null) {
             return "redirect:/login";
         }
-        // TODO
-        return "coordinatrice/planning-gestion";
+        try {
+            AppointmentFormService service = new AppointmentFormService();
+            service.updateAppointment(dtoAppointment, numAppointment);
+        } catch (SQLException | IllegalArgumentException ex) {
+            ex.printStackTrace();
+            // renvoyé page d'erreur.
+        }
+        return "redirect:/coordinatrice/planning-gestion";
     }
     /**
      * Build an events for FullCalendar with the Absence and the list of LocalDate choice between Start and End

@@ -1,7 +1,7 @@
 package be.hers.info.ProjetIntegree.Services;
 
 /**
- * @authors Rosman Loïs
+ * @authors Rosman Loïs, Quentin Vanderheyden.
  * @reviewer Nicolas Jean-François
  */
 
@@ -144,6 +144,95 @@ public class AppointmentFormService {
         catch(SQLException sqle){
             return null;
         }
+    }
+
+    /**
+     * This function is used to update an Appointment with new data.
+     * @param appointmentDTO represent an Appointment
+     * @param numAppointment is num of the Appointment, we are trying to update
+     * @return true if the update went well else false
+     * @throws SQLException if the database encounter an issue.
+     */
+    public boolean updateAppointment(DTOAppointmentForm appointmentDTO, int numAppointment) throws SQLException, BadStatusException {
+        boolean isUpdated = false;
+        Appointment updatedAppointment = new Appointment();
+        Appointment oldAppointment = new DAOAppointment().find(numAppointment);
+
+        DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+
+        TimeSlotPunctual newTimeSlotPunctual = daoTimeSlotPunctual.find(oldAppointment.getTimeSlot().getNumTimeSlot());
+        newTimeSlotPunctual.setStartTime(appointmentDTO.getStartTime());
+        newTimeSlotPunctual.setDuration(appointmentDTO.getEndTime());
+        newTimeSlotPunctual.setStartDate(appointmentDTO.getStartDate());
+        newTimeSlotPunctual.setEndDate(appointmentDTO.getEndDate());
+        daoTimeSlotPunctual.update(newTimeSlotPunctual);
+
+        updatedAppointment.setTimeSlot(newTimeSlotPunctual);
+
+        updatedAppointment.setNumAppointment(numAppointment);
+
+        updatedAppointment.setStatus("en attente");
+        updatedAppointment.setBeneficiary(new Beneficiary());
+
+        updatedAppointment.setAppointmentLocals(appointmentDTO.getAppointmentLocals());
+
+        DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+        Beneficiary beneficiary = daoBeneficiary.find(appointmentDTO.getNumBeneficiary());
+        if(beneficiary != null)
+            updatedAppointment.setBeneficiary(beneficiary);
+
+        DAOEstablishment daoEstablishment = new DAOEstablishment();
+        Establishment establishment = daoEstablishment.find(appointmentDTO.getNumEstablishment());
+        if(establishment != null)
+            updatedAppointment.setEstablishment(establishment);
+
+        DAOAppointment daoAppointment = new DAOAppointment();
+
+        List<AcademicSkill> academicSkillListBD = daoAppointment.findListAcademicSkillRequire(numAppointment);
+
+        DAOAcademicSkill daoAcademicSkill = new DAOAcademicSkill();
+        List<AcademicSkill> listAcademicSkills = new ArrayList<>();
+        for(int num : appointmentDTO.getNumAcademicSkillsNeeded()){
+            AcademicSkill academicSkillFound = daoAcademicSkill.find(num);
+            if(academicSkillFound != null) {
+                listAcademicSkills.add(academicSkillFound);
+                if(!academicSkillListBD.contains(academicSkillFound)){
+                    daoAppointment.addAcademicSkillAtAppointment(numAppointment, academicSkillFound.getNumAcademicSkill());
+                }
+            }
+        }
+        academicSkillListBD.stream().filter(x -> listAcademicSkills.contains(x) == false).toList();
+        for(AcademicSkill academicSkill : academicSkillListBD){
+            daoAppointment.deleteAcademicSkillAtAppointment(numAppointment, academicSkill.getNumAcademicSkill());
+        }
+
+        updatedAppointment.setAcademicSkillsNeeded(listAcademicSkills);
+
+        List<ProfessionalSkill> professionalSkillListBD = daoAppointment.findListProfessionalSkillRequire(numAppointment);
+
+        DAOProfessionalSkill daoProfessionalSkill = new DAOProfessionalSkill();
+        List<ProfessionalSkill> listProfessionalSkills = new ArrayList<>();
+        for(int num : appointmentDTO.getNumProfessionalSkillsNeeded()){
+            ProfessionalSkill professionalSkillFound = daoProfessionalSkill.find(num);
+
+            if(professionalSkillFound != null) {
+                listProfessionalSkills.add(professionalSkillFound);
+                if(!professionalSkillListBD.contains(professionalSkillFound)){
+                    daoAppointment.addProfessionalSkillAtAppointment(numAppointment, professionalSkillFound.getNumProfessionalSkill());
+                }
+            }
+        }
+        professionalSkillListBD.stream().filter(x -> listProfessionalSkills.contains(x) == false).toList();
+        for(ProfessionalSkill professionalSkill : professionalSkillListBD){
+            daoAppointment.deleteProfessionalSkillAtAppointment(numAppointment, professionalSkill.getNumProfessionalSkill());
+        }
+        updatedAppointment.setProfessionalSkillsNeeded(listProfessionalSkills);
+
+        daoAppointment.deleteInRDVInterpreter(updatedAppointment);
+        if(daoAppointment.update(updatedAppointment))
+            isUpdated = true;
+
+        return isUpdated;
     }
 }
 
