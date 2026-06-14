@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @author Jean-François Nicolas, Jean Vatafu, Ainhoa Leroy Rodriguez
  * @reviewer Jean-François Nicolas , Louis Halet
  */
-
 @Controller
 @ControllerAdvice
 public class NavbarController {
@@ -41,6 +40,7 @@ public class NavbarController {
      * Populates the model with specific attributes required for the navigation bar
      * and UI. It determines the user's role and specific identity
      * (Interpreter, Coordinator, or Beneficiary) based on their login prefix
+     *
      * @param model The UI model to be populated with attributes
      */
     @ModelAttribute
@@ -51,24 +51,24 @@ public class NavbarController {
         String userRole = null;
         boolean isAdmin = false;
 
-        if(connectedUser != null) {
-            model.addAttribute("userName", connectedUser.getFirstName()+" "+connectedUser.getLastName());
-            if(connectedUser.getLogin().charAt(0) == 'I') {
+        if (connectedUser != null) {
+            model.addAttribute("userName", connectedUser.getFirstName() + " " + connectedUser.getLastName());
+            if (connectedUser.getLogin().charAt(0) == 'I') {
                 userRole = "INTERPRETER";
                 model.addAttribute("InterpreterConnected", connectedUser);
-            } else if(connectedUser.getLogin().charAt(0) == 'C') {
+            } else if (connectedUser.getLogin().charAt(0) == 'C') {
                 userRole = "COORDINATOR";
-                if(connectedUser instanceof Coordinator) {
+                if (connectedUser instanceof Coordinator) {
                     isAdmin = ((Coordinator) connectedUser).isAdmin();
                 }
                 model.addAttribute("CoordinatorConnected", connectedUser);
-            } else if(connectedUser.getLogin().charAt(0) == 'B') {
+            } else if (connectedUser.getLogin().charAt(0) == 'B') {
                 userRole = "BENEFICIARY";
                 model.addAttribute("BeneficiaryConnected", connectedUser);
             }
 
             model.addAttribute("currentUser", connectedUser);
-            model.addAttribute("userName", connectedUser.getFirstName()+" "+connectedUser.getLastName());
+            model.addAttribute("userName", connectedUser.getFirstName() + " " + connectedUser.getLastName());
             model.addAttribute("userRole", userRole);
             model.addAttribute("isAdmin", isAdmin);
         }
@@ -76,8 +76,9 @@ public class NavbarController {
 
     /**
      * Redirects the user to their schedule
+     *
      * @param session The session containing the connected user
-     *@return The HTML path to the schedule page if a user is logged in, else redirects to /login.
+     * @return The HTML path to the schedule page if a user is logged in, else redirects to /login.
      */
     @GetMapping("/planning")
     public String displayHomePage(HttpSession session) {
@@ -85,21 +86,21 @@ public class NavbarController {
         User connectedUser = (User) session.getAttribute("currentUser");
         String redirection = "";
 
-        if(connectedUser == null) {
+        if (connectedUser == null) {
             redirection = "redirect:/login";
-        }else{
+        } else {
 
             char userRole = connectedUser.getLogin().charAt(0);
 
-            if(userRole == 'C'){
-                if(((Coordinator) connectedUser).isAdmin()){
+            if (userRole == 'C') {
+                if (((Coordinator) connectedUser).isAdmin()) {
                     redirection = "redirect:/coordinatrice/accueil";
-                }else{
+                } else {
                     redirection = "redirect:/resa/accueil";
                 }
-            }else if(userRole == 'I'){
+            } else if (userRole == 'I') {
                 redirection = "redirect:/interprete/planning";
-            }else if(userRole == 'B'){
+            } else if (userRole == 'B') {
                 redirection = "redirect:/beneficiaire/planning";
             }
         }
