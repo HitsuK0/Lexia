@@ -391,9 +391,11 @@ public class ResaController {
         return "redirect:/coordinatrice/etablissements";
     }
 
-    // Temporaire
     @GetMapping("/planning")
-    public String planning(Model model) {
-        return "resa/planning";
+    public String planning(HttpSession session) {
+        Coordinator resa = getCoordinatorFromSession(session);
+        if (resa == null)
+            return "redirect:/login";
+        return "redirect:/coordinatrice/planning-gestion";
     }
 }
