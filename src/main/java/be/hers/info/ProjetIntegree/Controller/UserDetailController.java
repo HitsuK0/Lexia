@@ -70,6 +70,7 @@ public class UserDetailController {
             SkillService skillService = new SkillService();
             List<ProfessionalSkill> allProfSkills = skillService.getAllProfessionalSkills();
             List<AcademicSkill> allAcadSkills = skillService.getAllAcademicSkills();
+            InterpreterProfileService profileService = new InterpreterProfileService();
 
             model.addAttribute("user", interpreter);
             model.addAttribute("userRole", userRole);
@@ -79,6 +80,7 @@ public class UserDetailController {
             model.addAttribute("allAcademicSkills", allAcadSkills);
             model.addAttribute("passwordDTO", new DTOPasswordChange());
             model.addAttribute("profileDTO", new DTOInterpreterProfile());
+            model.addAttribute("profileDTO", profileService.buildProfileDTO(interpreter));
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -109,11 +111,13 @@ public class UserDetailController {
                 return "redirect:/coordinatrice/utilisateurs";
 
             List<Interpreter> interpreterList = userDetailService.findAllInterpreters();
+            BeneficiaryProfileService profileService = new BeneficiaryProfileService();
 
             model.addAttribute("user", beneficiary);
             model.addAttribute("userRole", "BENEFICIARY");
             model.addAttribute("interpreterList", interpreterList);
             model.addAttribute("passwordDTO", new DTOPasswordChange());
+            model.addAttribute("profileDTO", profileService.buildProfileDTO(beneficiary));
 
         } catch (SQLException e) {
             e.printStackTrace();
