@@ -438,6 +438,41 @@ public class DAOInterpreter extends DAO<Interpreter> {
         return passwordUpdated;
     }
 
+    /** Checks whether the given plaintext password matches the stored password of the interpreter.
+     * The password is hashed in SQL via STANDARD_HASH (SHA256) before comparison
+     * Used to verify the interpreter's current password before allowing a password change
+     *
+     * @param numInterpreter the id of the interpreter whose password is checked
+     * @param passwordToCheck the plaintext password to verify against the stored hash
+     * @return true if the password matches the one stored for this interpreter, false otherwise
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public boolean checkOldPassword(int numInterpreter, String passwordToCheck) throws SQLException {
+        boolean samePassword = false;
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT numInterpreter " +
+                "FROM Interpreter " +
+                "WHERE numInterpreter = ? AND password = STANDARD_HASH(?, 'SHA256')";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setInt(1, numInterpreter);
+            preparedStatement.setString(2, passwordToCheck);
+
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()) {
+                samePassword = true;
+            }
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+
+        return samePassword;
+    }
+
     /**
      * Adds the professional skill designated by its number to the interpreter in question
      *
