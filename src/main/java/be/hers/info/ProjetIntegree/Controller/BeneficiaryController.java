@@ -68,7 +68,7 @@ public class BeneficiaryController {
         model.addAttribute("professionalSkillList", service.findAllProfessionalSkills());
         DTOAppointmentForm dto = new DTOAppointmentForm();
         dto.setNumBeneficiary(beneficiary.getNumBeneficiary());
-            model.addAttribute("DTOAppointmentForm", dto);
+        model.addAttribute("DTOAppointmentForm", dto);
         model.addAttribute("activeTab", "planning");
         return "beneficiaire/planning";
     }
