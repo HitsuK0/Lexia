@@ -1,13 +1,10 @@
 package be.hers.info.ProjetIntegree.Controller;
 
-/**
- * @author Nicolas Jean-François
- * @reviewer Halet Louis, Wellinger Chloé
- */
-
 import be.hers.info.ProjetIntegree.POJO.*;
 import be.hers.info.ProjetIntegree.Services.ValidationService;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +15,15 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author Nicolas Jean-François
+ * @reviewer Halet Louis, Wellinger Chloé
+ */
 @Controller
 @RequestMapping("/coordinatrice/validations")
 public class ValidationController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ValidationController.class);
 
     /**
      * Retrieves the connected coordinator from the session.
@@ -60,7 +63,7 @@ public class ValidationController {
             model.addAttribute("pendingAbsences", service.findAllPendingAbsences());
 
         } catch (SQLException | BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement de la page validations", e);
             model.addAttribute("pendingAppointments", Collections.emptyList());
             model.addAttribute("pendingAbsences", Collections.emptyList());
         }
@@ -112,7 +115,7 @@ public class ValidationController {
             }).collect(Collectors.toList());
 
         } catch (SQLException | BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement des interprètes disponibles pour le RDV {}", numAppointment, e);
             return Collections.emptyList();
         }
     }
@@ -155,7 +158,7 @@ public class ValidationController {
             return List.of(event);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement de l'événement pour le RDV {}", numAppointment, e);
             return Collections.emptyList();
         }
     }
@@ -203,7 +206,7 @@ public class ValidationController {
             return List.of(event);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement de l'événement pour l'absence {}", numAbsence, e);
             return Collections.emptyList();
         }
     }
@@ -228,7 +231,7 @@ public class ValidationController {
             ValidationService service = new ValidationService();
             return service.acceptAppointment(numAppointment, numInterpreter) ? "ok" : "error";
         } catch (SQLException | BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'acceptation du RDV {}", numAppointment, e);
             return "error";
         }
     }
@@ -252,7 +255,7 @@ public class ValidationController {
             ValidationService service = new ValidationService();
             return service.refuseAppointment(numAppointment) ? "ok" : "error";
         } catch (SQLException | BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du refus du RDV {}", numAppointment, e);
             return "error";
         }
     }
@@ -276,7 +279,7 @@ public class ValidationController {
             ValidationService service = new ValidationService();
             return service.acceptAbsence(numAbsence) ? "ok" : "error";
         } catch (SQLException | BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'acceptation de l'absence {}", numAbsence, e);
             return "error";
         }
     }
@@ -300,7 +303,7 @@ public class ValidationController {
             ValidationService service = new ValidationService();
             return service.refuseAbsence(numAbsence) ? "ok" : "error";
         } catch (SQLException | BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du refus de l'absence {}", numAbsence, e);
             return "error";
         }
     }

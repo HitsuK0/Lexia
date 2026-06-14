@@ -1,10 +1,5 @@
 package be.hers.info.ProjetIntegree.Controller;
 
-/**
- * @author Nicolas Jean-François
- * @reviewer Halet Louis, Wellinger Chloé
- */
-
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOInterpreterProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
@@ -14,6 +9,8 @@ import be.hers.info.ProjetIntegree.Services.InterpreterProfileService;
 import be.hers.info.ProjetIntegree.Services.SkillService;
 import be.hers.info.ProjetIntegree.Services.UserDetailService;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +18,15 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * @author Nicolas Jean-François
+ * @reviewer Halet Louis, Wellinger Chloé
+ */
 @Controller
 @RequestMapping("/coordinatrice/utilisateurs")
 public class UserDetailController {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserDetailController.class);
 
     /**
      * Retrieves the connected coordinator from the session.
@@ -47,9 +50,9 @@ public class UserDetailController {
      * Also loads all available skills so the coordinator can add new ones.
      * Redirects to login if no coordinator is found in session.
      *
-     * @param id the numInterpreter of the user to display
+     * @param id      the numInterpreter of the user to display
      * @param session the current HTTP session
-     * @param model the Spring UI model
+     * @param model   the Spring UI model
      * @return the view "coordinatrice/utilisateur-detail", or a redirect to "/login"
      */
     @GetMapping("/interpreter/{id}")
@@ -83,7 +86,7 @@ public class UserDetailController {
             model.addAttribute("profileDTO", profileService.buildProfileDTO(interpreter));
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement de la fiche interprète {}", id, e);
         }
 
         return "coordinatrice/utilisateur-detail";
@@ -95,9 +98,9 @@ public class UserDetailController {
      * Also loads all available interpreters so the coordinator can assign a referent.
      * Redirects to login if no coordinator is found in session.
      *
-     * @param id the numBeneficiary of the user to display
+     * @param id      the numBeneficiary of the user to display
      * @param session the current HTTP session
-     * @param model the Spring UI model
+     * @param model   the Spring UI model
      * @return the view "coordinatrice/utilisateur-detail", or a redirect to "/login"
      */
     @GetMapping("/beneficiary/{id}")
@@ -120,7 +123,7 @@ public class UserDetailController {
             model.addAttribute("profileDTO", profileService.buildProfileDTO(beneficiary));
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement de la fiche bénéficiaire {}", id, e);
         }
 
         return "coordinatrice/utilisateur-detail";
@@ -132,18 +135,18 @@ public class UserDetailController {
      * sets it as the Beneficiary's referent.
      * Redirects to login if no coordinator is found in session.
      *
-     * @param id the numBeneficiary of the beneficiary whose referent interpreter is assigned
+     * @param id            the numBeneficiary of the beneficiary whose referent interpreter is assigned
      * @param idInterpreter the numInterpreter of the interpreter selected as referent
-     * @param session the current HTTP session
+     * @param session       the current HTTP session
      * @return a redirect to the beneficiary detail page after saving
-     *         a redirect to "/coordinatrice/utilisateurs" if the beneficiary does not exist
-     *         a redirect to "/login" if the session is invalid
+     * a redirect to "/coordinatrice/utilisateurs" if the beneficiary does not exist
+     * a redirect to "/login" if the session is invalid
      */
     @PostMapping("/beneficiary/{id}/referenceInterpreter")
     public String beneficiaryReferenceInterpreter(@PathVariable int id,
                                                   @RequestParam("interpreterId") int idInterpreter,
                                                   HttpSession session) {
-        if(getCoordinatorFromSession(session) == null) return "redirect:/login";
+        if (getCoordinatorFromSession(session) == null) return "redirect:/login";
 
         try {
             Beneficiary beneficiary = new UserDetailService().findBeneficiaryById(id);
@@ -153,7 +156,7 @@ public class UserDetailController {
             new UserDetailService().updateBeneficiary(beneficiary);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'attribution du référent interprète {} au bénéficiaire {}", idInterpreter, id, e);
         }
 
         return "redirect:/coordinatrice/utilisateurs/beneficiary/" + id;
@@ -164,11 +167,11 @@ public class UserDetailController {
      * Reuses InterpreterProfileService.saveProfile() to update personal data and address.
      * Redirects to login if no coordinator is found in session.
      *
-     * @param id the numInterpreter of the user to update
+     * @param id         the numInterpreter of the user to update
      * @param profileDTO the profile form data submitted by the coordinator
-     * @param session the current HTTP session
+     * @param session    the current HTTP session
      * @return a redirect to the interpreter detail page after saving,
-     *         or a redirect to "/login" if the session is invalid
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/interpreter/{id}")
     public String saveInterpreter(@PathVariable int id, @ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO, HttpSession session) {
@@ -182,7 +185,7 @@ public class UserDetailController {
                 profileService.saveProfile(interpreter, profileDTO);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la sauvegarde du profil interprète {}", id, e);
         }
 
         return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;
@@ -193,11 +196,11 @@ public class UserDetailController {
      * Reuses BeneficiaryProfileService.saveProfile() to update personal data and address.
      * Redirects to login if no coordinator is found in session.
      *
-     * @param id the numBeneficiary of the user to update
+     * @param id         the numBeneficiary of the user to update
      * @param profileDTO the profile form data submitted by the coordinator
-     * @param session the current HTTP session
+     * @param session    the current HTTP session
      * @return a redirect to the beneficiary detail page after saving,
-     *         or a redirect to "/login" if the session is invalid
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/beneficiary/{id}")
     public String saveBeneficiary(@PathVariable int id, @ModelAttribute("profileDTO") DTOBeneficiaryProfile profileDTO,
@@ -212,7 +215,7 @@ public class UserDetailController {
                 profileService.saveProfile(beneficiary, profileDTO);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la sauvegarde du profil bénéficiaire {}", id, e);
         }
 
         return "redirect:/coordinatrice/utilisateurs/beneficiary/" + id;
@@ -224,12 +227,12 @@ public class UserDetailController {
      * Verifies that newPassword and confirmPassword match before applying the change.
      * Redirects to login if no coordinator is found in session.
      *
-     * @param id the numInterpreter of the user whose password is reset
+     * @param id          the numInterpreter of the user whose password is reset
      * @param passwordDTO the password reset form data submitted by the coordinator
-     * @param session the current HTTP session
+     * @param session     the current HTTP session
      * @return a redirect to the interpreter detail page after the operation,
-     *         with "?passwordError=true" if passwords do not match,
-     *         or a redirect to "/login" if the session is invalid
+     * with "?passwordError=true" if passwords do not match,
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/interpreter/{id}/password")
     public String resetPasswordInterpreter(@PathVariable int id, @ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpSession session) {
@@ -247,23 +250,24 @@ public class UserDetailController {
                 userDetailService.updateInterpreterPassword(interpreter);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la réinitialisation du mot de passe interprète {}", id, e);
         }
 
         return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;
     }
 
-    /** Adds a ProfessionalSkill to an Interpreter, Resa or Coordinator.
+    /**
+     * Adds a ProfessionalSkill to an Interpreter, Resa or Coordinator.
      * Loads the interpreter to verify it exists, then checks the skills it already owns
      * to avoid inserting a duplicate
      * Redirects to login if no coordinator is found in session
      *
-     * @param id the numInterpreter of the interpreter receiving the skill
+     * @param id      the numInterpreter of the interpreter receiving the skill
      * @param idSkill the numProfessionalSkill of the skill to add
      * @param session the current HTTP session
      * @return a redirect to the interpreter detail page after the operation
-     *         a redirect to "/coordinatrice/utilisateurs" if the interpreter does not exist
-     *         or a redirect to "/login" if the session is invalid
+     * a redirect to "/coordinatrice/utilisateurs" if the interpreter does not exist
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/interpreter/{id}/addProfessionalSkill")
     public String addProfessionalSkill(@PathVariable int id,
@@ -288,7 +292,7 @@ public class UserDetailController {
                 new InterpreterProfileService().addProfessionalSkill(interpreter.getNumInterpreter(), idSkill);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout de la compétence métier {} à l'interprète {}", idSkill, id, e);
         }
 
         return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;
@@ -300,12 +304,12 @@ public class UserDetailController {
      * and the skill in ProfessionalSkillInterpreter
      * Redirects to login if no coordinator is found in session
      *
-     * @param id the numInterpreter of the interpreter losing the skill
+     * @param id      the numInterpreter of the interpreter losing the skill
      * @param idSkill the numProfessionalSkill of the skill to remove
      * @param session the current HTTP session
      * @return a redirect to the interpreter detail page after the operation
-     *         a redirect to "/coordinatrice/utilisateurs" if the interpreter does not exist
-     *         or a redirect to "/login" if the session is invalid
+     * a redirect to "/coordinatrice/utilisateurs" if the interpreter does not exist
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/interpreter/{id}/deleteProfessionalSkill")
     public String deleteProfessionalSkill(@PathVariable int id,
@@ -323,7 +327,7 @@ public class UserDetailController {
             new InterpreterProfileService().deleteProfessionalSkill(interpreter.getNumInterpreter(), idSkill);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la suppression de la compétence métier {} de l'interprète {}", idSkill, id, e);
         }
 
         return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;
@@ -335,12 +339,12 @@ public class UserDetailController {
      * to avoid inserting a duplicate
      * Redirects to login if no coordinator is found in session
      *
-     * @param id the numInterpreter of the interpreter receiving the skill
+     * @param id      the numInterpreter of the interpreter receiving the skill
      * @param idSkill the numAcademicSkill of the skill to add
      * @param session the current HTTP session
      * @return a redirect to the interpreter detail page after the operation
-     *         a redirect to "/coordinatrice/utilisateurs" if the interpreter does not exist
-     *         or a redirect to "/login" if the session is invalid
+     * a redirect to "/coordinatrice/utilisateurs" if the interpreter does not exist
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/interpreter/{id}/addAcademicSkill")
     public String addAcademicSkill(@PathVariable int id,
@@ -365,7 +369,7 @@ public class UserDetailController {
                 new InterpreterProfileService().addAcademicSkill(interpreter.getNumInterpreter(), idSkill);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout de la compétence académique {} à l'interprète {}", idSkill, id, e);
         }
 
         return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;
@@ -377,12 +381,12 @@ public class UserDetailController {
      * and the skill in AcademicSkillInterpreter
      * Redirects to login if no coordinator is found in session
      *
-     * @param id the numInterpreter of the interpreter losing the skill
+     * @param id      the numInterpreter of the interpreter losing the skill
      * @param idSkill the numAcademicSkill of the skill to remove
      * @param session the current HTTP session
      * @return a redirect to the interpreter detail page after the operation
-     *         a redirect to "/coordinatrice/utilisateurs" if the interpreter does not exist
-     *         or a redirect to "/login" if the session is invalid
+     * a redirect to "/coordinatrice/utilisateurs" if the interpreter does not exist
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/interpreter/{id}/deleteAcademicSkill")
     public String deleteAcademicSkill(@PathVariable int id,
@@ -400,7 +404,7 @@ public class UserDetailController {
             new InterpreterProfileService().deleteAcademicSkill(interpreter.getNumInterpreter(), idSkill);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la suppression de la compétence académique {} de l'interprète {}", idSkill, id, e);
         }
 
         return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;
@@ -412,12 +416,12 @@ public class UserDetailController {
      * Verifies that newPassword and confirmPassword match before applying the change.
      * Redirects to login if no coordinator is found in session.
      *
-     * @param id the numBeneficiary of the user whose password is reset
+     * @param id          the numBeneficiary of the user whose password is reset
      * @param passwordDTO the password reset form data submitted by the coordinator
-     * @param session the current HTTP session
+     * @param session     the current HTTP session
      * @return a redirect to the beneficiary detail page after the operation,
-     *         with "?passwordError=true" if passwords do not match,
-     *         or a redirect to "/login" if the session is invalid
+     * with "?passwordError=true" if passwords do not match,
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/beneficiary/{id}/password")
     public String resetPasswordBeneficiary(@PathVariable int id, @ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpSession session) {
@@ -435,7 +439,7 @@ public class UserDetailController {
                 userDetailService.updateBeneficiaryPassword(beneficiary);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la réinitialisation du mot de passe bénéficiaire {}", id, e);
         }
 
         return "redirect:/coordinatrice/utilisateurs/beneficiary/" + id;
@@ -446,16 +450,16 @@ public class UserDetailController {
      * Supported transitions :
      * - RESA <-> COORDINATOR : only updates isAdmin in the Coordinator table, login unchanged.
      * - INTERPRETER -> RESA/COORDINATOR : changes the login prefix from 'I' to 'C',
-     *   then inserts a new row in the Coordinator table with isAdmin set accordingly.
+     * then inserts a new row in the Coordinator table with isAdmin set accordingly.
      * - RESA/COORDINATOR -> INTERPRETER : changes the login prefix from 'C' to 'I',
-     *   then deletes the row from the Coordinator table.
+     * then deletes the row from the Coordinator table.
      * Redirects to login if no coordinator is found in session.
      *
-     * @param id the numInterpreter of the user whose role is changed
+     * @param id      the numInterpreter of the user whose role is changed
      * @param newRole the new role : "INTERPRETER", "RESA" or "COORDINATOR"
      * @param session the current HTTP session
      * @return a redirect to the interpreter detail page after the operation,
-     *         or a redirect to "/login" if the session is invalid
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/interpreter/{id}/role")
     public String changeRole(@PathVariable int id, @RequestParam("newRole") String newRole, HttpSession session) {
@@ -504,7 +508,7 @@ public class UserDetailController {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du changement de rôle vers {} pour l'interprète {}", newRole, id, e);
         }
 
         return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;

@@ -1,8 +1,4 @@
 package be.hers.info.ProjetIntegree.Controller;
-/**
- * @authors Halet Louis, Wellinger Chloe, Vatafu Jean, Rosman Loïs, Vanderheyden Quentin
- * @reviewer Nicolas Jean-François
- */
 
 import be.hers.info.ProjetIntegree.DAO.DAOAcademicSkill;
 import be.hers.info.ProjetIntegree.DAO.DAOProfessionalSkill;
@@ -14,6 +10,8 @@ import be.hers.info.ProjetIntegree.Services.InterpreterProfileService;
 import be.hers.info.ProjetIntegree.Services.PlanningService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -24,9 +22,15 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author Halet Louis, Wellinger Chloe, Vatafu Jean, Rosman Loïs, Vanderheyden Quentin
+ * @reviewer Nicolas Jean-François
+ */
 @Controller
 @RequestMapping("/interprete")
 public class InterpreterController {
+
+    private static final Logger logger = LoggerFactory.getLogger(InterpreterController.class);
 
     /**
      * Retrieves the connected interpreter from the session.
@@ -369,9 +373,9 @@ public class InterpreterController {
             List<Absence> punctualAbsencesList = absenceService.getPunctualAbsencesInterpreter(interpreter);
             model.addAttribute("punctualAbsencesList", punctualAbsencesList);
         } catch (BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Statut invalide lors du chargement des indisponibilités interprète {}", interpreter.getNumInterpreter(), e);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement des indisponibilités interprète {}", interpreter.getNumInterpreter(), e);
         }
 
         model.addAttribute("activeTab", "indisponibilites");
@@ -379,7 +383,6 @@ public class InterpreterController {
         model.addAttribute("DTOAbsenceEdit", new DTOAbsence());
         return "interprete/indisponibilites";
     }
-
 
     /**
      * Function called when the form is filled.
@@ -405,11 +408,11 @@ public class InterpreterController {
             try {
                 absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter(), "en attente");
             } catch (SQLException sql) {
-                // afficher la page d'erreur
-            } catch (IllegalArgumentException e){
-                // afficher la page d'erreur
+                logger.error("Erreur SQL lors de la création d'indisponibilité interprète {}", interpreter.getNumInterpreter(), sql);
+            } catch (IllegalArgumentException e) {
+                logger.warn("Argument invalide lors de la création d'indisponibilité interprète {}: {}", interpreter.getNumInterpreter(), e.getMessage());
             } catch (BadStatusException bse) {
-                // afficher la page d'erreur
+                logger.error("Statut invalide lors de la création d'indisponibilité interprète {}", interpreter.getNumInterpreter(), bse);
             }
         }
 
@@ -436,7 +439,7 @@ public class InterpreterController {
             AbsenceService absenceService = new AbsenceService();
             absenceService.deleteAbsence(id);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la suppression de l'absence {}", id, e);
         }
 
         return "redirect:/interprete/indisponibilites";
@@ -466,7 +469,7 @@ public class InterpreterController {
             AbsenceService absenceService = new AbsenceService();
             absenceService.updateAbsenceFromDTO(numAbsence, dtoAbsence);
         } catch (SQLException | BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la mise à jour de l'absence {} interprète {}", numAbsence, interpreter.getNumInterpreter(), e);
         }
         return "redirect:/interprete/indisponibilites";
     }
@@ -525,7 +528,7 @@ public class InterpreterController {
             profileService.saveProfile(interpreter, profileDTO);
             session.setAttribute("currentUser", interpreter);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la sauvegarde du profil interprète {}", interpreter.getNumInterpreter(), e);
         }
 
         return "redirect:/interprete/profil";
@@ -562,7 +565,7 @@ public class InterpreterController {
                 return "redirect:/interprete/profil?passwordError=true";
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du changement de mot de passe interprète {}", interpreter.getNumInterpreter(), e);
         }
 
         return "redirect:/interprete/profil";
@@ -616,7 +619,7 @@ public class InterpreterController {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout de compétence métier interprète {}", interpreter.getNumInterpreter(), e);
         }
         session.setAttribute("currentUser", interpreter);
         return "redirect:/interprete/profil?section=metiers";
@@ -655,7 +658,7 @@ public class InterpreterController {
                         .removeIf(s -> s.getNumProfessionalSkill() == numSkill);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la suppression de compétence métier interprète {}", interpreter.getNumInterpreter(), e);
         }
 
         session.setAttribute("currentUser", interpreter);
@@ -710,7 +713,7 @@ public class InterpreterController {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout de compétence académique interprète {}", interpreter.getNumInterpreter(), e);
         }
         session.setAttribute("currentUser", interpreter);
         return "redirect:/interprete/profil?section=academics";
@@ -749,7 +752,7 @@ public class InterpreterController {
                         .removeIf(s -> s.getNumAcademicSkill() == numSkill);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la suppression de compétence académique interprète {}", interpreter.getNumInterpreter(), e);
         }
 
         session.setAttribute("currentUser", interpreter);
@@ -798,7 +801,7 @@ public class InterpreterController {
             boolean success = service.createAppointment(dtoAppointment);
             return success ? "ok" : "error";
         } catch (BadStatusException | SQLException | IllegalArgumentException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la création du RDV bénéficiaire par interprète {}", interpreter.getNumInterpreter(), e);
             return "error";
         }
     }
