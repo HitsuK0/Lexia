@@ -216,46 +216,6 @@ public class ResaController {
     }
 
     /**
-     * Controller for the pages named "Mon profil" part Professional Skill.
-     * Deletes a professional skill from the connected resa.
-     * Removes the skill from the resa's session list by matching its ID directly,
-     * since the profileDTO reconstructed by Spring via @ModelAttribute does not carry its
-     * skill lists — only numProfessionalSkillSelected is used from it.
-     * Reads the resa directly from the session.
-     * Redirects to login if no resa is found in session.
-     *
-     * @param profileDTO the profile form data submitted by the user,
-     *                   only numProfessionalSkillSelected is read from it
-     * @param request    the current HTTP request used to access the session
-     * @return a redirect to "/resa/profil" after deleting,
-     *         or a redirect to "/login" if the session is invalid
-     */
-    @PostMapping("/profil/deleteProfessionalSkill")
-    public String deleteProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
-                                          HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        Coordinator resa = getCoordinatorFromSession(session);
-        if (resa == null) {
-            return "redirect:/login";
-        }
-
-        try {
-            InterpreterProfileService profileService = new InterpreterProfileService();
-            int numSkill = profileDTO.getNumProfessionalSkillSelected();
-            boolean res = profileService.deleteProfessionalSkill(resa.getNumInterpreter(), numSkill);
-            if (res && resa.getProfessionalSkillsList() != null) {
-                resa.getProfessionalSkillsList()
-                        .removeIf(s -> s.getNumProfessionalSkill() == numSkill);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        session.setAttribute("currentUser", resa);
-        return "redirect:/resa/profil?section=metiers";
-    }
-
-    /**
      * Controller for the pages named "Mon profil" part Academic Skill.
      * Adds an academic skill to the connected resa.
      * Checks first if the resa already owns the skill to avoid a unique constraint
@@ -308,48 +268,6 @@ public class ResaController {
         session.setAttribute("currentUser", resa);
         return "redirect:/resa/profil?section=academics";
     }
-
-    /**
-     * Controller for the pages named "Mon profil" part Academic Skill.
-     * Deletes an academic skill from the connected resa.
-     * Removes the skill from the resa's session list by matching its ID directly,
-     * since the profileDTO reconstructed by Spring via @ModelAttribute does not carry its
-     * skill lists — only numAcademicSkillSelected is used from it.
-     * Reads the resa directly from the session.
-     * Redirects to login if no resa is found in session.
-     *
-     * @param profileDTO the profile form data submitted by the user,
-     *                   only numAcademicSkillSelected is read from it
-     * @param request    the current HTTP request used to access the session
-     * @return a redirect to "/resa/profil" after deleting,
-     *         or a redirect to "/login" if the session is invalid
-     */
-    @PostMapping("/profil/deleteAcademicSkill")
-    public String deleteAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
-                                      HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        Interpreter resa = getCoordinatorFromSession(session);
-        if (resa == null) {
-            return "redirect:/login";
-        }
-
-        try {
-            InterpreterProfileService profileService = new InterpreterProfileService();
-            int numSkill = profileDTO.getNumAcademicSkillSelected();
-            boolean res = profileService.deleteAcademicSkill(resa.getNumInterpreter(), numSkill);
-            if (res && resa.getAcademicSkillsList() != null) {
-                resa.getAcademicSkillsList()
-                        .removeIf(s -> s.getNumAcademicSkill() == numSkill);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        session.setAttribute("currentUser", resa);
-        return "redirect:/resa/profil?section=academics";
-    }
-
-    
 
     /**
      * This function load the page "gestion".
@@ -472,7 +390,6 @@ public class ResaController {
         }
         return "redirect:/coordinatrice/etablissements";
     }
-
 
     // Temporaire
     @GetMapping("/planning")
