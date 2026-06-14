@@ -774,18 +774,20 @@ public class CoordinatorController {
      * It create an Absence in the Database.
      *
      * @param dtoAbsence the dto to convert into a pojo
-     * @param model      the UI model to hold the list of absences and the active tab status
      * @param request    the current HTTP request used to access the session
      * @return redirect the curent page.
      */
     @PostMapping("/indisponibilites")
-    public String createIndisponibilite(@ModelAttribute("DTOAbsence") DTOAbsence dtoAbsence, Model model, HttpServletRequest request) {
+    public String createIndisponibilite(@ModelAttribute("DTOAbsence") DTOAbsence dtoAbsence,
+                                        HttpServletRequest request) {
         HttpSession session = request.getSession();
         String pageReferer = request.getHeader("Referer");
+
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null) {
             return "redirect:/login";
         }
+
         if (dtoAbsence.getStartDate() != null && dtoAbsence.getEndDate() != null
                 && (dtoAbsence.isFullDay() || (dtoAbsence.getStartTime() != null && dtoAbsence.getEndTime() != null))) {
             AbsenceService absenceService = new AbsenceService();

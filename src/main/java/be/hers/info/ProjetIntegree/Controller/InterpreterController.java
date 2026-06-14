@@ -406,6 +406,8 @@ public class InterpreterController {
                 absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter(), "en attente");
             } catch (SQLException sql) {
                 // afficher la page d'erreur
+            } catch (IllegalArgumentException e){
+                // afficher la page d'erreur
             } catch (BadStatusException bse) {
                 // afficher la page d'erreur
             }
