@@ -20,16 +20,16 @@ public class DTOReferrer {
      * Initialize an empty DTOReferrer
      */
     public DTOReferrer() {
-
     }
 
     /**
      * Initialize a DTOReferrer with all the field for a Referrer.
+     *
      * @param numEstablishement is the number of the Establishment where the Referrer work in.
-     * @param name is the name of the referrer.
-     * @param surname is the surname of the referrer.
-     * @param phoneNumber is the phone number of the referrer.
-     * @param mailReferrer is the mail address of the referrer.
+     * @param name              is the name of the referrer.
+     * @param surname           is the surname of the referrer.
+     * @param phoneNumber       is the phone number of the referrer.
+     * @param mailReferrer      is the mail address of the referrer.
      */
     public DTOReferrer(int numEstablishement, int numReferrer, String name, String surname, String phoneNumber, String mailReferrer) {
         this.numEstablishement = numEstablishement;
@@ -38,11 +38,12 @@ public class DTOReferrer {
         this.surnameNewReferrer = surname;
         this.phoneNumberReferrer = phoneNumber;
         this.mailReferrer = mailReferrer;
-        this.displayName = name.toUpperCase() + " " +surname;
+        this.displayName = name.toUpperCase() + " " + surname;
     }
 
     /**
      * Initialise a DTOReferrer by using a param of type Referrer.
+     *
      * @param referrer is reference to create the this.
      */
     public DTOReferrer(Referrer referrer) {
@@ -51,6 +52,7 @@ public class DTOReferrer {
 
     /**
      * Get the name of the Referrer
+     *
      * @return nameNewReffer.
      */
     public String getNameNewReferrer() {
@@ -59,6 +61,7 @@ public class DTOReferrer {
 
     /**
      * Get the surname of the Referrer.
+     *
      * @return surnameNewReffer.
      */
     public String getSurnameNewReferrer() {
@@ -67,6 +70,7 @@ public class DTOReferrer {
 
     /**
      * Get the phone number of the Referrer.
+     *
      * @return phone Number.
      */
     public String getPhoneNumberReferrer() {
@@ -75,6 +79,7 @@ public class DTOReferrer {
 
     /**
      * Get the mail address of the Referrer.
+     *
      * @return mailReferrer
      */
     public String getMailReferrer() {
@@ -83,24 +88,34 @@ public class DTOReferrer {
 
     /**
      * Get the num of the Establishment the referrer work in.
+     *
      * @return numEstablishment.
      */
-    public int getNumEstablishement() {return numEstablishement; }
-
+    public int getNumEstablishement() {
+        return numEstablishement;
+    }
 
     /**
      * Get the id of the referrer
+     *
      * @return idReferrer.
      */
-    public int getIdReferrer() {return idReferrer; }
+    public int getIdReferrer() {
+        return idReferrer;
+    }
+
     /**
      * Set the new numEstablishment with the given param.
+     *
      * @param numEstablishement is the new numEstablishment.
      */
-    public void setNumEstablishement(int numEstablishement) {this.numEstablishement = numEstablishement;}
+    public void setNumEstablishement(int numEstablishement) {
+        this.numEstablishement = numEstablishement;
+    }
 
     /**
      * Set the name of the Referrer.
+     *
      * @param nameNewReferrer is the new name.
      */
     public void setNameNewReferrer(String nameNewReferrer) {
@@ -109,6 +124,7 @@ public class DTOReferrer {
 
     /**
      * Set the new surname of the referrer.
+     *
      * @param surnameNewReferrer is the new surname.
      */
     public void setSurnameNewReferrer(String surnameNewReferrer) {
@@ -117,6 +133,7 @@ public class DTOReferrer {
 
     /**
      * Set the new phone number of the referrer.
+     *
      * @param phoneNumberReferrer is the new phone number.
      */
     public void setPhoneNumberReferrer(String phoneNumberReferrer) {
@@ -125,22 +142,25 @@ public class DTOReferrer {
 
     /**
      * Set the new mail address of the referrer.
+     *
      * @param mailReferrer is the new mail address.
      */
     public void setMailReferrer(String mailReferrer) {
         this.mailReferrer = mailReferrer;
     }
 
-
     /**
      * Set the id of the Referrer
+     *
      * @param idReferrer is new id for the referrer.
      */
     public void setIdReferrer(int idReferrer) {
         this.idReferrer = idReferrer;
     }
 
-
+    /**
+     * @return displayName
+     */
     public String getDisplayName() {
         return displayName;
     }

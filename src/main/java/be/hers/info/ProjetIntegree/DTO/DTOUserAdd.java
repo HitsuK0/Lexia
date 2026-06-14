@@ -1,13 +1,13 @@
 package be.hers.info.ProjetIntegree.DTO;
 
+import java.util.List;
+
 /**
  * @authors Rosman Loïs
  * @reviewer Nicolas Jean-François
  */
-
-import java.util.List;
-
 public class DTOUserAdd {
+
     private String password;
     private String lastName;
     private String firstName;
@@ -25,23 +25,25 @@ public class DTOUserAdd {
     /**
      * Initialize a default DTOUserAdd
      */
-    public DTOUserAdd(){}
+    public DTOUserAdd() {
+    }
 
     /**
      * Initialize a DTOUserAdd
-     * @param password the password of the user
-     * @param lastName the lastName of the user
-     * @param firstName the firstName of the user
-     * @param emailAddress the email address of the user
-     * @param phoneNumber the phone number of the user
-     * @param postcode the postcode of the address
-     * @param postOfficeBox the post office box of the address
-     * @param locality the locality of the address
-     * @param hamlet the hamlet of the address
-     * @param hourQuota the quota hours of the beneficiary. Present if the user is a beneficiary
-     * @param educationLevel the level of education of the beneficiary. Present if the user is a beneficiary
-     * @param weeklyWorkHours the number of hours worked over the week.
-     *                        Present if the user is an interpreter, a resa or a ccordinator
+     *
+     * @param password              the password of the user
+     * @param lastName              the lastName of the user
+     * @param firstName             the firstName of the user
+     * @param emailAddress          the email address of the user
+     * @param phoneNumber           the phone number of the user
+     * @param postcode              the postcode of the address
+     * @param postOfficeBox         the post office box of the address
+     * @param locality              the locality of the address
+     * @param hamlet                the hamlet of the address
+     * @param hourQuota             the quota hours of the beneficiary. Present if the user is a beneficiary
+     * @param educationLevel        the level of education of the beneficiary. Present if the user is a beneficiary
+     * @param weeklyWorkHours       the number of hours worked over the week.
+     *                              Present if the user is an interpreter, a resa or a ccordinator
      * @param communicationLanguage the list of communication languages used by the beneficiary.
      *                              Present if the user is a beneficiary
      */
@@ -72,6 +74,7 @@ public class DTOUserAdd {
 
     /**
      * Set the password of the user
+     *
      * @param password The password to set
      */
     public void setPassword(String password) {
@@ -87,6 +90,7 @@ public class DTOUserAdd {
 
     /**
      * Set the last name of the user
+     *
      * @param lastName The last name to set
      */
     public void setLastName(String lastName) {
@@ -102,6 +106,7 @@ public class DTOUserAdd {
 
     /**
      * Set the first name of the user
+     *
      * @param firstName The first name to set
      */
     public void setFirstName(String firstName) {
@@ -117,6 +122,7 @@ public class DTOUserAdd {
 
     /**
      * Set the email address of the user
+     *
      * @param emailAddress The email address to set
      */
     public void setEmailAddress(String emailAddress) {
@@ -132,6 +138,7 @@ public class DTOUserAdd {
 
     /**
      * Set the phone number of the user
+     *
      * @param phoneNumber The phone number to set
      */
     public void setPhoneNumber(String phoneNumber) {
@@ -147,6 +154,7 @@ public class DTOUserAdd {
 
     /**
      * Set the postcode of the address
+     *
      * @param postcode the postcode of the address
      */
     public void setPostcode(int postcode) {
@@ -162,6 +170,7 @@ public class DTOUserAdd {
 
     /**
      * Set the postOfficeBox of the address
+     *
      * @param postOfficeBox the post office box of the address
      */
     public void setPostOfficeBox(String postOfficeBox) {
@@ -177,6 +186,7 @@ public class DTOUserAdd {
 
     /**
      * Set the locality of the address
+     *
      * @param locality the locality of the address
      */
     public void setLocality(String locality) {
@@ -192,6 +202,7 @@ public class DTOUserAdd {
 
     /**
      * Set the hamlet of the address
+     *
      * @param hamlet the hamlet of the address
      */
     public void setHamlet(String hamlet) {
@@ -207,6 +218,7 @@ public class DTOUserAdd {
 
     /**
      * Set the hour quota of the beneficiary
+     *
      * @param hourQuota the hour quota of the beneficiary
      */
     public void setHourQuota(int hourQuota) {
@@ -222,6 +234,7 @@ public class DTOUserAdd {
 
     /**
      * Set the level of education of the beneficiary
+     *
      * @param educationLevel the level of education of the beneficiary
      */
     public void setEducationLevel(int educationLevel) {
@@ -237,6 +250,7 @@ public class DTOUserAdd {
 
     /**
      * Set the number of hours worked this week by an interpreter
+     *
      * @param weeklyWorkHours the number of hours worked this week by an interpreter
      */
     public void setWeeklyWorkHours(int weeklyWorkHours) {
@@ -252,6 +266,7 @@ public class DTOUserAdd {
 
     /**
      * Set the list of communication languages of the beneficiary
+     *
      * @param communicationLanguage the list of communication languages of the beneficiary
      */
     public void setCommunicationLanguage(List<String> communicationLanguage) {

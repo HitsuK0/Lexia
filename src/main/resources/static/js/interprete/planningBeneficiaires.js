@@ -44,57 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /**
-     * Fetches establishments from the server and fills #rdvEstablishment.
-     * GET /interprete/planning/beneficiaires/etablissements
-     */
-    function loadEstablishments() {
-        fetch('/interprete/planning/beneficiaires/etablissements')
-            .then(r => r.json())
-            .then(data => {
-                const select = document.getElementById('rdvEstablishment');
-                data.forEach(e => {
-                    const option = document.createElement('option');
-                    option.value = e.numEstablishment;
-                    option.textContent = e.name;
-                    select.appendChild(option);
-                });
-            })
-            .catch(err => console.error('Error loading establishments:', err));
-    }
-
-    /* Fetches academic skills from the server and fills #rdvAcademicSkill. */
-    function loadAcademicSkills() {
-        fetch('/interprete/planning/beneficiaires/academic-skills')
-            .then(r => r.json())
-            .then(data => {
-                const select = document.getElementById('rdvAcademicSkill');
-                data.forEach(s => {
-                    const option = document.createElement('option');
-                    option.value = s.numAcademicSkill;
-                    option.textContent = s.designation;
-                    select.appendChild(option);
-                });
-            })
-            .catch(err => console.error('Error loading academic skills:', err));
-    }
-
-    /* Fetches professional skills from the server and fills #rdvProfessionalSkill. */
-    function loadProfessionalSkills() {
-        fetch('/interprete/planning/beneficiaires/professional-skills')
-            .then(r => r.json())
-            .then(data => {
-                const select = document.getElementById('rdvProfessionalSkill');
-                data.forEach(s => {
-                    const option = document.createElement('option');
-                    option.value = s.numProfessionalSkill;
-                    option.textContent = s.designation;
-                    select.appendChild(option);
-                });
-            })
-            .catch(err => console.error('Error loading professional skills:', err));
-    }
-
-    /**
      * Updates the currently selected beneficiary and refreshes calendar events.
      * @param {HTMLElement} element - The clicked <a> element, must have data-num and data-nom
      */
@@ -118,9 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     fillBeneficiarySelect();
-    loadEstablishments();
-    loadAcademicSkills();
-    loadProfessionalSkills();
     generateTimeOptions('rdvHourStart', 8 * 60, 18 * 60 + 55);
     generateTimeOptions('rdvHourEnd', 8 * 60 + 5, 19 * 60);
 

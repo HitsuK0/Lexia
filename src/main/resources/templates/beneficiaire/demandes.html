@@ -65,7 +65,7 @@
                             </td>
                             <td th:text="${#strings.listJoin(appointment.academicSkillsNeeded.![designation], ', ')}"></td>
                             <td th:text="${#strings.listJoin(appointment.professionalSkillsNeeded.![designation], ', ')}"></td>
-                            <td th:text="${appointment.establishment != null ? appointment.establishment.name : '-'}"></td>
+                            <td th:text="${appointment.establishment != null ? appointment.establishment.nameBuilding : '-'}"></td>
                             <td th:text="${#strings.listJoin(appointment.appointmentLocals, ', ')}"></td>
                             <td th:text="${appointment.description}"></td>
                             <td>

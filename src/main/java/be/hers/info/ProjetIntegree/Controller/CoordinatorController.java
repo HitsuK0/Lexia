@@ -334,6 +334,7 @@ public class CoordinatorController {
         }
 
         session.setAttribute("beneficiaryList", beneficiaryList);
+        model.addAttribute("listBeneficiary", beneficiaryList);
         model.addAttribute("activeTab", "planning");
 
         return "coordinatrice/planning-gestion";
@@ -464,7 +465,7 @@ public class CoordinatorController {
         }
         PlanningService p = new PlanningService();
         p.changeStatusAppointment(numAppointment,"annule");
-        return "coordinatrice/planning-gestion";
+        return "redirect:/coordinatrice/planning-gestion";
     }
 
 
@@ -593,6 +594,7 @@ public class CoordinatorController {
         }
 
         session.setAttribute("beneficiaryList", beneficiaryList);
+        model.addAttribute("listBeneficiary", beneficiaryList);
         model.addAttribute("activeTab", "planning");
 
         return "coordinatrice/planning-gestion";
@@ -687,6 +689,7 @@ public class CoordinatorController {
         }
 
         session.setAttribute("beneficiaryList", beneficiaryList);
+        model.addAttribute("listBeneficiary", beneficiaryList);
         model.addAttribute("activeTab", "planning");
 
         return "coordinatrice/planning-gestion";
@@ -789,6 +792,8 @@ public class CoordinatorController {
             try {
                 absenceService.createAbsence(dtoAbsence, coordinator.getNumInterpreter(), "accepte");
             } catch (SQLException sql) {
+                // afficher la page d'erreur
+            } catch (IllegalArgumentException e){
                 // afficher la page d'erreur
             } catch (BadStatusException bse) {
                 // afficher la page d'erreur
@@ -1127,23 +1132,6 @@ public class CoordinatorController {
         model.addAttribute("dtoAddUser", new DTOUserAdd());
 
         return "coordinatrice/utilisateurs";
-    }
-
-    // Temporaire
-    @GetMapping("/utilisateurs/{id}")
-    public String utilisateurDetail(@PathVariable String id, Model model) {
-        model.addAttribute("userName", "NOM Prenom");
-        model.addAttribute("isAdmin", true);
-
-        switch (id) {
-            case "1" -> model.addAttribute("userRole", "RESA");
-            case "2" -> model.addAttribute("userRole", "INTERPRETER");
-            case "3" -> model.addAttribute("userRole", "BENEFICIARY");
-            case "4" -> model.addAttribute("userRole", "COORDINATOR");
-            default -> model.addAttribute("userRole", "INTERPRETER");
-        }
-
-        return "coordinatrice/utilisateur-detail";
     }
 
     /**
