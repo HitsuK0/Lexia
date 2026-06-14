@@ -213,6 +213,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (mode === 'coordinator') {
             searchZone.classList.add('d-none');
+            setCalendarVisible(true);
             calendar.refetchEvents();
 
             document.getElementById('rdvUserLabel').textContent = 'Bénéficiaire';
