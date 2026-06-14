@@ -8,7 +8,6 @@ import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
 import be.hers.info.ProjetIntegree.DTO.DTOReferrer;
 import be.hers.info.ProjetIntegree.POJO.AcademicSkill;
 import be.hers.info.ProjetIntegree.POJO.Coordinator;
-import be.hers.info.ProjetIntegree.POJO.Interpreter;
 import be.hers.info.ProjetIntegree.POJO.ProfessionalSkill;
 import be.hers.info.ProjetIntegree.Services.EstablishementService;
 import be.hers.info.ProjetIntegree.Services.InterpreterProfileService;
@@ -16,6 +15,8 @@ import be.hers.info.ProjetIntegree.Services.ReferrerService;
 import be.hers.info.ProjetIntegree.Services.SkillService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -23,15 +24,21 @@ import org.springframework.ui.Model;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * @author Quentin Vanderheyden
+ * @reviewer Jean-François Nicolas
+ */
 @Controller
 @RequestMapping("/resa")
 public class ResaController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ResaController.class);
     private final String ROLE = "COORDINATOR";
 
     /**
      * Retrieves the connected coordinator from the session.
      * Returns null if no user is connected or if the connected user is not a Coordinator.
+     *
      * @param session the current HTTP session
      * @return the connected Coordinator, or null if not found
      */
@@ -44,42 +51,43 @@ public class ResaController {
         return null;
     }
 
-
-    /** Function who redirect to the page accueil for the resa.
+    /**
+     * Function who redirect to the page accueil for the resa.
      *
      * @param session is the session of the user,
-     * @param model is used to give attribute to thymeleaf
+     * @param model   is used to give attribute to thymeleaf
      * @return the page resa/accueil if the user is connected.
      * else return /login for connection.
      */
     @GetMapping("/accueil")
     public String accueil(HttpSession session, Model model) {
         Coordinator resa = getCoordinatorFromSession(session);
-        if(resa == null) {
+        if (resa == null) {
             return "redirect:/login";
         }
-        String userName = resa.getFirstName() + " " +resa.getLastName();
+        String userName = resa.getFirstName() + " " + resa.getLastName();
         model.addAttribute("userName", userName);
         model.addAttribute("userRole", ROLE);
         model.addAttribute("isAdmin", resa.isAdmin());
         return "resa/accueil";
     }
 
-
-    /** Function who redirect to the page profil for the resa.
+    /**
+     * Function who redirect to the page profil for the resa.
      * Put all the attribute in model for the profil information.
+     *
      * @param session is the session of the user,
-     * @param model is used to give attribute to thymeleaf
+     * @param model   is used to give attribute to thymeleaf
      * @return the page interprete/profil if the user is connected.
      * else return /login for connection.
      */
     @GetMapping("/profil")
     public String profil(HttpSession session, Model model) {
         Coordinator resa = getCoordinatorFromSession(session);
-        if(resa == null) {
+        if (resa == null) {
             return "redirect:/login";
         }
-        String userName = resa.getFirstName() + " " +resa.getLastName();
+        String userName = resa.getFirstName() + " " + resa.getLastName();
         model.addAttribute("userName", userName);
         model.addAttribute("userRole", ROLE);
         model.addAttribute("isAdmin", resa.isAdmin());
@@ -95,7 +103,8 @@ public class ResaController {
 
     }
 
-    /** Controller for the pages named "Mon profil"
+    /**
+     * Controller for the pages named "Mon profil"
      * Handles the submission of the profile edit form.
      * Saves the modified personal data (lastName, firstName, phoneNumber, emailAddress, address, weeklyWorkHours) of the connected resa.
      * The login and password are NOT modified here.
@@ -119,13 +128,14 @@ public class ResaController {
             profileService.saveProfile(resa, profileDTO);
             session.setAttribute("currentUser", resa);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la sauvegarde du profil resa", e);
         }
 
         return "redirect:/resa/profil";
     }
 
-    /** Controller for the pages named "Mon profil"
+    /**
+     * Controller for the pages named "Mon profil"
      * Handles the submission of the password change modal.
      * Verifies that newPassword and confirmPassword match, then updates the password in the database.
      * The DB trigger will hash the new password automatically on UPDATE.
@@ -136,10 +146,9 @@ public class ResaController {
      * @param passwordDTO the password change form data submitted by the user
      * @param request     the current HTTP request used to access the session
      * @return a redirect to "/resa/profil" after the operation,
-     *         with "?passwordError=true" appended if passwords do not match,
-     *         or a redirect to "/login" if the session is invalid
+     * with "?passwordError=true" appended if passwords do not match,
+     * or a redirect to "/login" if the session is invalid
      */
-
     @PostMapping("/profil/password")
     public String changePassword(@ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -155,7 +164,7 @@ public class ResaController {
                 return "redirect:/resa/profil?passwordError=true";
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du changement de mot de passe resa", e);
         }
 
         return "redirect:/resa/profil";
@@ -176,7 +185,7 @@ public class ResaController {
      *                   only numProfessionalSkillSelected is read from it
      * @param request    the current HTTP request used to access the session
      * @return a redirect to "/resa/profil" after adding,
-     *         or a redirect to "/login" if the session is invalid
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/addProfessionalSkill")
     public String addProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
@@ -209,7 +218,7 @@ public class ResaController {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout de compétence métier resa", e);
         }
         session.setAttribute("currentUser", resa);
         return "redirect:/resa/profil?section=metiers";
@@ -230,7 +239,7 @@ public class ResaController {
      *                   only numAcademicSkillSelected is read from it
      * @param request    the current HTTP request used to access the session
      * @return a redirect to "/resa/profil" after adding,
-     *         or a redirect to "/login" if the session is invalid
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/addAcademicSkill")
     public String addAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
@@ -263,7 +272,7 @@ public class ResaController {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout de compétence académique resa", e);
         }
         session.setAttribute("currentUser", resa);
         return "redirect:/resa/profil?section=academics";
@@ -275,7 +284,7 @@ public class ResaController {
      * If no user of Coordinator object was found in the session or if the Coordinator in the session
      * is not an admin, it redirects the user to the '/login' page
      *
-     * @param model used by Spring to add all the data in the page
+     * @param model   used by Spring to add all the data in the page
      * @param session the current HTTP session
      * @return the page displayed for the Coordinator admin user
      */
@@ -294,8 +303,8 @@ public class ResaController {
             model.addAttribute("etablissementList", new EstablishementService().getAllFullEstablishments());
             model.addAttribute("professionalSkillList", new SkillService().getAllProfessionalSkills());
             model.addAttribute("academicSkillList", new SkillService().getAllAcademicSkills());
-        } catch(SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            logger.error("Erreur lors du chargement de la page gestion resa", e);
         }
 
         model.addAttribute("DTOReferrer", new DTOReferrer());
@@ -309,21 +318,21 @@ public class ResaController {
      * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
      * the user is redirected to the '/login' page
      *
-     * @param session the current HTTP session
+     * @param session     the current HTTP session
      * @param designation the designation of the AcademicSkill to create
      * @return a redirection to the "/coordinatrice/gestion" page
      */
     @PostMapping("/etablissements/addAcademicSkill")
     public String academicSkillAdd(HttpSession session, @RequestParam("designation") String designation) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if(coordinator == null || !coordinator.isAdmin()) {
+        if (coordinator == null || !coordinator.isAdmin()) {
             return "redirect:/login";
         }
 
         try {
             new SkillService().addAcademicSkill(designation);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout de la compétence académique", e);
         }
 
         return "redirect:/resa/gestion?tab=competences";
@@ -334,21 +343,21 @@ public class ResaController {
      * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
      * the user is redirected to the '/login' page
      *
-     * @param session the current HTTP session
+     * @param session     the current HTTP session
      * @param designation the designation of the ProfessionalSkill to create
      * @return a redirection to the "/coordinatrice/gestion" page
      */
     @PostMapping("/etablissements/addProfessionalSkill")
     public String professionalSkillAdd(HttpSession session, @RequestParam("designation") String designation) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if(coordinator == null || !coordinator.isAdmin()) {
+        if (coordinator == null || !coordinator.isAdmin()) {
             return "redirect:/login";
         }
 
         try {
             new SkillService().addProfessionalSkill(designation);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout de la compétence métier", e);
         }
 
         return "redirect:/resa/gestion?tab=competences";
@@ -366,7 +375,7 @@ public class ResaController {
         try {
             establishementService.createEstablishment(dtoEstablishment);
         } catch (SQLException e) {
-            // renvoyé la page d'erreur.
+            logger.error("Erreur lors de la création de l'établissement", e);
         }
         return "redirect:/coordinatrice/etablissements";
     }
@@ -386,11 +395,19 @@ public class ResaController {
         try {
             establishementService.updateEstablishment(dtoEstablishment);
         } catch (SQLException e) {
-            // renvoyé la page d'erreur.
+            logger.error("Erreur lors de la mise à jour de l'établissement", e);
         }
         return "redirect:/coordinatrice/etablissements";
     }
 
+    /**
+     * Redirects to the planning-gestion page shared with the coordinator.
+     * The resa has the same planning view but cannot validate appointments.
+     * Redirects to login if no resa is found in session.
+     *
+     * @param session the current HTTP session
+     * @return a redirect to "/coordinatrice/planning-gestion", or a redirect to "/login" if the session is invalid
+     */
     @GetMapping("/planning")
     public String planning(HttpSession session) {
         Coordinator resa = getCoordinatorFromSession(session);
