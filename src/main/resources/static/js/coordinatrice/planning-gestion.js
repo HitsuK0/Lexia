@@ -10,6 +10,25 @@ document.addEventListener('DOMContentLoaded', function () {
     let allUsers = [];
     let currentEvent = null;
 
+    /* Maps the raw Interpreter/Beneficiary objects injected by Thymeleaf
+       into the {id, name} format expected by the dropdowns and selects. */
+    function mapInterpreters(list) {
+        return (list || []).map(i => ({
+            id: i.numInterpreter,
+            name: `${i.lastName} ${i.firstName}`
+        }));
+    }
+
+    function mapBeneficiaries(list) {
+        return (list || []).map(b => ({
+            id: b.numBeneficiary,
+            name: `${b.lastName} ${b.firstName}`
+        }));
+    }
+
+    const interpretersList = mapInterpreters(typeof SERVER_INTERPRETERS !== 'undefined' ? SERVER_INTERPRETERS : []);
+    const beneficiariesList = mapBeneficiaries(typeof SERVER_BENEFICIARIES !== 'undefined' ? SERVER_BENEFICIARIES : []);
+
     /* Initializes the FullCalendar instance with French locale, week view,
        and custom toolbar with previous/next navigation only. */
     const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
@@ -37,11 +56,11 @@ document.addEventListener('DOMContentLoaded', function () {
             let url;
 
             if (currentMode === 'coordinator') {
-                url = `/coordinatrice/planning/events?start=${info.startStr}&end=${info.endStr}`;
+                url = `/coordinatrice/planning-gestion/events?start=${info.startStr}&end=${info.endStr}`;
             } else if (currentMode === 'interpreter' && selectedUserId) {
-                url = `/coordinatrice/planning/interpreter/${selectedUserId}/events?start=${info.startStr}&end=${info.endStr}`;
+                url = `/coordinatrice/planning-gestion/interpreter/events?start=${info.startStr}&end=${info.endStr}&num=${selectedUserId}`;
             } else if (currentMode === 'beneficiary' && selectedUserId) {
-                url = `/coordinatrice/planning/beneficiary/${selectedUserId}/events?start=${info.startStr}&end=${info.endStr}`;
+                url = `/coordinatrice/planning-gestion/beneficiaires/events?start=${info.startStr}&end=${info.endStr}&num=${selectedUserId}`;
             } else {
                 successCallback([]);
                 return;
@@ -168,13 +187,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     calendar.render();
 
+    /* Prevents manual typing in date inputs, forcing the use of the native date picker. */
+    ['indispoDateStart', 'indispoDateEnd', 'rdvDateStart', 'rdvDateEnd'].forEach(id => {
+        const input = document.getElementById(id);
+        input.addEventListener('keydown', e => e.preventDefault());
+        input.addEventListener('click', function () {
+            this.showPicker();
+        });
+    });
+
     /* Pre-loads beneficiaries for the modal RDV on page load,
        since the default mode is coordinator (she is always the interpreter). */
     document.getElementById('rdvUserLabel').textContent = 'Bénéficiaire';
-    fetch('/coordinatrice/planning/beneficiaries')
-        .then(r => r.json())
-        .then(data => populateModalUserSelect(data, '-- Sélectionner un bénéficiaire --'))
-        .catch(() => populateModalUserSelect([], '-- Sélectionner un bénéficiaire --'));
+    populateModalUserSelect(beneficiariesList, '-- Sélectionner un bénéficiaire --');
 
     /* Switches the active planning mode and updates the toolbar button styles.
        Resets the selected user and reloads the calendar accordingly.
@@ -189,22 +214,23 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('btnInterpreterPlanning').className = mode === 'interpreter' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
         document.getElementById('btnBeneficiaryPlanning').className = mode === 'beneficiary' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
 
+        const isBeneficiaryMode = mode === 'beneficiary';
+        document.getElementById('btnAddRdv').classList.toggle('d-none', !isBeneficiaryMode);
+        document.getElementById('btnAddIndispo').classList.toggle('d-none', isBeneficiaryMode);
+
         const searchZone = document.getElementById('zone-selection');
 
         if (mode === 'coordinator') {
             searchZone.classList.add('d-none');
+            setCalendarVisible(true);
             calendar.refetchEvents();
 
             document.getElementById('rdvUserLabel').textContent = 'Bénéficiaire';
-            fetch('/coordinatrice/planning/beneficiaries')
-                .then(r => r.json())
-                .then(data => populateModalUserSelect(data, '-- Sélectionner un bénéficiaire --'))
-                .catch(() => populateModalUserSelect([], '-- Sélectionner un bénéficiaire --'));
+            populateModalUserSelect(beneficiariesList, '-- Sélectionner un bénéficiaire --');
         } else {
             searchZone.classList.remove('d-none');
             document.getElementById('userTypeLabel').textContent = mode === 'interpreter' ? 'interprète' : 'bénéficiaire';
 
-            document.getElementById('userSearchInput').value = '';
             hideContextBanner();
             setCalendarVisible(false);
             calendar.refetchEvents();
@@ -213,31 +239,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    /* Fetches the list of interpreters or beneficiaries from the server,
-       caches it locally, and populates both the search dropdown and the autocomplete. */
+    /* Populates the search dropdown and the modal RDV selector using the
+       interpreter or beneficiary lists injected by Thymeleaf, depending on the mode. */
     function loadUserList(mode) {
-        const url = mode === 'interpreter' ? '/coordinatrice/planning/interpreters' : '/coordinatrice/planning/beneficiaries';
+        const data = mode === 'interpreter' ? interpretersList : beneficiariesList;
+        allUsers = data;
+        populateDropdown(data, mode);
 
-        fetch(url)
-            .then(r => r.json())
-            .then(data => {
-                allUsers = data;
-                populateDropdown(data, mode);
-            })
-            .catch(() => {
-                allUsers = [];
-            });
-
-        const modalUrl = mode === 'beneficiary' ? '/coordinatrice/planning/interpreters' : '/coordinatrice/planning/beneficiaries';
+        const modalData = mode === 'beneficiary' ? interpretersList : beneficiariesList;
         const modalLabel = mode === 'beneficiary' ? 'Interprète' : 'Bénéficiaire';
         const modalPlaceholder = mode === 'beneficiary' ? '-- Sélectionner un interprète --' : '-- Sélectionner un bénéficiaire --';
 
         document.getElementById('rdvUserLabel').textContent = modalLabel;
-
-        fetch(modalUrl)
-            .then(r => r.json())
-            .then(data => populateModalUserSelect(data, modalPlaceholder))
-            .catch(() => populateModalUserSelect([], modalPlaceholder));
+        populateModalUserSelect(modalData, modalPlaceholder);
     }
 
     /* Populates the search zone dropdown with the loaded user list.
@@ -272,54 +286,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (user) selectUser(user);
     });
 
-    const searchInput = document.getElementById('userSearchInput');
-    const suggestionsList = document.getElementById('suggestionsList');
-
-    /* Filters the cached user list on each keystroke and renders matching suggestions.
-       Requires at least 2 characters before showing results. */
-    searchInput.addEventListener('input', function () {
-        const query = this.value.trim().toLowerCase();
-        suggestionsList.innerHTML = '';
-
-        if (query.length < 2) {
-            suggestionsList.classList.add('d-none');
-            return;
-        }
-
-        const results = allUsers.filter(u => u.name.toLowerCase().includes(query));
-
-        if (results.length === 0) {
-            suggestionsList.classList.add('d-none');
-            return;
-        }
-
-        results.forEach(u => {
-            const li = document.createElement('li');
-            li.className = 'list-group-item list-group-item-action py-1 px-2 small';
-            li.textContent = u.name;
-            li.style.cursor = 'pointer';
-            li.addEventListener('click', () => selectUser(u));
-            suggestionsList.appendChild(li);
-        });
-
-        suggestionsList.classList.remove('d-none');
-    });
-
-    /* Closes the suggestion dropdown when clicking outside the search field. */
-    document.addEventListener('click', function (e) {
-        if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
-            suggestionsList.classList.add('d-none');
-        }
-    });
-
-    /* Selects a user from either the autocomplete or the dropdown,
-       displays the context banner, syncs both inputs, and reloads the calendar. */
+    /* Selects a user from the dropdown, displays the context banner,
+       and reloads the calendar for that user. */
     function selectUser(u) {
         selectedUserId = u.id;
         selectedUserName = u.name;
-
-        searchInput.value = '';
-        suggestionsList.classList.add('d-none');
 
         document.getElementById('userDropdown').value = u.id;
 
@@ -362,6 +333,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!currentEvent) return;
         const props = currentEvent.extendedProps;
 
+        document.getElementById('modalRDVLabel').textContent = 'Modification du rendez-vous';
+        document.getElementById('btnSendRDV').textContent = 'Enregistrer les modifications';
+
+        /* Uncheck everything first; only the skills attached to this appointment
+           will be checked back below. */
+        document.querySelectorAll('.skill-check').forEach(cb => cb.checked = false);
+        document.querySelectorAll('.comp-check').forEach(cb => cb.checked = false);
+
         const startDate = currentEvent.start.toISOString().split('T')[0];
         const endDate = currentEvent.end ? currentEvent.end.toISOString().split('T')[0] : startDate;
         document.getElementById('rdvDateStart').value = startDate;
@@ -380,7 +359,15 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('rdvEndHour').disabled = true;
         }
 
-        if (props.establishment) document.getElementById('rdvEstablishment').value = props.establishment;
+        if (props.establishment) {
+            const options = document.getElementById('rdvEstablishment').options;
+            for (const opt of options) {
+                if (opt.textContent === props.establishment) {
+                    opt.selected = true;
+                    break;
+                }
+            }
+        }
         if (props.locals && props.locals.length > 0) document.getElementById('rdvLocal').value = props.locals[0];
         if (props.description) document.getElementById('rdvDescription').value = props.description;
 
@@ -389,18 +376,27 @@ document.addEventListener('DOMContentLoaded', function () {
         new bootstrap.Modal(document.getElementById('modalRDV')).show();
     });
 
-    /* Asks for confirmation then sends a cancellation request to the backend
+    /* Opens a confirmation modal before sending the cancellation request
        for the currently selected appointment. */
     document.getElementById('btnCancelEvent').addEventListener('click', function () {
         if (!currentEvent) return;
 
-        if (!confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')) return;
-
-        // TODO: call backend cancel endpoint
-        // fetch(`/coordinatrice/planning/appointments/${currentEvent.id}/cancel`, { method: 'POST' })
-        //     .then(() => { calendar.refetchEvents(); })
-
         bootstrap.Modal.getInstance(document.getElementById('modalEvent')).hide();
+        new bootstrap.Modal(document.getElementById('modalConfirmCancel')).show();
+    });
+
+    /* Sends the cancellation request to the backend once confirmed in the modal. */
+    document.getElementById('btnConfirmCancelRdv').addEventListener('click', function () {
+        if (!currentEvent) return;
+
+        const numAppointment = currentEvent.extendedProps.numAppointment;
+
+        fetch(`/coordinatrice/planning-gestion/${numAppointment}/Annuler`, { method: 'POST' })
+            .then(() => {
+                calendar.refetchEvents();
+                bootstrap.Modal.getInstance(document.getElementById('modalConfirmCancel')).hide();
+            })
+            .catch(err => console.error('Error cancelling appointment:', err));
     });
 
     /* Generates time options in 5-minute increments between a start and end time (in minutes)
@@ -445,7 +441,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('rdvEndHour').disabled = this.checked;
     });
 
-    /* Hides the academic skills error message as soon as at least one skill is checked. */
+    /* Hides the academic skills / professional skills error messages
+       as soon as at least one checkbox of the corresponding group is checked. */
     document.querySelectorAll('.skill-check').forEach(cb => {
         cb.addEventListener('change', function () {
             if (document.querySelectorAll('.skill-check:checked').length > 0) {
@@ -454,7 +451,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    /* Validates the add appointment form before submission. */
+    document.querySelectorAll('.comp-check').forEach(cb => {
+        cb.addEventListener('change', function () {
+            if (document.querySelectorAll('.comp-check:checked').length > 0) {
+                document.getElementById('rdvCompsError').style.display = 'none';
+            }
+        });
+    });
+
+    /* Validates the add appointment form before submission and sends it to the server. */
     document.getElementById('btnSendRDV').addEventListener('click', function () {
         let valid = true;
 
@@ -465,12 +470,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const fullDay = document.getElementById('rdvFullDay').checked;
         const rdvEstablishment = document.getElementById('rdvEstablishment');
         const rdvLocal = document.getElementById('rdvLocal');
+        const rdvUserSelect = document.getElementById('rdvUserSelect');
         const selectedSkills = document.querySelectorAll('.skill-check:checked');
         const skillsError = document.getElementById('rdvAcademicSkillsError');
-        const atLeastOneComp = Array.from(document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')).some(cb => cb.checked);
+        const selectedComps = document.querySelectorAll('.comp-check:checked');
         const compsError = document.getElementById('rdvCompsError');
 
-        [dateStart, dateEnd, startHour, endHour, rdvEstablishment, rdvLocal].forEach(el => {
+        [dateStart, dateEnd, startHour, endHour, rdvEstablishment, rdvLocal, rdvUserSelect].forEach(el => {
             el.classList.remove('is-invalid');
             const feedback = el.nextElementSibling;
             if (feedback && feedback.classList.contains('invalid-feedback')) feedback.remove();
@@ -487,6 +493,7 @@ document.addEventListener('DOMContentLoaded', function () {
             valid = false;
         }
 
+        if (!rdvUserSelect.value) displayError(rdvUserSelect, 'Veuillez sélectionner un bénéficiaire.');
         if (!dateStart.value) displayError(dateStart, 'La date de début est obligatoire.');
         if (!dateEnd.value) displayError(dateEnd, 'La date de fin est obligatoire.');
         if (dateStart.value && dateEnd.value && dateEnd.value < dateStart.value) {
@@ -496,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function () {
             skillsError.style.display = 'block';
             valid = false;
         }
-        if (!atLeastOneComp) {
+        if (selectedComps.length === 0) {
             compsError.style.display = 'block';
             valid = false;
         }
@@ -507,14 +514,56 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!endHour.value) displayError(endHour, 'L\'heure de fin est obligatoire.');
         }
 
-        if (valid) {
-            // TODO: submit to backend endpoint
-            bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
+        if (!valid) return;
+        if (document.querySelector('#modalRDV .is-invalid')) return;
+
+        const numAcademicSkillsNeeded = Array.from(selectedSkills).map(cb => Number(cb.value));
+        const numProfessionalSkillsNeeded = Array.from(selectedComps).map(cb => Number(cb.value));
+
+        let startTimeValue, endTimeValue;
+        if (fullDay) {
+            startTimeValue = '00:00';
+            endTimeValue = '23:59';
+        } else {
+            startTimeValue = startHour.value;
+            endTimeValue = endHour.value;
         }
+
+        const body = {
+            numBeneficiary: Number(rdvUserSelect.value),
+            appointmentLocals: [rdvLocal.value.trim()],
+            startDate: dateStart.value,
+            endDate: dateEnd.value,
+            startTime: startTimeValue,
+            endTime: endTimeValue,
+            numEstablishment: Number(rdvEstablishment.value),
+            numAcademicSkillsNeeded: numAcademicSkillsNeeded,
+            numProfessionalSkillsNeeded: numProfessionalSkillsNeeded
+        };
+
+        fetch('/coordinatrice/planning-gestion/beneficiaires/rdv', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        })
+            .then(r => r.text())
+            .then(result => {
+                if (result === 'ok') {
+                    calendar.refetchEvents();
+                    bootstrap.Modal.getInstance(document.getElementById('modalRDV')).hide();
+                } else {
+                    alert('Une erreur est survenue lors de la création du rendez-vous.');
+                }
+            })
+            .catch(err => console.error('Error creating appointment:', err));
     });
 
     /* Resets all add appointment modal fields to their default state when the modal is closed. */
     document.getElementById('modalRDV').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('modalRDVLabel').textContent = 'Ajouter un rendez-vous';
+        document.getElementById('btnSendRDV').textContent = 'Ajouter le RDV';
+        delete document.getElementById('btnSendRDV').dataset.editId;
+
         document.getElementById('rdvDateStart').value = '';
         document.getElementById('rdvDateEnd').value = '';
         document.getElementById('rdvDateStart').min = today;
@@ -530,8 +579,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('rdvEstablishment').selectedIndex = 0;
 
         document.querySelectorAll('.skill-check').forEach(cb => cb.checked = false);
-        document.querySelectorAll('#compTranscription, #compTranslitteration, #compTranslation')
-            .forEach(cb => cb.checked = true);
+        document.querySelectorAll('.comp-check').forEach(cb => cb.checked = true);
 
         generateHours('rdvStartHour', 8 * 60, 18 * 60 + 55);
         generateHours('rdvEndHour', 8 * 60 + 5, 19 * 60);

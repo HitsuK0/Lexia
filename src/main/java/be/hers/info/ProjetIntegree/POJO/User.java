@@ -17,7 +17,7 @@ public abstract class User {
     /**
      * Initialize a User with no elements
      */
-    public User(){
+    public User() {
         this.login = "";
         this.password = "";
         this.lastName = "";
@@ -29,15 +29,16 @@ public abstract class User {
 
     /**
      * Initialize a User with login, password, lastName, firstName, phoneNumber and emailAddress
-     * @param login the login of the user
-     * @param password the password of the user
-     * @param lastName the lastName of the user
-     * @param firstName the firstName of the user
+     *
+     * @param login        the login of the user
+     * @param password     the password of the user
+     * @param lastName     the lastName of the user
+     * @param firstName    the firstName of the user
      * @param emailAddress the email address of the user
      * @throws IllegalArgumentException if the password is null or empty
      */
     public User(String login, String password, String lastName, String firstName, String emailAddress) {
-        if(password == null || password.isEmpty())
+        if (password == null || password.isEmpty())
             throw new IllegalArgumentException("[POJOUser] Le mot de passe ne peut pas être vide ou null");
 
         this.login = login;
@@ -51,13 +52,14 @@ public abstract class User {
 
     /**
      * Initialize a User with login, password, lastName, firstName, phoneNumber, emailAddress and address
-     * @param login The id login the user
-     * @param password The password of the user
-     * @param lastName the lastName of the user
-     * @param firstName the firstName of the user
-     * @param phoneNumber the phone number of the user
+     *
+     * @param login        The id login the user
+     * @param password     The password of the user
+     * @param lastName     the lastName of the user
+     * @param firstName    the firstName of the user
+     * @param phoneNumber  the phone number of the user
      * @param emailAddress the email address of the user
-     * @param address the address of the user
+     * @param address      the address of the user
      * @throws IllegalArgumentException if address is null
      *                                  if password is null or empty
      */
@@ -86,6 +88,7 @@ public abstract class User {
 
     /**
      * Set the login of the user
+     *
      * @param login The login to set
      */
     public void setLogin(String login) {
@@ -101,10 +104,11 @@ public abstract class User {
 
     /**
      * Set the password of the user
+     *
      * @param password The password to set
      */
     public void setPassword(String password) {
-        if(password == null || password.isEmpty())
+        if (password == null || password.isEmpty())
             throw new IllegalArgumentException("[POJOUser] Le mot de passe de l'utilisateur ne peut pas être vide ou null");
         this.password = password;
     }
@@ -118,6 +122,7 @@ public abstract class User {
 
     /**
      * Set the last name of the user
+     *
      * @param lastName The last name to set
      */
     public void setLastName(String lastName) {
@@ -133,6 +138,7 @@ public abstract class User {
 
     /**
      * Set the first name of the user
+     *
      * @param firstName The first name to set
      */
     public void setFirstName(String firstName) {
@@ -148,6 +154,7 @@ public abstract class User {
 
     /**
      * Set the phone number of the user
+     *
      * @param phoneNumber The phone number to set
      */
     public void setPhoneNumber(String phoneNumber) {
@@ -163,12 +170,13 @@ public abstract class User {
 
     /**
      * Set the email address of the user
+     *
      * @param emailAddress The email address to set
      */
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
-    
+
     /**
      * @return the address of the user
      */
@@ -178,6 +186,7 @@ public abstract class User {
 
     /**
      * Set the address of the user
+     *
      * @param address The address to set
      * @throws IllegalArgumentException if address is null
      */
@@ -189,7 +198,7 @@ public abstract class User {
 
     /**
      * @return a String containing the login, the password, the last name, the first name, the email address,
-     *         the phone number and the address
+     * the phone number and the address
      */
     public String toString() {
         return "\nNom d'utilisateur : " + login +

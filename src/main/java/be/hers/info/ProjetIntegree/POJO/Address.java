@@ -15,14 +15,15 @@ public class Address {
 
     /**
      * Initialize an address with postcode, postOfficeBox, locality, hamlet, establishment
-     * @param postcode the postcode
+     *
+     * @param postcode      the postcode
      * @param postOfficeBox the post office box. It can only have 1 post office box
-     * @param locality the locality. It can only have 1 locality
-     * @param hamlet the hamlet
+     * @param locality      the locality. It can only have 1 locality
+     * @param hamlet        the hamlet
      * @throws IllegalArgumentException if postOfficeBox or locality is null
      */
     public Address(int postcode, String postOfficeBox, String locality, String hamlet) {
-        if(postOfficeBox == null || locality == null){
+        if (postOfficeBox == null || locality == null) {
             throw new IllegalArgumentException("[POJOAddress] : postOfficeBox et/ou locality est null");
         }
 
@@ -34,15 +35,16 @@ public class Address {
 
     /**
      * Initialize an address with postcode, postOfficeBox, locality, hamlet, establishment
-     * @param postcode the postcode
+     *
+     * @param postcode      the postcode
      * @param postOfficeBox the post office box. It can only have 1 post office box
-     * @param locality the locality. It can only have 1 locality
-     * @param hamlet the hamlet
+     * @param locality      the locality. It can only have 1 locality
+     * @param hamlet        the hamlet
      * @param establishment the establishment linked. It can have 0 or 1 establishment
      * @throws IllegalArgumentException if postOfficeBox or locality is null
      */
     public Address(int postcode, String postOfficeBox, String locality, String hamlet, Establishment establishment) {
-        if(postOfficeBox == null || locality == null){
+        if (postOfficeBox == null || locality == null) {
             throw new IllegalArgumentException("[POJOAddress] : postOfficeBox et/ou locality est null");
         }
 
@@ -55,16 +57,17 @@ public class Address {
 
     /**
      * Initialize an address with numAddress, postcode, postOfficeBox, locality, hamlet, establishment
-     * @param numAddress the id
-     * @param postcode the postcode
+     *
+     * @param numAddress    the id
+     * @param postcode      the postcode
      * @param postOfficeBox the post office box. It can only have 1 post office box
-     * @param locality the locality. It can only have 1 locality
-     * @param hamlet the hamlet
+     * @param locality      the locality. It can only have 1 locality
+     * @param hamlet        the hamlet
      * @param establishment the establishment linked. It can have 0 or 1 establishment
      * @throws IllegalArgumentException if postOfficeBox or locality is null
      */
     public Address(int numAddress, int postcode, String postOfficeBox, String locality, String hamlet, Establishment establishment) {
-        if(postOfficeBox == null || locality == null){
+        if (postOfficeBox == null || locality == null) {
             throw new IllegalArgumentException("[POJOAddress] : postOfficeBox et/ou locality est null");
         }
 
@@ -128,7 +131,7 @@ public class Address {
      * @throws IllegalArgumentException if postOfficeBox is null
      */
     public void setPostOfficeBox(String postOfficeBox) {
-        if(postOfficeBox == null){
+        if (postOfficeBox == null) {
             throw new IllegalArgumentException("[POJOAddress] : On ne peut pas set la boite postale à null");
         }
 
@@ -147,7 +150,7 @@ public class Address {
      * @throws IllegalArgumentException if locality is null
      */
     public void setLocality(String locality) {
-        if(locality == null){
+        if (locality == null) {
             throw new IllegalArgumentException("[POJOAddress] : On ne peut pas set la localité à null");
         }
 

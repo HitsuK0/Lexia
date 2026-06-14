@@ -20,7 +20,8 @@
         </encoder>
     </appender>
 
-    <logger name="be.hers.info.ProjetIntegree" level="DEBUG"/>
+    <logger name="be.hers.info.ProjetIntegree" level="INFO"/>
+    <logger name="org.hibernate" level="WARN"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

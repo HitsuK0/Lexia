@@ -39,16 +39,26 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('endHour').disabled = this.checked;
     });
 
+    /* Disables the time range inputs when the full day checkbox is checked in the edit modal.
+    Also updates the hidden field so fullDay is always sent in the form. */
+    document.getElementById('editAllDay').addEventListener('change', function () {
+        document.getElementById('editStartHour').disabled = this.checked;
+        document.getElementById('editEndHour').disabled = this.checked;
+        document.getElementById('fullDay').value = this.checked ? 'true' : 'false';
+    });
+
     /* Populates the edit modal fields with the data from the clicked row's button */
     document.getElementById('modalEditIndispo').addEventListener('show.bs.modal', function (e) {
         const btn = e.relatedTarget;
         document.getElementById('editStartDate').value = btn.dataset.startDate;
         document.getElementById('editEndDate').value = btn.dataset.endDate;
         document.getElementById('editReason').value = btn.dataset.reason || '';
+        document.getElementById('editReasonPrivate').checked = btn.dataset.privateReason === 'true';
         document.getElementById('editAbsenceId').value = btn.dataset.absenceId;
 
         const allDay = btn.dataset.allDay === 'true';
         document.getElementById('editAllDay').checked = allDay;
+        document.getElementById('fullDay').value = allDay ? 'true' : 'false';
         document.getElementById('editStartHour').disabled = allDay;
         document.getElementById('editEndHour').disabled = allDay;
 
@@ -76,6 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('editStartDate').value = '';
         document.getElementById('editEndDate').value = '';
         document.getElementById('editAllDay').checked = false;
+        document.getElementById('fullDay').value = 'false';
         document.getElementById('editStartHour').disabled = false;
         document.getElementById('editEndHour').disabled = false;
         document.getElementById('editReason').value = '';
@@ -97,12 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('editEndDate').min = today;
     document.getElementById('editStartDate').addEventListener('change', function () {
         document.getElementById('editEndDate').min = this.value;
-    });
-
-    /* Disables the time range inputs when the full day checkbox is checked in the edit modal */
-    document.getElementById('editAllDay').addEventListener('change', function () {
-        document.getElementById('editStartHour').disabled = this.checked;
-        document.getElementById('editEndHour').disabled = this.checked;
     });
 
     /* Populates the hidden absence id field in the delete modal */

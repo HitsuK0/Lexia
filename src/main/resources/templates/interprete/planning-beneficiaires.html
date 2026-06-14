@@ -35,10 +35,10 @@
                     <div class="dropdown">
                         <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
                                 id="dropdownBeneficiaire" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span id="beneficiaireSelectionne"
-                                          th:text="${#lists.isEmpty(session.beneficiaryList)} ? 'Aucun bénéficiaire' : ${session.beneficiaryList[0].lastName + ' ' + session.beneficiaryList[0].firstName}">
-                                        Bénéficiaire
-                                    </span>
+                                            <span id="beneficiaireSelectionne"
+                                                  th:text="${#lists.isEmpty(session.beneficiaryList)} ? 'Aucun bénéficiaire' : ${session.beneficiaryList[0].lastName + ' ' + session.beneficiaryList[0].firstName}">
+                                                Bénéficiaire
+                                            </span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownBeneficiaire">
                             <li th:each="benef : ${session.beneficiaryList}">
@@ -105,6 +105,9 @@
                             <label class="form-label small fw-semibold">Matière</label>
                             <select id="rdvAcademicSkill" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez une matière</option>
+                                <option th:each="skill : ${academicSkillList}"
+                                        th:value="${skill.numAcademicSkill}"
+                                        th:text="${skill.designation}"></option>
                             </select>
                             <div id="rdvAcademicSkillsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une matière.</div>
                         </div>
@@ -113,6 +116,9 @@
                             <label class="form-label small fw-semibold">Compétence requise</label>
                             <select id="rdvProfessionalSkill" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez une compétence</option>
+                                <option th:each="skill : ${professionalSkillList}"
+                                        th:value="${skill.numProfessionalSkill}"
+                                        th:text="${skill.designation}"></option>
                             </select>
                             <div id="rdvCompsError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une compétence requise.</div>
                         </div>
@@ -121,6 +127,9 @@
                             <label class="form-label small fw-semibold">Établissement</label>
                             <select id="rdvEstablishment" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez un établissement</option>
+                                <option th:each="establishment : ${establishmentList}"
+                                        th:value="${establishment.numEstablishment}"
+                                        th:text="${establishment.name}"></option>
                             </select>
                         </div>
 
