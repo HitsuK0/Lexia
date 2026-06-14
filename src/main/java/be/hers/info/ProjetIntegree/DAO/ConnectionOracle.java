@@ -39,7 +39,11 @@ public class ConnectionOracle {
      * @return The database connection singleton. Create a connection if it does not exist.
      */
     public static Connection getInstance() {
-        if (connectionBD == null) {
+        try {
+            if (connectionBD == null || connectionBD.isClosed()) {
+                new ConnectionOracle();
+            }
+        } catch (SQLException e) {
             new ConnectionOracle();
         }
         return connectionBD;
