@@ -201,7 +201,7 @@ public class AppointmentFormService {
                 }
             }
         }
-        academicSkillListBD.stream().filter(x -> listAcademicSkills.contains(x) == false).toList();
+        academicSkillListBD = academicSkillListBD.stream().filter(x -> listAcademicSkills.contains(x) == false).toList();
         for(AcademicSkill academicSkill : academicSkillListBD){
             daoAppointment.deleteAcademicSkillAtAppointment(numAppointment, academicSkill.getNumAcademicSkill());
         }
@@ -222,7 +222,7 @@ public class AppointmentFormService {
                 }
             }
         }
-        professionalSkillListBD.stream().filter(x -> listProfessionalSkills.contains(x) == false).toList();
+        professionalSkillListBD = professionalSkillListBD.stream().filter(x -> listProfessionalSkills.contains(x) == false).toList();
         for(ProfessionalSkill professionalSkill : professionalSkillListBD){
             daoAppointment.deleteProfessionalSkillAtAppointment(numAppointment, professionalSkill.getNumProfessionalSkill());
         }
