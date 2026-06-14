@@ -146,7 +146,8 @@ public class HoraireBaseController {
      */
     @GetMapping
     public String horaireBase(HttpSession session, Model model) {
-        if (getCoordinatorFromSession(session) == null)
+        Coordinator coordinator = getCoordinatorFromSession(session);
+        if (coordinator == null)
             return "redirect:/login";
 
         try {
@@ -154,6 +155,7 @@ public class HoraireBaseController {
             SkillService skillService = new SkillService();
             AppointmentFormService appointmentFormService = new AppointmentFormService();
 
+            model.addAttribute("isAdmin", coordinator.isAdmin());
             model.addAttribute("interpreterList", service.findAllInterpreters());
             model.addAttribute("beneficiaryList", service.findAllBeneficiaries());
             model.addAttribute("allAcademicSkills", skillService.getAllAcademicSkills());
