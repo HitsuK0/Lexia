@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 
 import java.sql.SQLException;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -28,6 +27,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/interprete")
 public class InterpreterController {
+
     /**
      * Retrieves the connected interpreter from the session.
      * Returns null if no user is connected or if the connected user is not an interpreter.
@@ -49,6 +49,7 @@ public class InterpreterController {
     /**
      * Redirect to the "interprete/planning" page
      * Redirects to login if no beneficiary is found in session.
+     *
      * @return Redirect to the "interprete/planning" page
      */
     @GetMapping("/planning")
@@ -68,36 +69,37 @@ public class InterpreterController {
      * Searches for all Absences and Appointments within the Start and End time range.
      * Format the information found in a list on the Map for FullCalendar
      * Redirects to login if no Interpreter is found in session.
-     * @param start the start date of the schedule
-     * @param end the end date of the schedule
+     *
+     * @param start   the start date of the schedule
+     * @param end     the end date of the schedule
      * @param session the current HTTP session
-     * @param model the Spring UI model
+     * @param model   the Spring UI model
      * @return a formatted map list for FullCalendar
      */
-    @GetMapping(value = "/planning/events", produces="application/json")
+    @GetMapping(value = "/planning/events", produces = "application/json")
     @ResponseBody
-    public List<Map<String,Object>> getEventsPlaningInterpreter(@RequestParam String start,
-                                                                @RequestParam String end, HttpSession session, Model model) {
+    public List<Map<String, Object>> getEventsPlaningInterpreter(@RequestParam String start,
+                                                                 @RequestParam String end, HttpSession session, Model model) {
         Interpreter interpreter = getInterpreterFromSession(session);
         if (interpreter == null) {
             return Collections.emptyList();
         }
 
-        String dateStart = start.substring(0,10);
-        String dateEnd = end.substring(0,10);
+        String dateStart = start.substring(0, 10);
+        String dateEnd = end.substring(0, 10);
         PlanningService planningService = new PlanningService();
-        List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndInterpreter(interpreter,dateStart,dateEnd);
-        List<Absence> absenceList = planningService.getListAbsenceWithDateAndInterpreter(interpreter,dateStart,dateEnd);
+        List<Appointment> appointmentList = planningService.getListAppointmentWithDateAndInterpreter(interpreter, dateStart, dateEnd);
+        List<Absence> absenceList = planningService.getListAbsenceWithDateAndInterpreter(interpreter, dateStart, dateEnd);
 
         interpreter.setAppointmentsList(appointmentList);
         interpreter.setAbsences(absenceList);
         LocalDate ldStart = LocalDate.parse(dateStart);
         LocalDate ldEnd = LocalDate.parse(dateEnd);
 
-        List<Map<String,Object>> events = new ArrayList<>();
+        List<Map<String, Object>> events = new ArrayList<>();
         List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
                 .toList();
-        for( Appointment a : appointmentList){
+        for (Appointment a : appointmentList) {
             Map<String, Object> event = new HashMap<>();
             Map<String, Object> extendedProps = new HashMap<>();
 
@@ -106,88 +108,88 @@ public class InterpreterController {
                     .collect(Collectors.joining(", "));
             event.put("title", skills);
 
-            if(a.getTimeSlot() instanceof TimeSlotPunctual){
+            if (a.getTimeSlot() instanceof TimeSlotPunctual) {
                 TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
-                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                LocalDateTime ldt = LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+                event.put("start", ldt);
+                event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
 
-                switch (a.getStatus()){
+                switch (a.getStatus()) {
                     case "en attente":
-                        event.put("color","#f0ad4e");
+                        event.put("color", "#f0ad4e");
                         break;
                     case "accepte":
-                        event.put("color","#81c784");
+                        event.put("color", "#81c784");
                         break;
                     case "refuse":
-                        event.put("color","#f28b82");
+                        event.put("color", "#f28b82");
                         break;
                     case "annule":
                         event.put("color", "#f28b82");
                         break;
                 }
-            }else{
+            } else {
                 TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
                 int i = tsp.getDayNumber();
                 LocalDate ld = null;
-                for(LocalDate l : listDateBetweenStartEnd){
-                    if(l.getDayOfWeek().getValue() == i){
+                for (LocalDate l : listDateBetweenStartEnd) {
+                    if (l.getDayOfWeek().getValue() == i) {
                         ld = l;
                         break;
                     }
                 }
                 LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-                event.put("color","#b39ddb");
+                event.put("start", ldt);
+                event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                event.put("color", "#b39ddb");
             }
 
             String professionalSkills = a.getProfessionalSkillsNeeded().stream()
                     .map(s -> s.getDesignation())
                     .collect(Collectors.joining(", "));
 
-            extendedProps.put("type","appointment");
-            extendedProps.put("status",a.getStatus());
+            extendedProps.put("type", "appointment");
+            extendedProps.put("status", a.getStatus());
             extendedProps.put("professionalSkills", professionalSkills);
-            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,1) + ". " + a.getBeneficiary().getFirstName());
+            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0, 1) + ". " + a.getBeneficiary().getFirstName());
             extendedProps.put("locals", a.getAppointmentLocals());
-            extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
+            extendedProps.put("establishment", a.getEstablishment().getNameBuilding());
             extendedProps.put("description", a.getDescription());
-            event.put("extendedProps",extendedProps);
+            event.put("extendedProps", extendedProps);
             events.add(event);
 
         }
-        for(Absence a : absenceList){
+        for (Absence a : absenceList) {
             Map<String, Object> event = new HashMap<>();
             Map<String, Object> extendedProps = new HashMap<>();
-            event.put("title","Indisponibilité");
+            event.put("title", "Indisponibilité");
 
-            if(a.getTimeSlot() instanceof TimeSlotPunctual){
+            if (a.getTimeSlot() instanceof TimeSlotPunctual) {
                 TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
                 LocalDateTime ldt = LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
-                event.put("start",ldt);
+                event.put("start", ldt);
 
                 if (!tsp.getStartDate().equals(tsp.getEndDate())) {
                     LocalDateTime ldtEnd = LocalDateTime.of(tsp.getEndDate(), tsp.getStartTime())
                             .plusSeconds(tsp.getDuration().toSecondOfDay());
                     event.put("end", ldtEnd);
                 } else {
-                    event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                    event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
                 }
-            }else{
+            } else {
                 TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
                 int i = tsp.getDayNumber();
                 LocalDate ld = null;
-                for(LocalDate l : listDateBetweenStartEnd){
-                    if(l.getDayOfWeek().getValue() == i){
+                for (LocalDate l : listDateBetweenStartEnd) {
+                    if (l.getDayOfWeek().getValue() == i) {
                         ld = l;
                         break;
                     }
                 }
                 if (ld == null) continue;
                 LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                event.put("start", ldt);
+                event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
             }
 
             boolean isFullDay = false;
@@ -198,11 +200,11 @@ public class InterpreterController {
                         && tsp.getDuration() != null
                         && tsp.getDuration().getHour() == 23;
             }
-            event.put("color","#f0ad4e");
-            extendedProps.put("type","absence");
+            event.put("color", "#f0ad4e");
+            extendedProps.put("type", "absence");
             extendedProps.put("reason", a.getReason());
             extendedProps.put("fullDay", isFullDay);
-            event.put("extendedProps",extendedProps);
+            event.put("extendedProps", extendedProps);
             events.add(event);
         }
         return events;
@@ -211,6 +213,7 @@ public class InterpreterController {
     /**
      * Create a list of beneficiaries linked to the interpreter
      * Redirects to login if no beneficiary is found in session.
+     *
      * @param session the current HTTP session
      * @param model   the Spring UI model
      * @return Redirect to the "interprete/planning/beneficiaires" page
@@ -238,16 +241,17 @@ public class InterpreterController {
      * Search all Appointments within the Start and End time range linked to the beneficiary number passed in the URL.
      * Format the information found in a list on the Map for FullCalendar
      * Redirects to login if no Interpreter is found in session.
-     * @param start the start date of the schedule
-     * @param end the end date of the schedule
+     *
+     * @param start   the start date of the schedule
+     * @param end     the end date of the schedule
      * @param session the current HTTP session
-     * @param model the Spring UI model
+     * @param model   the Spring UI model
      * @return a formatted map list for FullCalendar
      */
-    @GetMapping(value = "/planning/beneficiaires/events", produces="application/json")
+    @GetMapping(value = "/planning/beneficiaires/events", produces = "application/json")
     @ResponseBody
-    public List<Map<String,Object>> getEventsPlaningBeneficiary(@RequestParam String start,
-                                                                @RequestParam String end, @RequestParam("num") int num, HttpSession session, Model model) {
+    public List<Map<String, Object>> getEventsPlaningBeneficiary(@RequestParam String start,
+                                                                 @RequestParam String end, @RequestParam("num") int num, HttpSession session, Model model) {
         Interpreter interpreter = getInterpreterFromSession(session);
         if (interpreter == null) {
             return Collections.emptyList();
@@ -262,10 +266,10 @@ public class InterpreterController {
         LocalDate ldStart = LocalDate.parse(dateStart);
         LocalDate ldEnd = LocalDate.parse(dateEnd);
 
-        List<Map<String,Object>> events = new ArrayList<>();
+        List<Map<String, Object>> events = new ArrayList<>();
         List<LocalDate> listDateBetweenStartEnd = ldStart.datesUntil(ldEnd.plusDays(1))
                 .toList();
-        for( Appointment a : appointmentList){
+        for (Appointment a : appointmentList) {
             Map<String, Object> event = new HashMap<>();
             Map<String, Object> extendedProps = new HashMap<>();
 
@@ -275,55 +279,55 @@ public class InterpreterController {
                     .collect(Collectors.joining(", "));
             event.put("title", skills);
 
-            if(a.getTimeSlot() instanceof TimeSlotPunctual){
+            if (a.getTimeSlot() instanceof TimeSlotPunctual) {
                 TimeSlotPunctual tsp = (TimeSlotPunctual) a.getTimeSlot();
-                LocalDateTime ldt =  LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                LocalDateTime ldt = LocalDateTime.of(tsp.getStartDate(), tsp.getStartTime());
+                event.put("start", ldt);
+                event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
 
-                switch (a.getStatus()){
+                switch (a.getStatus()) {
                     case "en attente":
-                        event.put("color","#f0ad4e");
+                        event.put("color", "#f0ad4e");
                         break;
                     case "accepte":
-                        event.put("color","#81c784");
+                        event.put("color", "#81c784");
                         break;
                     case "refuse":
-                        event.put("color","#f28b82");
+                        event.put("color", "#f28b82");
                         break;
                     case "annule":
-                        event.put("color","#f28b82");
+                        event.put("color", "#f28b82");
                         break;
                 }
-            }else{
+            } else {
                 TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
                 int i = tsp.getDayNumber();
                 LocalDate ld = null;
-                for(LocalDate l : listDateBetweenStartEnd){
-                    if(l.getDayOfWeek().getValue() == i){
+                for (LocalDate l : listDateBetweenStartEnd) {
+                    if (l.getDayOfWeek().getValue() == i) {
                         ld = l;
                         break;
                     }
                 }
                 if (ld == null) continue;
                 LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
-                event.put("start",ldt);
-                event.put("end",ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-                event.put("color","#b39ddb");
+                event.put("start", ldt);
+                event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
+                event.put("color", "#b39ddb");
             }
 
             String professionalSkills = a.getProfessionalSkillsNeeded().stream()
                     .map(s -> s.getDesignation())
                     .collect(Collectors.joining(", "));
 
-            extendedProps.put("type","appointment");
-            extendedProps.put("status",a.getStatus());
+            extendedProps.put("type", "appointment");
+            extendedProps.put("status", a.getStatus());
             extendedProps.put("professionalSkills", professionalSkills);
-            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0,1) + ". " + a.getBeneficiary().getFirstName());
+            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0, 1) + ". " + a.getBeneficiary().getFirstName());
             extendedProps.put("locals", a.getAppointmentLocals());
-            extendedProps.put("establishment",a.getEstablishment().getNameBuilding());
+            extendedProps.put("establishment", a.getEstablishment().getNameBuilding());
             extendedProps.put("description", a.getDescription());
-            event.put("extendedProps",extendedProps);
+            event.put("extendedProps", extendedProps);
             events.add(event);
 
         }
@@ -334,6 +338,7 @@ public class InterpreterController {
      * Displays the list of punctual absences for the connected interpreter within a specific date range
      * The method extracts the date from the start and end parameters and retrieves
      * matching absences from the database
+     *
      * @param model the UI model to hold the list of absences and the active tab status
      * @return The view name "interprete/indisponibilites", or a redirect to login if session is invalid
      */
@@ -358,6 +363,7 @@ public class InterpreterController {
 
         model.addAttribute("activeTab", "indisponibilites");
         model.addAttribute("DTOAbsence", new DTOAbsence());
+        model.addAttribute("DTOAbsenceEdit", new DTOAbsence());
         return "interprete/indisponibilites";
     }
 
@@ -366,8 +372,9 @@ public class InterpreterController {
      * Function called when the form is filled.
      * Also redirect to the indsponibilites page.
      * It create an Absence in the Database.
+     *
      * @param dtoAbsence the dto to convert into a pojo
-     * @param model the UI model to hold the list of absences and the active tab status
+     * @param model      the UI model to hold the list of absences and the active tab status
      * @param request    the current HTTP request used to access the session
      * @return redirect the curent page.
      */
@@ -379,28 +386,27 @@ public class InterpreterController {
         if (interpreter == null) {
             return "redirect:/login";
         }
-        if(dtoAbsence.getStartDate() != null && dtoAbsence.getEndDate() != null
-                && (dtoAbsence.isFullDay() || (dtoAbsence.getStartTime() != null && dtoAbsence.getEndTime() != null))){
-            AbsenceService absenceService = new  AbsenceService();
-            try{
-                absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter(),"en attente");
-            }
-            catch(SQLException sql){
+        if (dtoAbsence.getStartDate() != null && dtoAbsence.getEndDate() != null
+                && (dtoAbsence.isFullDay() || (dtoAbsence.getStartTime() != null && dtoAbsence.getEndTime() != null))) {
+            AbsenceService absenceService = new AbsenceService();
+            try {
+                absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter(), "en attente");
+            } catch (SQLException sql) {
                 // afficher la page d'erreur
-            }
-            catch(BadStatusException bse){
+            } catch (BadStatusException bse) {
                 // afficher la page d'erreur
             }
         }
 
-        return "redirect:"+pageReferer;
+        return "redirect:" + pageReferer;
     }
 
     /**
      * Deletes a specific absence record based on its unique ID
-     * @param id the unique identifier of the absence to be deleted
-     * @param model the UI model to hold the list of absences and the active tab status
-     * @param request    the current HTTP request used to access the session
+     *
+     * @param id      the unique identifier of the absence to be deleted
+     * @param model   the UI model to hold the list of absences and the active tab status
+     * @param request the current HTTP request used to access the session
      * @return A redirect to the absences list view after deletion
      */
     @PostMapping("/indisponibilites/delete")
@@ -422,32 +428,36 @@ public class InterpreterController {
     }
 
     /**
-     * Updates the details of an existing absence
-     * The updated information is received as a model attribute and passed to the service
-     * @param updatedAbsence The absence object containing the modified data
+     * Updates an existing absence from the edit modal form.
+     * Receives the absence id as a request parameter and the new values as a DTOAbsence.
+     * Delegates the update logic to AbsenceService.updateAbsenceFromDTO().
+     * Only absences with status "en attente" can be modified (enforced by the HTML).
+     * Redirects to login if no interpreter is found in session.
+     *
+     * @param numAbsence the id of the absence to update
+     * @param dtoAbsence the DTO containing the new values submitted from the edit modal
      * @param request    the current HTTP request used to access the session
-     * @return A redirect to the absences list view after the update is processed
+     * @return a redirect to "/interprete/indisponibilites" after the update,
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/indisponibilites/update")
-    public String updateAbsence(@ModelAttribute Absence updatedAbsence,
-                                HttpServletRequest request) {
+    public String updateAbsence(@RequestParam int numAbsence, @ModelAttribute("DTOAbsenceEdit") DTOAbsence dtoAbsence, HttpServletRequest request) {
         HttpSession session = request.getSession();
         Interpreter interpreter = getInterpreterFromSession(session);
-        if (interpreter == null) {
+        if (interpreter == null)
             return "redirect:/login";
-        }
 
         try {
             AbsenceService absenceService = new AbsenceService();
-            absenceService.updateAbsence(updatedAbsence);
-        } catch (SQLException e) {
+            absenceService.updateAbsenceFromDTO(numAbsence, dtoAbsence);
+        } catch (SQLException | BadStatusException e) {
             e.printStackTrace();
         }
-
         return "redirect:/interprete/indisponibilites";
     }
 
-    /** Controller for the pages named "Mon profil"
+    /**
+     * Controller for the pages named "Mon profil"
      * Displays the profile page for the connected interpreter.
      * Reads the interpreter directly from the session to avoid Spring injecting an empty POJO when no user is connected.
      * Builds a {@link DTOInterpreterProfile} from the connected interpreter and adds it to the model so the Thymeleaf form can bind its fields.
@@ -459,7 +469,7 @@ public class InterpreterController {
      * @return the view "interprete/profil", or a redirect to "/login"
      */
     @GetMapping("/profil")
-    public String profil(HttpSession session, Model model){
+    public String profil(HttpSession session, Model model) {
         Interpreter interpreter = getInterpreterFromSession(session);
         if (interpreter == null) {
             return "redirect:/login";
@@ -475,7 +485,8 @@ public class InterpreterController {
         return "interprete/profil";
     }
 
-    /** Controller for the pages named "Mon profil"
+    /**
+     * Controller for the pages named "Mon profil"
      * Handles the submission of the profile edit form.
      * Saves the modified personal data (lastName, firstName, phoneNumber, emailAddress, address, weeklyWorkHours) of the connected interpreter.
      * The login and password are NOT modified here.
@@ -505,7 +516,8 @@ public class InterpreterController {
         return "redirect:/interprete/profil";
     }
 
-    /** Controller for the pages named "Mon profil"
+    /**
+     * Controller for the pages named "Mon profil"
      * Handles the submission of the password change modal.
      * Verifies that newPassword and confirmPassword match, then updates the password in the database.
      * The DB trigger will hash the new password automatically on UPDATE.
@@ -516,8 +528,8 @@ public class InterpreterController {
      * @param passwordDTO the password change form data submitted by the user
      * @param request     the current HTTP request used to access the session
      * @return a redirect to "/interprete/profil" after the operation,
-     *         with "?passwordError=true" appended if passwords do not match,
-     *         or a redirect to "/login" if the session is invalid
+     * with "?passwordError=true" appended if passwords do not match,
+     * or a redirect to "/login" if the session is invalid
      */
 
     @PostMapping("/profil/password")
@@ -556,7 +568,7 @@ public class InterpreterController {
      *                   only numProfessionalSkillSelected is read from it
      * @param request    the current HTTP request used to access the session
      * @return a redirect to "/interprete/profil" after adding,
-     *         or a redirect to "/login" if the session is invalid
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/addProfessionalSkill")
     public String addProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
@@ -608,7 +620,7 @@ public class InterpreterController {
      *                   only numProfessionalSkillSelected is read from it
      * @param request    the current HTTP request used to access the session
      * @return a redirect to "/interprete/profil" after deleting,
-     *         or a redirect to "/login" if the session is invalid
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/deleteProfessionalSkill")
     public String deleteProfessionalSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
@@ -650,7 +662,7 @@ public class InterpreterController {
      *                   only numAcademicSkillSelected is read from it
      * @param request    the current HTTP request used to access the session
      * @return a redirect to "/interprete/profil" after adding,
-     *         or a redirect to "/login" if the session is invalid
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/addAcademicSkill")
     public String addAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
@@ -702,7 +714,7 @@ public class InterpreterController {
      *                   only numAcademicSkillSelected is read from it
      * @param request    the current HTTP request used to access the session
      * @return a redirect to "/interprete/profil" after deleting,
-     *         or a redirect to "/login" if the session is invalid
+     * or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/profil/deleteAcademicSkill")
     public String deleteAcademicSkill(@ModelAttribute("profileDTO") DTOInterpreterProfile profileDTO,
