@@ -548,4 +548,30 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         }
         return numberBeneficiaries;
     }
+
+    public boolean checkOldPassword(int numBeneficiary, String passwordToCheck) throws SQLException {
+        boolean samePassword = false;
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT numBeneficiary " +
+                "FROM Beneficiary " +
+                "WHERE numBeneficiary = ? AND password = STANDARD_HASH(?, 'SHA256')";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setInt(1, numBeneficiary);
+            preparedStatement.setString(2, passwordToCheck);
+
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()) {
+                samePassword = true;
+            }
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+
+        return samePassword;
+    }
 }

@@ -113,9 +113,13 @@ public class BeneficiaryProfileService {
             return false;
         }
 
-        beneficiary.setPassword(dto.getNewPassword());
-
         DAOBeneficiary daoBeneficiary = new DAOBeneficiary();
+
+        if(!(daoBeneficiary.checkOldPassword(beneficiary.getNumBeneficiary(), dto.getConfirmPassword()))) {
+            return false;
+        }
+
+        beneficiary.setPassword(dto.getNewPassword());
         daoBeneficiary.updatePassword(beneficiary);
 
         return true;
