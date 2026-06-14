@@ -12,6 +12,7 @@ import be.hers.info.ProjetIntegree.DTO.DTOEstablishmentFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.*;
 
 import java.sql.SQLException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,9 +65,15 @@ public class AppointmentFormService {
         }
         newAppointment.setProfessionalSkillsNeeded(listProfessionalSkills);
 
+        LocalTime startTime = appointmentDTO.getStartTime();
+        LocalTime endTime = appointmentDTO.getEndTime();
+        LocalTime duration = LocalTime.ofSecondOfDay(
+                java.time.Duration.between(startTime, endTime).getSeconds()
+        );
+
         TimeSlotPunctual newTimeSlotPunctual = new TimeSlotPunctual(
-                appointmentDTO.getStartTime(),
-                appointmentDTO.getEndTime(),
+                startTime,
+                duration,
                 appointmentDTO.getStartDate(),
                 appointmentDTO.getEndDate()
         );
