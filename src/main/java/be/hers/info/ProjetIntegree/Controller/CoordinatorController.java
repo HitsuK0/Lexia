@@ -1,10 +1,5 @@
 package be.hers.info.ProjetIntegree.Controller;
 
-/**
- * @authors Willinger Chloé, Leroy Rodriguez Aïnhoa, Vanderheyden Quentin, Vatafu Jean, Rosman Loïs
- * @reviewer Halet Louis
- */
-
 import be.hers.info.ProjetIntegree.DAO.DAOAcademicSkill;
 import be.hers.info.ProjetIntegree.DAO.DAOProfessionalSkill;
 import be.hers.info.ProjetIntegree.DTO.*;
@@ -13,6 +8,8 @@ import be.hers.info.ProjetIntegree.Services.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -23,9 +20,15 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author Willinger Chloé, Leroy Rodriguez Aïnhoa, Vanderheyden Quentin, Vatafu Jean, Rosman Loïs
+ * @reviewer Halet Louis
+ */
 @Controller
 @RequestMapping("/coordinatrice")
 public class CoordinatorController {
+
+    private static final Logger logger = LoggerFactory.getLogger(CoordinatorController.class);
 
     /**
      * Retrieves the connected coordinator from the session.
@@ -90,7 +93,7 @@ public class CoordinatorController {
             profileService.saveProfile(coordinator, profileDTO);
             session.setAttribute("currentUser", coordinator);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la sauvegarde du profil coordinatrice {}", coordinator.getNumInterpreter(), e);
         }
 
         return "redirect:/interprete/profil";
@@ -120,7 +123,7 @@ public class CoordinatorController {
                 return "redirect:/interprete/profil?passwordError=true";
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du changement de mot de passe coordinatrice {}", coordinator.getNumInterpreter(), e);
         }
 
         return "redirect:/interprete/profil";
@@ -167,7 +170,7 @@ public class CoordinatorController {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout de compétence métier coordinatrice {}", coordinator.getNumInterpreter(), e);
         }
         session.setAttribute("currentUser", coordinator);
 
@@ -201,7 +204,7 @@ public class CoordinatorController {
                         .removeIf(s -> s.getNumProfessionalSkill() == numSkill);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la suppression de compétence métier coordinatrice {}", coordinator.getNumInterpreter(), e);
         }
 
         session.setAttribute("currentUser", coordinator);
@@ -249,7 +252,7 @@ public class CoordinatorController {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout de compétence académique coordinatrice {}", coordinator.getNumInterpreter(), e);
         }
         session.setAttribute("currentUser", coordinator);
         return "redirect:/interprete/profil?section=academics";
@@ -281,7 +284,7 @@ public class CoordinatorController {
                         .removeIf(s -> s.getNumAcademicSkill() == numSkill);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la suppression de compétence académique coordinatrice {}", coordinator.getNumInterpreter(), e);
         }
 
         session.setAttribute("currentUser", coordinator);
@@ -315,7 +318,7 @@ public class CoordinatorController {
             interpreterList = service.findAllInterpreters();
             interpreterList.removeIf(i -> i.getNumInterpreter() == coordinator.getNumInterpreter());
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement des interprètes pour le planning", e);
         }
         model.addAttribute("listInterpreter", interpreterList);
         model.addAttribute("DTOAbsence", new DTOAbsence());
@@ -330,7 +333,7 @@ public class CoordinatorController {
             beneficiaryList = service.findAllBeneficiaries();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement des bénéficiaires pour le planning", e);
         }
 
         session.setAttribute("beneficiaryList", beneficiaryList);
@@ -439,7 +442,7 @@ public class CoordinatorController {
                 .collect(Collectors.joining(", "));
 
         extendedProps.put("type", "appointment");
-        extendedProps.put("numAppointment",a.getNumAppointment());
+        extendedProps.put("numAppointment", a.getNumAppointment());
         extendedProps.put("status", a.getStatus());
         extendedProps.put("professionalSkills", professionalSkills);
         extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0, 1) + ". " + a.getBeneficiary().getFirstName());
@@ -452,33 +455,35 @@ public class CoordinatorController {
 
     /**
      * Pass the statut of the appointment on "annule"
+     *
      * @param numAppointment the numAppointment
-     * @param session the current HTTP session
-     * @param model   the Spring UI model
+     * @param session        the current HTTP session
+     * @param model          the Spring UI model
      * @return the view "/coordinatrice/planning-gestion", or a redirect to "/login"
      */
     @PostMapping("/planning-gestion/{numAppointment}/Annuler")
-    public String annulerRDV(@PathVariable int numAppointment,HttpSession session, Model model) {
+    public String annulerRDV(@PathVariable int numAppointment, HttpSession session, Model model) {
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null) {
             return "redirect:/login";
         }
         PlanningService p = new PlanningService();
-        p.changeStatusAppointment(numAppointment,"annule");
+        p.changeStatusAppointment(numAppointment, "annule");
         return "redirect:/coordinatrice/planning-gestion";
     }
 
 
     /**
      * This functions is used to update an Appointment.
+     *
      * @param dtoAppointment is the Appointment to update.
      * @param numAppointment is the num of the Appointment to update.
-     * @param session is the actual session.
-     * @param model is the Model for spring.
+     * @param session        is the actual session.
+     * @param model          is the Model for spring.
      * @return the page
      */
     @PostMapping("/planning-gestion/{numAppointment}/Modifier")
-    public String updateRDV(@RequestBody DTOAppointmentForm dtoAppointment, @PathVariable int numAppointment,HttpSession session, Model model) {
+    public String updateRDV(@RequestBody DTOAppointmentForm dtoAppointment, @PathVariable int numAppointment, HttpSession session, Model model) {
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null) {
             return "redirect:/login";
@@ -486,12 +491,12 @@ public class CoordinatorController {
         try {
             AppointmentFormService service = new AppointmentFormService();
             service.updateAppointment(dtoAppointment, numAppointment);
-        } catch (SQLException | BadStatusException ex) {
-            ex.printStackTrace();
-            // renvoyé page d'erreur.
+        } catch (SQLException | BadStatusException e) {
+            logger.error("Erreur lors de la mise à jour de l'absence", e);
         }
         return "redirect:/coordinatrice/planning-gestion";
     }
+
     /**
      * Build an events for FullCalendar with the Absence and the list of LocalDate choice between Start and End
      *
@@ -575,7 +580,7 @@ public class CoordinatorController {
             interpreterList = service.findAllInterpreters();
             interpreterList.removeIf(i -> i.getNumInterpreter() == coordinator.getNumInterpreter());
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement des interprètes pour le planning interprète", e);
         }
         model.addAttribute("listInterpreter", interpreterList);
         model.addAttribute("DTOAbsence", new DTOAbsence());
@@ -590,7 +595,7 @@ public class CoordinatorController {
             beneficiaryList = service.findAllBeneficiaries();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement des bénéficiaires pour le planning interprète", e);
         }
 
         session.setAttribute("beneficiaryList", beneficiaryList);
@@ -670,7 +675,7 @@ public class CoordinatorController {
             interpreterList = service.findAllInterpreters();
             interpreterList.removeIf(i -> i.getNumInterpreter() == coordinator.getNumInterpreter());
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement des interprètes pour le planning bénéficiaires", e);
         }
         model.addAttribute("listInterpreter", interpreterList);
         model.addAttribute("DTOAbsence", new DTOAbsence());
@@ -685,7 +690,7 @@ public class CoordinatorController {
             beneficiaryList = service.findAllBeneficiaries();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement des bénéficiaires pour le planning bénéficiaires", e);
         }
 
         session.setAttribute("beneficiaryList", beneficiaryList);
@@ -757,9 +762,9 @@ public class CoordinatorController {
             List<Absence> punctualAbsencesList = absenceService.getPunctualAbsencesInterpreter(coordinator);
             model.addAttribute("punctualAbsencesList", punctualAbsencesList);
         } catch (BadStatusException e) {
-            e.printStackTrace();
+            logger.error("Statut invalide lors du chargement des indisponibilités coordinatrice {}", coordinator.getNumInterpreter(), e);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement des indisponibilités coordinatrice {}", coordinator.getNumInterpreter(), e);
         }
 
         model.addAttribute("activeTab", "indisponibilites");
@@ -794,11 +799,11 @@ public class CoordinatorController {
             try {
                 absenceService.createAbsence(dtoAbsence, coordinator.getNumInterpreter(), "accepte");
             } catch (SQLException sql) {
-                // afficher la page d'erreur
-            } catch (IllegalArgumentException e){
-                // afficher la page d'erreur
+                logger.error("Erreur SQL lors de la création d'indisponibilité coordinatrice {}", coordinator.getNumInterpreter(), sql);
+            } catch (IllegalArgumentException e) {
+                logger.warn("Argument invalide lors de la création d'indisponibilité coordinatrice {}: {}", coordinator.getNumInterpreter(), e.getMessage());
             } catch (BadStatusException bse) {
-                // afficher la page d'erreur
+                logger.error("Statut invalide lors de la création d'indisponibilité coordinatrice {}", coordinator.getNumInterpreter(), bse);
             }
         }
 
@@ -825,7 +830,7 @@ public class CoordinatorController {
             AbsenceService absenceService = new AbsenceService();
             absenceService.deleteAbsence(id);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la suppression de l'absence {}", id, e);
         }
 
         return "redirect:/interprete/indisponibilites";
@@ -852,7 +857,7 @@ public class CoordinatorController {
             AbsenceService absenceService = new AbsenceService();
             absenceService.updateAbsence(updatedAbsence);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la mise à jour de l'absence", e);
         }
 
         return "redirect:/interprete/indisponibilites";
@@ -880,7 +885,7 @@ public class CoordinatorController {
             boolean success = service.createAppointment(dtoAppointment);
             return success ? "ok" : "error";
         } catch (BadStatusException | SQLException | IllegalArgumentException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la création du RDV bénéficiaire par coordinatrice", e);
             return "error";
         }
     }
@@ -913,7 +918,7 @@ public class CoordinatorController {
             model.addAttribute("professionalSkillList", new SkillService().getAllProfessionalSkills());
             model.addAttribute("academicSkillList", new SkillService().getAllAcademicSkills());
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement de la page gestion", e);
         }
 
         model.addAttribute("DTOReferrer", new DTOReferrer());
@@ -932,8 +937,7 @@ public class CoordinatorController {
      * @return a redirection to the "/coordinatrice/gestion" page
      */
     @PostMapping("/etablissements/addReferrer")
-    public String attributeReferrer(
-            @ModelAttribute("DTOReferrer") DTOReferrer dtoReferrer, HttpSession session) {
+    public String attributeReferrer(@ModelAttribute("DTOReferrer") DTOReferrer dtoReferrer, HttpSession session) {
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null || !coordinator.isAdmin()) {
             return "redirect:/login";
@@ -942,7 +946,7 @@ public class CoordinatorController {
         try {
             new ReferrerService().createReferrer(dtoReferrer);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout du référent", e);
         }
         return "redirect:/coordinatrice/gestion?tab=referents";
     }
@@ -966,7 +970,7 @@ public class CoordinatorController {
         try {
             new ReferrerService().updateReferrer(dtoReferrer);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la mise à jour du référent", e);
         }
 
         return "redirect:/coordinatrice/gestion?tab=referents";
@@ -991,7 +995,7 @@ public class CoordinatorController {
         try {
             new ReferrerService().deleteReferrer(dtoReferrer);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la suppression du référent", e);
         }
 
         return "redirect:/coordinatrice/gestion?tab=referents";
@@ -1016,7 +1020,7 @@ public class CoordinatorController {
         try {
             new SkillService().addAcademicSkill(designation);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout de la compétence académique", e);
         }
 
         return "redirect:/coordinatrice/gestion?tab=competences";
@@ -1041,7 +1045,7 @@ public class CoordinatorController {
         try {
             new SkillService().addProfessionalSkill(designation);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de l'ajout de la compétence métier", e);
         }
 
         return "redirect:/coordinatrice/gestion?tab=competences";
@@ -1062,7 +1066,7 @@ public class CoordinatorController {
         try {
             establishementService.createEstablishment(dtoEstablishment);
         } catch (SQLException e) {
-            // renvoyé la page d'erreur.
+            logger.error("Erreur lors de la création de l'établissement", e);
         }
         return "redirect:/coordinatrice/gestion";
     }
@@ -1082,7 +1086,7 @@ public class CoordinatorController {
         try {
             establishementService.updateEstablishment(dtoEstablishment);
         } catch (SQLException e) {
-            // renvoyé la page d'erreur.
+            logger.error("Erreur lors de la mise à jour de l'établissement", e);
         }
         return "redirect:/coordinatrice/gestion";
     }
@@ -1128,7 +1132,7 @@ public class CoordinatorController {
             int numberUsers = numberBeneficiaries + numberInterpreters;
             model.addAttribute("numberUsers", numberUsers);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur lors du chargement de la page utilisateurs", e);
         }
 
         model.addAttribute("dtoAddUser", new DTOUserAdd());
@@ -1164,10 +1168,10 @@ public class CoordinatorController {
 
             return "redirect:/coordinatrice/utilisateurs";
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erreur SQL lors de l'ajout d'un utilisateur", e);
             return "redirect:/coordinatrice/utilisateurs";
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            logger.error("Argument invalide lors de l'ajout d'un utilisateur", e);
             return "redirect:/coordinatrice/utilisateurs";
         }
     }
@@ -1187,6 +1191,4 @@ public class CoordinatorController {
         }
         return "coordinatrice/accueil";
     }
-
-
 }
