@@ -4,7 +4,7 @@
 -->
 
 <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
     <head th:replace="~{common/head :: head('Horaire de Base', '/css/coordinatrice/horaire-base.css')}"></head>
 
@@ -37,13 +37,19 @@
                     <div class="dropdown">
                         <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
                                 id="dropdownInterprete" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span id="interpreteSelectionne">MARTIN Sophie</span> <!-- TEMPORAIRE -->
+                            <span id="interpreteSelectionne">-- Sélectionner --</span>
                         </button>
-                        <!-- TEMPORAIRE -->
                         <ul class="dropdown-menu" aria-labelledby="dropdownInterprete" id="listeInterpretes">
-                            <li><a class="dropdown-item dropdown-interprete" href="#" data-id="1" data-nom="MARTIN Sophie">MARTIN Sophie</a></li>
-                            <li><a class="dropdown-item dropdown-interprete" href="#" data-id="2" data-nom="LEROY Thomas">LEROY Thomas</a></li>
-                            <li><a class="dropdown-item dropdown-interprete" href="#" data-id="3" data-nom="BRASSEUR Frédéric">BRASSEUR Frédéric</a></li>
+                            <li th:each="interpreter : ${interpreterList}">
+                                <a class="dropdown-item dropdown-interprete" href="#"
+                                   th:data-id="${interpreter.numInterpreter}"
+                                   th:data-nom="${interpreter.lastName + ' ' + interpreter.firstName}"
+                                   th:text="${interpreter.lastName + ' ' + interpreter.firstName}">
+                                </a>
+                            </li>
+                            <li th:if="${#lists.isEmpty(interpreterList)}">
+                                <span class="dropdown-item text-muted">Aucun interprète</span>
+                            </li>
                         </ul>
                     </div>
                     <button type="button" class="btn btn-outline-primary btn-sm"
@@ -59,12 +65,19 @@
                     <div class="dropdown">
                         <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
                                 id="dropdownBeneficiaire" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span id="beneficiaireSelectionne">DUPONT Jean</span> <!-- TEMPORAIRE -->
+                            <span id="beneficiaireSelectionne">-- Sélectionner --</span>
                         </button>
-                        <!-- TEMPORAIRE -->
                         <ul class="dropdown-menu" aria-labelledby="dropdownBeneficiaire" id="listeBeneficiaires">
-                            <li><a class="dropdown-item dropdown-beneficiaire" href="#" data-id="1" data-nom="DUPONT Jean">DUPONT Jean</a></li>
-                            <li><a class="dropdown-item dropdown-beneficiaire" href="#" data-id="2" data-nom="LAMBERT Marie">LAMBERT Marie</a></li>
+                            <li th:each="beneficiary : ${beneficiaryList}">
+                                <a class="dropdown-item dropdown-beneficiaire" href="#"
+                                   th:data-id="${beneficiary.numBeneficiary}"
+                                   th:data-nom="${beneficiary.lastName + ' ' + beneficiary.firstName}"
+                                   th:text="${beneficiary.lastName + ' ' + beneficiary.firstName}">
+                                </a>
+                            </li>
+                            <li th:if="${#lists.isEmpty(beneficiaryList)}">
+                                <span class="dropdown-item text-muted">Aucun bénéficiaire</span>
+                            </li>
                         </ul>
                     </div>
                     <button type="button" class="btn btn-outline-primary btn-sm"
@@ -121,20 +134,20 @@
                         <div id="creneauInterpreteFields">
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Bénéficiaire</label>
-                                <!-- TEMPORAIRE -->
                                 <select id="creneauBeneficiaire" class="form-select form-select-sm">
                                     <option value="" disabled selected>Choisissez un bénéficiaire</option>
-                                    <option value="1">DUPONT Jean</option>
-                                    <option value="2">LAMBERT Marie</option>
+                                    <option th:each="beneficiary : ${beneficiaryList}"
+                                            th:value="${beneficiary.numBeneficiary}"
+                                            th:text="${beneficiary.lastName + ' ' + beneficiary.firstName}"></option>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Établissement</label>
-                                <!-- TEMPORAIRE -->
                                 <select id="creneauEtablissementInterprete" class="form-select form-select-sm">
                                     <option value="" disabled selected>Choisissez un établissement</option>
-                                    <option value="1">École Primaire Saint-Joseph</option>
-                                    <option value="2">Athénée Royal de Namur</option>
+                                    <option th:each="establishment : ${establishmentList}"
+                                            th:value="${establishment.numEstablishment}"
+                                            th:text="${establishment.name}"></option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -192,47 +205,40 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Matière</label>
-                            <!-- TEMPORAIRE -->
                             <select id="creneauAcademicSkill" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez une matière</option>
-                                <option value="1">Mathématiques</option>
-                                <option value="2">Français</option>
-                                <option value="3">Histoire</option>
-                                <option value="4">Sciences</option>
+                                <option th:each="skill : ${allAcademicSkills}"
+                                        th:value="${skill.numAcademicSkill}"
+                                        th:text="${skill.designation}"></option>
                             </select>
                             <div id="creneauAcademicSkillError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une matière.</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Compétence métier</label>
-                            <!-- TEMPORAIRE -->
                             <select id="creneauProfessionalSkill" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez une compétence</option>
-                                <option value="1">Transcription</option>
-                                <option value="2">Translittération</option>
-                                <option value="3">Translation</option>
+                                <option th:each="skill : ${allProfessionalSkills}"
+                                        th:value="${skill.numProfessionalSkill}"
+                                        th:text="${skill.designation}"></option>
                             </select>
                             <div id="creneauProfessionalSkillError" class="text-danger small mt-1" style="display:none;">Veuillez sélectionner une compétence.</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Interprète</label>
-                            <!-- TEMPORAIRE — référent en tête -->
                             <select id="creneauInterprete" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez un interprète</option>
-                                <option value="1">MARTIN Sophie (Référent)</option>
-                                <option value="2">LEROY Thomas</option>
-                                <option value="3">BRASSEUR Frédéric</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Établissement</label>
-                            <!-- TEMPORAIRE -->
                             <select id="creneauEtablissementBeneficiaire" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez un établissement</option>
-                                <option value="1">École Primaire Saint-Joseph</option>
-                                <option value="2">Athénée Royal de Namur</option>
+                                <option th:each="establishment : ${establishmentList}"
+                                        th:value="${establishment.numEstablishment}"
+                                        th:text="${establishment.name}"></option>
                             </select>
                         </div>
 
@@ -290,7 +296,7 @@
 
                         <div class="mb-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="editCreneauIndispo"/>
+                                <input class="form-check-input" type="checkbox" id="editCreneauIndispo" disabled/>
                                 <label class="form-check-label small fw-semibold" for="editCreneauIndispo">
                                     Indisponibilité récurrente
                                     <span class="text-muted fw-normal">(ex: jamais disponible ce jour)</span>
@@ -301,20 +307,20 @@
                         <div id="editCreneauInterpreteFields">
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Bénéficiaire</label>
-                                <!-- TEMPORAIRE -->
                                 <select id="editCreneauBeneficiaire" class="form-select form-select-sm">
                                     <option value="" disabled selected>Choisissez un bénéficiaire</option>
-                                    <option value="1">DUPONT Jean</option>
-                                    <option value="2">LAMBERT Marie</option>
+                                    <option th:each="beneficiary : ${beneficiaryList}"
+                                            th:value="${beneficiary.numBeneficiary}"
+                                            th:text="${beneficiary.lastName + ' ' + beneficiary.firstName}"></option>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Établissement</label>
-                                <!-- TEMPORAIRE -->
                                 <select id="editCreneauEtablissementInterprete" class="form-select form-select-sm">
                                     <option value="" disabled selected>Choisissez un établissement</option>
-                                    <option value="1">École Primaire Saint-Joseph</option>
-                                    <option value="2">Athénée Royal de Namur</option>
+                                    <option th:each="establishment : ${establishmentList}"
+                                            th:value="${establishment.numEstablishment}"
+                                            th:text="${establishment.name}"></option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -374,45 +380,41 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Matière</label>
-                            <!-- TEMPORAIRE -->
                             <select id="editCreneauAcademicSkill" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez une matière</option>
-                                <option value="1">Mathématiques</option>
-                                <option value="2">Français</option>
-                                <option value="3">Histoire</option>
-                                <option value="4">Sciences</option>
+                                <option th:each="skill : ${allAcademicSkills}"
+                                        th:value="${skill.numAcademicSkill}"
+                                        th:text="${skill.designation}"></option>
                             </select>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Compétence métier</label>
-                            <!-- TEMPORAIRE -->
                             <select id="editCreneauProfessionalSkill" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez une compétence</option>
-                                <option value="1">Transcription</option>
-                                <option value="2">Translittération</option>
-                                <option value="3">Translation</option>
+                                <option th:each="skill : ${allProfessionalSkills}"
+                                        th:value="${skill.numProfessionalSkill}"
+                                        th:text="${skill.designation}"></option>
                             </select>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Interprète</label>
-                            <!-- TEMPORAIRE — référent en tête -->
                             <select id="editCreneauInterprete" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez un interprète</option>
-                                <option value="1">MARTIN Sophie (Référent)</option>
-                                <option value="2">LEROY Thomas</option>
-                                <option value="3">BRASSEUR Frédéric</option>
+                                <option th:each="interpreter : ${interpreterList}"
+                                        th:value="${interpreter.numInterpreter}"
+                                        th:text="${interpreter.lastName + ' ' + interpreter.firstName}"></option>
                             </select>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Établissement</label>
-                            <!-- TEMPORAIRE -->
                             <select id="editCreneauEtablissementBeneficiaire" class="form-select form-select-sm">
                                 <option value="" disabled selected>Choisissez un établissement</option>
-                                <option value="1">École Primaire Saint-Joseph</option>
-                                <option value="2">Athénée Royal de Namur</option>
+                                <option th:each="establishment : ${establishmentList}"
+                                        th:value="${establishment.numEstablishment}"
+                                        th:text="${establishment.name}"></option>
                             </select>
                         </div>
 
@@ -462,121 +464,6 @@
         </div>
 
         <script th:src="@{/js/fullcalendar.min.js}"></script>
-
-        <!-- TEMPORAIRE — données hardcodées pour les screenshots -->
-        <script th:inline="javascript">
-            /*<![CDATA[*/
-            function getWeekDay(dayOffset) {
-                const now = new Date();
-                const day = now.getDay();
-                const monday = new Date(now);
-                monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1) + dayOffset);
-                return monday.toISOString().split('T')[0];
-            }
-
-            window.HARDCODED_EVENTS_INTERPRETE = [
-                {
-                    title: 'Cours de maths',
-                    start: getWeekDay(0) + 'T08:00:00',
-                    end:   getWeekDay(0) + 'T10:00:00',
-                    color: '#b39ddb',
-                    extendedProps: {
-                        id: 1, dayNumber: 1, startTime: '08:00', endTime: '10:00',
-                        beneficiary: 'DUPONT Jean',
-                        establishment: 'École Primaire Saint-Joseph',
-                        local: 'Local M5',
-                        description: 'Cours de soutien en maths',
-                        isAbsence: false
-                    }
-                },
-                {
-                    title: 'Indisponibilité',
-                    start: getWeekDay(1) + 'T00:00:00',
-                    end:   getWeekDay(2) + 'T00:00:00',
-                    color: '#f0ad4e',
-                    extendedProps: {
-                        id: 2, dayNumber: 2, startTime: '00:00', endTime: '23:59',
-                        isAbsence: true
-                    }
-                },
-                {
-                    title: 'Transcription',
-                    start: getWeekDay(2) + 'T14:00:00',
-                    end:   getWeekDay(2) + 'T16:30:00',
-                    color: '#b39ddb',
-                    extendedProps: {
-                        id: 3, dayNumber: 3, startTime: '14:00', endTime: '16:30',
-                        beneficiary: 'LAMBERT Marie',
-                        establishment: 'Athénée Royal de Namur',
-                        local: 'Labo 2',
-                        isAbsence: false
-                    }
-                },
-                {
-                    title: 'Translittération',
-                    start: getWeekDay(3) + 'T09:00:00',
-                    end:   getWeekDay(3) + 'T11:00:00',
-                    color: '#b39ddb',
-                    extendedProps: {
-                        id: 4, dayNumber: 4, startTime: '09:00', endTime: '11:00',
-                        beneficiary: 'DUPONT Jean',
-                        establishment: 'École Primaire Saint-Joseph',
-                        local: 'Local A3',
-                        description: 'Session de translittération',
-                        isAbsence: false
-                    }
-                }
-            ];
-            window.HARDCODED_EVENTS_BENEFICIAIRE = [
-                {
-                    title: 'Mathématiques',
-                    start: getWeekDay(0) + 'T10:00:00',
-                    end:   getWeekDay(0) + 'T12:00:00',
-                    color: '#b39ddb',
-                    extendedProps: {
-                        id: 5, dayNumber: 1, startTime: '10:00', endTime: '12:00',
-                        academicSkill: 'Mathématiques',
-                        professionalSkill: 'Transcription',
-                        interpreter: 'MARTIN Sophie (Référent)',
-                        establishment: 'École Primaire Saint-Joseph',
-                        local: 'Local M5'
-                    }
-                },
-                {
-                    title: 'Histoire',
-                    start: getWeekDay(2) + 'T08:00:00',
-                    end:   getWeekDay(2) + 'T09:30:00',
-                    color: '#b39ddb',
-                    extendedProps: {
-                        id: 6, dayNumber: 3, startTime: '08:00', endTime: '09:30',
-                        academicSkill: 'Histoire',
-                        professionalSkill: 'Translation',
-                        interpreter: 'LEROY Thomas',
-                        establishment: 'Athénée Royal de Namur',
-                        local: 'Salle 12'
-                    }
-                },
-                {
-                    title: 'Français',
-                    start: getWeekDay(4) + 'T13:00:00',
-                    end:   getWeekDay(4) + 'T15:00:00',
-                    color: '#b39ddb',
-                    extendedProps: {
-                        id: 7, dayNumber: 5, startTime: '13:00', endTime: '15:00',
-                        academicSkill: 'Français',
-                        professionalSkill: 'Translittération',
-                        interpreter: 'MARTIN Sophie (Référent)',
-                        establishment: 'École Primaire Saint-Joseph',
-                        local: 'Local B2',
-                        description: 'Cours de lecture'
-                    }
-                }
-            ];
-            window.CURRENT_INTERPRETE_ID = 1;
-            window.CURRENT_BENEFICIAIRE_ID = 1;
-            /*]]>*/
-        </script>
-
         <script th:src="@{/js/coordinatrice/horaire-base.js}"></script>
 
         <div th:replace="~{common/footer :: footer}"></div>
