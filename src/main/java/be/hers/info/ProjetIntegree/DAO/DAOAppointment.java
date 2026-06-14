@@ -444,6 +444,8 @@ public class DAOAppointment extends DAO<Appointment> {
     }
 
 
+
+
     /**
      * This function delete every line of RDVInterpreter where the num of objectToDeleteFormDB
      * is used.
@@ -473,6 +475,72 @@ public class DAOAppointment extends DAO<Appointment> {
         }
 
         return isDeleted;
+    }
+
+    /**
+     * Delete a line in the database linking an AcademicSkill to an Appointment.
+     * Precondition :
+     * The appointment designated by numAppointment exists in the database
+     * The AcademicSkill designated by numAcademicSkill exists in the database
+     *
+     * @param numAppointment   the appointment number
+     * @param numAcademicSkill the AcademicSkill number
+     * @return true if the line is correctly inserted into the database, false otherwise
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public boolean deleteAcademicSkillAtAppointment(int numAppointment, int numAcademicSkill) throws SQLException {
+
+        boolean isInserted = false;
+        PreparedStatement prStat = null;
+        String query = "DELETE FROM RequiredAcademicSkill " +
+                "WHERE numAppointment = ? AND numAcademicSkill = ?";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numAppointment);
+            prStat.setInt(2, numAcademicSkill);
+            int nbLinesInsert = prStat.executeUpdate();
+            if (nbLinesInsert > 0) {
+                isInserted = true;
+            }
+        } finally {
+            closeStatement(prStat);
+        }
+
+        return isInserted;
+    }
+
+    /**
+     * Delete a line in the database linking an Professional to an Appointment.
+     * Precondition :
+     * The appointment designated by numAppointment exists in the database
+     * The AcademicSkill designated by numAcademicSkill exists in the database
+     *
+     * @param numAppointment   the appointment number
+     * @param numAcademicSkill the AcademicSkill number
+     * @return true if the line is correctly inserted into the database, false otherwise
+     * @throws SQLException In case of any SQL problems encountered with this method.
+     */
+    public boolean deleteProfessionalSkillAtAppointment(int numAppointment, int numAcademicSkill) throws SQLException {
+
+        boolean isInserted = false;
+        PreparedStatement prStat = null;
+        String query = "DELETE FROM RequiredProfessionalSkill " +
+                "WHERE numAppointment = ? AND numProfessionalSkill = ?";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numAppointment);
+            prStat.setInt(2, numAcademicSkill);
+            int nbLinesInsert = prStat.executeUpdate();
+            if (nbLinesInsert > 0) {
+                isInserted = true;
+            }
+        } finally {
+            closeStatement(prStat);
+        }
+
+        return isInserted;
     }
 
     /**
