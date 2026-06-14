@@ -58,7 +58,7 @@ public class ResaController {
         if(resa == null) {
             return "redirect:/login";
         }
-        String userName = resa.getLastName().toUpperCase() + " " + resa.getFirstName();
+        String userName = resa.getFirstName() + " " +resa.getLastName().toUpperCase();
         model.addAttribute("userName", userName);
         model.addAttribute("userRole", ROLE);
         model.addAttribute("isAdmin", resa.isAdmin());
@@ -79,7 +79,7 @@ public class ResaController {
         if(resa == null) {
             return "redirect:/login";
         }
-        String userName = resa.getLastName().toUpperCase() + " " + resa.getFirstName();
+        String userName = resa.getFirstName() + " " +resa.getLastName();
         model.addAttribute("userName", userName);
         model.addAttribute("userRole", ROLE);
         model.addAttribute("isAdmin", resa.isAdmin());

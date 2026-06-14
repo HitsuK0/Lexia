@@ -900,7 +900,7 @@ public class CoordinatorController {
         if (coordinator == null || !coordinator.isAdmin()) {
             return "redirect:/login";
         }
-        String userName = coordinator.getLastName().toUpperCase() + " " + coordinator.getFirstName();
+        String userName = coordinator.getFirstName() + " " + coordinator.getLastName();
 
         model.addAttribute("userName", userName);
         model.addAttribute("userRole", "COORDINATOR");
