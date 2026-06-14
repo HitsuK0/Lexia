@@ -17,6 +17,9 @@ import java.util.List;
 
 /**
  * Service link to the Absence.
+ *
+ * @author Vatafu Jean
+ * @reviewer Nicolas Jean-francois
  */
 public class AbsenceService {
 
@@ -25,13 +28,13 @@ public class AbsenceService {
      *
      * @param absenceDTO     is the DTOAbsence used by spring to copy the data in the form.
      * @param numInterpreter the numero of th interpreter
-     * @throws BadStatusException if the status of the absence isn't correct
-     * @throws SQLException       if a database access error occurs
+     * @throws BadStatusException       if the status of the absence isn't correct
+     * @throws SQLException             if a database access error occurs
      * @throws IllegalArgumentException if the start date is before now
      *                                  if an absence overlaps with another
      */
     public void createAbsence(DTOAbsence absenceDTO, int numInterpreter, String status) throws BadStatusException, SQLException {
-        if(absenceDTO.getStartDate().isBefore(LocalDate.now())) {
+        if (absenceDTO.getStartDate().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("[AbsenceService] La date de l'absence ne peut pas etre dans le passe.");
         }
 
@@ -61,7 +64,7 @@ public class AbsenceService {
         timeSlotPunctual.setDuration(duration);
 
         for (Absence abs : existentAbsences) {
-            if(timeSlotPunctual.overlapsWith(abs.getTimeSlot())) {
+            if (timeSlotPunctual.overlapsWith(abs.getTimeSlot())) {
                 throw new IllegalArgumentException("[AbsenceService] L'indisponibilité chevauche une indisponibilité existante.");
             }
         }

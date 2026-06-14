@@ -7,7 +7,6 @@ import be.hers.info.ProjetIntegree.POJO.Establishment;
 import be.hers.info.ProjetIntegree.POJO.Referrer;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +17,7 @@ public class ReferrerService {
 
     /**
      * This function find every Referrer in the DB
+     *
      * @return a List of Referrer
      * @throws SQLException if the database encountered a problem
      */
@@ -28,7 +28,8 @@ public class ReferrerService {
     /**
      * This method attribute the numEstablishment
      * to all the Referrer who has there id in idReferrers
-     * @param idReferrers represent all the id of the Referrer to update with a new Establishment.
+     *
+     * @param idReferrers      represent all the id of the Referrer to update with a new Establishment.
      * @param numEstablishment is the new Establishement to link the Referrers.
      * @throws SQLException if the DB encountered a problem
      */
@@ -45,6 +46,7 @@ public class ReferrerService {
     /**
      * This function create a referrer with all the data needed
      * It find the establishment where it is create an link it.
+     *
      * @param dtoReferrer
      * @throws SQLException
      */
@@ -69,7 +71,7 @@ public class ReferrerService {
      */
     public void updateReferrer(DTOReferrer dtoReferrer) throws SQLException {
         Establishment establishment = null;
-        if(dtoReferrer.getNumEstablishement() != 0) {
+        if (dtoReferrer.getNumEstablishement() != 0) {
             establishment = new DAOEstablishment().find(dtoReferrer.getNumEstablishement());
         }
 

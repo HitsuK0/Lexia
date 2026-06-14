@@ -1,10 +1,5 @@
 package be.hers.info.ProjetIntegree.Services;
 
-/**
- * @author Nicolas Jean-François
- * @reviewer Halet Louis, Wellinger Chloé
- */
-
 import be.hers.info.ProjetIntegree.DAO.DAOBeneficiary;
 import be.hers.info.ProjetIntegree.DAO.DAOCoordinator;
 import be.hers.info.ProjetIntegree.DAO.DAOInterpreter;
@@ -13,6 +8,10 @@ import be.hers.info.ProjetIntegree.POJO.*;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * @author Nicolas Jean-François
+ * @reviewer Halet Louis, Wellinger Chloé
+ */
 public class UserDetailService {
 
     /**
