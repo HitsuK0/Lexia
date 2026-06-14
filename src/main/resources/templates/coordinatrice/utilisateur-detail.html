@@ -142,19 +142,12 @@
                 </div>
 
                 <div class="mb-3" th:if="${userRole == 'BENEFICIARY'}">
-                    <label class="form-label small fw-semibold">Langue(s) de communication</label>
-                    <div class="input-edit-group">
-                        <input type="text" class="form-control form-control-sm" th:value="${#strings.listJoin(user.communicationLanguage, ', ')}" readonly id="inputLangues" placeholder="—"/>
-                        <button type="button" class="btn-edit" onclick="toggleEdit('inputLangues', this)" title="Modifier">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                    </div>
-                    <div class="d-flex flex-wrap gap-3 mt-2" id="langueCheckboxes" style="display:none;">
-                        <div class="form-check" th:each="lang : ${ {'LSFB','francais_parle_complete','ecrit'} }">
-                            <input class="form-check-input lang-check" type="checkbox" th:field="*{communicationLanguage}" th:value="${lang}" th:id="'lang_' + ${lang}"/>
-                            <label class="form-check-label small" th:for="'lang_' + ${lang}" th:text="${lang}"></label>
-                        </div>
-                    </div>
+                    <label class="form-label small fw-semibold">Langue de communication</label>
+                    <select th:field="*{communicationLanguage}" class="form-select form-select-sm" style="max-width: 250px;" id="selectLangue">
+                        <option value="LSFB">LSFB</option>
+                        <option value="francais_parle_complete">Français parlé complété</option>
+                        <option value="ecrit">Écrit</option>
+                    </select>
                 </div>
             </div>
 

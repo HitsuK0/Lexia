@@ -64,13 +64,13 @@ function toggleEdit(id, btn) {
 /* Validates the new password and its confirmation before submission,
 otherwise displays the corresponding errors. */
 function savePassword() {
-    const newPassword     = document.getElementById('inputNewPassword').value;
+    const newPassword = document.getElementById('inputNewPassword').value;
     const confirmPassword = document.getElementById('inputConfirmPassword').value;
-    const passwordError   = document.getElementById('passwordError');
-    const confirmError    = document.getElementById('confirmError');
+    const passwordError = document.getElementById('passwordError');
+    const confirmError = document.getElementById('confirmError');
 
     passwordError.style.display = 'none';
-    confirmError.style.display  = 'none';
+    confirmError.style.display = 'none';
 
     if (!isValidPassword(newPassword)) {
         passwordError.textContent = 'Veuillez respecter tous les critères du mot de passe.';
@@ -90,8 +90,8 @@ function onFieldChanged() {
     document.getElementById('btnSauvegarder').style.display = 'block';
 }
 
-/* Adds a skill badge from the select into the badge container.
-Only updates the visual state; persistence is not yet wired to the backend. */
+/* Adds a professional or academic skill to the user via a dedicated POST request,
+then updates the badge list visually on success. */
 function addSkill(selectId, containerId) {
     const select = document.getElementById(selectId);
     const option = select.options[select.selectedIndex];
@@ -99,38 +99,71 @@ function addSkill(selectId, containerId) {
 
     const id = option.value;
     const designation = option.dataset.designation;
+    const userId = document.body.dataset.userId;
+    const isAcademic = selectId === 'selectAcademic';
+    const endpoint = isAcademic ? 'addAcademicSkill' : 'addProfessionalSkill';
 
-    const span = document.createElement('span');
-    span.className = 'badge-skill';
-    span.innerHTML = `<i class="bi bi-check-lg"></i> ${designation}
-        <button type="button" class="btn-badge-remove" onclick="removeSkill(this, '${containerId}', ${id})" title="Retirer">
-            <i class="bi bi-x"></i>
-        </button>`;
-    document.getElementById(containerId).appendChild(span);
+    const params = new URLSearchParams();
+    params.append('skillId', id);
 
-    option.remove();
-    select.value = '';
-    onFieldChanged();
+    fetch(`/coordinatrice/utilisateurs/interpreter/${userId}/${endpoint}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: params.toString()
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Erreur lors de l\'ajout de la compétence');
+
+            const span = document.createElement('span');
+            span.className = 'badge-skill';
+            span.innerHTML = `<i class="bi bi-check-lg"></i> ${designation}
+                <button type="button" class="btn-badge-remove" onclick="removeSkill(this, '${containerId}', ${id})" title="Retirer">
+                    <i class="bi bi-x"></i>
+                </button>`;
+            document.getElementById(containerId).appendChild(span);
+
+            option.remove();
+            select.value = '';
+        })
+        .catch(err => console.error('Error adding skill:', err));
 }
 
-/* Removes a skill badge from the container.
-Only updates the visual state; persistence is not yet wired to the backend. */
+/* Removes a professional or academic skill from the user via a dedicated POST request,
+then removes the badge visually on success. */
 function removeSkill(btn, containerId, skillId) {
-    btn.closest('.badge-skill').remove();
-    onFieldChanged();
+    const userId = document.body.dataset.userId;
+    const isAcademic = containerId === 'badgesAcademics';
+    const endpoint = isAcademic ? 'deleteAcademicSkill' : 'deleteProfessionalSkill';
+
+    const params = new URLSearchParams();
+    params.append('skillId', skillId);
+
+    fetch(`/coordinatrice/utilisateurs/interpreter/${userId}/${endpoint}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: params.toString()
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Erreur lors de la suppression de la compétence');
+            btn.closest('.badge-skill').remove();
+        })
+        .catch(err => console.error('Error removing skill:', err));
 }
 
-const originalRole = document.getElementById('roleSelectDetail').value;
+const roleSelectDetailEl = document.getElementById('roleSelectDetail');
+const originalRole = roleSelectDetailEl ? roleSelectDetailEl.value : null;
 
 document.addEventListener('DOMContentLoaded', function () {
 
     /* Warns the coordinator that the user's login will be regenerated on save
     if the selected role changes (only relevant for non-beneficiary users). */
-    document.getElementById('roleSelectDetail').addEventListener('change', function () {
-        const roleChanged = this.value !== originalRole;
-        const warning = document.getElementById('idRegenWarning');
-        if (warning) warning.style.display = roleChanged ? 'block' : 'none';
-    });
+    if (roleSelectDetailEl) {
+        roleSelectDetailEl.addEventListener('change', function () {
+            const roleChanged = this.value !== originalRole;
+            const warning = document.getElementById('idRegenWarning');
+            if (warning) warning.style.display = roleChanged ? 'block' : 'none';
+        });
+    }
 
     /* Shows the save button as soon as any field value changes. */
     document.querySelectorAll('#formProfile input:not([type="radio"]), #formProfile textarea, #formProfile select').forEach(el => {
@@ -169,11 +202,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('inputNewPassword').addEventListener('input', function () {
         const val = this.value;
         const criteria = [
-            { id: 'crit-length',  test: val.length >= 8 },
-            { id: 'crit-upper',   test: /[A-Z]/.test(val) },
-            { id: 'crit-lower',   test: /[a-z]/.test(val) },
-            { id: 'crit-number',  test: /[0-9]/.test(val) },
-            { id: 'crit-special', test: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val) }
+            {id: 'crit-length', test: val.length >= 8},
+            {id: 'crit-upper', test: /[A-Z]/.test(val)},
+            {id: 'crit-lower', test: /[a-z]/.test(val)},
+            {id: 'crit-number', test: /[0-9]/.test(val)},
+            {id: 'crit-special', test: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val)}
         ];
         criteria.forEach(c => {
             const el = document.getElementById(c.id);
@@ -231,4 +264,52 @@ document.addEventListener('DOMContentLoaded', function () {
             addSkill('selectAcademic', 'badgesAcademics');
         });
     }
+
+    /* Handles the main "Sauvegarder" button.
+    Before submitting the main profile form, sends dedicated requests for:
+    - the role change (if the role select exists and its value changed)
+    - the referent interpreter assignment (if the select exists, for beneficiaries)
+    Both requests run in parallel, then the main form is submitted regardless of their result
+    (errors are logged to the console but do not block the profile save). */
+    document.getElementById('btnSauvegarder').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const userId = document.body.dataset.userId;
+        const requests = [];
+
+        if (roleSelectDetailEl && roleSelectDetailEl.value !== originalRole) {
+            const roleParams = new URLSearchParams();
+            roleParams.append('newRole', roleSelectDetailEl.value);
+
+            requests.push(
+                fetch(`/coordinatrice/utilisateurs/interpreter/${userId}/role`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: roleParams.toString()
+                }).catch(err => console.error('Error changing role:', err))
+            );
+        }
+
+        const interpreterRefSelect = document.querySelector('select[name="numInterpreterReferent"]');
+        if (interpreterRefSelect) {
+            const refParams = new URLSearchParams();
+            refParams.append('interpreterId', interpreterRefSelect.value);
+
+            requests.push(
+                fetch(`/coordinatrice/utilisateurs/beneficiary/${userId}/referenceInterpreter`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: refParams.toString()
+                }).catch(err => console.error('Error setting referent interpreter:', err))
+            );
+        }
+
+        if (requests.length > 0) {
+            Promise.all(requests).then(() => {
+                document.getElementById('formProfile').submit();
+            });
+        } else {
+            document.getElementById('formProfile').submit();
+        }
+    });
 });
