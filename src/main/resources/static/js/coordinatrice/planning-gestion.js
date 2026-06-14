@@ -187,6 +187,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     calendar.render();
 
+    /* Prevents manual typing in date inputs, forcing the use of the native date picker. */
+    ['indispoDateStart', 'indispoDateEnd', 'rdvDateStart', 'rdvDateEnd'].forEach(id => {
+        const input = document.getElementById(id);
+        input.addEventListener('keydown', e => e.preventDefault());
+        input.addEventListener('click', function () {
+            this.showPicker();
+        });
+    });
+
     /* Pre-loads beneficiaries for the modal RDV on page load,
        since the default mode is coordinator (she is always the interpreter). */
     document.getElementById('rdvUserLabel').textContent = 'Bénéficiaire';
@@ -213,6 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (mode === 'coordinator') {
             searchZone.classList.add('d-none');
+            setCalendarVisible(true);
             calendar.refetchEvents();
 
             document.getElementById('rdvUserLabel').textContent = 'Bénéficiaire';
