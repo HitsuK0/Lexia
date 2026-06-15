@@ -264,11 +264,9 @@ CREATE OR REPLACE TRIGGER trg_generate_login_coordinator
 BEFORE INSERT ON Coordinator
 FOR EACH ROW
 BEGIN
-
     UPDATE Interpreter
-    SET login = 'C' || LPAD(SEQ_USERLEXIA_LOGIN.NEXTVAL, 4, '0')
+    SET login = 'C' || SUBSTR(login, 2)
     WHERE numInterpreter = :NEW.FKnumInterpreter;
-
 END;
 /
 
