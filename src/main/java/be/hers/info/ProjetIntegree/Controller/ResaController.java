@@ -65,10 +65,6 @@ public class ResaController {
         if (resa == null) {
             return "redirect:/login";
         }
-        String userName = resa.getFirstName() + " " + resa.getLastName();
-        model.addAttribute("userName", userName);
-        model.addAttribute("userRole", ROLE);
-        model.addAttribute("isAdmin", resa.isAdmin());
         return "resa/accueil";
     }
 
@@ -87,10 +83,6 @@ public class ResaController {
         if (resa == null) {
             return "redirect:/login";
         }
-        String userName = resa.getFirstName() + " " + resa.getLastName();
-        model.addAttribute("userName", userName);
-        model.addAttribute("userRole", ROLE);
-        model.addAttribute("isAdmin", resa.isAdmin());
 
         InterpreterProfileService profileService = new InterpreterProfileService();
         DTOInterpreterProfile profileDTO = profileService.buildProfileDTO(resa);
@@ -294,10 +286,7 @@ public class ResaController {
         if (resa == null) {
             return "redirect:/login";
         }
-        String userName = resa.getFirstName() + " " + resa.getLastName();
-        model.addAttribute("userName", userName);
-        model.addAttribute("userRole", ROLE);
-        model.addAttribute("isAdmin", resa.isAdmin());
+
         try {
             model.addAttribute("referentList", new ReferrerService().getAllReferrer());
             model.addAttribute("etablissementList", new EstablishementService().getAllFullEstablishments());
@@ -325,7 +314,7 @@ public class ResaController {
     @PostMapping("/etablissements/addAcademicSkill")
     public String academicSkillAdd(HttpSession session, @RequestParam("designation") String designation) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null || !coordinator.isAdmin()) {
+        if (coordinator == null) {
             return "redirect:/login";
         }
 
@@ -350,7 +339,7 @@ public class ResaController {
     @PostMapping("/etablissements/addProfessionalSkill")
     public String professionalSkillAdd(HttpSession session, @RequestParam("designation") String designation) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null || !coordinator.isAdmin()) {
+        if (coordinator == null) {
             return "redirect:/login";
         }
 

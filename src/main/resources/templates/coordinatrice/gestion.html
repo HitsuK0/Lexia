@@ -554,7 +554,7 @@
         <div class="modal fade" id="modalAjoutCompMetier" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <form th:action="@{/coordinatrice/etablissements/addProfessionalSkill}" method="POST">
+                    <form th:action="@{${isAdmin ? '/coordinatrice/etablissements/addProfessionalSkill' : '/resa/etablissements/addProfessionalSkill'}}" method="POST">
                         <div class="modal-header border-bottom">
                             <h5 class="modal-title fw-bold w-100 text-center">Ajouter une compétence métier</h5>
                             <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
@@ -604,7 +604,7 @@
         <div class="modal fade" id="modalAjoutCompAcad" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <form th:action="@{/coordinatrice/etablissements/addAcademicSkill}" method="POST">
+                    <form th:action="@{${isAdmin ? '/coordinatrice/etablissements/addAcademicSkill' : '/resa/etablissements/addAcademicSkill'}}" method="POST">
                         <div class="modal-header border-bottom">
                             <h5 class="modal-title fw-bold w-100 text-center">Ajouter une compétence académique</h5>
                             <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
