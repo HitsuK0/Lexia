@@ -294,6 +294,28 @@ public class DAOEstablishment extends DAO<Establishment> {
         return isInserted;
     }
 
+    public boolean deleteReferrerAtEstablishment(int numEstablishment, int numReferrer) throws SQLException {
+        boolean isDeleted = false;
+        PreparedStatement prStat = null;
+
+        String query = "DELETE FROM Work WHERE numEstablishment=? AND numReferer=?";
+
+        try {
+            prStat = connect.prepareStatement(query);
+            prStat.setInt(1, numEstablishment);
+            prStat.setInt(2, numReferrer);
+
+            if(prStat.executeUpdate() > 0) {
+                isDeleted = true;
+            }
+        } finally {
+            closeStatement(prStat);
+        }
+
+
+        return isDeleted;
+    }
+
     /**
      * Precondition: the establishment passed as a parameter cannot be null.
      * Updates all establishment fields in the table (except its identifier) that correspond to

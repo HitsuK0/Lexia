@@ -83,12 +83,27 @@ public class EstablishementService {
     public void updateEstablishment(DTOEstablishment dtoEstablishment) throws SQLException {
         DAOEstablishment daoEstablishment = new DAOEstablishment();
         DAOReferrer daoReferrer = new DAOReferrer();
-        for (int id : dtoEstablishment.getListReferrerSelected()) {
-            daoEstablishment.addReferrerAtEstablishment(
-                    dtoEstablishment.getNumEstablishment(),
-                    daoReferrer.find(id).getNumReferrer()
-            );
+
+        List<Integer> actualIds = daoReferrer
+                .findAllByWork(dtoEstablishment.getNumEstablishment())
+                .stream()
+                .map(Referrer::getNumReferrer)
+                .toList();
+
+        List<Integer> selectedIds = dtoEstablishment.getListReferrerSelected();
+
+        for(int id : selectedIds) {
+            if(!actualIds.contains(id)) {
+                daoEstablishment.addReferrerAtEstablishment(dtoEstablishment.getNumEstablishment(), id);
+            }
         }
+
+        for(int id : actualIds) {
+            if(!selectedIds.contains(id)) {
+                daoEstablishment.deleteReferrerAtEstablishment(dtoEstablishment.getNumEstablishment(), id);
+            }
+        }
+
         Establishment establishment = new Establishment();
         establishment.setNumEstablishment(dtoEstablishment.getNumEstablishment());
         establishment.setNameBuilding(dtoEstablishment.getNameBuilding());
