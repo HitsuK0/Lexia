@@ -103,4 +103,66 @@ document.addEventListener('DOMContentLoaded', function () {
         weeklyWorkField.style.display = (val === '1' || val === '2' || val === '4') ? 'block' : 'none';
         beneficiaryFields.style.display = val === '3' ? 'block' : 'none';
     });
+
+    /**
+     * Generates a random password that respects the password policy:
+     * at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, 1 special character.
+     * Guarantees one character from each required category, then fills the rest
+     * randomly and shuffles the result so the categories aren't predictably ordered.
+     *
+     * @param {number} length - total length of the password (must be >= 4, default 12)
+     * @returns {string} the generated password
+     */
+    function generatePassword(length = 12) {
+        const uppercase = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+        const lowercase = 'abcdefghijkmnpqrstuvwxyz';
+        const digits = '23456789';
+        const special = '!@#$%&*?';
+        const all = uppercase + lowercase + digits + special;
+
+        function randomChar(charset) {
+            const randomValues = new Uint32Array(1);
+            crypto.getRandomValues(randomValues);
+            return charset[randomValues[0] % charset.length];
+        }
+
+        // Guarantee at least one character of each required category
+        const passwordChars = [
+            randomChar(uppercase),
+            randomChar(lowercase),
+            randomChar(digits),
+            randomChar(special)
+        ];
+
+        // Fill the remaining length with random characters from the full charset
+        for (let i = passwordChars.length; i < length; i++) {
+            passwordChars.push(randomChar(all));
+        }
+
+        // Shuffle to avoid a predictable pattern (Fisher-Yates)
+        for (let i = passwordChars.length - 1; i > 0; i--) {
+            const randomValues = new Uint32Array(1);
+            crypto.getRandomValues(randomValues);
+            const j = randomValues[0] % (i + 1);
+            [passwordChars[i], passwordChars[j]] = [passwordChars[j], passwordChars[i]];
+        }
+
+        return passwordChars.join('');
+    }
+
+    generatePasswordBtn.addEventListener('click', function () {
+        passwordInput.value = generatePassword();
+        passwordInput.removeAttribute('readonly');
+    });
+
+    passwordInput.addEventListener('focus', function () {
+        passwordInput.removeAttribute('readonly');
+    });
+
+    // Generates a password by default when the modal opens
+    const modalAjout = document.getElementById('modalAjout');
+    modalAjout.addEventListener('show.bs.modal', function () {
+        passwordInput.value = generatePassword();
+        passwordInput.removeAttribute('readonly');
+    });
 });
