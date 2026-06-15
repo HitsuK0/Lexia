@@ -104,8 +104,11 @@ public class CoordinatorUsersService {
      * @throws SQLException If an SQL error occurs with this method.
      */
     public String addResaCoordinator(DTOUserAdd dtoUserAdd, boolean isAdmin) throws SQLException {
-        Address newAddress = new Address(dtoUserAdd.getPostcode(), dtoUserAdd.getPostOfficeBox(),
-                dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
+        String postOfficeBox = dtoUserAdd.getPostOfficeBox();
+        if (postOfficeBox == null || postOfficeBox.isBlank()) {
+            postOfficeBox = "-";
+        }
+        Address newAddress = new Address(dtoUserAdd.getPostcode(), postOfficeBox, dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
         DAOAddress daoAddress = new DAOAddress();
         daoAddress.create(newAddress);
 
@@ -124,6 +127,7 @@ public class CoordinatorUsersService {
 
         try {
             Coordinator newCoordinator = new Coordinator(dtoUserAdd, newAddress, isAdmin);
+            newCoordinator.setNumInterpreter(newInterpreter.getNumInterpreter());
             DAOCoordinator daoCoordinator = new DAOCoordinator();
             if (!daoCoordinator.create(newCoordinator)) {
                 daoInterpreter.delete(newInterpreter);
@@ -148,8 +152,11 @@ public class CoordinatorUsersService {
      * @throws SQLException If an SQL error occurs with this method.
      */
     public String addInterpreter(DTOUserAdd dtoUserAdd) throws SQLException {
-        Address newAddress = new Address(dtoUserAdd.getPostcode(), dtoUserAdd.getPostOfficeBox(),
-                dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
+        String postOfficeBox = dtoUserAdd.getPostOfficeBox();
+        if (postOfficeBox == null || postOfficeBox.isBlank()) {
+            postOfficeBox = "-";
+        }
+        Address newAddress = new Address(dtoUserAdd.getPostcode(), postOfficeBox, dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
         DAOAddress daoAddress = new DAOAddress();
         daoAddress.create(newAddress);
 
@@ -177,8 +184,11 @@ public class CoordinatorUsersService {
      * @throws SQLException If an SQL error occurs with this method.
      */
     public String addBeneficiary(DTOUserAdd dtoUserAdd) throws SQLException {
-        Address newAddress = new Address(dtoUserAdd.getPostcode(), dtoUserAdd.getPostOfficeBox(),
-                dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
+        String postOfficeBox = dtoUserAdd.getPostOfficeBox();
+        if (postOfficeBox == null || postOfficeBox.isBlank()) {
+            postOfficeBox = "-";
+        }
+        Address newAddress = new Address(dtoUserAdd.getPostcode(), postOfficeBox, dtoUserAdd.getLocality(), dtoUserAdd.getHamlet());
         DAOAddress daoAddress = new DAOAddress();
         daoAddress.create(newAddress);
 
