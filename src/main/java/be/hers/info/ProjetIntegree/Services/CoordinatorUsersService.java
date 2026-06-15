@@ -130,15 +130,6 @@ public class CoordinatorUsersService {
             return new AddUserResult("Ajout interprète échoué", null);
         }
 
-        String generatedLogin = null;
-        try {
-            Interpreter created = daoInterpreter.find(newInterpreter.getNumInterpreter());
-            if (created != null)
-                generatedLogin = created.getLogin();
-        } catch (SQLException e) {
-            logger.warn("Impossible de récupérer le login généré pour l'interprète {}", newInterpreter.getNumInterpreter(), e);
-        }
-
         try {
             Coordinator newCoordinator = new Coordinator(dtoUserAdd, newAddress, isAdmin);
             newCoordinator.setNumInterpreter(newInterpreter.getNumInterpreter());
@@ -153,6 +144,15 @@ public class CoordinatorUsersService {
             daoInterpreter.delete(newInterpreter);
             daoAddress.delete(newAddress);
             return new AddUserResult("Ajout coordinatrice échoué", null);
+        }
+
+        String generatedLogin = null;
+        try {
+            Interpreter created = daoInterpreter.find(newInterpreter.getNumInterpreter());
+            if (created != null)
+                generatedLogin = created.getLogin();
+        } catch (SQLException e) {
+            logger.warn("Impossible de récupérer le login généré pour l'interprète {}", newInterpreter.getNumInterpreter(), e);
         }
 
         return new AddUserResult("Ajout réussi", generatedLogin);
