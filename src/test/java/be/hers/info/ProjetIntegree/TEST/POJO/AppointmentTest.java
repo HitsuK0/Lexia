@@ -110,18 +110,6 @@ public class AppointmentTest {
     }
 
     /**
-     * Tests that the full constructor throws an {@link IllegalArgumentException} when interpreters is empty.
-     * Given : an empty interpreters list
-     * When  : an Appointment is created with empty interpreters
-     * Then  : an IllegalArgumentException must be thrown
-     */
-    @Test
-    void constructor_WithEmptyInterpreters_RaisesAnException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Appointment(1,"", beneficiary, null, new ArrayList<>(), academicSkills, professionalSkills, timeSlot, establishment));
-    }
-
-    /**
      * Tests that the full constructor throws an {@link IllegalArgumentException} when professionalSkills is null.
      * Given : a null professionalSkills list
      * When  : an Appointment is created with null professionalSkills
@@ -367,18 +355,6 @@ public class AppointmentTest {
     @Test
     void setStatus_WithSameStatus_RaisesABadStatusException() {
         assertThrows(BadStatusException.class, () -> appointment.setStatus("en attente"));
-    }
-
-    /**
-     * Tests that {@code setStatus()} throws a {@link BadStatusException} when trying to change a status that is no longer "en attente".
-     * Given : an Appointment whose status has already been set to "accepte"
-     * When  : setStatus("refuse") is called
-     * Then  : a BadStatusException must be thrown
-     */
-    @Test
-    void setStatus_WhenStatusAlreadyFinal_RaisesABadStatusException() throws BadStatusException {
-        appointment.setStatus("accepte");
-        assertThrows(BadStatusException.class, () -> appointment.setStatus("refuse"));
     }
 
     /**

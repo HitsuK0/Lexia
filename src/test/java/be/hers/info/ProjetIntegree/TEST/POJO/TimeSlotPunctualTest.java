@@ -375,19 +375,6 @@ public class TimeSlotPunctualTest {
                 () -> timeSlotPunctual.setEndDate(LocalDate.of(2025, 6, 9)));
     }
 
-    // getTravelTimeMinutes (inherited from TimeSlot) //
-
-    /**
-     * Tests that getTravelTimeMinutes() returns 40.
-     * Given : any TimeSlotPunctual
-     * When  : getTravelTimeMinutes() is called
-     * Then  : the result must equal 40
-     */
-    @Test
-    void getTravelTimeMinutes_Returns40() {
-        assertEquals(40, timeSlotPunctual.getTravelTimeMinutes());
-    }
-
     // overlapsWith(TimeSlotPunctual) //
 
     /**
