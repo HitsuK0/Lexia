@@ -126,3 +126,13 @@
 .pagination .page-item.disabled .page-link {
     opacity: 0.5;
 }
+
+.input-group-password .form-control {
+    border-left: 1px solid #dee2e6;
+    border-right: none;
+}
+
+.input-group-password:focus-within .form-control,
+.input-group-password:focus-within .btn {
+    border-color: #6c5ce7 !important;
+}
