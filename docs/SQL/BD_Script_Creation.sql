@@ -162,7 +162,7 @@ ALTER TABLE Coordinator ADD CONSTRAINT checkValueIsAdminCoordinator CHECK (isAdm
 -- hour_quota > 0, we cannot have a negative number of hours
 ALTER TABLE Beneficiary ADD CONSTRAINT checkValueHourQuotaBeneficiary CHECK (hourQuota > 0);
 -- 0 <= education_level < 5 (0 = other, 1 = kindergarten, 2 = primary, 3 = secondary, 4 = higher education)
-ALTER TABLE Beneficiary ADD CONSTRAINT checkValueEducationLevelBeneficiary CHECK (educationLevel >= 0 and educationLevel < 5);
+ALTER TABLE Beneficiary ADD CONSTRAINT checkValueEducationLevelBeneficiary CHECK( REGEXP_LIKE(educationLevel,'^(0|1|2|3|4)(,(0|1|2|3|4))*$'));
 -- Email address format constraint
 ALTER TABLE Beneficiary ADD CONSTRAINT checkEmailAddressBeneficiary CHECK (REGEXP_LIKE(emailAddress, '^[A-Za-z0-9._-]+@[A-Za-z0-9._-]+\.[A-Za-z]+$'));
 -- Phone number constraint (just numbers)
@@ -171,7 +171,7 @@ ALTER TABLE Beneficiary ADD CONSTRAINT checkPhoneNumberBeneficiary CHECK (REGEXP
 -- Phone number: only numbers.
 ALTER TABLE  Establishment ADD CONSTRAINT phoneNumberCheck CHECK(regexp_like(phoneNumber, '^[0-9]+$')); 
 -- 0 <= education_level < 5 (0 = other, 1 = kindergarten, 2 = primary, 3 = secondary, 4 = higher education)
-ALTER TABLE Establishment ADD CONSTRAINT checkValueEducationLevelEstablishment CHECK (educationLevel >= 0 and educationLevel < 5);
+ALTER TABLE Establishment ADD CONSTRAINT checkValueEducationLevelEstablishment CHECK( REGEXP_LIKE(educationLevel,'^(0|1|2|3|4)(,(0|1|2|3|4))*$'));
 
 -- The status can only be pending, accepted, rejected or cancelled.
 ALTER TABLE  Appointment ADD CONSTRAINT checkStatusAppointment CHECK (lower(status) in ('en attente', 'accepte', 'refuse','annule'));
