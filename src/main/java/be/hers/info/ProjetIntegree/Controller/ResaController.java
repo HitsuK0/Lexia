@@ -33,7 +33,6 @@ import java.util.ArrayList;
 public class ResaController {
 
     private static final Logger logger = LoggerFactory.getLogger(ResaController.class);
-    private final String ROLE = "COORDINATOR";
 
     /**
      * Retrieves the connected coordinator from the session.
@@ -65,10 +64,6 @@ public class ResaController {
         if (resa == null) {
             return "redirect:/login";
         }
-        String userName = resa.getFirstName() + " " + resa.getLastName();
-        model.addAttribute("userName", userName);
-        model.addAttribute("userRole", ROLE);
-        model.addAttribute("isAdmin", resa.isAdmin());
         return "resa/accueil";
     }
 
@@ -87,10 +82,6 @@ public class ResaController {
         if (resa == null) {
             return "redirect:/login";
         }
-        String userName = resa.getFirstName() + " " + resa.getLastName();
-        model.addAttribute("userName", userName);
-        model.addAttribute("userRole", ROLE);
-        model.addAttribute("isAdmin", resa.isAdmin());
 
         InterpreterProfileService profileService = new InterpreterProfileService();
         DTOInterpreterProfile profileDTO = profileService.buildProfileDTO(resa);
@@ -294,10 +285,7 @@ public class ResaController {
         if (resa == null) {
             return "redirect:/login";
         }
-        String userName = resa.getFirstName() + " " + resa.getLastName();
-        model.addAttribute("userName", userName);
-        model.addAttribute("userRole", ROLE);
-        model.addAttribute("isAdmin", resa.isAdmin());
+
         try {
             model.addAttribute("referentList", new ReferrerService().getAllReferrer());
             model.addAttribute("etablissementList", new EstablishementService().getAllFullEstablishments());
@@ -313,6 +301,78 @@ public class ResaController {
         return "coordinatrice/gestion";
     }
 
+    /** Creates a new Referrer in the database using the data submitted from the form.
+     * Redirects to login if no resa is found in session.
+     *
+     * @param dtoReferrer the DTOReferrer containing the data of the Referrer to create
+     * @param session the current HTTP session
+     * @return redirect to "/resa/gestion?tab=referents" after the operation
+     *         redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/etablissements/addReferrer")
+    public String addReferrer(@ModelAttribute("DTOReferrer") DTOReferrer dtoReferrer, HttpSession session) {
+        Coordinator resa = getCoordinatorFromSession(session);
+        if (resa == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            new ReferrerService().createReferrer(dtoReferrer);
+        } catch (SQLException e) {
+            logger.error("Erreur lors de l'ajout du référent.", e);
+        }
+
+        return "redirect:/resa/gestion?tab=referents";
+    }
+
+    /** Updates an existing Referrer in the database with the data submitted from the form.
+     * Redirects to login if no resa is found in session.
+     *
+     * @param dtoReferrer the DTOReferrer containing the updated data of the Referrer
+     * @param session the current HTTP session
+     * @return redirect to "/resa/gestion?tab=referents" after the operation,
+     *         redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/etablissements/updateReferrer")
+    public String updateReferrer(DTOReferrer dtoReferrer, HttpSession session) {
+        Coordinator resa = getCoordinatorFromSession(session);
+        if (resa == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            new ReferrerService().updateReferrer(dtoReferrer);
+        } catch (SQLException e) {
+            logger.error("Erreur lors de la mise à jour du référent", e);
+        }
+
+        return "redirect:/resa/gestion?tab=referents";
+    }
+
+    /** Deletes a Referrer from the database using the id contained in the DTOReferrer submitted from the form.
+     * Redirects to login if no resa is found in session.
+     *
+     * @param dtoReferrer the DTOReferrer containing the id of the Referrer to delete
+     * @param session the current HTTP session
+     * @return redirect to "/resa/gestion?tab=referents" after the operation,
+     *         redirect to "/login" if the session is invalid
+     */
+    @PostMapping("/etablissements/deleteReferrer")
+    public String deleteReferrer(DTOReferrer dtoReferrer, HttpSession session) {
+        Coordinator resa = getCoordinatorFromSession(session);
+        if (resa == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            new ReferrerService().deleteReferrer(dtoReferrer);
+        } catch (SQLException e) {
+            logger.error("Erreur lors de la suppression du référent", e);
+        }
+
+        return "redirect:/resa/gestion?tab=referents";
+    }
+
     /**
      * Creates a new AcademicSkill in the database with the designation submitted from the form.
      * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
@@ -325,7 +385,7 @@ public class ResaController {
     @PostMapping("/etablissements/addAcademicSkill")
     public String academicSkillAdd(HttpSession session, @RequestParam("designation") String designation) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null || !coordinator.isAdmin()) {
+        if (coordinator == null) {
             return "redirect:/login";
         }
 
@@ -350,7 +410,7 @@ public class ResaController {
     @PostMapping("/etablissements/addProfessionalSkill")
     public String professionalSkillAdd(HttpSession session, @RequestParam("designation") String designation) {
         Coordinator coordinator = getCoordinatorFromSession(session);
-        if (coordinator == null || !coordinator.isAdmin()) {
+        if (coordinator == null) {
             return "redirect:/login";
         }
 
