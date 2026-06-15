@@ -95,13 +95,12 @@ document.addEventListener('DOMContentLoaded', function () {
      * based on the selected role in the add user modal.
      */
     const roleSelect = document.getElementById('roleSelect');
-    const interpreteWorkField = document.getElementById('interpreteWorkField');
+    const weeklyWorkField = document.getElementById('weeklyWorkField');
     const beneficiaryFields = document.getElementById('beneficiaryFields');
-    const resaCoordinatorWorkField = document.getElementById('resaCoordinatorWorkField');
 
     roleSelect.addEventListener('change', function () {
-        interpreteWorkField.style.display = this.value === '2' ? 'block' : 'none';
-        beneficiaryFields.style.display = this.value === '3' ? 'block' : 'none';
-        resaCoordinatorWorkField.style.display = (this.value === '1' || this.value === '4') ? 'block' : 'none';
+        const val = this.value;
+        weeklyWorkField.style.display = (val === '1' || val === '2' || val === '4') ? 'block' : 'none';
+        beneficiaryFields.style.display = val === '3' ? 'block' : 'none';
     });
 });
