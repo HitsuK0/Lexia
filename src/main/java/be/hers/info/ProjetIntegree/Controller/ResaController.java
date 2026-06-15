@@ -425,39 +425,53 @@ public class ResaController {
 
     /**
      * This function create an establishment in DB using the data put in the form.
+     * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
+     * the user is redirected to the '/login' page
      *
      * @param dtoEstablishment is the DTOEstablishment the user is trying to add.
      * @return the page "etablissements" where it comes from.
      */
     @PostMapping("/etablissements/createEstablishment")
-    public String addEstablishment(@ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment) {
-        EstablishementService establishementService = new EstablishementService();
+    public String addEstablishment(@ModelAttribute("DTOEstablishmentAdd") DTOEstablishment dtoEstablishment,
+                                   HttpSession session) {
+        Coordinator resa = getCoordinatorFromSession(session);
+        if (resa == null) {
+            return "redirect:/login";
+        }
+
         try {
-            establishementService.createEstablishment(dtoEstablishment);
+            new EstablishementService().createEstablishment(dtoEstablishment);
         } catch (SQLException e) {
             logger.error("Erreur lors de la création de l'établissement", e);
         }
-        return "redirect:/coordinatrice/etablissements";
+
+        return "redirect:/resa/gestion";
     }
 
     /**
      * This functions update the Establishment with the
      * Establishment the user put in the form
+     * If no user of Coordinator type is found in the session or if the Coordinator is not an admin,
+     * the user is redirected to the '/login' page
      *
      * @param dtoEstablishment is the DTOEstablishment to update.
-     * @param model            is param used by Spring to add all the data in the page.
      * @return the page "etablissements" where it comes from.
      */
     @PostMapping("/etablissements/updateEstablishment")
     public String updateEstablishment(@ModelAttribute("DTOEstablishment") DTOEstablishment dtoEstablishment,
-                                      Model model) {
-        EstablishementService establishementService = new EstablishementService();
+                                HttpSession session) {
+        Coordinator resa = getCoordinatorFromSession(session);
+        if (resa == null) {
+            return "redirect:/login";
+        }
+
         try {
-            establishementService.updateEstablishment(dtoEstablishment);
+            new EstablishementService().updateEstablishment(dtoEstablishment);
         } catch (SQLException e) {
             logger.error("Erreur lors de la mise à jour de l'établissement", e);
         }
-        return "redirect:/coordinatrice/etablissements";
+
+        return "redirect:/resa/gestion";
     }
 
     /**

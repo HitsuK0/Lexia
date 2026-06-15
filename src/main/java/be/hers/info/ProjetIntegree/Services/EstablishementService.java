@@ -90,6 +90,7 @@ public class EstablishementService {
             );
         }
         Establishment establishment = new Establishment();
+        establishment.setNumEstablishment(dtoEstablishment.getNumEstablishment());
         establishment.setNameBuilding(dtoEstablishment.getNameBuilding());
         establishment.setPhoneNumber(dtoEstablishment.getPhoneNumber());
         establishment.setEducationLevel(dtoEstablishment.getEducationLevelInt());
