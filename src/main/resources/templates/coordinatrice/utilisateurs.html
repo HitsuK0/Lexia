@@ -219,7 +219,13 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small fw-semibold">Niveau d'études</label>
-                                    <input type="number" th:field="*{educationLevel}" class="form-control form-control-sm" placeholder="Ex : 1"/>
+                                    <select th:field="*{educationLevel}" class="form-select form-select-sm">
+                                        <option value="0">Autres</option>
+                                        <option value="1">Maternelle</option>
+                                        <option value="2">Primaire</option>
+                                        <option value="3">Secondaire</option>
+                                        <option value="4">Supérieur</option>
+                                    </select>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small fw-semibold">Langue(s) de communication</label>
