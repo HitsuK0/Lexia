@@ -30,6 +30,12 @@ public class CoordinatorController {
 
     private static final Logger logger = LoggerFactory.getLogger(CoordinatorController.class);
 
+    private final EmailService emailService;
+
+    public CoordinatorController(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
     /**
      * Retrieves the connected coordinator from the session.
      * Returns null if no user is connected or if the connected user is not a Coordinator.
@@ -1141,30 +1147,48 @@ public class CoordinatorController {
     }
 
     /**
-     * Create a new coordinator, interpreter or beneficiary in the database using the datas submitted from the form
+     * Creates a new coordinator, interpreter or beneficiary in the database using the data submitted from the form.
+     * After a successful creation, sends a welcome email to the new user containing their generated login, temporary password and role.
      *
-     * @param session the current HTTP session
-     * @return a redirection to the "coordinatrice/utilisateurs" page if the user is a coordinator connected.
-     * Otherwise, return a redirection to the "/login" page
+     * @param session    the current HTTP session
+     * @param dtoAddUser the form data for the new user
+     * @param role       the role code: "1" = Résa, "2" = Interprète, "3" = Bénéficiaire, "4" = Coordinatrice
+     * @param model      the Spring UI model
+     * @return a redirection to the "coordinatrice/utilisateurs" page if the user is a coordinator connected,
+     *         or a redirection to "/login" if the session is invalid
      */
     @PostMapping("utilisateurs/addUser")
-    public String addUser(HttpSession session, @ModelAttribute DTOUserAdd dtoAddUser,
-                          @RequestParam String role, Model model) {
+    public String addUser(HttpSession session, @ModelAttribute DTOUserAdd dtoAddUser, @RequestParam String role, Model model) {
         Coordinator coordinator = getCoordinatorFromSession(session);
         if (coordinator == null)
             return "redirect:/login";
 
         CoordinatorUsersService coordinatorUsersService = new CoordinatorUsersService();
         try {
-            String result = "";
+            CoordinatorUsersService.AddUserResult result = null;
+            String roleLabel = "";
+
             switch (role) {
-                case "1" -> result = coordinatorUsersService.addResaCoordinator(dtoAddUser, false);
-                case "2" -> result = coordinatorUsersService.addInterpreter(dtoAddUser);
-                case "3" -> result = coordinatorUsersService.addBeneficiary(dtoAddUser);
-                case "4" -> result = coordinatorUsersService.addResaCoordinator(dtoAddUser, true);
+                case "1" -> { result = coordinatorUsersService.addResaCoordinator(dtoAddUser, false); roleLabel = "Résa"; }
+                case "2" -> { result = coordinatorUsersService.addInterpreter(dtoAddUser); roleLabel = "Interprète"; }
+                case "3" -> { result = coordinatorUsersService.addBeneficiary(dtoAddUser); roleLabel = "Bénéficiaire"; }
+                case "4" -> { result = coordinatorUsersService.addResaCoordinator(dtoAddUser, true); roleLabel = "Coordinatrice"; }
             }
 
-            model.addAttribute("message", result);
+            if (result != null) {
+                model.addAttribute("message", result.message);
+
+                if ("Ajout réussi".equals(result.message) && result.login != null && dtoAddUser.getEmailAddress() != null) {
+                    emailService.sendWelcomeEmail(
+                            dtoAddUser.getEmailAddress(),
+                            dtoAddUser.getFirstName(),
+                            dtoAddUser.getLastName(),
+                            result.login,
+                            dtoAddUser.getPassword(),
+                            roleLabel
+                    );
+                }
+            }
 
             return "redirect:/coordinatrice/utilisateurs";
         } catch (SQLException e) {
