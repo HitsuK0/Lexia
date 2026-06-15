@@ -261,8 +261,8 @@
                         <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body px-4 py-3">
-                        <form th:action="@{/coordinatrice/etablissements/createEstablishment}" th:object="${DTOEstablishment}" method="POST">
-                            <div class="mb-3">
+                        <form th:action="@{${isAdmin ? '/coordinatrice/etablissements/createEstablishment' : '/resa/etablissements/createEstablishment'}}" th:object="${DTOEstablishment}" method="POST">
+                                <div class="mb-3">
                                 <label class="form-label small fw-semibold">Nom de l'établissement</label>
                                 <input type="text" th:field="*{nameBuilding}" class="form-control form-control-sm" id="ajoutEtabNom" placeholder="Ex : Haute Ecole Robert Schuman"/>
                             </div>
@@ -347,7 +347,7 @@
                         <h5 class="modal-title fw-bold w-100 text-center">Modifier l'établissement</h5>
                         <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
                     </div>
-                    <form th:action="@{/coordinatrice/etablissements/updateEstablishment}" th:object="${DTOEstablishment}" method="POST">
+                    <form th:action="@{${isAdmin ? '/coordinatrice/etablissements/updateEstablishment' : '/resa/etablissements/updateEstablishment'}}" th:object="${DTOEstablishment}" method="POST">
                         <div class="modal-body px-4 py-3">
 
                             <input type="hidden" th:field="*{numEstablishment}" id="editEtabId"/>

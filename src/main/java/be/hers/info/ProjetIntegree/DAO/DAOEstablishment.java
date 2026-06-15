@@ -297,7 +297,8 @@ public class DAOEstablishment extends DAO<Establishment> {
     /**
      * Precondition: the establishment passed as a parameter cannot be null.
      * Updates all establishment fields in the table (except its identifier) that correspond to
-     * the establishment identifier passed as a parameter. It updated the name and the phoneNumber of the establishment
+     * the establishment identifier passed as a parameter. It updated the name, phoneNumber and educationLevel
+     * of the establishment
      *
      * @param objectToUpdateInDB the establishment containing the identifier and the fields to be updated in the table.
      * @return true if the establishment has been successfully updated, false otherwise.
@@ -310,15 +311,22 @@ public class DAOEstablishment extends DAO<Establishment> {
 
         String query = """
                 UPDATE Establishment
-                SET name = ?, phoneNumber = ?
+                SET name = ?, phoneNumber = ?, educationLevel = ? 
                 WHERE numEstablishment = ?
                 """;
 
         try {
+            List<String> listStrEducationLevel = objectToUpdateInDB.getEducationLevel().stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.toList());
+
+            String strEducationLevel = String.join(",", listStrEducationLevel);
+
             prStat = connect.prepareStatement(query);
             prStat.setString(1, objectToUpdateInDB.getNameBuilding());
             prStat.setString(2, objectToUpdateInDB.getPhoneNumber());
-            prStat.setInt(3, objectToUpdateInDB.getNumEstablishment());
+            prStat.setString(3, strEducationLevel);
+            prStat.setInt(4, objectToUpdateInDB.getNumEstablishment());
 
             int nbLinesUpdate = prStat.executeUpdate();
             if (nbLinesUpdate > 0) {
