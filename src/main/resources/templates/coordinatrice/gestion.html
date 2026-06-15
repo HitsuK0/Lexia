@@ -433,7 +433,7 @@
         <div class="modal fade" id="modalAjoutRef" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <form th:action="@{/coordinatrice/etablissements/addReferrer}" th:object="${DTOReferrer}" method="POST">
+                    <form th:action="@{${isAdmin ? '/coordinatrice/etablissements/addReferrer' : '/resa/etablissements/addReferrer'}}" th:object="${DTOReferrer}" method="POST">
                         <div class="modal-header border-bottom">
                             <h5 class="modal-title fw-bold w-100 text-center">Ajouter un référent</h5>
                             <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
@@ -481,7 +481,7 @@
         <div class="modal fade" id="modalEditRef" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <form th:action="@{/coordinatrice/etablissements/updateReferrer}" method="POST">
+                    <form th:action="@{${isAdmin ? '/coordinatrice/etablissements/updateReferrer' : '/resa/etablissements/updateReferrer'}}" method="POST">
                         <div class="modal-header border-bottom">
                             <h5 class="modal-title fw-bold w-100 text-center">Modifier le référent</h5>
                             <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
@@ -530,7 +530,7 @@
         <div class="modal fade" id="modalDeleteRef" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
-                    <form th:action="@{/coordinatrice/etablissements/deleteReferrer}" method="POST">
+                    <form th:action="@{${isAdmin ? '/coordinatrice/etablissements/deleteReferrer' : '/resa/etablissements/deleteReferrer'}}" method="POST">
                         <div class="modal-header border-bottom">
                             <h5 class="modal-title fw-bold w-100 text-center">Supprimer le référent</h5>
                             <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
