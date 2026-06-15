@@ -210,11 +210,13 @@ public class HoraireBaseService {
      * @param endTime          the end time (used to compute duration)
      * @param local            the local (room), may be null
      * @param description      the description, may be null
+     * @param numAcademicSkill     the id of the required academic skill
+     * @param numProfessionalSkill the id of the required professional skill
      * @return true if the appointment was successfully created, false otherwise
      * @throws SQLException if a database error occurs
      */
     public boolean createBaseAppointmentForInterpreter(int numInterpreter, int numBeneficiary, int numEstablishment, int dayNumber, LocalTime startTime, LocalTime endTime,
-                                                       String local, String description) throws SQLException {
+                                                       String local, String description, int numAcademicSkill, int numProfessionalSkill) throws SQLException {
         LocalTime duration = LocalTime.ofSecondOfDay(endTime.toSecondOfDay() - startTime.toSecondOfDay());
         TimeSlotBase tsb = new TimeSlotBase(startTime, duration, dayNumber);
 
@@ -225,6 +227,8 @@ public class HoraireBaseService {
         Beneficiary beneficiary = new DAOBeneficiary().find(numBeneficiary);
         Establishment establishment = new DAOEstablishment().find(numEstablishment);
         Interpreter interpreter = new DAOInterpreter().find(numInterpreter);
+        AcademicSkill academicSkill = new DAOAcademicSkill().find(numAcademicSkill);
+        ProfessionalSkill professionalSkill = new DAOProfessionalSkill().find(numProfessionalSkill);
 
         if (beneficiary == null || establishment == null || interpreter == null)
             return false;
@@ -244,8 +248,8 @@ public class HoraireBaseService {
         appointment.setEstablishment(establishment);
         appointment.setTimeSlot(tsb);
         appointment.setInterpreters(List.of(interpreter));
-        appointment.setAcademicSkillsNeeded(Collections.emptyList());
-        appointment.setProfessionalSkillsNeeded(Collections.emptyList());
+        appointment.setAcademicSkillsNeeded(List.of(academicSkill));
+        appointment.setProfessionalSkillsNeeded(List.of(professionalSkill));
 
         return new DAOAppointment().create(appointment);
     }

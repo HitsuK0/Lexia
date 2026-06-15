@@ -302,7 +302,8 @@ public class HoraireBaseController {
     @ResponseBody
     public String createInterpreterSlot(@PathVariable int id, @RequestParam int dayNumber, @RequestParam String startTime, @RequestParam String endTime,
                                         @RequestParam(defaultValue = "false") boolean isAbsence, @RequestParam(required = false) Integer numBeneficiary, @RequestParam(required = false) Integer numEstablishment,
-                                        @RequestParam(required = false) String local, @RequestParam(required = false) String description, HttpSession session) {
+                                        @RequestParam(required = false) String local, @RequestParam(required = false) String description,@RequestParam(required = false) Integer numAcademicSkill,
+                                        @RequestParam(required = false) Integer numProfessionalSkill, HttpSession session) {
 
         if (getCoordinatorFromSession(session) == null)
             return "unauthorized";
@@ -318,7 +319,7 @@ public class HoraireBaseController {
                 if (numBeneficiary == null || numEstablishment == null)
                     return "error";
                 return service.createBaseAppointmentForInterpreter(id, numBeneficiary, numEstablishment,
-                        dayNumber, start, end, local, description) ? "ok" : "error";
+                        dayNumber, start, end, local, description,numAcademicSkill,numProfessionalSkill) ? "ok" : "error";
             }
         } catch (Exception e) {
             logger.error("Erreur lors de la création du créneau pour l'interprète {}", id, e);
