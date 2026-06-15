@@ -1,3 +1,8 @@
+/**
+ * @author Wellinger Chloé
+ * @reviewer Nicolas Jean-François, Halet Louis
+ */
+
 document.addEventListener('DOMContentLoaded', function () {
 
     const ROWS_PER_PAGE = 7;
@@ -85,8 +90,12 @@ document.addEventListener('DOMContentLoaded', function () {
         pagination.appendChild(nextLi);
     }
 
-    searchInput.addEventListener('input', function () { renderPage(1); });
-    roleFilter.addEventListener('change', function () { renderPage(1); });
+    searchInput.addEventListener('input', function () {
+        renderPage(1);
+    });
+    roleFilter.addEventListener('change', function () {
+        renderPage(1);
+    });
 
     renderPage(1);
 
