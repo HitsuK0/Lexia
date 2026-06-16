@@ -193,4 +193,92 @@ document.addEventListener('DOMContentLoaded', function () {
             clearFieldErrors(this.querySelectorAll('.form-control'));
         });
     });
+
+    const PAGE_SIZE_GESTION = 7;
+    let currentPageEtab = 1;
+    let currentPageRef  = 1;
+
+    /* Returns all data rows of a table body, excluding the "no data" placeholder row if present. */
+    function getDataRows(tbodySelector, emptyMessageSubstring) {
+        return Array.from(document.querySelectorAll(`${tbodySelector} tr`)).filter(row => {
+            return !row.textContent.includes(emptyMessageSubstring);
+        });
+    }
+
+    /* Renders pagination controls for a given table.
+       tableId: id-less prefix used to build pagination element ids (e.g. 'Etab', 'Ref')
+       rows: array of all data rows for that table
+       currentPage: current page number (will be read/written via the getter/setter callbacks) */
+    function renderPaginationGestion(prefix, rows, getCurrentPage, setCurrentPage) {
+        const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE_GESTION));
+        let currentPage = getCurrentPage();
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+            setCurrentPage(currentPage);
+        }
+
+        rows.forEach((row, idx) => {
+            const page = Math.floor(idx / PAGE_SIZE_GESTION) + 1;
+            row.style.display = page === currentPage ? '' : 'none';
+        });
+
+        const ul = document.getElementById('pagination' + prefix);
+        ul.innerHTML = '';
+
+        if (totalPages <= 1) return;
+
+        if (currentPage > 1) {
+            const prevLi = document.createElement('li');
+            prevLi.className = 'page-item';
+            prevLi.innerHTML = `<a class="page-link" href="#">&laquo;</a>`;
+            prevLi.addEventListener('click', e => {
+                e.preventDefault();
+                setCurrentPage(getCurrentPage() - 1);
+                renderPaginationGestion(prefix, rows, getCurrentPage, setCurrentPage);
+            });
+            ul.appendChild(prevLi);
+        }
+
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            li.addEventListener('click', e => {
+                e.preventDefault();
+                setCurrentPage(i);
+                renderPaginationGestion(prefix, rows, getCurrentPage, setCurrentPage);
+            });
+            ul.appendChild(li);
+        }
+
+        if (currentPage < totalPages) {
+            const nextLi = document.createElement('li');
+            nextLi.className = 'page-item';
+            nextLi.innerHTML = `<a class="page-link" href="#">&raquo;</a>`;
+            nextLi.addEventListener('click', e => {
+                e.preventDefault();
+                setCurrentPage(getCurrentPage() + 1);
+                renderPaginationGestion(prefix, rows, getCurrentPage, setCurrentPage);
+            });
+            ul.appendChild(nextLi);
+        }
+    }
+
+    /* Initializes pagination for the établissements table. */
+    const etabRows = getDataRows('#tab-etablissements tbody', 'Aucun établissement');
+    renderPaginationGestion(
+        'Etab',
+        etabRows,
+        () => currentPageEtab,
+        (p) => { currentPageEtab = p; }
+    );
+
+    /* Initializes pagination for the référents table. */
+    const refRows = getDataRows('#tab-referents tbody', 'Aucun référent');
+    renderPaginationGestion(
+        'Ref',
+        refRows,
+        () => currentPageRef,
+        (p) => { currentPageRef = p; }
+    );
 });
