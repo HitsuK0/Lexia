@@ -140,24 +140,32 @@ public class AbsenceService {
 
     /**
      * Updates an existing absence from a DTOAbsence.
+     * Verifies the new time slot does not overlap with another existing absence of the same
+     * interpreter (excluding the absence being updated) before applying the change.
      * Creates a new TimeSlotPunctual from the DTO data, updates the absence to point to it,
      * then deletes the old TimeSlotPunctual.
      * This order ensures the FK constraint is never violated.
      * If startTime is null (disabled selects when fullDay is checked), the absence is treated
      * as a full-day absence regardless of the fullDay flag.
      *
-     * @param numAbsence the id of the absence to update
-     * @param dto        the DTO containing the new values
-     * @throws SQLException       if a database access error occurs
-     * @throws BadStatusException if the absence status is invalid
+     * @param numAbsence     the id of the absence to update
+     * @param numInterpreter the id of the interpreter who owns the absence, used to check overlap
+     * @param dto            the DTO containing the new values
+     * @throws SQLException             if a database access error occurs
+     * @throws BadStatusException       if the absence status is invalid
+     * @throws IllegalArgumentException if the updated time slot overlaps with another absence
      */
-    public void updateAbsenceFromDTO(int numAbsence, DTOAbsence dto) throws SQLException, BadStatusException {
+    public void updateAbsenceFromDTO(int numAbsence, int numInterpreter, DTOAbsence dto) throws SQLException, BadStatusException {
         DAOAbsence daoAbsence = new DAOAbsence();
         Absence absence = daoAbsence.find(numAbsence);
         if (absence == null) return;
 
-        TimeSlotPunctual oldTsp = (TimeSlotPunctual) absence.getTimeSlot();
-        DAOTimeSlotPunctual daoTSP = new DAOTimeSlotPunctual();
+        Interpreter interpreter = new Interpreter();
+        interpreter.setNumInterpreter(numInterpreter);
+
+        List<Absence> existentAbsences = getPunctualAbsencesInterpreter(interpreter);
+        existentAbsences.addAll(getBaseAbsencesInterpreter(interpreter));
+        existentAbsences.removeIf(a -> a.getNumAbsence() == numAbsence);
 
         TimeSlotPunctual newTsp = new TimeSlotPunctual();
         newTsp.setStartDate(dto.getStartDate());
@@ -172,6 +180,14 @@ public class AbsenceService {
             newTsp.setDuration(LocalTime.MIDNIGHT.plus(d));
         }
 
+        for (Absence abs : existentAbsences) {
+            if (newTsp.overlapsWith(abs.getTimeSlot())) {
+                throw new IllegalArgumentException("[AbsenceService] L'indisponibilité chevauche une indisponibilité existante.");
+            }
+        }
+
+        TimeSlotPunctual oldTsp = (TimeSlotPunctual) absence.getTimeSlot();
+        DAOTimeSlotPunctual daoTSP = new DAOTimeSlotPunctual();
         daoTSP.create(newTsp);
 
         absence.setReason(dto.getReason());

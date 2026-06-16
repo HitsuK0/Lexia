@@ -110,19 +110,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     ? '<i class="bi bi-slash-circle" style="float:right; font-size:0.85rem;"></i>'
                     : '';
 
-            let html = `<div class="fw-bold">${arg.event.title}</div>`;
+            let html = `<div class="fw-bold text-truncate">${arg.event.title}</div>`;
 
             if (props.type === 'appointment') {
-                if (props.professionalSkills) html += `<div class="small">${props.professionalSkills}</div>`;
-                if (props.beneficiary) html += `<div class="small">Bénéficiaire : ${props.beneficiary}</div>`;
-                if (props.establishment) html += `<div class="small">${props.establishment}</div>`;
-                if (props.locals && props.locals.length > 0) html += `<div class="small">${props.locals.join(', ')}</div>`;
-                if (props.description) html += `<div class="small">📝 ${props.description}</div>`;
+                if (props.beneficiary) html += `<div class="small text-truncate">Bénéficiaire : ${props.beneficiary}</div>`;
             } else if (props.type === 'absence') {
-                if (props.reason && props.reason !== '') html += `<div class="small">Motif : ${props.reason}</div>`;
+                if (props.reason && props.reason !== '') html += `<div class="small text-truncate">Motif : ${props.reason}</div>`;
             }
 
-            return {html: `<div class="p-1">${icone}${html}</div>`};
+            return {html: `<div class="p-1" style="overflow:hidden;">${icone}${html}</div>`};
         }
     });
 

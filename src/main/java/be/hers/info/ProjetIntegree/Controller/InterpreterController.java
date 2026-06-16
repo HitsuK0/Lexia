@@ -317,20 +317,7 @@ public class InterpreterController {
                 LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
                 event.put("start", ldt);
                 event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-                switch (a.getStatus()) {
-                    case "en attente":
-                        event.put("color", "#f0ad4e");
-                        break;
-                    case "accepte":
-                        event.put("color", "#81c784");
-                        break;
-                    case "refuse":
-                        event.put("color", "#f28b82");
-                        break;
-                    case "annule":
-                        event.put("color", "#f28b82");
-                        break;
-                }
+                event.put("color", "#b39ddb");
             }
 
             String professionalSkills = a.getProfessionalSkillsNeeded().stream()
@@ -367,17 +354,24 @@ public class InterpreterController {
             return "redirect:/login";
         }
 
+        boolean isCoordinator = interpreter instanceof Coordinator;
+        String userRole = isCoordinator ? "COORDINATOR" : "INTERPRETER";
+        boolean isAdmin = isCoordinator && ((Coordinator) interpreter).isAdmin();
+
         try {
             AbsenceService absenceService = new AbsenceService();
-
             List<Absence> punctualAbsencesList = absenceService.getPunctualAbsencesInterpreter(interpreter);
             model.addAttribute("punctualAbsencesList", punctualAbsencesList);
         } catch (BadStatusException e) {
-            logger.error("Statut invalide lors du chargement des indisponibilités interprète {}", interpreter.getNumInterpreter(), e);
+            logger.error("Statut invalide lors du chargement des indisponibilités {}", interpreter.getNumInterpreter(), e);
         } catch (SQLException e) {
-            logger.error("Erreur lors du chargement des indisponibilités interprète {}", interpreter.getNumInterpreter(), e);
+            logger.error("Erreur lors du chargement des indisponibilités {}", interpreter.getNumInterpreter(), e);
         }
 
+        model.addAttribute("userRole", userRole);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("userName", interpreter.getFirstName() + " " + interpreter.getLastName());
+        model.addAttribute("breadcrumb", isCoordinator ? "Indisponibilités" : null);
         model.addAttribute("activeTab", "indisponibilites");
         model.addAttribute("DTOAbsence", new DTOAbsence());
         model.addAttribute("DTOAbsenceEdit", new DTOAbsence());
@@ -405,14 +399,15 @@ public class InterpreterController {
         if (dtoAbsence.getStartDate() != null && dtoAbsence.getEndDate() != null
                 && (dtoAbsence.isFullDay() || (dtoAbsence.getStartTime() != null && dtoAbsence.getEndTime() != null))) {
             AbsenceService absenceService = new AbsenceService();
+            String status = (interpreter instanceof Coordinator) ? "accepte" : "en attente";
             try {
-                absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter(), "en attente");
+                absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter(), status);
             } catch (SQLException sql) {
-                logger.error("Erreur SQL lors de la création d'indisponibilité interprète {}", interpreter.getNumInterpreter(), sql);
+                logger.error("Erreur SQL lors de la création d'indisponibilité {}", interpreter.getNumInterpreter(), sql);
             } catch (IllegalArgumentException e) {
-                logger.warn("Argument invalide lors de la création d'indisponibilité interprète {}: {}", interpreter.getNumInterpreter(), e.getMessage());
+                logger.warn("Argument invalide lors de la création d'indisponibilité {}: {}", interpreter.getNumInterpreter(), e.getMessage());
             } catch (BadStatusException bse) {
-                logger.error("Statut invalide lors de la création d'indisponibilité interprète {}", interpreter.getNumInterpreter(), bse);
+                logger.error("Statut invalide lors de la création d'indisponibilité {}", interpreter.getNumInterpreter(), bse);
             }
         }
 
@@ -467,9 +462,12 @@ public class InterpreterController {
 
         try {
             AbsenceService absenceService = new AbsenceService();
-            absenceService.updateAbsenceFromDTO(numAbsence, dtoAbsence);
+            absenceService.updateAbsenceFromDTO(numAbsence, interpreter.getNumInterpreter(), dtoAbsence);
         } catch (SQLException | BadStatusException e) {
             logger.error("Erreur lors de la mise à jour de l'absence {} interprète {}", numAbsence, interpreter.getNumInterpreter(), e);
+        } catch (IllegalArgumentException e) {
+            logger.warn("Chevauchement détecté lors de la mise à jour de l'absence {} : {}", numAbsence, e.getMessage());
+            return "redirect:/interprete/indisponibilites?updateError=true";
         }
         return "redirect:/interprete/indisponibilites";
     }
