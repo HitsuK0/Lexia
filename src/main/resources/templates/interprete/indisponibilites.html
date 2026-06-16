@@ -90,7 +90,7 @@
                 </td>
 
                 <td data-label="Actions" class="actions-cell">
-                    <button th:if="${statusVal == 'en attente'}"
+                    <button th:if="${statusVal == 'en attente' or userRole == 'COORDINATOR'}"
                             class="btn-action edit active"
                             data-bs-toggle="modal" data-bs-target="#modalEditIndispo"
                             th:attr="
@@ -105,19 +105,19 @@
                             title="Modifier">
                         <i class="bi bi-pencil"></i>
                     </button>
-                    <button th:unless="${statusVal == 'en attente'}" class="btn-action edit" disabled
+                    <button th:unless="${statusVal == 'en attente' or userRole == 'COORDINATOR'}" class="btn-action edit" disabled
                             title="Non modifiable">
                         <i class="bi bi-pencil"></i>
                     </button>
 
-                    <button th:if="${statusVal == 'en attente'}"
+                    <button th:if="${statusVal == 'en attente' or userRole == 'COORDINATOR'}"
                             class="btn-action delete active"
                             data-bs-toggle="modal" data-bs-target="#modalDeleteIndispo"
                             th:attr="data-absence-id=${absence.numAbsence}"
                             title="Supprimer">
                         <i class="bi bi-trash"></i>
                     </button>
-                    <button th:unless="${statusVal == 'en attente'}" class="btn-action delete" disabled
+                    <button th:unless="${statusVal == 'en attente' or userRole == 'COORDINATOR'}" class="btn-action delete" disabled
                             title="Non modifiable">
                         <i class="bi bi-trash"></i>
                     </button>
