@@ -134,7 +134,7 @@ public class DAOCoordinator extends DAO<Coordinator> {
                 interpreter = daoInterpreter.find(resultSet.getInt("FKnumInterpreter"));
 
                 resa = new DTOUser(
-                        resultSet.getInt("numCoordinator"),
+                        interpreter.getNumInterpreter(),
                         interpreter.getLastName(),
                         interpreter.getFirstName(),
                         interpreter.getPhoneNumber(),
@@ -173,7 +173,7 @@ public class DAOCoordinator extends DAO<Coordinator> {
                 interpreter = daoInterpreter.find(resultSet.getInt("FKnumInterpreter"));
 
                 coordinator = new DTOUser(
-                        resultSet.getInt("numCoordinator"),
+                        interpreter.getNumInterpreter(),
                         interpreter.getLastName(),
                         interpreter.getFirstName(),
                         interpreter.getPhoneNumber(),

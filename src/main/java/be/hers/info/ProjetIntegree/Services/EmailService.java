@@ -67,7 +67,7 @@ public class EmailService {
                     </table>
                 </div>
                 <p style="color: #e67e22; font-size: 13px; background-color: #fff8f0; border-radius: 6px; padding: 10px 12px; margin: 0;">
-                    ⚠️ Vous <b>DEVEZ<\b> changer votre mot de passe lors de votre première connexion.
+                    ⚠️ Vous DEVEZ changer votre mot de passe lors de votre première connexion.
                 </p>
             </div>
             <div style="background-color: #f3effe; padding: 16px; text-align: center; font-size: 12px; color: #888;">
