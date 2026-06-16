@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
         eventContent: function (arg) {
             const props = arg.event.extendedProps;
 
-            const isRefuse  = props.status === 'refuse';
+            const isRefuse  = props.status === 'refuse' || props.status === 'annule';
             const isAttente = props.status === 'en attente';
             const isAccepte = props.status === 'accepte';
 
@@ -103,16 +103,26 @@ document.addEventListener('DOMContentLoaded', function () {
                         ? '<i class="bi bi-check-circle" style="float:right; font-size:0.85rem;"></i>'
                         : '';
 
-            let html = `<div class="fw-bold">${arg.event.title}</div>`;
+            const dureeMinutes = (arg.event.end - arg.event.start) / 60000;
+
+            let html = `<div class="fw-bold text-truncate">${arg.event.title}</div>`;
 
             if (props.type === 'appointment') {
-                if (props.professionalSkills) html += `<div class="small">${props.professionalSkills}</div>`;
-                if (props.establishment) html += `<div class="small">${props.establishment}</div>`;
-                if (props.locals && props.locals.length > 0) html += `<div class="small">${props.locals.join(', ')}</div>`;
-                if (props.description) html += `<div class="small">📝 ${props.description}</div>`;
+                if (props.interpreter) {
+                    html += `<div class="small text-truncate">Interprète : ${props.interpreter}</div>`;
+                }
+                if (dureeMinutes >= 60) {
+                    if (props.establishment) html += `<div class="small text-truncate">${props.establishment}</div>`;
+                }
+                if (dureeMinutes >= 90) {
+                    if (props.locals && props.locals.length > 0) html += `<div class="small text-truncate">${props.locals.join(', ')}</div>`;
+                }
+                if (dureeMinutes >= 120) {
+                    if (props.description) html += `<div class="small text-truncate">${props.description}</div>`;
+                }
             }
 
-            return {html: `<div class="p-1">${icone}${html}</div>`};
+            return {html: `<div class="p-1" style="overflow:hidden;">${icone}${html}</div>`};
         }
     });
 
