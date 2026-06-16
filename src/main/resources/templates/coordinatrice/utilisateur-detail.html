@@ -303,32 +303,16 @@
                 <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
             </div>
             <form method="post"
-                  th:action="${userRole == 'BENEFICIARY'} ? @{/coordinatrice/utilisateurs/beneficiary/{id}/password(id=${user.numBeneficiary})} : @{/coordinatrice/utilisateurs/interpreter/{id}/password(id=${user.numInterpreter})}"
-                  th:object="${passwordDTO}">
-                <div class="modal-body px-4 py-3">
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Nouveau mot de passe</label>
-                        <input type="password" th:field="*{newPassword}" class="form-control form-control-sm" id="inputNewPassword" placeholder="Nouveau mot de passe..."/>
-                        <div id="passwordCriteria" style="font-size:0.875em; margin-top:0.4rem;">
-                            <div id="crit-length"  class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 8 characters minimum</div>
-                            <div id="crit-upper"   class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 uppercase letter</div>
-                            <div id="crit-lower"   class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 lowercase letter</div>
-                            <div id="crit-number"  class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 number</div>
-                            <div id="crit-special" class="crit"><i class="bi bi-x-circle-fill text-danger"></i> 1 special character (!@#$%...)</div>
-                        </div>
-                        <div id="passwordError" style="display:none; color:#dc3545; font-size:0.875em;"></div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Confirmer le mot de passe</label>
-                        <input type="password" th:field="*{confirmPassword}" class="form-control form-control-sm" id="inputConfirmPassword" placeholder="Confirmation..."/>
-                        <div id="confirmError" style="display:none; color:#dc3545; font-size:0.875em;">
-                            Les mots de passe ne correspondent pas.
-                        </div>
-                    </div>
+                  th:action="${userRole == 'BENEFICIARY'} ? @{/coordinatrice/utilisateurs/beneficiary/{id}/password(id=${user.numBeneficiary})} : @{/coordinatrice/utilisateurs/interpreter/{id}/password(id=${user.numInterpreter})}">
+                <div class="modal-body px-4 py-3 text-center">
+                    <i class="bi bi-key text-warning fs-1 mb-3 d-block"></i>
+                    <p class="mb-1">Vous êtes sur le point de réinitialiser le mot de passe de</p>
+                    <p class="fw-bold mb-3" th:text="${user.lastName} + ' ' + ${user.firstName}"></p>
+                    <p class="text-muted small">Un nouveau mot de passe temporaire sera généré et envoyé par e-mail à l'utilisateur.</p>
                 </div>
                 <div class="modal-footer border-top justify-content-center gap-2">
                     <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="savePassword()">
+                    <button type="submit" class="btn btn-primary btn-sm">
                         <i class="bi bi-key me-1"></i> Réinitialiser
                     </button>
                 </div>
