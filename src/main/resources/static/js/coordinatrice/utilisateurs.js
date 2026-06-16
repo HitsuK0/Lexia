@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const prevLi = document.createElement('li');
         prevLi.className = 'page-item';
-        prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-arrow-left"></i> Previous</a>`;
+        prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-arrow-left"></i> Précédent</a>`;
         if (currentPage === 1) {
             prevLi.style.display = 'none';
         } else {
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const nextLi = document.createElement('li');
         nextLi.className = 'page-item';
-        nextLi.innerHTML = `<a class="page-link" href="#">Next <i class="bi bi-arrow-right"></i></a>`;
+        nextLi.innerHTML = `<a class="page-link" href="#">Suivant <i class="bi bi-arrow-right"></i></a>`;
         if (currentPage === totalPages) {
             nextLi.style.display = 'none';
         } else {
