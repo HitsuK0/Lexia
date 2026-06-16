@@ -145,24 +145,21 @@ document.addEventListener('DOMContentLoaded', function () {
             const ep = arg.event.extendedProps;
             const lines = [];
 
-            lines.push(`<div class="fw-bold">${arg.event.title || ''}</div>`);
+            lines.push(`<div class="fw-bold text-truncate">${arg.event.title || ''}</div>`);
 
             if (ep.professionalSkills) {
-                lines.push(`<div class="small">${ep.professionalSkills}</div>`);
-            }
-            if (ep.beneficiary) {
-                lines.push(`<div class="small">${ep.beneficiary}</div>`);
-            }
-            if (ep.locals && ep.locals.length > 0) {
-                const localsStr = Array.isArray(ep.locals) ? ep.locals.join(', ') : ep.locals;
-                lines.push(`<div class="small">${localsStr}</div>`);
+                lines.push(`<div class="small text-truncate">${ep.professionalSkills}</div>`);
             }
 
             const icon = (ep.status === 'en attente')
                 ? '<i class="bi bi-hourglass-split" style="float:right; font-size:0.85rem;"></i>'
-                : '';
+                : (ep.status === 'accepte')
+                    ? '<i class="bi bi-check-circle" style="float:right; font-size:0.85rem;"></i>'
+                    : (ep.status === 'refuse')
+                        ? '<i class="bi bi-x-circle" style="float:right; font-size:0.85rem;"></i>'
+                        : '';
 
-            return { html: `<div class="p-1">${icon}${lines.join('')}</div>` };
+            return { html: `<div class="p-1" style="overflow:hidden;">${icon}${lines.join('')}</div>` };
         },
 
         /* Opens the event detail modal on click, displaying the appointment's

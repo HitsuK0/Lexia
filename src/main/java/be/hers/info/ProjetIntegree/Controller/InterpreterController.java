@@ -317,20 +317,7 @@ public class InterpreterController {
                 LocalDateTime ldt = LocalDateTime.of(ld, tsp.getStartTime());
                 event.put("start", ldt);
                 event.put("end", ldt.plusSeconds(tsp.getDuration().toSecondOfDay()));
-                switch (a.getStatus()) {
-                    case "en attente":
-                        event.put("color", "#f0ad4e");
-                        break;
-                    case "accepte":
-                        event.put("color", "#81c784");
-                        break;
-                    case "refuse":
-                        event.put("color", "#f28b82");
-                        break;
-                    case "annule":
-                        event.put("color", "#f28b82");
-                        break;
-                }
+                event.put("color", "#b39ddb");
             }
 
             String professionalSkills = a.getProfessionalSkillsNeeded().stream()
