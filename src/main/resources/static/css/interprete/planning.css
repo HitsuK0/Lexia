@@ -1,3 +1,8 @@
+/**
+ * @author Wellinger Chloé
+ * @reviewer Nicolas Jean-François, Halet Louis
+ */
+
 /* Allows you to reduce the fullcalendar toolbar */
 .fc .fc-toolbar {
     padding: 4px 8px !important;
@@ -22,6 +27,23 @@
 #modalEnvoi .modal-content {
     border-radius: 16px !important;
     overflow: hidden;
+}
+
+/* Prevents event content from overflowing its time slot */
+.fc-event {
+    overflow: hidden !important;
+}
+
+.fc-event .p-1 {
+    overflow: hidden;
+    max-height: 100%;
+}
+
+.fc-event .small,
+.fc-event .fw-bold {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /* On mobile, makes the button group full width with equal buttons. */
