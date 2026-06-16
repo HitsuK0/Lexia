@@ -566,7 +566,8 @@ document.addEventListener('DOMContentLoaded', function () {
             endTime: endTimeValue,
             numEstablishment: Number(rdvEstablishment.value),
             numAcademicSkillsNeeded: numAcademicSkillsNeeded,
-            numProfessionalSkillsNeeded: numProfessionalSkillsNeeded
+            numProfessionalSkillsNeeded: numProfessionalSkillsNeeded,
+            description: document.getElementById('rdvDescription').value.trim()
         };
 
         fetch('/coordinatrice/planning-gestion/beneficiaires/rdv', {
@@ -607,7 +608,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('rdvEstablishment').selectedIndex = 0;
 
         document.querySelectorAll('.skill-check').forEach(cb => cb.checked = false);
-        document.querySelectorAll('.comp-check').forEach(cb => cb.checked = true);
+        document.querySelectorAll('.comp-check').forEach(cb => cb.checked = false);
 
         generateHours('rdvStartHour', 8 * 60, 18 * 60 + 55);
         generateHours('rdvEndHour', 8 * 60 + 5, 19 * 60);
