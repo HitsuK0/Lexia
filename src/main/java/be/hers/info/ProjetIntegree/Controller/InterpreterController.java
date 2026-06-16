@@ -399,14 +399,15 @@ public class InterpreterController {
         if (dtoAbsence.getStartDate() != null && dtoAbsence.getEndDate() != null
                 && (dtoAbsence.isFullDay() || (dtoAbsence.getStartTime() != null && dtoAbsence.getEndTime() != null))) {
             AbsenceService absenceService = new AbsenceService();
+            String status = (interpreter instanceof Coordinator) ? "accepte" : "en attente";
             try {
-                absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter(), "en attente");
+                absenceService.createAbsence(dtoAbsence, interpreter.getNumInterpreter(), status);
             } catch (SQLException sql) {
-                logger.error("Erreur SQL lors de la création d'indisponibilité interprète {}", interpreter.getNumInterpreter(), sql);
+                logger.error("Erreur SQL lors de la création d'indisponibilité {}", interpreter.getNumInterpreter(), sql);
             } catch (IllegalArgumentException e) {
-                logger.warn("Argument invalide lors de la création d'indisponibilité interprète {}: {}", interpreter.getNumInterpreter(), e.getMessage());
+                logger.warn("Argument invalide lors de la création d'indisponibilité {}: {}", interpreter.getNumInterpreter(), e.getMessage());
             } catch (BadStatusException bse) {
-                logger.error("Statut invalide lors de la création d'indisponibilité interprète {}", interpreter.getNumInterpreter(), bse);
+                logger.error("Statut invalide lors de la création d'indisponibilité {}", interpreter.getNumInterpreter(), bse);
             }
         }
 
@@ -461,9 +462,12 @@ public class InterpreterController {
 
         try {
             AbsenceService absenceService = new AbsenceService();
-            absenceService.updateAbsenceFromDTO(numAbsence, dtoAbsence);
+            absenceService.updateAbsenceFromDTO(numAbsence, interpreter.getNumInterpreter(), dtoAbsence);
         } catch (SQLException | BadStatusException e) {
             logger.error("Erreur lors de la mise à jour de l'absence {} interprète {}", numAbsence, interpreter.getNumInterpreter(), e);
+        } catch (IllegalArgumentException e) {
+            logger.warn("Chevauchement détecté lors de la mise à jour de l'absence {} : {}", numAbsence, e.getMessage());
+            return "redirect:/interprete/indisponibilites?updateError=true";
         }
         return "redirect:/interprete/indisponibilites";
     }
