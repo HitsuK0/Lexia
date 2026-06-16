@@ -163,6 +163,9 @@ document.addEventListener('DOMContentLoaded', function () {
         /* Sets the event display content with an icon based on the appointment status
            (cancelled or unavailability), and shows appointment details below the title.
            For absences, displays the reason if one was provided. */
+        /* Sets the event display content with an icon based on the appointment status
+   (cancelled or unavailability), and progressively shows more details
+   as the event's duration (and thus its visual height) increases. */
         eventContent: function (arg) {
             const props = arg.event.extendedProps;
             const isCancelled = arg.event.title.startsWith('Annulé');
@@ -170,19 +173,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const icon = isCancelled ? '<i class="bi bi-x-circle" style="float:right; font-size:0.85rem;"></i>' : isUnavailable ? '<i class="bi bi-slash-circle" style="float:right; font-size:0.85rem;"></i>' : '';
 
-            let html = `<div class="fw-bold">${arg.event.title}</div>`;
+            const dureeMinutes = (arg.event.end - arg.event.start) / 60000;
+
+            let html = `<div class="fw-bold text-truncate">${arg.event.title}</div>`;
 
             if (props.type === 'appointment') {
-                if (props.professionalSkills) html += `<div class="small">${props.professionalSkills}</div>`;
-                if (props.beneficiary) html += `<div class="small">Bénéficiaire : ${props.beneficiary}</div>`;
-                if (props.establishment) html += `<div class="small">${props.establishment}</div>`;
-                if (props.locals && props.locals.length > 0) html += `<div class="small">${props.locals.join(', ')}</div>`;
-                if (props.description) html += `<div class="small">📝 ${props.description}</div>`;
+                if (dureeMinutes >= 60) {
+                    if (props.beneficiary) html += `<div class="small text-truncate">Bénéficiaire : ${props.beneficiary}</div>`;
+                    if (props.interpreters) html += `<div class="small text-truncate">Interprète : ${props.interpreters}</div>`;
+                }
+                if (dureeMinutes >= 90) {
+                    if (props.establishment) html += `<div class="small text-truncate">${props.establishment}</div>`;
+                }
+                if (dureeMinutes >= 120) {
+                    if (props.locals && props.locals.length > 0) html += `<div class="small text-truncate">${props.locals.join(', ')}</div>`;
+                    if (props.description) html += `<div class="small text-truncate">${props.description}</div>`;
+                }
             } else if (props.type === 'absence') {
-                if (props.reason && props.reason !== '') html += `<div class="small">Motif : ${props.reason}</div>`;
+                if (dureeMinutes >= 60) {
+                    if (props.reason && props.reason !== '') html += `<div class="small text-truncate">Motif : ${props.reason}</div>`;
+                }
             }
 
-            return {html: `<div class="p-1">${icon}${html}</div>`};
+            return {html: `<div class="p-1" style="overflow:hidden;">${icon}${html}</div>`};
         }
     });
 
