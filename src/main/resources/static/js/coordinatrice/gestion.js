@@ -69,4 +69,142 @@ document.addEventListener('DOMContentLoaded', function () {
         if (section) section.classList.add('active');
     }
 
+    /* Generic field validator: shows/removes a Bootstrap invalid-feedback message under the input. */
+    function validateRequiredField(input, message) {
+        let feedback = input.nextElementSibling;
+        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+            feedback = document.createElement('div');
+            feedback.classList.add('invalid-feedback');
+            input.insertAdjacentElement('afterend', feedback);
+        }
+
+        if (!input.value.trim()) {
+            input.classList.add('is-invalid');
+            feedback.textContent = message;
+            feedback.style.display = 'block';
+            return false;
+        }
+
+        input.classList.remove('is-invalid');
+        feedback.style.display = 'none';
+        return true;
+    }
+
+    /* Validates an email field: checks both presence and basic format. */
+    function validateEmailField(input) {
+        let feedback = input.nextElementSibling;
+        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+            feedback = document.createElement('div');
+            feedback.classList.add('invalid-feedback');
+            input.insertAdjacentElement('afterend', feedback);
+        }
+
+        const value = input.value.trim();
+        if (!value) {
+            input.classList.add('is-invalid');
+            feedback.textContent = 'L\'email est obligatoire.';
+            feedback.style.display = 'block';
+            return false;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            input.classList.add('is-invalid');
+            feedback.textContent = 'Adresse e-mail invalide.';
+            feedback.style.display = 'block';
+            return false;
+        }
+
+        input.classList.remove('is-invalid');
+        feedback.style.display = 'none';
+        return true;
+    }
+
+    /* Clears all is-invalid states and hidden feedback messages for a list of inputs. */
+    function clearFieldErrors(inputs) {
+        inputs.forEach(input => {
+            input.classList.remove('is-invalid');
+            const feedback = input.nextElementSibling;
+            if (feedback && feedback.classList.contains('invalid-feedback')) {
+                feedback.style.display = 'none';
+            }
+        });
+    }
+
+    /* Validates the "Ajouter un établissement" form before submission. */
+    const formAjoutEtab = document.querySelector('#modalAjoutEtab form');
+    formAjoutEtab.addEventListener('submit', function (e) {
+        const fields = [
+            { el: document.getElementById('ajoutEtabNom'),   msg: 'Le nom de l\'établissement est obligatoire.' },
+            { el: document.getElementById('ajoutEtabRue'),   msg: 'La rue et le numéro sont obligatoires.' },
+            { el: document.getElementById('ajoutEtabCp'),    msg: 'Le code postal est obligatoire.' },
+            { el: document.getElementById('ajoutEtabVille'), msg: 'La ville est obligatoire.' },
+            { el: document.getElementById('ajoutEtabNumTel'),msg: 'Le numéro de téléphone est obligatoire.' }
+        ];
+
+        let valid = true;
+        fields.forEach(f => {
+            if (!validateRequiredField(f.el, f.msg)) valid = false;
+        });
+
+        if (!valid) e.preventDefault();
+    });
+
+    /* Validates the "Modifier l'établissement" form before submission. */
+    const formEditEtab = document.querySelector('#modalEditEtab form');
+    formEditEtab.addEventListener('submit', function (e) {
+        const fields = [
+            { el: document.getElementById('editEtabNom'),   msg: 'Le nom de l\'établissement est obligatoire.' },
+            { el: document.getElementById('editEtabRue'),   msg: 'La rue et le numéro sont obligatoires.' },
+            { el: document.getElementById('editEtabCp'),    msg: 'Le code postal est obligatoire.' },
+            { el: document.getElementById('editEtabVille'), msg: 'La ville est obligatoire.' },
+            { el: document.getElementById('editEtabNumTel'),msg: 'Le numéro de téléphone est obligatoire.' }
+        ];
+
+        let valid = true;
+        fields.forEach(f => {
+            if (!validateRequiredField(f.el, f.msg)) valid = false;
+        });
+
+        if (!valid) e.preventDefault();
+    });
+
+    /* Validates the "Ajouter un référent" form before submission. */
+    const formAjoutRef = document.querySelector('#modalAjoutRef form');
+    formAjoutRef.addEventListener('submit', function (e) {
+        const nom    = document.getElementById('ajoutRefNom');
+        const prenom = document.getElementById('ajoutRefPrenom');
+        const tel    = document.getElementById('ajoutRefTel');
+        const email  = document.getElementById('ajoutRefEmail');
+
+        let valid = true;
+        if (!validateRequiredField(nom, 'Le nom est obligatoire.')) valid = false;
+        if (!validateRequiredField(prenom, 'Le prénom est obligatoire.')) valid = false;
+        if (!validateRequiredField(tel, 'Le téléphone est obligatoire.')) valid = false;
+        if (!validateEmailField(email)) valid = false;
+
+        if (!valid) e.preventDefault();
+    });
+
+    /* Validates the "Modifier le référent" form before submission. */
+    const formEditRef = document.querySelector('#modalEditRef form');
+    formEditRef.addEventListener('submit', function (e) {
+        const nom    = document.getElementById('editRefNom');
+        const prenom = document.getElementById('editRefPrenom');
+        const tel    = document.getElementById('editRefTel');
+        const email  = document.getElementById('editRefEmail');
+
+        let valid = true;
+        if (!validateRequiredField(nom, 'Le nom est obligatoire.')) valid = false;
+        if (!validateRequiredField(prenom, 'Le prénom est obligatoire.')) valid = false;
+        if (!validateRequiredField(tel, 'Le téléphone est obligatoire.')) valid = false;
+        if (!validateEmailField(email)) valid = false;
+
+        if (!valid) e.preventDefault();
+    });
+
+    /* Clears validation errors on each modal close, so the next time it opens it starts clean. */
+    ['modalAjoutEtab', 'modalEditEtab', 'modalAjoutRef', 'modalEditRef'].forEach(modalId => {
+        document.getElementById(modalId).addEventListener('hidden.bs.modal', function () {
+            clearFieldErrors(this.querySelectorAll('.form-control'));
+        });
+    });
 });
