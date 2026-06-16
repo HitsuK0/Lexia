@@ -235,6 +235,10 @@ document.addEventListener('DOMContentLoaded', function () {
         };
         document.getElementById('pageTitle').textContent = titles[mode];
 
+        const isBeneficiaryLegend = mode === 'beneficiary';
+        document.getElementById('legendDefault').style.setProperty('display', isBeneficiaryLegend ? 'none' : 'flex', 'important');
+        document.getElementById('legendBeneficiary').style.setProperty('display', isBeneficiaryLegend ? 'flex' : 'none', 'important');
+        
         const isBeneficiaryMode = mode === 'beneficiary';
         const isCoordinatorMode = mode === 'coordinator';
         document.getElementById('btnAddRdv').classList.toggle('d-none', !isBeneficiaryMode);
@@ -260,6 +264,8 @@ document.addEventListener('DOMContentLoaded', function () {
             loadUserList(mode);
         }
     };
+
+    switchMode('coordinator');
 
     /* Populates the search dropdown and the modal RDV selector using the
        interpreter or beneficiary lists injected by Thymeleaf, depending on the mode. */
