@@ -136,6 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (props.type === 'appointment') {
                 if (props.beneficiary) body += `<p><strong>Bénéficiaire :</strong> ${props.beneficiary}</p>`;
+                if (props.interpreters) body += `<p><strong>Interprète :</strong> ${props.interpreters}</p>`;
                 if (props.establishment) body += `<p><strong>Établissement :</strong> ${props.establishment}</p>`;
                 if (props.locals?.length > 0) body += `<p><strong>Local :</strong> ${props.locals.join(', ')}</p>`;
                 if (props.description) body += `<p><strong>Description :</strong> ${props.description}</p>`;
