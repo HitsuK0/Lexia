@@ -1,6 +1,7 @@
 package be.hers.info.ProjetIntegree.Services;
 
 import be.hers.info.ProjetIntegree.DAO.*;
+import be.hers.info.ProjetIntegree.DTO.DTOAbsenceValidation;
 import be.hers.info.ProjetIntegree.POJO.*;
 
 import java.sql.SQLException;
@@ -55,7 +56,7 @@ public class ValidationService {
      * @throws SQLException       if a database error occurs
      * @throws BadStatusException if an absence status in the database is invalid
      */
-    public List<Absence> findAllPendingAbsences() throws SQLException, BadStatusException {
+    public List<DTOAbsenceValidation> findAllPendingAbsences() throws SQLException, BadStatusException {
         DAOAbsence daoAbsence = new DAOAbsence();
         return daoAbsence.findAllPendingAbsences();
     }

@@ -608,4 +608,39 @@ public class DAOInterpreter extends DAO<Interpreter> {
         }
         return numberInterpreters;
     }
+    /** Retrieves the last name and first name of an Interpreter, concatenated into a single
+     * String separated by a space ("lastName firstName").
+     *
+     * @param numInterpreter the numInterpreter of the interpreter to search for
+     * @return the interpreter's last name and first name separated by a space,
+     *         or null if no interpreter matches the given id
+     * @throws SQLException In case of any SQL problems encountered with this method
+     */
+    public String findNameSurname(int numInterpreter) throws SQLException {
+        String nameSurname = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        String query = "SELECT lastName, firstName " +
+                "FROM Interpreter " +
+                "WHERE numInterpreter = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(query);
+            preparedStatement.setInt(1, numInterpreter);
+
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()) {
+                String name = resultSet.getString(1);
+                String surname = resultSet.getString(2);
+
+                nameSurname = name +" "+ surname;
+            }
+        } finally {
+            closeStatementAndResultSet(preparedStatement, resultSet);
+        }
+
+        return nameSurname;
+    }
 }

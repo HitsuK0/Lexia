@@ -1,5 +1,6 @@
 package be.hers.info.ProjetIntegree.DAO;
 
+import be.hers.info.ProjetIntegree.DTO.DTOAbsenceValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -388,15 +389,15 @@ public class DAOAbsence extends DAO<Absence> {
      * Retrieves all punctual absences (with a TimeSlotPunctual) with status "en attente", across all interpreters.
      * Each Absence is populated with its corresponding TimeSlotPunctual and interpreter details.
      *
-     * @return a list of Absences with status "en attente", or an empty list if none found
+     * @return a list of DTOAbsenceValidation with status "en attente", or an empty list if none found
      * @throws SQLException       If a database access error occurs or the SQL query fails
      * @throws BadStatusException If the absence status in the database does not match
      *                            the expected values ('en attente', 'refuse', or 'accepte')
      */
-    public List<Absence> findAllPendingAbsences() throws SQLException, BadStatusException {
+    public List<DTOAbsenceValidation> findAllPendingAbsences() throws SQLException, BadStatusException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        List<Absence> pendingAbsenceList = new ArrayList<>();
+        List<DTOAbsenceValidation> pendingAbsenceList = new ArrayList<>();
 
         String query = "SELECT ab.numAbsence, ab.status, ab.reasons, ab.privateReason, " +
                 "ab.FKTimeSlotPunctual, ab.FKnumInterpreter " +
@@ -410,17 +411,19 @@ public class DAOAbsence extends DAO<Absence> {
             resultSet = preparedStatement.executeQuery();
 
             DAOTimeSlotPunctual daoTimeSlotPunctual = new DAOTimeSlotPunctual();
+            DAOInterpreter daoInterpreter = new DAOInterpreter();
 
             while (resultSet.next()) {
                 TimeSlot timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
 
                 try {
-                    Absence absence = new Absence(
+                    DTOAbsenceValidation absence = new DTOAbsenceValidation(
                             resultSet.getInt("numAbsence"),
                             resultSet.getString("status"),
                             timeSlot,
                             resultSet.getString("reasons"),
-                            resultSet.getBoolean("privateReason")
+                            resultSet.getBoolean("privateReason"),
+                            daoInterpreter.findNameSurname(resultSet.getInt("FKnumInterpreter"))
                     );
                     pendingAbsenceList.add(absence);
                 } catch (BadStatusException e) {
