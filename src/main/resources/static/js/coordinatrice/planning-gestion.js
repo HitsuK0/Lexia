@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 new bootstrap.Modal(document.getElementById('modalRDV')).show();
-            } else {
+            } else if (currentMode === 'coordinator') {
                 document.getElementById('indispoDateStart').value = clickedDate;
                 document.getElementById('indispoDateEnd').value   = clickedDate;
                 document.getElementById('indispoDateStart').min   = today;
@@ -215,8 +215,9 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('btnBeneficiaryPlanning').className = mode === 'beneficiary' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
 
         const isBeneficiaryMode = mode === 'beneficiary';
+        const isCoordinatorMode = mode === 'coordinator';
         document.getElementById('btnAddRdv').classList.toggle('d-none', !isBeneficiaryMode);
-        document.getElementById('btnAddIndispo').classList.toggle('d-none', isBeneficiaryMode);
+        document.getElementById('btnAddIndispo').classList.toggle('d-none', !isCoordinatorMode);
 
         const searchZone = document.getElementById('zone-selection');
 
