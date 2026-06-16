@@ -354,17 +354,24 @@ public class InterpreterController {
             return "redirect:/login";
         }
 
+        boolean isCoordinator = interpreter instanceof Coordinator;
+        String userRole = isCoordinator ? "COORDINATOR" : "INTERPRETER";
+        boolean isAdmin = isCoordinator && ((Coordinator) interpreter).isAdmin();
+
         try {
             AbsenceService absenceService = new AbsenceService();
-
             List<Absence> punctualAbsencesList = absenceService.getPunctualAbsencesInterpreter(interpreter);
             model.addAttribute("punctualAbsencesList", punctualAbsencesList);
         } catch (BadStatusException e) {
-            logger.error("Statut invalide lors du chargement des indisponibilités interprète {}", interpreter.getNumInterpreter(), e);
+            logger.error("Statut invalide lors du chargement des indisponibilités {}", interpreter.getNumInterpreter(), e);
         } catch (SQLException e) {
-            logger.error("Erreur lors du chargement des indisponibilités interprète {}", interpreter.getNumInterpreter(), e);
+            logger.error("Erreur lors du chargement des indisponibilités {}", interpreter.getNumInterpreter(), e);
         }
 
+        model.addAttribute("userRole", userRole);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("userName", interpreter.getFirstName() + " " + interpreter.getLastName());
+        model.addAttribute("breadcrumb", isCoordinator ? "Indisponibilités" : null);
         model.addAttribute("activeTab", "indisponibilites");
         model.addAttribute("DTOAbsence", new DTOAbsence());
         model.addAttribute("DTOAbsenceEdit", new DTOAbsence());
