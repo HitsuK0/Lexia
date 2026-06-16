@@ -452,7 +452,10 @@ public class CoordinatorController {
         extendedProps.put("status", a.getStatus());
         extendedProps.put("professionalSkills", professionalSkills);
         extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0, 1) + ". " + a.getBeneficiary().getFirstName());
-        extendedProps.put("interpreters", String.join(",", (CharSequence) a.getInterpreters()));
+        extendedProps.put("interpreters",
+                a.getInterpreters().stream()
+                .map(i -> i.getLastName().substring(0, 1) + ". " + i.getFirstName())
+                .collect(Collectors.joining(", ")));
         extendedProps.put("locals", a.getAppointmentLocals());
         extendedProps.put("establishment", a.getEstablishment().getNameBuilding());
         extendedProps.put("description", a.getDescription());
