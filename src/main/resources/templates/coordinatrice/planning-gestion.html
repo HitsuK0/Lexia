@@ -231,7 +231,7 @@
                                 <div class="form-check" th:each="skill : ${professionalSkillList}">
                                     <input class="form-check-input comp-check" type="checkbox"
                                            th:id="'compSkill' + ${skill.numProfessionalSkill}"
-                                           th:value="${skill.numProfessionalSkill}" checked/>
+                                           th:value="${skill.numProfessionalSkill}"/>
                                     <label class="form-check-label small"
                                            th:for="'compSkill' + ${skill.numProfessionalSkill}"
                                            th:text="${skill.designation}"></label>

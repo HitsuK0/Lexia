@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const isBeneficiaryLegend = mode === 'beneficiary';
         document.getElementById('legendDefault').style.setProperty('display', isBeneficiaryLegend ? 'none' : 'flex', 'important');
         document.getElementById('legendBeneficiary').style.setProperty('display', isBeneficiaryLegend ? 'flex' : 'none', 'important');
-        
+
         const isBeneficiaryMode = mode === 'beneficiary';
         const isCoordinatorMode = mode === 'coordinator';
         document.getElementById('btnAddRdv').classList.toggle('d-none', !isBeneficiaryMode);
