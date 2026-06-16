@@ -4,10 +4,7 @@ import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOInterpreterProfile;
 import be.hers.info.ProjetIntegree.DTO.DTOPasswordChange;
 import be.hers.info.ProjetIntegree.POJO.*;
-import be.hers.info.ProjetIntegree.Services.BeneficiaryProfileService;
-import be.hers.info.ProjetIntegree.Services.InterpreterProfileService;
-import be.hers.info.ProjetIntegree.Services.SkillService;
-import be.hers.info.ProjetIntegree.Services.UserDetailService;
+import be.hers.info.ProjetIntegree.Services.*;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +13,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author Nicolas Jean-François
@@ -27,6 +27,11 @@ import java.util.List;
 public class UserDetailController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailController.class);
+    private final EmailService emailService;
+
+    public UserDetailController(EmailService emailService) {
+        this.emailService = emailService;
+    }
 
     /**
      * Retrieves the connected coordinator from the session.
@@ -222,32 +227,33 @@ public class UserDetailController {
     }
 
     /**
-     * Resets the password of an Interpreter, Resa or Coordinator.
-     * The new password is stored as-is — the DB trigger will hash it on UPDATE.
-     * Verifies that newPassword and confirmPassword match before applying the change.
+     * Resets the password of an Interpreter, Resa or Coordinator with a randomly generated password.
+     * The new password is sent by email to the user, and stored as-is in the database — the DB trigger will hash it on UPDATE.
      * Redirects to login if no coordinator is found in session.
      *
-     * @param id          the numInterpreter of the user whose password is reset
-     * @param passwordDTO the password reset form data submitted by the coordinator
-     * @param session     the current HTTP session
-     * @return a redirect to the interpreter detail page after the operation,
-     * with "?passwordError=true" if passwords do not match,
-     * or a redirect to "/login" if the session is invalid
+     * @param id      the numInterpreter of the user whose password is reset
+     * @param session the current HTTP session
+     * @return a redirect to the interpreter detail page after the operation, or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/interpreter/{id}/password")
-    public String resetPasswordInterpreter(@PathVariable int id, @ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpSession session) {
-        if (getCoordinatorFromSession(session) == null) return "redirect:/login";
+    public String resetPasswordInterpreter(@PathVariable int id, HttpSession session) {
+        if (getCoordinatorFromSession(session) == null)
+            return "redirect:/login";
 
         try {
-            if (passwordDTO.getNewPassword() == null || !passwordDTO.getNewPassword().equals(passwordDTO.getConfirmPassword())) {
-                return "redirect:/coordinatrice/utilisateurs/interpreter/" + id + "?passwordError=true";
-            }
-
             UserDetailService userDetailService = new UserDetailService();
             Interpreter interpreter = userDetailService.findInterpreterById(id);
             if (interpreter != null) {
-                interpreter.setPassword(passwordDTO.getNewPassword());
+                String newPassword = generateRandomPassword();
+                interpreter.setPassword(newPassword);
                 userDetailService.updateInterpreterPassword(interpreter);
+
+                emailService.sendPasswordResetEmail(
+                        interpreter.getEmailAddress(),
+                        interpreter.getFirstName(),
+                        interpreter.getLastName(),
+                        newPassword
+                );
             }
         } catch (SQLException e) {
             logger.error("Erreur lors de la réinitialisation du mot de passe interprète {}", id, e);
@@ -411,32 +417,33 @@ public class UserDetailController {
     }
 
     /**
-     * Resets the password of a Beneficiary.
-     * The new password is stored as-is — the DB trigger will hash it on UPDATE.
-     * Verifies that newPassword and confirmPassword match before applying the change.
+     * Resets the password of a Beneficiary with a randomly generated password.
+     * The new password is sent by email to the beneficiary, and stored as-is in the database — the DB trigger will hash it on UPDATE.
      * Redirects to login if no coordinator is found in session.
      *
-     * @param id          the numBeneficiary of the user whose password is reset
-     * @param passwordDTO the password reset form data submitted by the coordinator
-     * @param session     the current HTTP session
-     * @return a redirect to the beneficiary detail page after the operation,
-     * with "?passwordError=true" if passwords do not match,
-     * or a redirect to "/login" if the session is invalid
+     * @param id      the numBeneficiary of the user whose password is reset
+     * @param session the current HTTP session
+     * @return a redirect to the beneficiary detail page after the operation, or a redirect to "/login" if the session is invalid
      */
     @PostMapping("/beneficiary/{id}/password")
-    public String resetPasswordBeneficiary(@PathVariable int id, @ModelAttribute("passwordDTO") DTOPasswordChange passwordDTO, HttpSession session) {
-        if (getCoordinatorFromSession(session) == null) return "redirect:/login";
+    public String resetPasswordBeneficiary(@PathVariable int id, HttpSession session) {
+        if (getCoordinatorFromSession(session) == null)
+            return "redirect:/login";
 
         try {
-            if (passwordDTO.getNewPassword() == null || !passwordDTO.getNewPassword().equals(passwordDTO.getConfirmPassword())) {
-                return "redirect:/coordinatrice/utilisateurs/beneficiary/" + id + "?passwordError=true";
-            }
-
             UserDetailService userDetailService = new UserDetailService();
             Beneficiary beneficiary = userDetailService.findBeneficiaryById(id);
             if (beneficiary != null) {
-                beneficiary.setPassword(passwordDTO.getNewPassword());
+                String newPassword = generateRandomPassword();
+                beneficiary.setPassword(newPassword);
                 userDetailService.updateBeneficiaryPassword(beneficiary);
+
+                emailService.sendPasswordResetEmail(
+                        beneficiary.getEmailAddress(),
+                        beneficiary.getFirstName(),
+                        beneficiary.getLastName(),
+                        newPassword
+                );
             }
         } catch (SQLException e) {
             logger.error("Erreur lors de la réinitialisation du mot de passe bénéficiaire {}", id, e);
@@ -512,5 +519,39 @@ public class UserDetailController {
         }
 
         return "redirect:/coordinatrice/utilisateurs/interpreter/" + id;
+    }
+
+    /**
+     * Generates a random password with at least 8 characters,
+     * including an uppercase letter, a lowercase letter, a digit and a special character.
+     *
+     * @return the generated plaintext password
+     */
+    private String generateRandomPassword() {
+        String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lower = "abcdefghijklmnopqrstuvwxyz";
+        String digits = "0123456789";
+        String special = "!@#$%&*?";
+        String all = upper + lower + digits + special;
+
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        sb.append(upper.charAt(random.nextInt(upper.length())));
+        sb.append(lower.charAt(random.nextInt(lower.length())));
+        sb.append(digits.charAt(random.nextInt(digits.length())));
+        sb.append(special.charAt(random.nextInt(special.length())));
+        for (int i = 4; i < 10; i++) {
+            sb.append(all.charAt(random.nextInt(all.length())));
+        }
+
+        List<Character> chars = new ArrayList<>();
+        for (char c : sb.toString().toCharArray()){
+            chars.add(c);
+        }
+        Collections.shuffle(chars);
+
+        StringBuilder result = new StringBuilder();
+        for (char c : chars) result.append(c);
+        return result.toString();
     }
 }
