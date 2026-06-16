@@ -215,6 +215,13 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('btnInterpreterPlanning').className = mode === 'interpreter' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
         document.getElementById('btnBeneficiaryPlanning').className = mode === 'beneficiary' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
 
+        const titles = {
+            coordinator: 'Votre horaire de la semaine',
+            interpreter: 'Planning d\'un interprète',
+            beneficiary: 'Planning d\'un bénéficiaire'
+        };
+        document.getElementById('pageTitle').textContent = titles[mode];
+
         const isBeneficiaryMode = mode === 'beneficiary';
         const isCoordinatorMode = mode === 'coordinator';
         document.getElementById('btnAddRdv').classList.toggle('d-none', !isBeneficiaryMode);
