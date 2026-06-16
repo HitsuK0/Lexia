@@ -18,18 +18,22 @@
             </div>
 
             <div id="planning-toolbar" class="mb-2 px-2 px-md-5">
-                <div class="d-flex justify-content-between align-items-center gap-2">
-                    <div class="d-none d-lg-flex gap-3 small text-muted">
+                <div class="d-none d-lg-grid" style="grid-template-columns: 1fr auto 1fr; align-items: center; gap: 0.5rem;">
+                    <div></div>
+
+                    <div class="d-flex gap-3 small text-muted text-nowrap justify-content-center">
                         <span><span class="badge" style="background-color:#81c784;">&nbsp;<i class="bi bi-check-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Demande Acceptée</span>
                         <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-clock" style="font-size:0.7rem;"></i>&nbsp;</span> Demande en attente</span>
                         <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Demande Refusée/Annulée</span>
                         <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de Base</span>
                     </div>
 
-                    <button type="button" class="btn btn-primary btn-sm d-none d-lg-block"
-                            data-bs-toggle="modal" data-bs-target="#modalRDV">
-                        <i class="bi bi-plus-lg me-1"></i> Demander un RDV
-                    </button>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#modalRDV">
+                            <i class="bi bi-plus-lg me-1"></i> Demander un RDV
+                        </button>
+                    </div>
                 </div>
 
                 <div class="d-lg-none mt-2">
@@ -38,7 +42,6 @@
                         <i class="bi bi-plus-lg me-1"></i> Demander un RDV
                     </button>
                 </div>
-
             </div>
 
             <div id="calendar"></div>

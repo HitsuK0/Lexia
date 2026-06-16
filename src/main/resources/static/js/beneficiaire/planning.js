@@ -1,3 +1,8 @@
+/**
+ * @author Wellinger Chloé
+ * @reviewer Nicolas Jean-François, Halet Louis
+ */
+
 document.addEventListener('DOMContentLoaded', function () {
 
     /* Initializes the FullCalendar instance with French locale, week view,
