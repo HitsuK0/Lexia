@@ -11,6 +11,7 @@ public class Absence {
     private String reason;
     private boolean privateReason;
     private TimeSlot timeSlot;
+    private Interpreter interpreter;
 
     /**
      * Create an Absence with all attribute
@@ -176,6 +177,22 @@ public class Absence {
         if (numAbsence < 0)
             throw new IllegalArgumentException("[POJOAbsence] Le numéro de l'absence ne peut pas être négatif");
         this.numAbsence = numAbsence;
+    }
+
+    /**
+     *
+     * @return the interprete linked by absence
+     */
+    public Interpreter getInterpreter() {
+        return interpreter;
+    }
+
+    /**
+     *
+     * @param interpreter the interprete linked by absence
+     */
+    public void setInterpreter(Interpreter interpreter) {
+        this.interpreter = interpreter;
     }
 
     /**
