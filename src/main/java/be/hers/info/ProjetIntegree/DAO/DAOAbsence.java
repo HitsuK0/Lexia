@@ -1,6 +1,5 @@
 package be.hers.info.ProjetIntegree.DAO;
 
-import be.hers.info.ProjetIntegree.DTO.DTOAbsenceValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -389,15 +388,15 @@ public class DAOAbsence extends DAO<Absence> {
      * Retrieves all punctual absences (with a TimeSlotPunctual) with status "en attente", across all interpreters.
      * Each Absence is populated with its corresponding TimeSlotPunctual and interpreter details.
      *
-     * @return a list of DTOAbsenceValidation with status "en attente", or an empty list if none found
+     * @return a list of Absence with status "en attente", or an empty list if none found
      * @throws SQLException       If a database access error occurs or the SQL query fails
      * @throws BadStatusException If the absence status in the database does not match
      *                            the expected values ('en attente', 'refuse', or 'accepte')
      */
-    public List<DTOAbsenceValidation> findAllPendingAbsences() throws SQLException, BadStatusException {
+    public List<Absence> findAllPendingAbsences() throws SQLException, BadStatusException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        List<DTOAbsenceValidation> pendingAbsenceList = new ArrayList<>();
+        List<Absence> pendingAbsenceList = new ArrayList<>();
 
         String query = "SELECT ab.numAbsence, ab.status, ab.reasons, ab.privateReason, " +
                 "ab.FKTimeSlotPunctual, ab.FKnumInterpreter " +
@@ -417,14 +416,15 @@ public class DAOAbsence extends DAO<Absence> {
                 TimeSlot timeSlot = daoTimeSlotPunctual.find(resultSet.getInt("FKTimeSlotPunctual"));
 
                 try {
-                    DTOAbsenceValidation absence = new DTOAbsenceValidation(
+                    Absence absence = new Absence(
                             resultSet.getInt("numAbsence"),
                             resultSet.getString("status"),
                             timeSlot,
                             resultSet.getString("reasons"),
-                            resultSet.getBoolean("privateReason"),
-                            daoInterpreter.findNameSurname(resultSet.getInt("FKnumInterpreter"))
+                            resultSet.getBoolean("privateReason")
+
                     );
+                    absence.setInterpreter(daoInterpreter.find(resultSet.getInt("FKnumInterpreter")));
                     pendingAbsenceList.add(absence);
                 } catch (BadStatusException e) {
                     throw new BadStatusException("[DAOAbsence] Le statut ne peut etre que 'en attente', 'refuse' ou 'accepte'");
