@@ -142,6 +142,24 @@
                                 </select>
                             </div>
                             <div class="mb-3">
+                                <label class="form-label small fw-semibold">Matière</label>
+                                <select id="creneauAcademicSkillInterprete" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Choisissez une matière</option>
+                                    <option th:each="skill : ${allAcademicSkills}"
+                                            th:value="${skill.numAcademicSkill}"
+                                            th:text="${skill.designation}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Compétence métier</label>
+                                <select id="creneauProfessionalSkillInterprete" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Choisissez une compétence</option>
+                                    <option th:each="skill : ${allProfessionalSkills}"
+                                            th:value="${skill.numProfessionalSkill}"
+                                            th:text="${skill.designation}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label small fw-semibold">Établissement</label>
                                 <select id="creneauEtablissementInterprete" class="form-select form-select-sm">
                                     <option value="" disabled selected>Choisissez un établissement</option>
@@ -312,6 +330,24 @@
                                     <option th:each="beneficiary : ${beneficiaryList}"
                                             th:value="${beneficiary.numBeneficiary}"
                                             th:text="${beneficiary.lastName + ' ' + beneficiary.firstName}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Matière</label>
+                                <select id="editCreneauAcademicSkillInterprete" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Choisissez une matière</option>
+                                    <option th:each="skill : ${allAcademicSkills}"
+                                            th:value="${skill.numAcademicSkill}"
+                                            th:text="${skill.designation}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Compétence métier</label>
+                                <select id="editCreneauProfessionalSkillInterprete" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Choisissez une compétence</option>
+                                    <option th:each="skill : ${allProfessionalSkills}"
+                                            th:value="${skill.numProfessionalSkill}"
+                                            th:text="${skill.designation}"></option>
                                 </select>
                             </div>
                             <div class="mb-3">
