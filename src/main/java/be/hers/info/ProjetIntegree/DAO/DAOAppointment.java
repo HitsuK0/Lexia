@@ -632,7 +632,7 @@ public class DAOAppointment extends DAO<Appointment> {
                 "WHERE rdv.numInterpreter = ? " +
                 "  AND ap.status <> 'en attente' " +
                 "  AND ( " +
-                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
+                "      (tsp.startDate IS NOT NULL AND TRUNC(tsp.startDate) <= TO_DATE(?, 'YYYY-MM-DD') AND TRUNC(tsp.endDate) >= TO_DATE(?, 'YYYY-MM-DD')) " +
                 "      OR " +
                 "      tsb.numTimeSlot IS NOT NULL" +
                 ")";
@@ -892,7 +892,7 @@ public class DAOAppointment extends DAO<Appointment> {
                 "LEFT JOIN TimeSlotPunctual tsp ON tsp.numTimeSlot = ab.FKTimeSlotPunctual " +
                 "WHERE ab.FKnumInterpreter = ? " +
                 "  AND ( " +
-                "      (tsp.startDate IS NOT NULL AND tsp.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND tsp.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
+                "      (tsp.startDate IS NOT NULL AND TRUNC(tsp.startDate) <= TO_DATE(?, 'YYYY-MM-DD') AND TRUNC(tsp.endDate) >= TO_DATE(?, 'YYYY-MM-DD')) " +
                 "      OR " +
                 "      tsb.numTimeSlot IS NOT NULL)";
 
@@ -1098,6 +1098,9 @@ public class DAOAppointment extends DAO<Appointment> {
                         timeSlot,
                         daoEstablishment.find(resultSet.getInt("FKnumEstablishment"))
                 );
+                appointment.setAcademicSkillsNeeded(findListAcademicSkillRequire(numAppointment));
+                appointment.setProfessionalSkillsNeeded(findListProfessionalSkillRequire(numAppointment));
+
                 appointmentList.add(appointment);
             }
         } finally {
