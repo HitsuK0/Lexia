@@ -100,13 +100,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const isAttente = props.status === 'en attente';
             const isAccepte = props.status === 'accepte';
 
-            const icone = isRefuse
-                ? '<i class="bi bi-x-circle" style="float:right; font-size:0.85rem;"></i>'
-                : isAttente
-                    ? '<i class="bi bi-clock" style="float:right; font-size:0.85rem;"></i>'
-                    : isAccepte
-                        ? '<i class="bi bi-check-circle" style="float:right; font-size:0.85rem;"></i>'
-                        : '';
+            const icone = props.isBase ? '' :
+                isRefuse
+                    ? '<i class="bi bi-x-circle" style="float:right; font-size:0.85rem;"></i>'
+                    : isAttente
+                        ? '<i class="bi bi-clock" style="float:right; font-size:0.85rem;"></i>'
+                        : isAccepte
+                            ? '<i class="bi bi-check-circle" style="float:right; font-size:0.85rem;"></i>'
+                            : '';
 
             const dureeMinutes = (arg.event.end - arg.event.start) / 60000;
 

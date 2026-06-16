@@ -160,6 +160,8 @@ public class BeneficiaryController {
                     .map(i -> i.getLastName().substring(0, 1) + ". " + i.getFirstName())
                     .collect(Collectors.joining(", "));
 
+            boolean isBase = !(a.getTimeSlot() instanceof TimeSlotPunctual);
+
             extendedProps.put("type", "appointment");
             extendedProps.put("status", a.getStatus());
             extendedProps.put("professionalSkills", professionalSkills);
@@ -167,6 +169,7 @@ public class BeneficiaryController {
             extendedProps.put("locals", a.getAppointmentLocals());
             extendedProps.put("establishment", a.getEstablishment().getNameBuilding());
             extendedProps.put("description", a.getDescription());
+            extendedProps.put("isBase", isBase);
             event.put("extendedProps", extendedProps);
             events.add(event);
 
