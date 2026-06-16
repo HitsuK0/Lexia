@@ -131,6 +131,9 @@ public class BeneficiaryController {
                     case "refuse":
                         event.put("color", "#f28b82");
                         break;
+                    case "annule":
+                        event.put("color", "#f28b82");
+                        break;
                 }
             } else {
                 TimeSlotBase tsp = (TimeSlotBase) a.getTimeSlot();
@@ -153,10 +156,14 @@ public class BeneficiaryController {
                     .map(s -> s.getDesignation())
                     .collect(Collectors.joining(", "));
 
+            String interpreterNames = a.getInterpreters().stream()
+                    .map(i -> i.getLastName().substring(0, 1) + ". " + i.getFirstName())
+                    .collect(Collectors.joining(", "));
+
             extendedProps.put("type", "appointment");
             extendedProps.put("status", a.getStatus());
             extendedProps.put("professionalSkills", professionalSkills);
-            extendedProps.put("beneficiary", a.getBeneficiary().getLastName().substring(0, 1) + ". " + a.getBeneficiary().getFirstName());
+            extendedProps.put("interpreter", interpreterNames);
             extendedProps.put("locals", a.getAppointmentLocals());
             extendedProps.put("establishment", a.getEstablishment().getNameBuilding());
             extendedProps.put("description", a.getDescription());
