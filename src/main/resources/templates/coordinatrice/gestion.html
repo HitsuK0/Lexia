@@ -187,25 +187,15 @@
                                 <thead>
                                     <tr>
                                         <th>Désignation</th>
-                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="ps : ${professionalSkillList}">
-                                        <td th:text="${ps.designation}" data-label="Désignation">Compétence</td>
-                                        <td data-label="Actions">
-                                            <button class="btn btn-link p-0 text-danger"
-                                                    data-bs-toggle="modal" data-bs-target="#modalDeleteCompMetier"
-                                                    th:data-id="${ps.numProfessionalSkill}"
-                                                    th:data-designation="${ps.designation}"
-                                                    title="Supprimer">
-                                                <i class="bi bi-trash3 fs-5"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr th:if="${#lists.isEmpty(professionalSkillList)}">
-                                        <td colspan="2" class="text-center text-muted">Aucune compétence métier.</td>
-                                    </tr>
+                                <tr th:each="ps : ${professionalSkillList}">
+                                    <td th:text="${ps.designation}" data-label="Désignation">Compétence</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(professionalSkillList)}">
+                                    <td colspan="1" class="text-center text-muted">Aucune compétence métier.</td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -224,25 +214,15 @@
                                 <thead>
                                     <tr>
                                         <th>Désignation</th>
-                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="as : ${academicSkillList}">
-                                        <td th:text="${as.designation}" data-label="Désignation">Compétence</td>
-                                        <td data-label="Actions">
-                                            <button class="btn btn-link p-0 text-danger"
-                                                    data-bs-toggle="modal" data-bs-target="#modalDeleteCompAcad"
-                                                    th:data-id="${as.numAcademicSkill}"
-                                                    th:data-designation="${as.designation}"
-                                                    title="Supprimer">
-                                                <i class="bi bi-trash3 fs-5"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr th:if="${#lists.isEmpty(academicSkillList)}">
-                                        <td colspan="2" class="text-center text-muted">Aucune compétence académique.</td>
-                                    </tr>
+                                <tr th:each="as : ${academicSkillList}">
+                                    <td th:text="${as.designation}" data-label="Désignation">Compétence</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(academicSkillList)}">
+                                    <td colspan="1" class="text-center text-muted">Aucune compétence académique.</td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -567,30 +547,6 @@
             </div>
         </div>
 
-        <div class="modal fade" id="modalDeleteCompMetier" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content modal-rounded">
-                    <form th:action="@{/coordinatrice/etablissements/deleteProfessionalSkill}" method="POST">
-                        <div class="modal-header border-bottom">
-                            <h5 class="modal-title fw-bold w-100 text-center">Supprimer la compétence métier</h5>
-                            <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body px-4 py-3 text-center">
-                            <p>Êtes-vous sûr de vouloir supprimer la compétence <strong id="deleteCompMetierDesig"></strong> ?</p>
-                            <p class="text-danger fw-semibold">Cette action est irréversible.</p>
-                        </div>
-                        <div class="modal-footer border-top justify-content-center gap-2">
-                            <input type="hidden" name="idProfessionalSkill" id="deleteCompMetierId"/>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="bi bi-trash3 me-1"></i> Supprimer
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
         <div class="modal fade" id="modalAjoutCompAcad" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-rounded">
@@ -617,29 +573,6 @@
             </div>
         </div>
 
-        <div class="modal fade" id="modalDeleteCompAcad" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content modal-rounded">
-                    <form th:action="@{/coordinatrice/etablissements/deleteAcademicSkill}" method="POST">
-                        <div class="modal-header border-bottom">
-                            <h5 class="modal-title fw-bold w-100 text-center">Supprimer la compétence académique</h5>
-                            <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body px-4 py-3 text-center">
-                            <p>Êtes-vous sûr de vouloir supprimer la compétence <strong id="deleteCompAcadDesig"></strong> ?</p>
-                            <p class="text-danger fw-semibold">Cette action est irréversible.</p>
-                        </div>
-                        <div class="modal-footer border-top justify-content-center gap-2">
-                            <input type="hidden" name="idAcademicSkill" id="deleteCompAcadId"/>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="bi bi-trash3 me-1"></i> Supprimer
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
 
         <div th:replace="~{common/footer :: footer}"></div>
 

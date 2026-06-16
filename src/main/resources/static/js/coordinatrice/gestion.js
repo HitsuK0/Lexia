@@ -43,20 +43,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('deleteRefId').value = e.relatedTarget.dataset.id;
     });
 
-    /* Stores the professional skill id and designation in the delete modal when it opens. */
-    document.getElementById('modalDeleteCompMetier').addEventListener('show.bs.modal', function (e) {
-        const btn = e.relatedTarget;
-        document.getElementById('deleteCompMetierId').value      = btn.dataset.id;
-        document.getElementById('deleteCompMetierDesig').textContent = btn.dataset.designation;
-    });
-
-    /* Stores the academic skill id and designation in the delete modal when it opens. */
-    document.getElementById('modalDeleteCompAcad').addEventListener('show.bs.modal', function (e) {
-        const btn = e.relatedTarget;
-        document.getElementById('deleteCompAcadId').value      = btn.dataset.id;
-        document.getElementById('deleteCompAcadDesig').textContent = btn.dataset.designation;
-    });
-
     // Activation of the tab according to the parameter? tab= in the URL
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
