@@ -136,6 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (props.type === 'appointment') {
                 if (props.beneficiary) body += `<p><strong>Bénéficiaire :</strong> ${props.beneficiary}</p>`;
+                if (props.interpreters) body += `<p><strong>Interprète :</strong> ${props.interpreters}</p>`;
                 if (props.establishment) body += `<p><strong>Établissement :</strong> ${props.establishment}</p>`;
                 if (props.locals?.length > 0) body += `<p><strong>Local :</strong> ${props.locals.join(', ')}</p>`;
                 if (props.description) body += `<p><strong>Description :</strong> ${props.description}</p>`;
@@ -162,6 +163,9 @@ document.addEventListener('DOMContentLoaded', function () {
         /* Sets the event display content with an icon based on the appointment status
            (cancelled or unavailability), and shows appointment details below the title.
            For absences, displays the reason if one was provided. */
+        /* Sets the event display content with an icon based on the appointment status
+   (cancelled or unavailability), and progressively shows more details
+   as the event's duration (and thus its visual height) increases. */
         eventContent: function (arg) {
             const props = arg.event.extendedProps;
             const isCancelled = arg.event.title.startsWith('Annulé');
@@ -169,19 +173,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const icon = isCancelled ? '<i class="bi bi-x-circle" style="float:right; font-size:0.85rem;"></i>' : isUnavailable ? '<i class="bi bi-slash-circle" style="float:right; font-size:0.85rem;"></i>' : '';
 
-            let html = `<div class="fw-bold">${arg.event.title}</div>`;
+            const dureeMinutes = (arg.event.end - arg.event.start) / 60000;
+
+            let html = `<div class="fw-bold text-truncate">${arg.event.title}</div>`;
 
             if (props.type === 'appointment') {
-                if (props.professionalSkills) html += `<div class="small">${props.professionalSkills}</div>`;
-                if (props.beneficiary) html += `<div class="small">Bénéficiaire : ${props.beneficiary}</div>`;
-                if (props.establishment) html += `<div class="small">${props.establishment}</div>`;
-                if (props.locals && props.locals.length > 0) html += `<div class="small">${props.locals.join(', ')}</div>`;
-                if (props.description) html += `<div class="small">📝 ${props.description}</div>`;
+                if (dureeMinutes >= 60) {
+                    if (props.beneficiary) html += `<div class="small text-truncate">Bénéficiaire : ${props.beneficiary}</div>`;
+                    if (props.interpreters) html += `<div class="small text-truncate">Interprète : ${props.interpreters}</div>`;
+                }
+                if (dureeMinutes >= 90) {
+                    if (props.establishment) html += `<div class="small text-truncate">${props.establishment}</div>`;
+                }
+                if (dureeMinutes >= 120) {
+                    if (props.locals && props.locals.length > 0) html += `<div class="small text-truncate">${props.locals.join(', ')}</div>`;
+                    if (props.description) html += `<div class="small text-truncate">${props.description}</div>`;
+                }
             } else if (props.type === 'absence') {
-                if (props.reason && props.reason !== '') html += `<div class="small">Motif : ${props.reason}</div>`;
+                if (dureeMinutes >= 60) {
+                    if (props.reason && props.reason !== '') html += `<div class="small text-truncate">Motif : ${props.reason}</div>`;
+                }
             }
 
-            return {html: `<div class="p-1">${icon}${html}</div>`};
+            return {html: `<div class="p-1" style="overflow:hidden;">${icon}${html}</div>`};
         }
     });
 
@@ -214,6 +228,17 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('btnInterpreterPlanning').className = mode === 'interpreter' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
         document.getElementById('btnBeneficiaryPlanning').className = mode === 'beneficiary' ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm';
 
+        const titles = {
+            coordinator: 'Votre horaire de la semaine',
+            interpreter: 'Planning d\'un interprète',
+            beneficiary: 'Planning d\'un bénéficiaire'
+        };
+        document.getElementById('pageTitle').textContent = titles[mode];
+
+        const isBeneficiaryLegend = mode === 'beneficiary';
+        document.getElementById('legendDefault').style.setProperty('display', isBeneficiaryLegend ? 'none' : 'flex', 'important');
+        document.getElementById('legendBeneficiary').style.setProperty('display', isBeneficiaryLegend ? 'flex' : 'none', 'important');
+
         const isBeneficiaryMode = mode === 'beneficiary';
         const isCoordinatorMode = mode === 'coordinator';
         document.getElementById('btnAddRdv').classList.toggle('d-none', !isBeneficiaryMode);
@@ -239,6 +264,8 @@ document.addEventListener('DOMContentLoaded', function () {
             loadUserList(mode);
         }
     };
+
+    switchMode('coordinator');
 
     /* Populates the search dropdown and the modal RDV selector using the
        interpreter or beneficiary lists injected by Thymeleaf, depending on the mode. */
@@ -539,7 +566,8 @@ document.addEventListener('DOMContentLoaded', function () {
             endTime: endTimeValue,
             numEstablishment: Number(rdvEstablishment.value),
             numAcademicSkillsNeeded: numAcademicSkillsNeeded,
-            numProfessionalSkillsNeeded: numProfessionalSkillsNeeded
+            numProfessionalSkillsNeeded: numProfessionalSkillsNeeded,
+            description: document.getElementById('rdvDescription').value.trim()
         };
 
         fetch('/coordinatrice/planning-gestion/beneficiaires/rdv', {
@@ -580,7 +608,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('rdvEstablishment').selectedIndex = 0;
 
         document.querySelectorAll('.skill-check').forEach(cb => cb.checked = false);
-        document.querySelectorAll('.comp-check').forEach(cb => cb.checked = true);
+        document.querySelectorAll('.comp-check').forEach(cb => cb.checked = false);
 
         generateHours('rdvStartHour', 8 * 60, 18 * 60 + 55);
         generateHours('rdvEndHour', 8 * 60 + 5, 19 * 60);
