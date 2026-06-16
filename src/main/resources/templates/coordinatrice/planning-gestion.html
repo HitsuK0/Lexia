@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
-    <head th:replace="~{common/head :: head('Planning - Coordinatrice', '/css/coordinatrice/planning-gestion.css')}"></head>
+    <head th:replace="~{common/head :: head('Planning - Coordinatrice', null)}"></head>
 
     <body>
         <nav th:replace="~{common/navbar :: navbar(activeTab='planning', userRole=${userRole}, userName=${userName}, breadcrumb='Planning Gestion', isAdmin=${isAdmin})}"></nav>
@@ -40,9 +40,16 @@
                         </button>
                     </div>
 
-                    <div class="d-none d-lg-flex gap-3 small text-muted position-absolute start-50 translate-middle-x">
-                        <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> <span id="legendUnavailabilityLabel">Indisponibilité</span></span>
+                    <div id="legendDefault" class="d-none d-lg-flex gap-3 small text-muted position-absolute start-50 translate-middle-x">
+                        <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Indisponibilité</span>
                         <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
+                        <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
+                    </div>
+
+                    <div id="legendBeneficiary" class="d-none d-lg-flex gap-3 small text-muted position-absolute start-50 translate-middle-x">
+                        <span><span class="badge" style="background-color:#81c784;">&nbsp;<i class="bi bi-check-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Validé</span>
+                        <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Refusé</span>
+                        <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-clock" style="font-size:0.7rem;"></i>&nbsp;</span> En attente</span>
                         <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
                     </div>
 
@@ -224,7 +231,7 @@
                                 <div class="form-check" th:each="skill : ${professionalSkillList}">
                                     <input class="form-check-input comp-check" type="checkbox"
                                            th:id="'compSkill' + ${skill.numProfessionalSkill}"
-                                           th:value="${skill.numProfessionalSkill}" checked/>
+                                           th:value="${skill.numProfessionalSkill}"/>
                                     <label class="form-check-label small"
                                            th:for="'compSkill' + ${skill.numProfessionalSkill}"
                                            th:text="${skill.designation}"></label>
@@ -315,12 +322,6 @@
 
         <script th:src="@{/js/fullcalendar.min.js}"></script>
         <script th:src="@{/js/coordinatrice/planning-gestion.js}"></script>
-
-        <div class="d-flex d-lg-none gap-2 small text-muted flex-wrap justify-content-center mt-3 mb-2 px-3">
-            <span><span class="badge" style="background-color:#f0ad4e;">&nbsp;<i class="bi bi-slash-circle" style="font-size:0.7rem;"></i>&nbsp;</span> <span id="legendUnavailabilityLabelMobile">Indisponibilité</span></span>
-            <span><span class="badge" style="background-color:#f28b82;">&nbsp;<i class="bi bi-x-circle" style="font-size:0.7rem;"></i>&nbsp;</span> Annulée</span>
-            <span><span class="badge" style="background-color:#b39ddb;">&nbsp;&nbsp;</span> Horaire de base</span>
-        </div>
 
         <div th:replace="~{common/footer :: footer}"></div>
     </body>
