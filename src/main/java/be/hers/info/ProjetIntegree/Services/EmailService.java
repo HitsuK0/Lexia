@@ -61,13 +61,13 @@ public class EmailService {
                             <td style="padding: 6px 12px; font-weight: 700; color: #333; font-family: monospace; font-size: 15px;">%s</td>
                         </tr>
                         <tr>
-                            <td style="padding: 6px 12px; color: #888; font-size: 13px;">Mot de passe</td>
+                            <td style="padding: 6px 12px; color: #888; font-size: 13px;">Mot de passe temporaire</td>
                             <td style="padding: 6px 12px; font-weight: 700; color: #333; font-family: monospace; font-size: 15px;">%s</td>
                         </tr>
                     </table>
                 </div>
                 <p style="color: #e67e22; font-size: 13px; background-color: #fff8f0; border-radius: 6px; padding: 10px 12px; margin: 0;">
-                    ⚠️ Nous vous recommandons de changer votre mot de passe lors de votre première connexion.
+                    ⚠️ Vous DEVEZ changer votre mot de passe lors de votre première connexion.
                 </p>
             </div>
             <div style="background-color: #f3effe; padding: 16px; text-align: center; font-size: 12px; color: #888;">
