@@ -112,15 +112,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* Initializes or reloads a FullCalendar day-view inside the given card.
        The pending appointment is shown as an orange event. */
-    function initCalendar(card, prefix, calSelector) {
-        const key = `${prefix}-${card.dataset.id}`;
+    function initCalendar(card) {
+        const key = `b-${card.dataset.id}`;
         if (calendarInstances[key]) {
             calendarInstances[key].gotoDate(card.dataset.date);
             calendarInstances[key].refetchEvents();
             return;
         }
 
-        const cal = new FullCalendar.Calendar(card.querySelector(calSelector), {
+        const cal = new FullCalendar.Calendar(card.querySelector('.card-calendar'), {
             locale: 'fr',
             initialView: 'timeGridDay',
             initialDate: card.dataset.date,
@@ -129,17 +129,13 @@ document.addEventListener('DOMContentLoaded', function () {
             slotMaxTime: '19:00:00',
             allDaySlot: false,
             height: 400,
-            events: function (info, successCallback) {
-                const pendingEvent = {
-                    title: `⏳ ${card.dataset.skill} (en attente)`,
-                    start: `${card.dataset.date}T${card.dataset.timeStart}:00`,
-                    end:   `${card.dataset.date}T${card.dataset.timeEnd}:00`,
-                    color: '#f0ad4e'
-                };
-                // TODO: fetch existing events from backend
-                successCallback([pendingEvent]);
+            events: function (info, successCallback, failureCallback) {
+                fetch(`/coordinatrice/validations/appointment/${card.dataset.id}/events`)
+                    .then(r => r.json())
+                    .then(data => successCallback(data))
+                    .catch(() => failureCallback());
             },
-            eventContent: arg => ({ html: `<div class="p-1 fw-bold small">${arg.event.title}</div>` })
+            eventContent: arg => ({ html: `<div class="p-1 fw-bold small">⏳ ${arg.event.title}</div>` })
         });
 
         cal.render();
@@ -158,9 +154,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const isFullDay  = card.dataset.fullDay === 'true';
         const dateStart  = card.dataset.dateStart;
-        const dateEnd    = card.dataset.dateEnd;
-        const timeStart  = card.dataset.timeStart;
-        const timeEnd    = card.dataset.timeEnd;
 
         const cal = new FullCalendar.Calendar(card.querySelector('.absence-calendar'), {
             locale: 'fr',
@@ -171,14 +164,13 @@ document.addEventListener('DOMContentLoaded', function () {
             slotMaxTime: '19:00:00',
             allDaySlot: isFullDay,
             height: 400,
-            events: function (info, successCallback) {
-                const event = isFullDay
-                    ? { title: '⏳ Indisponibilité (journée complète)', start: dateStart, end: dateEnd, allDay: true, color: '#f0ad4e' }
-                    : { title: '⏳ Indisponibilité', start: `${dateStart}T${timeStart}:00`, end: `${dateEnd}T${timeEnd}:00`, color: '#f0ad4e' };
-                // TODO: fetch existing events from backend
-                successCallback([event]);
+            events: function (info, successCallback, failureCallback) {
+                fetch(`/coordinatrice/validations/absence/${card.dataset.id}/events`)
+                    .then(r => r.json())
+                    .then(data => successCallback(data))
+                    .catch(() => failureCallback());
             },
-            eventContent: arg => ({ html: `<div class="p-1 fw-bold small">${arg.event.title}</div>` })
+            eventContent: arg => ({ html: `<div class="p-1 fw-bold small">⏳ ${arg.event.title}</div>` })
         });
 
         cal.render();
@@ -186,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function loadInterpreters(card) {
-        fetch(`/coordinatrice/validations/interpreters?appointmentId=${card.dataset.id}`)
+        fetch(`/coordinatrice/validations/appointment/${card.dataset.id}/interpreters`)
             .then(r => r.json())
             .then(data => renderInterpreters(card, data))
             .catch(() => showInterpretersState(card, 'empty'));
@@ -199,15 +191,16 @@ document.addEventListener('DOMContentLoaded', function () {
         interpreters.forEach(interp => {
             const tr = document.createElement('tr');
             tr.style.cursor = 'pointer';
+            const fullName = `${interp.lastName} ${interp.firstName}`;
             tr.innerHTML = `
-                <td><input class="form-check-input interpreter-radio" type="radio" name="interpreterSelect-${card.dataset.id}" value="${interp.id}"/></td>
-                <td>${interp.name}</td>
-                <td>${interp.professionalSkills ?? '—'}</td>
-                <td>${interp.academicSkills ?? '—'}</td>
-            `;
+            <td><input class="form-check-input interpreter-radio" type="radio" name="interpreterSelect-${card.dataset.id}" value="${interp.numInterpreter}"/></td>
+            <td>${fullName}</td>
+            <td>${interp.professionalSkills || '—'}</td>
+            <td>${interp.academicSkills || '—'}</td>
+        `;
             tr.addEventListener('click', function () {
                 this.querySelector('.interpreter-radio').checked = true;
-                selectedInterpreterId = interp.id;
+                selectedInterpreterId = interp.numInterpreter;
                 tbody.querySelectorAll('tr').forEach(r => r.classList.remove('table-active'));
                 this.classList.add('table-active');
                 card.querySelector('.interpreters-error').classList.add('d-none');
@@ -231,8 +224,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 card.querySelector('.interpreters-error').classList.remove('d-none');
                 return;
             }
-            // TODO: call backend accept endpoint
-            removeCard(card, 'beneficiary');
+            fetch(`/coordinatrice/validations/appointment/${card.dataset.id}/accept?numInterpreter=${selectedInterpreterId}`, {
+                method: 'POST'
+            })
+                .then(r => r.text())
+                .then(result => {
+                    if (result === 'ok') {
+                        removeCard(card, 'beneficiary');
+                    } else {
+                        alert('Une erreur est survenue lors de l\'acceptation.');
+                    }
+                })
+                .catch(err => console.error('Error accepting appointment:', err));
         });
     });
 
@@ -240,8 +243,18 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.addEventListener('click', function (e) {
             e.stopPropagation();
             const card = this.closest('.absence-card');
-            // TODO: call backend accept absence endpoint
-            removeCard(card, 'interpreter');
+            fetch(`/coordinatrice/validations/absence/${card.dataset.id}/accept`, {
+                method: 'POST'
+            })
+                .then(r => r.text())
+                .then(result => {
+                    if (result === 'ok') {
+                        removeCard(card, 'interpreter');
+                    } else {
+                        alert('Une erreur est survenue lors de l\'acceptation.');
+                    }
+                })
+                .catch(err => console.error('Error accepting absence:', err));
         });
     });
 
@@ -273,8 +286,23 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('btnConfirmRefuse').addEventListener('click', function () {
         bootstrap.Modal.getInstance(document.getElementById('modalRefuse')).hide();
         if (!refuseTarget) return;
-        // TODO: call backend refuse endpoint based on refuseTarget.type
-        removeCard(refuseTarget.card, refuseTarget.type);
+
+        const { card, type } = refuseTarget;
+        const url = type === 'beneficiary'
+            ? `/coordinatrice/validations/appointment/${card.dataset.id}/refuse`
+            : `/coordinatrice/validations/absence/${card.dataset.id}/refuse`;
+
+        fetch(url, { method: 'POST' })
+            .then(r => r.text())
+            .then(result => {
+                if (result === 'ok') {
+                    removeCard(card, type);
+                } else {
+                    alert('Une erreur est survenue lors du refus.');
+                }
+            })
+            .catch(err => console.error('Error refusing request:', err));
+
         refuseTarget = null;
     });
 
