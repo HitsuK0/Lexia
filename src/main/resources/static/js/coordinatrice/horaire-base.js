@@ -168,6 +168,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('creneauIndispo').checked = false;
         document.getElementById('creneauInterpreteFields').style.display = '';
         document.getElementById('creneauBeneficiaire').selectedIndex = 0;
+        document.getElementById('creneauAcademicSkillInterprete').selectedIndex = 0;
+        document.getElementById('creneauProfessionalSkillInterprete').selectedIndex = 0;
         document.getElementById('creneauEtablissementInterprete').selectedIndex = 0;
         document.getElementById('creneauLocalInterprete').value = '';
         document.getElementById('creneauDescriptionInterprete').value = '';
@@ -206,6 +208,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('editCreneauIndispo').checked = false;
         document.getElementById('editCreneauInterpreteFields').style.display = '';
         document.getElementById('editCreneauBeneficiaire').selectedIndex = 0;
+        document.getElementById('editCreneauAcademicSkillInterprete').selectedIndex = 0;
+        document.getElementById('editCreneauProfessionalSkillInterprete').selectedIndex = 0;
         document.getElementById('editCreneauEtablissementInterprete').selectedIndex = 0;
         document.getElementById('editCreneauLocalInterprete').value = '';
         document.getElementById('editCreneauDescriptionInterprete').value = '';
@@ -272,11 +276,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!indispo) {
             const beneficiaire = document.getElementById('creneauBeneficiaire').value;
+            const academicSkill = document.getElementById('creneauAcademicSkillInterprete').value;
+            const professionalSkill = document.getElementById('creneauProfessionalSkillInterprete').value;
             const etablissement = document.getElementById('creneauEtablissementInterprete').value;
             const local = document.getElementById('creneauLocalInterprete').value.trim();
             const description = document.getElementById('creneauDescriptionInterprete').value.trim();
 
             if (beneficiaire) params.append('numBeneficiary', beneficiaire);
+            if (academicSkill) params.append('numAcademicSkill', academicSkill);
+            if (professionalSkill) params.append('numProfessionalSkill', professionalSkill);
             if (etablissement) params.append('numEstablishment', etablissement);
             if (local) params.append('local', local);
             if (description) params.append('description', description);
