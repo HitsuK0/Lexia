@@ -19,6 +19,8 @@ public class DTOAppointmentForm {
     // Each field allows the identification of its own object. This is the form binding.
     private int numBeneficiary;
     private int numEstablishment;
+    private int numInterpreter;
+    private String description;
     private List<Integer> numAcademicSkillsNeeded;
     private List<Integer> numProfessionalSkillsNeeded;
 
@@ -42,6 +44,8 @@ public class DTOAppointmentForm {
      * @param appointmentLocals           the list of appointment locals
      * @param numBeneficiary              the id of the beneficiary related to the appointment
      * @param numEstablishment            the id of the establishment related to the appointment
+     * @param numInterpreter              the id of the interpreter related to the appointment
+     * @param description                 the description related to the appointment
      * @param numAcademicSkillsNeeded     the list of academic skills identifiers related to the appointment
      * @param numProfessionalSkillsNeeded the list of professional skills identifiers related to the appointment
      * @param startDate                   the date start of the time slot
@@ -50,12 +54,14 @@ public class DTOAppointmentForm {
      * @param endTime                     the end time of the time slot
      */
     public DTOAppointmentForm(List<String> appointmentLocals, int numBeneficiary,
-                              int numEstablishment, List<Integer> numAcademicSkillsNeeded,
-                              List<Integer> numProfessionalSkillsNeeded,
+                              int numEstablishment, int numInterpreter, String description,
+                              List<Integer> numAcademicSkillsNeeded, List<Integer> numProfessionalSkillsNeeded,
                               LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         this.appointmentLocals = appointmentLocals;
         this.numBeneficiary = numBeneficiary;
         this.numEstablishment = numEstablishment;
+        this.numInterpreter = numInterpreter;
+        this.description = description;
         this.numAcademicSkillsNeeded = numAcademicSkillsNeeded;
         this.numProfessionalSkillsNeeded = numProfessionalSkillsNeeded;
         this.startDate = startDate;
@@ -110,6 +116,38 @@ public class DTOAppointmentForm {
      */
     public void setNumEstablishment(int numEstablishment) {
         this.numEstablishment = numEstablishment;
+    }
+
+    /**
+     * @return the id of the interpreter
+     */
+    public int getNumInterpreter() {
+        return numInterpreter;
+    }
+
+    /**
+     * Initialize the id of the interpreter
+     *
+     * @param numInterpreter the id of the interpreter related to the appointment
+     */
+    public void setNumInterpreter(int numInterpreter) {
+        this.numInterpreter = numInterpreter;
+    }
+
+    /**
+     * @return the description of the appointment
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Initialize the description of the appointment
+     *
+     * @param description the description of the appointment
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
