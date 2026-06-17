@@ -193,11 +193,9 @@ document.addEventListener('DOMContentLoaded', function () {
             tr.style.cursor = 'pointer';
             const fullName = `${interp.lastName} ${interp.firstName}`;
             tr.innerHTML = `
-            <td><input class="form-check-input interpreter-radio" type="radio" name="interpreterSelect-${card.dataset.id}" value="${interp.numInterpreter}"/></td>
-            <td>${fullName}</td>
-            <td>${interp.professionalSkills || '—'}</td>
-            <td>${interp.academicSkills || '—'}</td>
-        `;
+        <td><input class="form-check-input interpreter-radio" type="radio" name="interpreterSelect-${card.dataset.id}" value="${interp.numInterpreter}"/></td>
+        <td>${fullName}</td>
+    `;
             tr.addEventListener('click', function () {
                 this.querySelector('.interpreter-radio').checked = true;
                 selectedInterpreterId = interp.numInterpreter;
