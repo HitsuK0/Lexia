@@ -23,10 +23,11 @@ public class Referrer {
      * @param phoneNumber      the phone number
      * @param surname          the surname of the referrer
      * @param name             the name of the referrer
-     * @throws IllegalArgumentException if addressMail, phoneNumber,surname or name is null
+     * @throws IllegalArgumentException if addressMail, phoneNumber, surname or name is null, empty or only with spaces
      */
     public Referrer(Establishment refEstablishment, String addressMail, String phoneNumber, String surname, String name) {
-        if (addressMail == null || phoneNumber == null || surname == null || name == null) {
+        if (addressMail == null || addressMail.isBlank() || phoneNumber == null || phoneNumber.isBlank() ||
+            surname == null || surname.isBlank() || name == null || name.isBlank()) {
             throw new IllegalArgumentException();
         }
 
@@ -94,44 +95,44 @@ public class Referrer {
 
     /**
      * @param name the name
-     * @throws IllegalArgumentException if name is null
+     * @throws IllegalArgumentException if name is null, empty or only with spaces
      */
     public void setName(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("[POJOReferrer] Le prénom ne peut pas être null");
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("[POJOReferrer] Le prénom ne peut pas être null, vide ou ne contenir que des espaces");
         }
         this.name = name;
     }
 
     /**
      * @param surname the surname
-     * @throws IllegalArgumentException if surname is null
+     * @throws IllegalArgumentException if surname is null, empty or only with spaces
      */
     public void setSurname(String surname) {
-        if (surname == null) {
-            throw new IllegalArgumentException("[POJOReferrer] Le nom ne peut pas être null");
+        if (surname == null || surname.isBlank()) {
+            throw new IllegalArgumentException("[POJOReferrer] Le nom ne peut pas être null, vide ou ne contenir que des espaces");
         }
         this.surname = surname;
     }
 
     /**
      * @param phoneNumber the phone number
-     * @throws IllegalArgumentException if phoneNumber is null
+     * @throws IllegalArgumentException if phoneNumber is null, empty or only with spaces
      */
     public void setPhoneNumber(String phoneNumber) {
-        if (phoneNumber == null) {
-            throw new IllegalArgumentException("[POJOReferrer] Le numéro de téléphone ne peut pas être null");
+        if (phoneNumber == null || phoneNumber.isBlank()) {
+            throw new IllegalArgumentException("[POJOReferrer] Le numéro de téléphone ne peut pas être null, vide ou ne contenir que des espaces");
         }
         this.phoneNumber = phoneNumber;
     }
 
     /**
      * @param addressMail the mail address
-     * @throws IllegalArgumentException if addressMail is null
+     * @throws IllegalArgumentException if addressMail is null, empty or only with spaces
      */
     public void setAddressMail(String addressMail) {
-        if (addressMail == null) {
-            throw new IllegalArgumentException("[POJOReferrer] L'adresse mail ne peut pas être null");
+        if (addressMail == null || phoneNumber.isBlank()) {
+            throw new IllegalArgumentException("[POJOReferrer] L'adresse mail ne peut pas être null, vide ou ne contenir que des espaces");
         }
         this.addressMail = addressMail;
     }

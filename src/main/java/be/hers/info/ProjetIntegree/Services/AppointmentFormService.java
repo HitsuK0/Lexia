@@ -86,6 +86,8 @@ public class AppointmentFormService {
         daoTimeSlotPunctual.create(newTimeSlotPunctual);
         newAppointment.setTimeSlot(newTimeSlotPunctual);
 
+        newAppointment.setDescription(appointmentDTO.getDescription());
+
         DAOAppointment daoAppointment = new DAOAppointment();
         return daoAppointment.create(newAppointment);
     }
