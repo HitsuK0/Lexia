@@ -196,6 +196,7 @@ public class BeneficiaryController {
 
         try {
             AppointmentFormService service = new AppointmentFormService();
+            dtoAppointment.setNumBeneficiary(beneficiary.getNumBeneficiary());
             boolean success = service.createAppointment(dtoAppointment);
             return success ? "ok" : "error";
         } catch (BadStatusException | SQLException | IllegalArgumentException e) {
@@ -220,8 +221,6 @@ public class BeneficiaryController {
         if (beneficiary == null) {
             return "redirect:/login";
         }
-
-        dtoAppointment.setNumBeneficiary((beneficiary.getNumBeneficiary()));
 
         try {
             AppointmentFormService service = new AppointmentFormService();
