@@ -167,7 +167,7 @@
                     <div class="absence-card card border shadow-sm"
                          th:each="abs : ${pendingAbsences}"
                          th:data-id="${abs.numAbsence}"
-                         data-interpreter=""
+                         th:data-interpreter="${abs.interpreter.lastName + ' ' + abs.interpreter.firstName}"
                          th:data-date-start="${abs.timeSlot.startDate}"
                          th:data-date-end="${abs.timeSlot.endDate != null ? abs.timeSlot.endDate : abs.timeSlot.startDate}"
                          th:data-date-display="${abs.timeSlot.endDate != null and !abs.timeSlot.endDate.equals(abs.timeSlot.startDate)
@@ -182,7 +182,7 @@
                         <div class="absence-card-header px-3 py-2 d-grid align-items-center"
                              style="cursor:pointer; grid-template-columns: 2fr 2fr 1.5fr 1fr 1.5rem; gap: 0 1rem;"
                              th:with="isFullDay=${abs.timeSlot.startTime != null and abs.timeSlot.startTime.hour == 0 and abs.timeSlot.startTime.minute == 0 and abs.timeSlot.duration.hour == 23}">
-                            <span class="fw-bold text-truncate">Interprète</span>
+                            <span class="fw-bold text-truncate" th:text="${abs.interpreter.lastName + ' ' + abs.interpreter.firstName}">Interprète</span>
                             <span class="small text-muted"
                                   th:text="${abs.timeSlot.endDate != null and !abs.timeSlot.endDate.equals(abs.timeSlot.startDate)
                             ? #temporals.format(abs.timeSlot.startDate, 'dd/MM') + ' au ' + #temporals.format(abs.timeSlot.endDate, 'dd/MM/yyyy')
@@ -200,7 +200,7 @@
                                     <div class="rounded p-3 mb-3 small" style="background-color: #f0ecf8;">
                                         <h6 class="fw-bold text-primary mb-2">Récapitulatif</h6>
                                         <div class="row row-cols-2 g-2">
-                                            <div class="col"><span class="text-muted">Interprète :</span> <strong>—</strong></div>
+                                            <strong th:text="${abs.interpreter.lastName + ' ' + abs.interpreter.firstName}">—</strong>
                                             <div class="col"><span class="text-muted">Date :</span>
                                                 <strong th:text="${abs.timeSlot.endDate != null and !abs.timeSlot.endDate.equals(abs.timeSlot.startDate)
                                         ? #temporals.format(abs.timeSlot.startDate, 'dd/MM/yyyy') + ' au ' + #temporals.format(abs.timeSlot.endDate, 'dd/MM/yyyy')

@@ -221,6 +221,8 @@ public class BeneficiaryController {
             return "redirect:/login";
         }
 
+        dtoAppointment.setNumBeneficiary((beneficiary.getNumBeneficiary()));
+
         try {
             AppointmentFormService service = new AppointmentFormService();
             dtoAppointment.setNumBeneficiary(beneficiary.getNumBeneficiary());

@@ -89,6 +89,7 @@ public class ValidationService {
             List<Absence> absenceConflicts = new DAOAbsence().findPunctualAbsencesInterpreter(interpreter);
             List<Absence> baseAbsenceConflicts = new DAOAbsence().findBaseAbsencesInterpreter(interpreter);
 
+
             boolean hasConflict = conflicts.stream().anyMatch(a -> {
                 if (!(a.getTimeSlot() instanceof TimeSlotPunctual))
                     return false;
@@ -189,14 +190,11 @@ public class ValidationService {
         if (interpreter == null)
             return false;
 
-        List<Interpreter> interpreters = appointment.getInterpreters() != null
-                ? new ArrayList<>(appointment.getInterpreters())
-                : new ArrayList<>();
-        interpreters.add(interpreter);
-        appointment.setInterpreters(interpreters);
         appointment.setStatus("accepte");
+        boolean isUpdated = daoAppointment.update(appointment);
+        daoAppointment.addInterpreterAtAppointment(numAppointment, numInterpreter);
 
-        return daoAppointment.update(appointment);
+        return isUpdated;
     }
 
     /**
