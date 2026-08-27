@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: lexia-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-lexia}
+      POSTGRES_USER: ${DATABASE_USER:-lexia}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-lexia}
+    ports:
+      - "5432:5432"
+    volumes:
+      - lexia_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  lexia_postgres_data:
