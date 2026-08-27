@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import be.hers.info.ProjetIntegree.POJO.*;
-import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleTypes;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -245,7 +243,7 @@ public class DAOAppointment extends DAO<Appointment> {
     public boolean create(Appointment objectToInsertInDB) throws SQLException {
 
         boolean isInserted = false;
-        OraclePreparedStatement prStat = null;
+        PreparedStatement prStat = null;
         ResultSet rs = null;
         String local = null;
 
@@ -254,31 +252,27 @@ public class DAOAppointment extends DAO<Appointment> {
         }
 
         String query = "INSERT INTO Appointment (description,status, local, FKnumEstablishment, FKnumBeneficiary, FKTimeSlotPunctual) " +
-                "VALUES (?, ?, ?, ?, ?, ?) RETURNING numAppointment INTO ?";
+                "VALUES (?, ?, ?, ?, ?, ?) RETURNING numAppointment";
         if (objectToInsertInDB.getTimeSlot() instanceof TimeSlotBase) {
             query = "INSERT INTO Appointment (description,status, local, FKnumEstablishment, FKnumBeneficiary, FKTimeSlotBase) " +
-                    "VALUES (?, ?, ?, ?, ?, ?) RETURNING numAppointment INTO ?";
+                    "VALUES (?, ?, ?, ?, ?, ?) RETURNING numAppointment";
         }
 
         try {
-            prStat = (OraclePreparedStatement) connect.prepareStatement(query);
+            prStat = connect.prepareStatement(query);
             prStat.setString(1, objectToInsertInDB.getDescription());
             prStat.setString(2, objectToInsertInDB.getStatus());
             prStat.setString(3, local);
             prStat.setInt(4, objectToInsertInDB.getEstablishment().getNumEstablishment());
             prStat.setInt(5, objectToInsertInDB.getBeneficiary().getNumBeneficiary());
             prStat.setInt(6, objectToInsertInDB.getTimeSlot().getNumTimeSlot());
-            prStat.registerReturnParameter(7, OracleTypes.INTEGER);
 
-            int nbLinesInsert = prStat.executeUpdate();
-            rs = prStat.getReturnResultSet();
+            rs = prStat.executeQuery();
             if (rs.next()) {
                 int id = rs.getInt(1);
                 objectToInsertInDB.setNumAppointment(id);
 
-                if (nbLinesInsert > 0) {
-                    isInserted = true;
-                }
+                isInserted = true;
 
                 if (!objectToInsertInDB.getInterpreters().isEmpty()) {
                     for (Interpreter i : objectToInsertInDB.getInterpreters()) {

@@ -1,10 +1,9 @@
 package be.hers.info.ProjetIntegree.DAO;
 
 import be.hers.info.ProjetIntegree.POJO.TimeSlotBase;
-import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleTypes;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,25 +91,19 @@ public class DAOTimeSlotBase extends DAO<TimeSlotBase> {
         boolean isInserted = false;
         String query = "INSERT INTO TimeSlotBase(startTime,duration,dayNumber) " +
                 "VALUES (?,?,?) " +
-                "RETURNING numTimeSlot INTO ?";
+                "RETURNING numTimeSlot";
 
-        OraclePreparedStatement prStat = null;
+        PreparedStatement prStat = null;
         ResultSet generateID = null;
         try {
-            prStat = (OraclePreparedStatement) connect.prepareStatement(query);
+            prStat = connect.prepareStatement(query);
 
-            prStat.setTime(1, java.sql.Time.valueOf(objectToInsertInDB.getStartTime()));
-            prStat.setTime(2, java.sql.Time.valueOf(objectToInsertInDB.getDuration()));
+            prStat.setTimestamp(1, Timestamp.valueOf(objectToInsertInDB.getStartTime().atDate(LocalDate.EPOCH)));
+            prStat.setTimestamp(2, Timestamp.valueOf(objectToInsertInDB.getDuration().atDate(LocalDate.EPOCH)));
             prStat.setInt(3, objectToInsertInDB.getDayNumber());
-            prStat.registerReturnParameter(4, OracleTypes.INTEGER);
 
-            int nbLinesInsert = prStat.executeUpdate();
-            if (nbLinesInsert > 0) {
-                generateID = prStat.getReturnResultSet();
-                if (!generateID.next()) {
-                    throw new SQLException("[DAOTimeSlotBase] Impossible de récupérer le numTimeSlot généré.");
-                }
-
+            generateID = prStat.executeQuery();
+            if (generateID.next()) {
                 int numTimeSlotGenerated = generateID.getInt(1);
                 objectToInsertInDB.setNumTimeSlot(numTimeSlotGenerated);
 
@@ -142,8 +135,8 @@ public class DAOTimeSlotBase extends DAO<TimeSlotBase> {
         try {
             prStat = connect.prepareStatement(query);
 
-            prStat.setTime(1, java.sql.Time.valueOf(objectToUpdateInDB.getStartTime()));
-            prStat.setTime(2, java.sql.Time.valueOf(objectToUpdateInDB.getDuration()));
+            prStat.setTimestamp(1, Timestamp.valueOf(objectToUpdateInDB.getStartTime().atDate(LocalDate.EPOCH)));
+            prStat.setTimestamp(2, Timestamp.valueOf(objectToUpdateInDB.getDuration().atDate(LocalDate.EPOCH)));
             prStat.setInt(3, objectToUpdateInDB.getDayNumber());
             prStat.setInt(4, objectToUpdateInDB.getNumTimeSlot());
 

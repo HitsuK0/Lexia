@@ -1,8 +1,6 @@
 package be.hers.info.ProjetIntegree.DAO;
 
 import be.hers.info.ProjetIntegree.POJO.TimeSlotPunctual;
-import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleTypes;
 
 import java.sql.*;
 import java.util.List;
@@ -97,30 +95,25 @@ public class DAOTimeSlotPunctual extends DAO<TimeSlotPunctual> {
         boolean isInserted = false;
         String query = "INSERT INTO TimeSlotPunctual(startTime, duration, startDate, endDate) " +
                 "VALUES (?, ?, ?, ?)" +
-                "RETURNING numTimeSlot INTO ?";
-        OraclePreparedStatement prStat = null;
+                "RETURNING numTimeSlot";
+        PreparedStatement prStat = null;
         ResultSet generateID = null;
 
         try {
-            prStat = (OraclePreparedStatement) connect.prepareStatement(query);
+            prStat = connect.prepareStatement(query);
             prStat.setTimestamp(1, Timestamp.valueOf(objectToInsertInDB.getStartTime().atDate(objectToInsertInDB.getStartDate())));
             prStat.setTimestamp(2, Timestamp.valueOf(objectToInsertInDB.getDuration().atDate(objectToInsertInDB.getStartDate())));
             prStat.setTimestamp(3, Timestamp.valueOf(objectToInsertInDB.getStartDate().atTime(objectToInsertInDB.getStartTime())));
             prStat.setTimestamp(4, Timestamp.valueOf(objectToInsertInDB.getEndDate().atTime(0, 0)));
-            prStat.registerReturnParameter(5, OracleTypes.INTEGER);
-            int nbreLine = prStat.executeUpdate();
-            if (nbreLine > 0) {
-                generateID = prStat.getReturnResultSet();
-                if (!generateID.next()) {
-                    throw new SQLException("[DAOTimeSlotPunctual] Impossible de récupérer le numTimeSlot généré.");
-                }
+            generateID = prStat.executeQuery();
+            if (generateID.next()) {
                 objectToInsertInDB.setNumTimeSlot(generateID.getInt(1));
 
                 isInserted = true;
 
             }
         } finally {
-            closeStatement(prStat);
+            closeStatementAndResultSet(prStat, generateID);
         }
         return isInserted;
     }

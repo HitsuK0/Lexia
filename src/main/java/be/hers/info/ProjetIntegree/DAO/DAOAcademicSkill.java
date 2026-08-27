@@ -1,8 +1,6 @@
 package be.hers.info.ProjetIntegree.DAO;
 
 import be.hers.info.ProjetIntegree.POJO.AcademicSkill;
-import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleTypes;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -115,20 +113,15 @@ public class DAOAcademicSkill extends DAO<AcademicSkill> {
         boolean isCreated = false;
         String query = "INSERT INTO AcademicSkill(designation) " +
                 "VALUES (?) " +
-                "RETURNING numAcademicSkill INTO ?";
+                "RETURNING numAcademicSkill";
 
-        OraclePreparedStatement prStat = null;
+        PreparedStatement prStat = null;
         ResultSet rs = null;
         try {
-            prStat = (OraclePreparedStatement) connect.prepareStatement(query);
+            prStat = connect.prepareStatement(query);
             prStat.setString(1, objectToInsertInDB.getDesignation());
-            prStat.registerReturnParameter(2, OracleTypes.INTEGER);
-            int nbreLigne = prStat.executeUpdate();
-            if (nbreLigne > 0) {
-                rs = prStat.getReturnResultSet();
-                if (!rs.next()) {
-                    throw new SQLException("[DAOAcademicSkill] Impossible de récupérer le numProfessionalSkill généré.");
-                }
+            rs = prStat.executeQuery();
+            if (rs.next()) {
                 objectToInsertInDB.setNumAcademicSkill(rs.getInt(1));
                 isCreated = true;
             }

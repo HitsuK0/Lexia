@@ -3,8 +3,7 @@ package be.hers.info.ProjetIntegree.DAO;
 import be.hers.info.ProjetIntegree.DTO.DTOBeneficiaryFormAppointment;
 import be.hers.info.ProjetIntegree.DTO.DTOUser;
 import be.hers.info.ProjetIntegree.POJO.*;
-import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleTypes;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -205,8 +204,8 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
     @Override
     public boolean create(Beneficiary objectToInsertInDB) throws SQLException {
         boolean isCreated = false;
-        OraclePreparedStatement preparedStatementBeneficiary = null;
-        OraclePreparedStatement preparedStatementAppointment = null;
+        PreparedStatement preparedStatementBeneficiary = null;
+        PreparedStatement preparedStatementAppointment = null;
         PreparedStatement preparedStatementInterpreter = null;
         ResultSet generateBeneficiaryID = null;
         ResultSet generateAppointmentID = null;
@@ -215,18 +214,18 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                 "lastName, phoneNumber, emailAddress, hourQuota, educationLevel, " +
                 "communicationLanguage, FKnumInterpreter, FKAddress) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
-                "RETURNING numBeneficiary INTO ?";
+                "RETURNING numBeneficiary";
 
         String queryAppointment = "INSERT INTO Appointment (status, local, " +
                 "FKnumEstablishment, FKnumBeneficiary, FKTimeSlotBase, FKTimeSlotPunctual) " +
                 "VALUES (?, ?, ?, ?, ?, ?) " +
-                "RETURNING numAppointment INTO ?";
+                "RETURNING numAppointment";
 
         String queryInterpreter = "INSERT INTO RDVInterpreter (numAppointment, numInterpreter) " +
                 "VALUES (?, ?)";
 
         try {
-            preparedStatementBeneficiary = (OraclePreparedStatement) connect.prepareStatement(queryBeneficiary);
+            preparedStatementBeneficiary = connect.prepareStatement(queryBeneficiary);
 
             String communicationLanguage = "";
             if (objectToInsertInDB.getCommunicationLanguage() != null) {
@@ -236,7 +235,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             }
 
             preparedStatementBeneficiary.setString(1, objectToInsertInDB.getLogin());
-            preparedStatementBeneficiary.setString(2, objectToInsertInDB.getPassword());
+            preparedStatementBeneficiary.setString(2, BCrypt.hashpw(objectToInsertInDB.getPassword(), BCrypt.gensalt()));
             preparedStatementBeneficiary.setString(3, objectToInsertInDB.getFirstName());
             preparedStatementBeneficiary.setString(4, objectToInsertInDB.getLastName());
             preparedStatementBeneficiary.setString(5, objectToInsertInDB.getPhoneNumber());
@@ -252,20 +251,15 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
             }
 
             preparedStatementBeneficiary.setInt(11, objectToInsertInDB.getAddress().getNumAddress());
-            preparedStatementBeneficiary.registerReturnParameter(12, OracleTypes.INTEGER);
 
-            if (preparedStatementBeneficiary.executeUpdate() > 0) {
-                generateBeneficiaryID = preparedStatementBeneficiary.getReturnResultSet();
+            generateBeneficiaryID = preparedStatementBeneficiary.executeQuery();
 
-                if (!generateBeneficiaryID.next()) {
-                    throw new SQLException("[DAOBeneficiary] Impossible de récupérer le numBeneficiary généré.");
-                }
-
+            if (generateBeneficiaryID.next()) {
                 int numBeneficiaryGenerated = generateBeneficiaryID.getInt(1);
                 objectToInsertInDB.setNumBeneficiary(numBeneficiaryGenerated);
 
                 if (objectToInsertInDB.getAppointmentList() != null && !objectToInsertInDB.getAppointmentList().isEmpty()) {
-                    preparedStatementAppointment = (OraclePreparedStatement) connect.prepareStatement(queryAppointment);
+                    preparedStatementAppointment = connect.prepareStatement(queryAppointment);
 
                     preparedStatementInterpreter = connect.prepareStatement(queryInterpreter);
 
@@ -298,21 +292,17 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
                             preparedStatementAppointment.setNull(6, java.sql.Types.INTEGER);
                         }
 
-                        preparedStatementAppointment.registerReturnParameter(7, OracleTypes.INTEGER);
+                        generateAppointmentID = preparedStatementAppointment.executeQuery();
+                        if (generateAppointmentID.next()) {
 
-                        if (preparedStatementAppointment.executeUpdate() > 0) {
-                            generateAppointmentID = preparedStatementAppointment.getReturnResultSet();
-                            if (generateAppointmentID.next()) {
+                            int numAppointmentGenerated = generateAppointmentID.getInt(1);
+                            appt.setNumAppointment(numAppointmentGenerated);
 
-                                int numAppointmentGenerated = generateAppointmentID.getInt(1);
-                                appt.setNumAppointment(numAppointmentGenerated);
-
-                                if (appt.getInterpreters() != null && !appt.getInterpreters().isEmpty()) {
-                                    for (Interpreter interpreter : appt.getInterpreters()) {
-                                        preparedStatementInterpreter.setInt(1, numAppointmentGenerated);
-                                        preparedStatementInterpreter.setInt(2, interpreter.getNumInterpreter());
-                                        preparedStatementInterpreter.executeUpdate();
-                                    }
+                            if (appt.getInterpreters() != null && !appt.getInterpreters().isEmpty()) {
+                                for (Interpreter interpreter : appt.getInterpreters()) {
+                                    preparedStatementInterpreter.setInt(1, numAppointmentGenerated);
+                                    preparedStatementInterpreter.setInt(2, interpreter.getNumInterpreter());
+                                    preparedStatementInterpreter.executeUpdate();
                                 }
                             }
                         }
@@ -430,7 +420,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
 
         try {
             preparedStatement = connect.prepareStatement(query);
-            preparedStatement.setString(1, objectToUpdatePassword.getPassword());
+            preparedStatement.setString(1, BCrypt.hashpw(objectToUpdatePassword.getPassword(), BCrypt.gensalt()));
             preparedStatement.setInt(2, objectToUpdatePassword.getNumBeneficiary());
 
             if (preparedStatement.executeUpdate() > 0) {
@@ -447,7 +437,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
      * Builds and returns the full Beneficiary object
      *
      * @param login    the beneficiary's login
-     * @param password the password, hashed in SQL before comparison
+     * @param password the plaintext password, checked against the stored BCrypt hash
      * @return the authenticated Beneficiary, or null if no match is found
      * @throws SQLException if a database access error occurs
      */
@@ -456,17 +446,15 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
-        String query = "SELECT * FROM Beneficiary " +
-                "WHERE login = ? AND password = STANDARD_HASH(?, 'SHA256')";
+        String query = "SELECT * FROM Beneficiary WHERE login = ?";
 
         try {
             preparedStatement = connect.prepareStatement(query);
             preparedStatement.setString(1, login);
-            preparedStatement.setString(2, password);
 
             resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
+            if (resultSet.next() && BCrypt.checkpw(password, resultSet.getString("password"))) {
                 DAOAddress daoAddress = new DAOAddress();
                 DAOInterpreter daoInterpreter = new DAOInterpreter();
 
@@ -550,7 +538,7 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
     }
 
     /** Checks whether the given plaintext password matches the stored password of the beneficiary.
-     * The password is hashed in SQL via STANDARD_HASH (SHA256) before comparison
+     * The stored password is a BCrypt hash, checked via BCrypt.checkpw()
      * Used to verify a beneficiary's current password before allowing a password change
      *
      * @param numBeneficiary the id of the beneficiary whose password is checked
@@ -563,18 +551,17 @@ public class DAOBeneficiary extends DAO<Beneficiary> {
 
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String query = "SELECT numBeneficiary " +
+        String query = "SELECT password " +
                 "FROM Beneficiary " +
-                "WHERE numBeneficiary = ? AND password = STANDARD_HASH(?, 'SHA256')";
+                "WHERE numBeneficiary = ?";
 
         try {
             preparedStatement = connect.prepareStatement(query);
             preparedStatement.setInt(1, numBeneficiary);
-            preparedStatement.setString(2, passwordToCheck);
 
             resultSet = preparedStatement.executeQuery();
 
-            if(resultSet.next()) {
+            if (resultSet.next() && BCrypt.checkpw(passwordToCheck, resultSet.getString("password"))) {
                 samePassword = true;
             }
         } finally {

@@ -2,8 +2,6 @@ package be.hers.info.ProjetIntegree.DAO;
 
 import be.hers.info.ProjetIntegree.DTO.DTOUser;
 import be.hers.info.ProjetIntegree.POJO.*;
-import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleTypes;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -246,25 +244,20 @@ public class DAOCoordinator extends DAO<Coordinator> {
     public boolean create(Coordinator objectToInsertInDB) throws SQLException {
 
         boolean isInserted = false;
-        OraclePreparedStatement prStat = null;
+        PreparedStatement prStat = null;
         ResultSet rs = null;
 
         String query = "INSERT INTO Coordinator (isAdmin,FKnumInterpreter) " +
                 "VALUES (?, ?) " +
-                "RETURNING numCoordinator INTO ?";
+                "RETURNING numCoordinator";
 
         try {
-            prStat = (OraclePreparedStatement) connect.prepareStatement(query);
+            prStat = connect.prepareStatement(query);
             prStat.setInt(1, (objectToInsertInDB.isAdmin() ? 1 : 0));
             prStat.setInt(2, objectToInsertInDB.getNumInterpreter());
-            prStat.registerReturnParameter(3, OracleTypes.INTEGER);
-            int nbLinesInsert = prStat.executeUpdate();
+            rs = prStat.executeQuery();
 
-            if (nbLinesInsert > 0) {
-                rs = prStat.getReturnResultSet();
-                if (!rs.next()) {
-                    throw new SQLException("[DAOCoordinator] Impossible de récupérer le numCoordinator généré.");
-                }
+            if (rs.next()) {
                 int id = rs.getInt(1);
                 objectToInsertInDB.setNumCoordinator(id);
                 isInserted = true;

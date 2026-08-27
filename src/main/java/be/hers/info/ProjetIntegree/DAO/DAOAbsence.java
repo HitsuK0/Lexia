@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import be.hers.info.ProjetIntegree.POJO.*;
-import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleTypes;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -119,15 +117,15 @@ public class DAOAbsence extends DAO<Absence> {
      */
     public boolean create(Absence objectToInsertInDB) throws SQLException {
         boolean isCreated = false;
-        OraclePreparedStatement preparedStatement = null;
+        PreparedStatement preparedStatement = null;
         ResultSet generateID = null;
 
         String query = "INSERT INTO Absence(status, reasons, privateReason, FKTimeSlotBase, FKTimeSlotPunctual, FKnumInterpreter) " +
                 "VALUES (?, ?, ?, ?, ?, ?) " +
-                "RETURNING numAbsence  INTO ?";
+                "RETURNING numAbsence";
 
         try {
-            preparedStatement = (OraclePreparedStatement) connect.prepareStatement(query);
+            preparedStatement = connect.prepareStatement(query);
 
             preparedStatement.setString(1, objectToInsertInDB.getStatus());
             preparedStatement.setString(2, objectToInsertInDB.getReason());
@@ -143,14 +141,8 @@ public class DAOAbsence extends DAO<Absence> {
 
             preparedStatement.setNull(6, java.sql.Types.INTEGER);
 
-            preparedStatement.registerReturnParameter(7, OracleTypes.INTEGER);
-
-            if (preparedStatement.executeUpdate() > 0) {
-                generateID = preparedStatement.getReturnResultSet();
-                if (!generateID.next()) {
-                    throw new SQLException("[DAOAbsence] Impossible de récupérer le ID généré");
-                }
-
+            generateID = preparedStatement.executeQuery();
+            if (generateID.next()) {
                 int numAbsenceGenerated = generateID.getInt(1);
                 objectToInsertInDB.setNumAbsence(numAbsenceGenerated);
 
@@ -175,15 +167,15 @@ public class DAOAbsence extends DAO<Absence> {
      */
     public boolean create(Absence objectToInsertInDB, int otherObjectID) throws SQLException, IllegalArgumentException {
         boolean isCreated = false;
-        OraclePreparedStatement preparedStatement = null;
+        PreparedStatement preparedStatement = null;
         ResultSet generateID = null;
 
         String query = "INSERT INTO Absence(status, reasons, privateReason, FKTimeSlotBase, FKTimeSlotPunctual, FKnumInterpreter) " +
                 "VALUES (?, ?, ?, ?, ?, ?) " +
-                "RETURNING numAbsence  INTO ?";
+                "RETURNING numAbsence";
 
         try {
-            preparedStatement = (OraclePreparedStatement) connect.prepareStatement(query);
+            preparedStatement = connect.prepareStatement(query);
 
             preparedStatement.setString(1, objectToInsertInDB.getStatus());
             preparedStatement.setString(2, objectToInsertInDB.getReason());
@@ -199,14 +191,8 @@ public class DAOAbsence extends DAO<Absence> {
 
             preparedStatement.setInt(6, otherObjectID);
 
-            preparedStatement.registerReturnParameter(7, OracleTypes.INTEGER);
-
-            if (preparedStatement.executeUpdate() > 0) {
-                generateID = preparedStatement.getReturnResultSet();
-                if (!generateID.next()) {
-                    throw new SQLException("[DAOAbsence] Impossible de récupérer le ID généré");
-                }
-
+            generateID = preparedStatement.executeQuery();
+            if (generateID.next()) {
                 int numAbsenceGenerated = generateID.getInt(1);
                 objectToInsertInDB.setNumAbsence(numAbsenceGenerated);
 

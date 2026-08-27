@@ -19,7 +19,7 @@ public abstract class DAO<T> {
     /**
      * the connection to the database.
      */
-    public Connection connect = ConnectionOracle.getInstance();
+    public Connection connect = ConnectionPostgres.getInstance();
 
     /**
      * Close the PreparedStatement given in param.

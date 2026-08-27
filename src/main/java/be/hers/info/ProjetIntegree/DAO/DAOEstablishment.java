@@ -4,9 +4,6 @@ import be.hers.info.ProjetIntegree.DTO.DTOEstablishmentFormAppointment;
 import be.hers.info.ProjetIntegree.POJO.Address;
 import be.hers.info.ProjetIntegree.POJO.Establishment;
 import be.hers.info.ProjetIntegree.POJO.Referrer;
-import oracle.jdbc.OracleTypes;
-import oracle.jdbc.internal.OraclePreparedStatement;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -217,16 +214,16 @@ public class DAOEstablishment extends DAO<Establishment> {
                 .map(String::valueOf)
                 .collect(Collectors.toList());
         List<Address> addresses = objectToInsertInDB.getAddresses();
-        OraclePreparedStatement prStat = null;
+        PreparedStatement prStat = null;
         ResultSet rs = null;
 
         String query = """
                 INSERT INTO Establishment (name, phoneNumber, educationLevel, FKAddress) VALUES (?, ?, ?, ?)
-                RETURNING numEstablishment INTO ?
+                RETURNING numEstablishment
                 """;
 
         try {
-            prStat = (OraclePreparedStatement) connect.prepareStatement(query);
+            prStat = connect.prepareStatement(query);
             String strEducationLevel = String.join(",", listStrEducationLevel);
 
             int nbLinesInsert = 0;
@@ -236,12 +233,10 @@ public class DAOEstablishment extends DAO<Establishment> {
                 prStat.setString(3, strEducationLevel);
                 Address address = addresses.get(indexAddresses);
                 prStat.setInt(4, address.getNumAddress());
-                prStat.registerReturnParameter(5, OracleTypes.INTEGER);
 
-                nbLinesInsert += prStat.executeUpdate();
-
-                rs = prStat.getReturnResultSet();
+                rs = prStat.executeQuery();
                 if (rs.next()) {
+                    nbLinesInsert++;
                     int id = rs.getInt(1);
                     objectToInsertInDB.setNumEstablishment(id);
 
