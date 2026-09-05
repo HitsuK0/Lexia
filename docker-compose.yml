@@ -4,13 +4,36 @@ services:
     container_name: lexia-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DATABASE_NAME:-lexia}
-      POSTGRES_USER: ${DATABASE_USER:-lexia}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-lexia}
+      POSTGRES_DB: lexia
+      POSTGRES_USER: lexia
+      POSTGRES_PASSWORD: lexia
     ports:
       - "5432:5432"
     volumes:
       - lexia_postgres_data:/var/lib/postgresql/data
+      - ./docs/SQL/BD_Script_Creation.sql:/docker-entrypoint-initdb.d/01-creation.sql:ro
+      - ./docs/SQL/BD_Script_Insertion.sql:/docker-entrypoint-initdb.d/02-insertion.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lexia -d lexia"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: lexia-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Identifiants en clair volontairement pour cette branche de démo
+      # uniquement — voir le README pour l'explication.
+      DATABASE_URL: jdbc:postgresql://postgres:5432/lexia
+      DATABASE_USER: lexia
+      DATABASE_PASSWORD: lexia
+    ports:
+      - "8080:8080"
 
 volumes:
   lexia_postgres_data:
