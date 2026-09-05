@@ -19,8 +19,29 @@
 >
 > - L'application est accessible sur `http://localhost:8080`.
 > - Au premier démarrage, PostgreSQL exécute automatiquement les scripts de `docs/SQL/` (création du schéma + jeu de données de test) via `/docker-entrypoint-initdb.d`.
-> - Identifiants de test disponibles une fois la base peuplée : voir `docs/SQL/BD_Script_Insertion.sql` (logins générés au format `C000x`/`I000x`/`B000x`, mots de passe en clair du script — hashés en BCrypt à l'insertion).
-> - Pour repartir d'une base vierge : `docker compose down -v` (supprime le volume Postgres) puis `docker compose up --build`.
+> - Pour repartir d'une base vierge : `docker compose down -v` (supprime le volume Postgres) puis `docker compose up --build -d`.
+>
+> ### Identifiants de test
+>
+> Comptes créés par `docs/SQL/BD_Script_Insertion.sql` (logins générés automatiquement par trigger, mots de passe en clair du script — hashés en BCrypt une fois en base) :
+>
+> | Rôle | Login | Mot de passe |
+> |---|---|---|
+> | Coordinatrice (admin) | `C0001` | `motdepasse1` |
+> | Résa | `C0002` | `motdepasse2` |
+> | Résa | `C0003` | `motdepasse3` |
+> | Résa | `C0004` | `motdepasse4` |
+> | Résa | `C0005` | `motdepasse5` |
+> | Interprète | `I0006` | `motdepasse1` |
+> | Interprète | `I0007` | `motdepasse2` |
+> | Interprète | `I0008` | `motdepasse3` |
+> | Interprète | `I0009` | `motdepasse4` |
+> | Interprète | `I0010` | `motdepasse5` |
+> | Bénéficiaire | `B0011` | `motdepasse6` |
+> | Bénéficiaire | `B0012` | `motdepasse7` |
+> | Bénéficiaire | `B0013` | `motdepasse8` |
+> | Bénéficiaire | `B0014` | `motdepasse9` |
+> | Bénéficiaire | `B0015` | `motdepasse10` |
 
 Application web (Spring Boot + Thymeleaf) développée pour le Centre Comprendre et Parler, une ASBL qui met à disposition des interprètes spécialisés pour des bénéficiaires sourds ou malentendants. Lexia remplace la gestion actuelle via Teams/Excel par un planning centralisé, avec suggestions d'assignation d'interprète et notifications automatiques.
 
