@@ -12,8 +12,10 @@
 >
 > ```bash
 > git checkout demo-lexia
-> docker compose up --build
+> docker compose up --build -d
 > ```
+>
+> Le `-d` (detached) lance les conteneurs en arrière-plan et rend la main tout de suite ; sans lui, la commande reste attachée aux logs. Pour suivre les logs de l'appli ensuite : `docker compose logs -f app`.
 >
 > - L'application est accessible sur `http://localhost:8080`.
 > - Au premier démarrage, PostgreSQL exécute automatiquement les scripts de `docs/SQL/` (création du schéma + jeu de données de test) via `/docker-entrypoint-initdb.d`.
